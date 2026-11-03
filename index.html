@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0b5138" />
+  <title>THE EYES | Election Monitoring & Reporting System</title>
+  <style>
+    :root {
+      --green: #0b5138;
+      --green-dark: #073b2a;
+      --green-light: #e8f4ed;
+      --gold: #e4b54a;
+      --ink: #172a22;
+      --muted: #718078;
+      --line: #e3eae5;
+      --white: #ffffff;
+      --danger: #b42318;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; font-family: Inter, "Segoe UI", Arial, sans-serif;
+      color: var(--ink); background:
+        radial-gradient(circle at 12% 15%, rgba(228,181,74,.13), transparent 28%),
+        radial-gradient(circle at 90% 85%, rgba(11,81,56,.13), transparent 32%),
+        #f4f7f5;
+      display: flex; align-items: center; justify-content: center; padding: 24px;
+    }
+    .shell { width: min(1050px, 100%); min-height: 620px; display: grid; grid-template-columns: 1.02fr .98fr; background: var(--white); border-radius: 28px; overflow: hidden; box-shadow: 0 24px 80px rgba(15,45,30,.13); }
+    .brand-panel {
+      position: relative; overflow: hidden; padding: 48px;
+      background: linear-gradient(145deg, var(--green-dark), var(--green) 58%, #14734f);
+      color: white; display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .brand-panel:before, .brand-panel:after { content:""; position:absolute; border:1px solid rgba(255,255,255,.12); border-radius:50%; }
+    .brand-panel:before { width: 440px; height: 440px; right:-190px; top:-155px; }
+    .brand-panel:after { width: 330px; height: 330px; right:-120px; top:-100px; }
+    .brand-content, .brand-footer { position: relative; z-index: 1; }
+    .brand-top { display:flex; align-items:center; gap:14px; }
+    .logo-mark { width:64px; height:64px; flex:0 0 64px; display:grid; place-items:center; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.28); border-radius:19px; }
+    .logo-mark svg { width:47px; height:47px; }
+    .brand-name { font-size: 26px; font-weight: 900; letter-spacing: 3px; line-height:1; }
+    .brand-sub { margin-top:7px; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; opacity:.78; }
+    .eyebrow { display:inline-flex; align-items:center; gap:8px; margin-top:70px; padding:9px 13px; border-radius:30px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.15); font-size:11px; letter-spacing:1.4px; text-transform:uppercase; }
+    .eyebrow .dot { width:7px; height:7px; border-radius:50%; background:var(--gold); }
+    h1 { font-size: clamp(34px, 4vw, 48px); line-height:1.12; letter-spacing:-1.4px; margin:22px 0 18px; max-width:450px; }
+    .brand-copy { max-width:420px; color:rgba(255,255,255,.78); font-size:15px; line-height:1.8; }
+    .feature-row { display:flex; gap:12px; margin-top:32px; flex-wrap:wrap; }
+    .feature { display:flex; align-items:center; gap:8px; font-size:12px; color:rgba(255,255,255,.9); }
+    .feature-icon { display:grid; place-items:center; width:26px; height:26px; border-radius:8px; background:rgba(255,255,255,.13); color:#f4d27b; font-weight:700; }
+    .brand-footer { font-size:11px; color:rgba(255,255,255,.58); line-height:1.6; }
+    .flag-stripe { display:flex; height:5px; width:90px; border-radius:5px; overflow:hidden; margin-bottom:12px; }
+    .flag-stripe span { flex:1; background:#fff; } .flag-stripe span:first-child,.flag-stripe span:last-child { background:#159454; }
+    .form-panel { padding: 48px clamp(28px, 5vw, 62px); display:flex; flex-direction:column; justify-content:center; }
+    .mobile-brand { display:none; }
+    .form-heading { text-align:center; margin-bottom:28px; }
+    .form-heading h2 { margin:0; font-size:29px; letter-spacing:-.7px; }
+    .form-heading p { margin:10px 0 0; color:var(--muted); font-size:13px; line-height:1.6; }
+    .form-logo { width:76px; height:76px; margin:0 auto 17px; border-radius:24px; display:grid; place-items:center; background:var(--green-light); border:1px solid #d5e9dc; }
+    .form-logo svg { width:57px; height:57px; }
+    .field { margin-bottom:17px; }
+    label { display:block; margin-bottom:8px; font-size:12px; font-weight:700; color:#35483d; }
+    .input-wrap { position:relative; }
+    .input-wrap .field-icon { position:absolute; left:15px; top:50%; transform:translateY(-50%); color:#87958c; font-size:16px; pointer-events:none; }
+    input { width:100%; height:53px; border:1px solid var(--line); border-radius:13px; padding:0 15px 0 45px; font-size:14px; color:var(--ink); background:#fbfcfb; outline:none; transition:.2s; }
+    input:focus { border-color:#4b9a76; background:#fff; box-shadow:0 0 0 4px rgba(11,81,56,.08); }
+    .password-toggle { position:absolute; right:12px; top:50%; transform:translateY(-50%); border:0; background:transparent; color:#738078; cursor:pointer; font-size:12px; padding:7px; }
+    .password-toggle:focus-visible { outline:2px solid var(--green); border-radius:6px; }
+    .form-meta { display:flex; justify-content:space-between; align-items:center; gap:12px; margin:2px 0 22px; font-size:12px; }
+    .remember { display:flex; align-items:center; gap:8px; color:#647269; }
+    .remember input { width:15px; height:15px; padding:0; accent-color:var(--green); }
+    .help-text { color:#718078; }
+    .login-btn { width:100%; height:54px; border:0; border-radius:13px; color:#fff; font-size:14px; font-weight:800; letter-spacing:.3px; cursor:pointer; background:linear-gradient(100deg,var(--green),#14734f); box-shadow:0 9px 20px rgba(11,81,56,.18); transition:transform .15s, box-shadow .15s; }
+    .login-btn:hover { transform:translateY(-1px); box-shadow:0 12px 24px rgba(11,81,56,.24); }
+    .login-btn:disabled { opacity:.7; cursor:wait; transform:none; }
+    .status { display:none; margin:15px 0 0; padding:11px 13px; border-radius:10px; font-size:12px; line-height:1.5; }
+    .status.show { display:block; }
+    .status.error { color:var(--danger); background:#fff0ef; border:1px solid #f5d1ce; }
+    .status.info { color:#155a3e; background:#edf7f1; border:1px solid #d1e9da; }
+    .secure-note { display:flex; justify-content:center; align-items:center; gap:7px; color:#849087; font-size:11px; margin-top:22px; }
+    .bottom-note { margin-top:27px; padding-top:20px; border-top:1px solid #edf1ee; text-align:center; color:#8a958e; font-size:10px; line-height:1.7; }
+    @media (max-width: 760px) {
+      body { padding:14px; align-items:flex-start; }
+      .shell { grid-template-columns:1fr; min-height:0; border-radius:22px; max-width:500px; margin:auto; }
+      .brand-panel { display:none; }
+      .form-panel { padding:28px 24px 24px; }
+      .mobile-brand { display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:26px; }
+      .mobile-brand .logo-mark { width:49px; height:49px; flex-basis:49px; border-radius:15px; background:var(--green); }
+      .mobile-brand .logo-mark svg { width:38px; height:38px; }
+      .mobile-brand .brand-name { color:var(--green); font-size:22px; }
+      .mobile-brand .brand-sub { color:#718078; font-size:8px; }
+      .form-heading { margin-bottom:23px; }
+      .form-logo { width:65px; height:65px; border-radius:20px; }
+      .form-logo svg { width:49px; height:49px; }
+      .form-heading h2 { font-size:26px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="brand-panel" aria-label="THE EYES platform introduction">
+      <div class="brand-content">
+        <div class="brand-top">
+          <div class="logo-mark" aria-hidden="true">
+            <svg viewBox="0 0 64 64" fill="none">
+              <path d="M5 32C12 20 21 14 32 14s20 6 27 18C52 44 43 50 32 50S12 44 5 32Z" stroke="#fff" stroke-width="3.5"/>
+              <circle cx="32" cy="32" r="11" stroke="#E4B54A" stroke-width="3.5"/>
+              <circle cx="32" cy="32" r="4.5" fill="#fff"/>
+              <path d="M12 52h40" stroke="#fff" stroke-width="2.5" stroke-linecap="round" opacity=".55"/>
+            </svg>
+          </div>
+          <div>
+            <div class="brand-name">THE EYES</div>
+            <div class="brand-sub">Election Monitoring &amp; Reporting System</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="eyebrow"><span class="dot"></span> Observe · Verify · Report</div>
+          <h1>Every vote deserves to be seen.</h1>
+          <p class="brand-copy">A trusted digital workspace for election observers and monitoring teams to document polling activities, report incidents, and support transparent electoral processes.</p>
+          <div class="feature-row">
+            <div class="feature"><span class="feature-icon">✓</span> Field reporting</div>
+            <div class="feature"><span class="feature-icon">✓</span> Evidence records</div>
+            <div class="feature"><span class="feature-icon">✓</span> Secure access</div>
+          </div>
+        </div>
+      </div>
+      <div class="brand-footer">
+        <div class="flag-stripe" aria-label="Nigeria-inspired green white green colors"><span></span><span></span><span></span></div>
+        Independent observation. Responsible reporting. Electoral integrity.
+      </div>
+    </section>
+
+    <section class="form-panel">
+      <div class="mobile-brand">
+        <div class="logo-mark" aria-hidden="true">
+          <svg viewBox="0 0 64 64" fill="none">
+            <path d="M5 32C12 20 21 14 32 14s20 6 27 18C52 44 43 50 32 50S12 44 5 32Z" stroke="#fff" stroke-width="3.5"/>
+            <circle cx="32" cy="32" r="11" stroke="#E4B54A" stroke-width="3.5"/><circle cx="32" cy="32" r="4.5" fill="#fff"/>
+          </svg>
+        </div>
+        <div><div class="brand-name">THE EYES</div><div class="brand-sub">Election Monitoring System</div></div>
+      </div>
+
+      <div class="form-heading">
+        <div class="form-logo" aria-hidden="true">
+          <svg viewBox="0 0 64 64" fill="none">
+            <path d="M5 32C12 20 21 14 32 14s20 6 27 18C52 44 43 50 32 50S12 44 5 32Z" stroke="#0B5138" stroke-width="3.5"/>
+            <circle cx="32" cy="32" r="11" stroke="#D6A32D" stroke-width="3.5"/><circle cx="32" cy="32" r="4.5" fill="#0B5138"/>
+          </svg>
+        </div>
+        <h2>Welcome back</h2>
+        <p>Sign in to your secure election monitoring account.</p>
+      </div>
+
+      <form id="loginForm">
+        <div class="field">
+          <label for="username">Username</label>
+          <div class="input-wrap"><span class="field-icon">♙</span><input id="username" name="username" type="text" autocomplete="username" placeholder="Enter your assigned username" required /></div>
+        </div>
+        <div class="field">
+          <label for="email">Email address</label>
+          <div class="input-wrap"><span class="field-icon">✉</span><input id="email" name="email" type="email" autocomplete="email" placeholder="name@example.com" required /></div>
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <div class="input-wrap"><span class="field-icon">♙</span><input id="password" name="password" type="password" autocomplete="current-password" placeholder="Enter your password" required />
+            <button class="password-toggle" type="button" id="togglePassword" aria-label="Show password">Show</button>
+          </div>
+        </div>
+
+        <div class="form-meta">
+          <label class="remember"><input type="checkbox" id="remember" /> Keep me signed in</label>
+          <span class="help-text">Authorized personnel only</span>
+        </div>
+        <button class="login-btn" id="loginButton" type="submit">Sign in securely&nbsp; →</button>
+        <div id="status" class="status" role="status" aria-live="polite"></div>
+      </form>
+
+      <div class="secure-note"><span aria-hidden="true">🔒</span> Secure sign-in · Access based on your assigned role</div>
+      <div class="bottom-note">THE EYES · Election Monitoring &amp; Reporting System<br />© <span id="year"></span> · For authorized election monitoring personnel</div>
+    </section>
+  </main>
+
+  <!-- Firebase setup:
+       1) Replace the placeholder values below with your Firebase project config.
+       2) Enable Email/Password in Firebase Authentication.
+       3) Create Firestore collection "users"; each user's document ID should be their Firebase Auth UID.
+       4) Store a role field, e.g. "admin", "observer", "coordinator", "reporter".
+       5) Adjust the role-to-dashboard paths below to match your future HTML filenames.
+       Username is checked against Firestore profile after authentication. -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, setPersistence, browserLocalPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "YOUR_FIREBASE_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_FIREBASE_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Update these paths when the role dashboards are created.
+    const roleDashboards = {
+      admin: "admin-dashboard.html",
+      super_admin: "admin-dashboard.html",
+      coordinator: "coordinator-dashboard.html",
+      observer: "observer-dashboard.html",
+      reporter: "observer-dashboard.html",
+      supervisor: "supervisor-dashboard.html"
+    };
+
+    const form = document.getElementById("loginForm");
+    const usernameInput = document.getElementById("username");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const loginButton = document.getElementById("loginButton");
+    const statusBox = document.getElementById("status");
+
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    function showStatus(message, type = "error") {
+      statusBox.textContent = message;
+      statusBox.className = `status show ${type}`;
+    }
+
+    document.getElementById("togglePassword").addEventListener("click", () => {
+      const isPassword = passwordInput.type === "password";
+      passwordInput.type = isPassword ? "text" : "password";
+      document.getElementById("togglePassword").textContent = isPassword ? "Hide" : "Show";
+      document.getElementById("togglePassword").setAttribute("aria-label", isPassword ? "Hide password" : "Show password");
+    });
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      statusBox.className = "status";
+      loginButton.disabled = true;
+      loginButton.textContent = "Signing in…";
+
+      const username = usernameInput.value.trim();
+      const email = emailInput.value.trim().toLowerCase();
+      const password = passwordInput.value;
+
+      try {
+        await setPersistence(auth, document.getElementById("remember").checked
+          ? browserLocalPersistence
+          : browserSessionPersistence);
+
+        const credential = await signInWithEmailAndPassword(auth, email, password);
+        const profileRef = doc(db, "users", credential.user.uid);
+        const profileSnap = await getDoc(profileRef);
+
+        if (!profileSnap.exists()) {
+          await auth.signOut();
+          throw new Error("Your account profile is not registered in the system. Contact your system administrator.");
+        }
+
+        const profile = profileSnap.data();
+        const storedUsername = String(profile.username || "").trim().toLowerCase();
+        if (storedUsername && storedUsername !== username.toLowerCase()) {
+          await auth.signOut();
+          throw new Error("The username does not match this account. Please check your details.");
+        }
+
+        if (profile.active === false || profile.status === "disabled") {
+          await auth.signOut();
+          throw new Error("Your account is currently disabled. Contact your system administrator.");
+        }
+
+        const role = String(profile.role || "").trim().toLowerCase();
+        const dashboard = roleDashboards[role] || profile.dashboardUrl;
+
+        if (!dashboard || typeof dashboard !== "string" || !dashboard.endsWith(".html")) {
+          await auth.signOut();
+          throw new Error("No dashboard has been assigned to your account. Contact your system administrator.");
+        }
+
+        // Role and dashboard permissions must also be enforced by Firestore Security Rules.
+        window.location.href = dashboard;
+      } catch (error) {
+        let message = error?.message || "Unable to sign in. Please try again.";
+        if (error?.code === "auth/invalid-credential" || error?.code === "auth/wrong-password" || error?.code === "auth/user-not-found") {
+          message = "Incorrect email or password. Please check your details and try again.";
+        } else if (error?.code === "auth/too-many-requests") {
+          message = "Too many unsuccessful attempts. Please wait and try again later.";
+        } else if (error?.code === "auth/network-request-failed") {
+          message = "Network connection problem. Check your internet and try again.";
+        } else if (error?.code === "auth/operation-not-allowed") {
+          message = "Email/password sign-in is not enabled in Firebase Authentication.";
+        }
+        showStatus(message, "error");
+        loginButton.disabled = false;
+        loginButton.textContent = "Sign in securely  →";
+      }
+    });
+  </script>
+</body>
+</html>
