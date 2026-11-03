@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#08734f">
+<title>THE EYES | Polling Unit Agent Dashboard</title>
+<style>
+:root{--green:#08734f;--green-dark:#07543b;--mint:#e7f4ee;--bg:#f3f6f5;--ink:#20332b;--muted:#77877e;--line:#e2eae5;--white:#fff;--gold:#dcae43;--red:#b42318}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,"Segoe UI",Arial,sans-serif;font-size:14px}
+button,input,textarea,select{font:inherit}button{cursor:pointer}
+.app{min-height:100vh;display:flex}
+.sidebar{width:250px;flex:0 0 250px;background:#fff;border-right:1px solid var(--line);padding:24px 15px;display:flex;flex-direction:column;min-height:100vh}
+.brand{display:flex;align-items:center;gap:10px;padding:0 10px 28px;color:var(--green);font-weight:900;letter-spacing:2px;font-size:19px}
+.brand-mark{width:34px;height:34px;background:var(--mint);border-radius:11px;display:grid;place-items:center}
+.brand-mark svg{width:28px;height:28px}
+.profile-mini{background:#f8faf9;border:1px solid #edf1ee;border-radius:15px;padding:15px;margin-bottom:24px}
+.profile-mini .caption{font-size:9px;text-transform:uppercase;letter-spacing:1.2px;color:#6e9b84;font-weight:800;margin-bottom:9px}
+.profile-mini strong{display:block;font-size:13px;margin-bottom:6px}
+.profile-mini small{color:var(--muted);line-height:1.5}
+.nav{display:grid;gap:5px}
+.nav button{border:0;background:transparent;text-align:left;padding:12px 13px;border-radius:10px;color:#6e7e75;font-size:13px;font-weight:650;display:flex;gap:10px;align-items:center}
+.nav button:hover,.nav button.active{background:#eaf5ef;color:var(--green)}
+.nav .nav-icon{width:18px;text-align:center;font-size:15px}
+.sidebar-bottom{margin-top:auto;padding:18px 10px 0;color:#9aa59e;font-size:11px;line-height:1.7}
+.main{min-width:0;flex:1}
+.topbar{height:68px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 30px;gap:16px}
+.topbar-title{font-weight:750;font-size:14px}
+.top-actions{display:flex;align-items:center;gap:9px}
+.tag{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#6b9b83;background:#f0f8f3;border:1px solid #dceee3;border-radius:30px;padding:8px 12px}
+.view-toggle{display:flex;gap:5px;margin-left:18px}
+.view-toggle button{border:1px solid #dce5df;background:white;color:#718078;padding:8px 12px;border-radius:9px;font-size:11px}
+.view-toggle button.active{background:#eaf5ef;color:var(--green);border-color:#b9dcc8}
+.content{padding:28px 32px 48px;max-width:1250px;margin:auto}
+.role-label{font-size:10px;font-weight:800;letter-spacing:1.6px;color:#6c8f7c;text-transform:uppercase}
+h1{font-size:clamp(30px,4vw,42px);letter-spacing:-1.4px;margin:8px 0 10px;line-height:1.15}
+.subtitle{color:var(--muted);font-size:14px;margin:0 0 26px}
+.assigned-card{background:#fff;border:1px solid var(--line);border-radius:17px;padding:19px 20px;box-shadow:0 3px 10px rgba(20,50,35,.025);margin-bottom:26px}
+.assigned-card .label{font-size:9px;text-transform:uppercase;letter-spacing:1.2px;color:#6d9a82;font-weight:800;margin-bottom:7px}
+.assigned-card h3{font-size:14px;margin:0 0 7px}
+.assigned-card p{font-size:12px;color:var(--muted);margin:0}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.action-card{display:flex;align-items:center;gap:14px;text-align:left;background:#fff;border:1px solid var(--line);border-radius:15px;padding:17px 15px;min-height:82px;color:inherit;box-shadow:0 2px 7px rgba(20,50,35,.025);transition:.15s}
+.action-card:hover{transform:translateY(-2px);border-color:#c4dfd0;box-shadow:0 8px 20px rgba(20,50,35,.06)}
+.action-card.primary{background:var(--green);color:white;border-color:var(--green)}
+.action-card.primary:hover{background:var(--green-dark)}
+.action-icon{width:38px;height:38px;flex:0 0 38px;border-radius:11px;background:var(--mint);color:var(--green);display:grid;place-items:center;font-size:18px;font-weight:800}
+.primary .action-icon{background:rgba(255,255,255,.15);color:white}
+.action-text{min-width:0;flex:1}
+.action-text strong{display:block;font-size:13px;margin-bottom:5px}
+.action-text small{display:block;font-size:11px;color:#85938b;line-height:1.45}
+.primary .action-text small{color:rgba(255,255,255,.65)}
+.chevron{color:#70b8a1;font-size:20px}
+.primary .chevron{color:#c4e6d6}
+.view-section{display:none}
+.view-section.active{display:block}
+.panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px;margin-top:18px}
+.panel h2{font-size:18px;margin:0 0 6px}
+.panel p.desc{color:var(--muted);font-size:12px;line-height:1.6;margin:0 0 18px}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.field.full{grid-column:1/-1}
+.field label{display:block;font-size:12px;font-weight:700;margin-bottom:7px}
+.field input,.field select,.field textarea{width:100%;border:1px solid #dfe8e2;background:#fbfcfb;border-radius:10px;padding:12px;color:var(--ink);outline:none}
+.field textarea{min-height:100px;resize:vertical}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:#64a886;box-shadow:0 0 0 3px #eaf5ef}
+.btn{border:0;border-radius:10px;background:var(--green);color:#fff;padding:12px 17px;font-weight:750;font-size:12px}
+.btn.secondary{background:#edf5f0;color:var(--green)}
+.btn.danger{background:#fff0ef;color:var(--red)}
+.form-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:17px}
+.notice{margin-top:14px;padding:12px;border-radius:10px;background:#f0f8f3;color:#17603f;font-size:12px;display:none;line-height:1.5}
+.notice.show{display:block}
+.profile-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.profile-item{background:#f8faf9;border-radius:11px;padding:14px}
+.profile-item small{display:block;color:var(--muted);font-size:10px;margin-bottom:7px}
+.profile-item strong{font-size:13px;overflow-wrap:anywhere}
+.footer{padding:24px 0 0;color:#9aa59e;font-size:10px}
+.mobile-menu{display:none}
+@media(max-width:800px){.sidebar{width:220px;flex-basis:220px}.topbar{padding:0 20px}.content{padding:24px 20px}}
+@media(max-width:620px){
+ .app{display:block}.sidebar{display:none;position:fixed;z-index:20;left:0;top:0;bottom:0;width:260px;box-shadow:15px 0 40px #102b1c22}
+ .sidebar.open{display:flex}.topbar{height:60px;padding:0 14px}.mobile-menu{display:inline-flex;border:1px solid var(--line);background:white;border-radius:8px;padding:8px 10px}
+ .topbar-title{flex:1}.tag{display:none}.view-toggle{margin-left:0}.view-toggle button{padding:7px 9px}
+ .content{padding:23px 14px 35px}h1{font-size:32px}.cards{grid-template-columns:1fr}.action-card{min-height:76px}
+ .form-grid,.profile-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.panel{padding:16px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar" id="sidebar">
+  <div class="brand"><span class="brand-mark"><svg viewBox="0 0 64 64" fill="none"><path d="M5 32C12 20 21 14 32 14s20 6 27 18C52 44 43 50 32 50S12 44 5 32Z" stroke="#08734f" stroke-width="4"/><circle cx="32" cy="32" r="11" stroke="#dcae43" stroke-width="4"/><circle cx="32" cy="32" r="4" fill="#08734f"/></svg></span> THE EYES</div>
+  <div class="profile-mini"><div class="caption">Authenticated role</div><strong id="sideRole">Polling Unit Agent</strong><small id="sideLocation">Assigned polling unit location</small></div>
+  <nav class="nav">
+    <button class="active" data-view="dashboard"><span class="nav-icon">▦</span> Dashboard</button>
+    <button data-view="upload"><span class="nav-icon">↑</span> Upload Report</button>
+    <button data-view="backup"><span class="nav-icon">⚑</span> Backup Request</button>
+    <button data-view="vote-alert"><span class="nav-icon">!</span> Vote Buying Alert</button>
+    <button data-view="profile"><span class="nav-icon">◎</span> User Profile</button>
+    <button id="logoutBtn"><span class="nav-icon">↗</span> Log Out</button>
+  </nav>
+  <div class="sidebar-bottom">THE EYES Election Monitoring &amp; Reporting System<br>Authorized field reporting portal</div>
+</aside>
+
+<main class="main">
+<header class="topbar">
+  <button class="mobile-menu" id="menuBtn" aria-label="Open navigation">☰</button>
+  <div class="topbar-title" id="topTitle">Operations overview</div>
+  <div class="top-actions"><span class="tag">Field agent portal</span><div class="view-toggle"><button class="active" data-layout="desktop">Desktop</button><button data-layout="mobile">Mobile</button></div></div>
+</header>
+
+<div class="content">
+<section class="view-section active" id="view-dashboard">
+  <div class="role-label">Polling unit agent</div>
+  <h1>Welcome, <span id="welcomeName">Observer</span>.</h1>
+  <p class="subtitle">Submit monitoring reports for your assigned polling unit.</p>
+  <div class="assigned-card">
+    <div class="label">Assigned context</div>
+    <h3 id="assignedUnit">POLLING UNIT NAME</h3>
+    <p id="assignedAddress">Polling Unit · Ward · Local Government · State</p>
+  </div>
+  <div class="cards">
+    <button class="action-card primary" data-open="upload"><span class="action-icon">↑</span><span class="action-text"><strong>Upload</strong><small>Start a polling-unit report</small></span><span class="chevron">›</span></button>
+    <button class="action-card" data-open="backup"><span class="action-icon">⚑</span><span class="action-text"><strong>Backup Request</strong><small>Report a serious incident for response support</small></span><span class="chevron">›</span></button>
+    <button class="action-card" data-open="vote-alert"><span class="action-icon">!</span><span class="action-text"><strong>Vote Buying Alert</strong><small>Report suspected vote buying at this polling unit</small></span><span class="chevron">›</span></button>
+    <button class="action-card" data-open="profile"><span class="action-icon">◎</span><span class="action-text"><strong>User Profile</strong><small>View your assigned details</small></span><span class="chevron">›</span></button>
+    <button class="action-card" data-action="logout"><span class="action-icon">↗</span><span class="action-text"><strong>Log Out</strong><small>End your secure session</small></span><span class="chevron">›</span></button>
+  </div>
+</section>
+
+<section class="view-section" id="view-upload">
+  <div class="role-label">Field report</div><h1>Upload report</h1><p class="subtitle">Record the activity observed at your assigned polling unit.</p>
+  <div class="panel"><h2>Polling unit report</h2><p class="desc">Your assigned polling unit and location are loaded from your registration profile.</p>
+    <form id="reportForm"><div class="form-grid">
+      <div class="field"><label>Report category</label><select id="reportCategory" required><option value="">Select category</option><option>Opening of Polls</option><option>Accreditation</option><option>Voting Process</option><option>Vote Counting</option><option>Result Announcement</option><option>Closing of Polls</option><option>General Observation</option></select></div>
+      <div class="field"><label>Observation time</label><input id="reportTime" type="datetime-local" required></div>
+      <div class="field full"><label>Report details</label><textarea id="reportDetails" placeholder="Describe what you observed clearly and objectively…" required></textarea></div>
+      <div class="field full"><label>Evidence photo (optional)</label><input id="evidencePhoto" type="file" accept="image/*" capture="environment"><small style="color:#7b8b81">Cloudinary evidence upload will be connected in the next integration stage.</small></div>
+    </div><div class="form-actions"><button class="btn" type="submit">Save report draft</button><button class="btn secondary" type="reset">Clear form</button></div><div class="notice" id="reportNotice"></div></form>
+  </div>
+</section>
+
+<section class="view-section" id="view-backup">
+  <div class="role-label">Field assistance</div><h1>Backup request</h1><p class="subtitle">Request support for a serious incident or operational concern.</p>
+  <div class="panel"><h2>Request response support</h2><p class="desc">Provide factual information. For immediate danger, follow your organization’s emergency procedures and contact the appropriate authorities directly.</p>
+  <form id="backupForm"><div class="form-grid">
+    <div class="field"><label>Incident type</label><select id="backupType" required><option value="">Select incident</option><option>Security concern</option><option>Medical emergency</option><option>Disruption at polling unit</option><option>Equipment or materials issue</option><option>Observer assistance</option><option>Other</option></select></div>
+    <div class="field"><label>Urgency</label><select id="backupUrgency" required><option>Routine</option><option>Urgent</option><option>Critical</option></select></div>
+    <div class="field full"><label>Request details</label><textarea id="backupDetails" required placeholder="Describe the issue, current situation, and support needed…"></textarea></div>
+  </div><div class="form-actions"><button class="btn" type="submit">Submit backup request</button></div><div class="notice" id="backupNotice"></div></form></div>
+</section>
+
+<section class="view-section" id="view-vote-alert">
+  <div class="role-label">Incident reporting</div><h1>Vote buying alert</h1><p class="subtitle">Submit a factual report of suspected vote buying or inducement.</p>
+  <div class="panel"><h2>Suspected vote buying</h2><p class="desc">Report only what you directly observed or what was reported to you. Clearly distinguish firsthand observation from hearsay. Do not confront suspected individuals.</p>
+  <form id="alertForm"><div class="form-grid">
+    <div class="field"><label>Observation type</label><select id="alertType" required><option value="">Select type</option><option>Cash or money distribution</option><option>Distribution of gifts or goods</option><option>Promise of reward or benefit</option><option>Other suspected inducement</option></select></div>
+    <div class="field"><label>Time observed</label><input id="alertTime" type="datetime-local" required></div>
+    <div class="field"><label>Source of information</label><select id="alertSource" required><option>Direct observation</option><option>Reported by another person</option></select></div>
+    <div class="field"><label>Evidence available</label><select id="alertEvidence"><option>No evidence attached</option><option>Photo</option><option>Video</option><option>Witness details</option><option>Other documentation</option></select></div>
+    <div class="field full"><label>Incident description</label><textarea id="alertDetails" required placeholder="Describe the observed activity, location, and relevant details…"></textarea></div>
+  </div><div class="form-actions"><button class="btn" type="submit">Submit alert</button></div><div class="notice" id="alertNotice"></div></form></div>
+</section>
+
+<section class="view-section" id="view-profile">
+  <div class="role-label">Account information</div><h1>User profile</h1><p class="subtitle">Review your account and assigned election-monitoring location.</p>
+  <div class="panel"><h2>Registration details</h2><p class="desc">These details should be populated from your approved Firebase registration record.</p><div class="profile-grid">
+    <div class="profile-item"><small>Full name</small><strong id="profileName">Observer name</strong></div>
+    <div class="profile-item"><small>Username</small><strong id="profileUsername">—</strong></div>
+    <div class="profile-item"><small>Email</small><strong id="profileEmail">—</strong></div>
+    <div class="profile-item"><small>Role</small><strong id="profileRole">Polling Unit Agent</strong></div>
+    <div class="profile-item"><small>State</small><strong id="profileState">—</strong></div>
+    <div class="profile-item"><small>Local Government Area</small><strong id="profileLga">—</strong></div>
+    <div class="profile-item"><small>Ward</small><strong id="profileWard">—</strong></div>
+    <div class="profile-item"><small>Polling unit</small><strong id="profilePollingUnit">—</strong></div>
+  </div></div>
+</section>
+<div class="footer">THE EYES · Election Monitoring &amp; Reporting System</div>
+</div>
+</main>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, getDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "YOUR_FIREBASE_API_KEY",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT_ID.appspot.com",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_FIREBASE_APP_ID"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// Demo-friendly defaults. Replace with the authenticated user's Firestore profile.
+const demoProfile = {
+  fullName: "Abdulrahman",
+  username: "observer",
+  email: "",
+  role: "Polling Unit Agent",
+  state: "Katsina State",
+  lga: "Dandutse",
+  ward: "Funtua",
+  pollingUnit: "UNG. DAN DUTSE SHEHU PR. SCHOOL I",
+  pollingUnitCode: ""
+};
+
+let currentUser = null;
+let currentProfile = {...demoProfile};
+const roleLabel = role => ({
+  polling_unit_agent:"Polling Unit Agent", observer:"Polling Unit Agent", agent:"Polling Unit Agent"
+}[String(role||"").toLowerCase()] || role || "Polling Unit Agent");
+
+function populateProfile(profile, user) {
+  const fullName = profile.fullName || profile.name || user?.displayName || demoProfile.fullName;
+  const username = profile.username || user?.email?.split("@")[0] || demoProfile.username;
+  currentProfile = {...demoProfile, ...profile, fullName, username, email:profile.email || user?.email || ""};
+  document.getElementById("welcomeName").textContent = fullName.split(" ")[0];
+  document.getElementById("sideRole").textContent = roleLabel(profile.role);
+  document.getElementById("sideLocation").textContent = [profile.lga, profile.state].filter(Boolean).join(" · ") || "Assigned polling unit";
+  document.getElementById("assignedUnit").textContent = profile.pollingUnitName || profile.pollingUnit || demoProfile.pollingUnit;
+  document.getElementById("assignedAddress").textContent = [profile.ward, profile.lga, profile.state].filter(Boolean).join(" · ");
+  document.getElementById("profileName").textContent = fullName;
+  document.getElementById("profileUsername").textContent = username;
+  document.getElementById("profileEmail").textContent = currentProfile.email || "—";
+  document.getElementById("profileRole").textContent = roleLabel(profile.role);
+  document.getElementById("profileState").textContent = profile.state || "—";
+  document.getElementById("profileLga").textContent = profile.lga || "—";
+  document.getElementById("profileWard").textContent = profile.ward || "—";
+  document.getElementById("profilePollingUnit").textContent = profile.pollingUnitName || profile.pollingUnit || "—";
+}
+
+// In production, require Firebase authentication. Demo profile is shown only when
+// Firebase configuration is still a placeholder, so the interface can be previewed.
+const isConfigured = !firebaseConfig.apiKey.startsWith("YOUR_");
+if (isConfigured) {
+  onAuthStateChanged(auth, async user => {
+    if (!user) { window.location.replace("index.html"); return; }
+    currentUser = user;
+    try {
+      const snap = await getDoc(doc(db, "users", user.uid));
+      if (!snap.exists()) { await signOut(auth); window.location.replace("index.html"); return; }
+      const profile = snap.data();
+      const role = String(profile.role || "").toLowerCase();
+      if (!["polling_unit_agent","observer","agent"].includes(role)) {
+        // Replace this with your central role router if additional roles use this file.
+        window.location.replace(profile.dashboardUrl || "index.html");
+        return;
+      }
+      populateProfile(profile, user);
+    } catch (e) {
+      console.error("Profile load error:", e);
+      alert("Could not load your registered profile. Please check your connection and try again.");
+    }
+  });
+} else {
+  populateProfile(demoProfile, null);
+}
+
+function showView(view) {
+  document.querySelectorAll(".view-section").forEach(section => section.classList.toggle("active", section.id === `view-${view}`));
+  document.querySelectorAll(".nav button[data-view]").forEach(button => button.classList.toggle("active", button.dataset.view === view));
+  const titles = {dashboard:"Operations overview",upload:"Upload report",backup:"Backup request","vote-alert":"Vote buying alert",profile:"User profile"};
+  document.getElementById("topTitle").textContent = titles[view] || "Operations overview";
+  document.getElementById("sidebar").classList.remove("open");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+document.querySelectorAll("[data-view]").forEach(btn => btn.addEventListener("click", () => showView(btn.dataset.view)));
+document.querySelectorAll("[data-open]").forEach(btn => btn.addEventListener("click", () => showView(btn.dataset.open)));
+document.querySelectorAll("[data-action='logout'],#logoutBtn").forEach(btn => btn.addEventListener("click", logout));
+document.getElementById("menuBtn").addEventListener("click", () => document.getElementById("sidebar").classList.toggle("open"));
+
+document.querySelectorAll("[data-layout]").forEach(btn => btn.addEventListener("click", () => {
+  document.querySelectorAll("[data-layout]").forEach(b => b.classList.toggle("active", b === btn));
+  document.body.dataset.previewLayout = btn.dataset.layout;
+  if (btn.dataset.layout === "mobile") document.querySelector(".content").style.maxWidth = "480px";
+  else document.querySelector(".content").style.maxWidth = "";
+}));
+
+async function logout() {
+  if (isConfigured && auth.currentUser) await signOut(auth);
+  window.location.href = "index.html";
+}
+
+async function submitReport(collectionName, formId, noticeId, typeKey) {
+  const form = document.getElementById(formId);
+  const notice = document.getElementById(noticeId);
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+    const payload = {
+      ...currentProfile,
+      userId: currentUser?.uid || "demo-user",
+      category: document.getElementById(typeKey)?.value || "",
+      details: form.querySelector("textarea")?.value.trim() || "",
+      createdAt: isConfigured ? serverTimestamp() : new Date().toISOString(),
+      status: "submitted"
+    };
+    if (formId === "reportForm") {
+      payload.observationTime = document.getElementById("reportTime").value;
+      payload.evidenceFileName = document.getElementById("evidencePhoto").files[0]?.name || "";
+    } else if (formId === "backupForm") {
+      payload.urgency = document.getElementById("backupUrgency").value;
+    } else if (formId === "alertForm") {
+      payload.observationTime = document.getElementById("alertTime").value;
+      payload.source = document.getElementById("alertSource").value;
+      payload.evidenceAvailable = document.getElementById("alertEvidence").value;
+    }
+    try {
+      if (isConfigured && currentUser) {
+        await addDoc(collection(db, collectionName), payload);
+        notice.textContent = "Your report has been submitted to Firebase.";
+      } else {
+        notice.textContent = "Demo preview: form validated. Connect Firebase to save reports.";
+      }
+      notice.classList.add("show");
+      form.reset();
+    } catch (error) {
+      notice.textContent = "Could not submit report. Please check your connection and try again.";
+      notice.classList.add("show");
+      console.error(error);
+    }
+  });
+}
+submitReport("pollingUnitReports","reportForm","reportNotice","reportCategory");
+submitReport("backupRequests","backupForm","backupNotice","backupType");
+submitReport("voteBuyingAlerts","alertForm","alertNotice","alertType");
+</script>
+</body>
+</html>
