@@ -66,10 +66,7 @@
     input:focus { border-color:#4b9a76; background:#fff; box-shadow:0 0 0 4px rgba(11,81,56,.08); }
     .password-toggle { position:absolute; right:12px; top:50%; transform:translateY(-50%); border:0; background:transparent; color:#738078; cursor:pointer; font-size:12px; padding:7px; }
     .password-toggle:focus-visible { outline:2px solid var(--green); border-radius:6px; }
-    .form-meta { display:flex; justify-content:space-between; align-items:center; gap:12px; margin:2px 0 22px; font-size:12px; }
-    .remember { display:flex; align-items:center; gap:8px; color:#647269; }
     .remember input { width:15px; height:15px; padding:0; accent-color:var(--green); }
-    .help-text { color:#718078; }
     .login-btn { width:100%; height:54px; border:0; border-radius:13px; color:#fff; font-size:14px; font-weight:800; letter-spacing:.3px; cursor:pointer; background:linear-gradient(100deg,var(--green),#14734f); box-shadow:0 9px 20px rgba(11,81,56,.18); transition:transform .15s, box-shadow .15s; }
     .login-btn:hover { transform:translateY(-1px); box-shadow:0 12px 24px rgba(11,81,56,.24); }
     .login-btn:disabled { opacity:.7; cursor:wait; transform:none; }
@@ -77,8 +74,6 @@
     .status.show { display:block; }
     .status.error { color:var(--danger); background:#fff0ef; border:1px solid #f5d1ce; }
     .status.info { color:#155a3e; background:#edf7f1; border:1px solid #d1e9da; }
-    .secure-note { display:flex; justify-content:center; align-items:center; gap:7px; color:#849087; font-size:11px; margin-top:22px; }
-    .bottom-note { margin-top:27px; padding-top:20px; border-top:1px solid #edf1ee; text-align:center; color:#8a958e; font-size:10px; line-height:1.7; }
     @media (max-width: 760px) {
       body { padding:14px; align-items:flex-start; }
       .shell { grid-template-columns:1fr; min-height:0; border-radius:22px; max-width:500px; margin:auto; }
@@ -150,8 +145,8 @@
             <circle cx="32" cy="32" r="11" stroke="#D6A32D" stroke-width="3.5"/><circle cx="32" cy="32" r="4.5" fill="#0B5138"/>
           </svg>
         </div>
-        <h2>Welcome back</h2>
-        <p>Sign in to your secure election monitoring account.</p>
+        <h2>Sign in</h2>
+        
       </div>
 
       <form id="loginForm">
@@ -170,16 +165,10 @@
           </div>
         </div>
 
-        <div class="form-meta">
-          <label class="remember"><input type="checkbox" id="remember" /> Keep me signed in</label>
-          <span class="help-text">Authorized personnel only</span>
-        </div>
         <button class="login-btn" id="loginButton" type="submit">Sign in securely&nbsp; →</button>
         <div id="status" class="status" role="status" aria-live="polite"></div>
       </form>
 
-      <div class="secure-note"><span aria-hidden="true">🔒</span> Secure sign-in · Access based on your assigned role</div>
-      <div class="bottom-note">THE EYES · Election Monitoring &amp; Reporting System<br />© <span id="year"></span> · For authorized election monitoring personnel</div>
     </section>
   </main>
 
