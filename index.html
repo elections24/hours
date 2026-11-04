@@ -37,6 +37,11 @@
     .brand-panel:after { width: 330px; height: 330px; right:-120px; top:-100px; }
     .brand-content, .brand-footer { position: relative; z-index: 1; }
     .brand-top { display:flex; align-items:center; gap:14px; }
+    /* Center branding text and remove duplicate eye icons from the side headers. */
+    .brand-top-centered { justify-content:center; text-align:center; }
+    .brand-top-centered .brand-name,
+    .brand-top-centered .brand-sub { text-align:center; }
+
     .logo-mark { width:64px; height:64px; flex:0 0 64px; display:grid; place-items:center; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.28); border-radius:19px; }
     .logo-mark svg { width:47px; height:47px; }
     .brand-name { font-size: 26px; font-weight: 900; letter-spacing: 3px; line-height:1; }
@@ -95,15 +100,7 @@
   <main class="shell">
     <section class="brand-panel" aria-label="THE EYES platform introduction">
       <div class="brand-content">
-        <div class="brand-top">
-          <div class="logo-mark" aria-hidden="true">
-            <svg viewBox="0 0 64 64" fill="none">
-              <path d="M5 32C12 20 21 14 32 14s20 6 27 18C52 44 43 50 32 50S12 44 5 32Z" stroke="#fff" stroke-width="3.5"/>
-              <circle cx="32" cy="32" r="11" stroke="#E4B54A" stroke-width="3.5"/>
-              <circle cx="32" cy="32" r="4.5" fill="#fff"/>
-              <path d="M12 52h40" stroke="#fff" stroke-width="2.5" stroke-linecap="round" opacity=".55"/>
-            </svg>
-          </div>
+        <div class="brand-top brand-top-centered">
           <div>
             <div class="brand-name">THE EYES</div>
             <div class="brand-sub">Election Monitoring &amp; Reporting System</div>
@@ -128,15 +125,7 @@
     </section>
 
     <section class="form-panel">
-      <div class="mobile-brand">
-        <div class="logo-mark" aria-hidden="true">
-          <svg viewBox="0 0 64 64" fill="none">
-            <path d="M5 32C12 20 21 14 32 14s20 6 27 18C52 44 43 50 32 50S12 44 5 32Z" stroke="#fff" stroke-width="3.5"/>
-            <circle cx="32" cy="32" r="11" stroke="#E4B54A" stroke-width="3.5"/><circle cx="32" cy="32" r="4.5" fill="#fff"/>
-          </svg>
-        </div>
-        <div><div class="brand-name">THE EYES</div><div class="brand-sub">Election Monitoring System</div></div>
-      </div>
+
 
       <div class="form-heading">
         <div class="form-logo" aria-hidden="true">
@@ -224,22 +213,18 @@
     }
 
     
-    // Hidden Super Admin entry: seven consecutive taps/clicks on the eye logo.
-    // Supports both mouse clicks and mobile touchscreen taps.
-    let logoClicks = 0;
+    // Hidden Super Admin entry: seven consecutive double-clicks on the existing eye logo.
+    let logoDblClicks = 0;
     let logoResetTimer;
     document.querySelectorAll(".logo-mark, .form-logo").forEach((logo) => {
-      logo.addEventListener("click", () => {
-        logoClicks++;
+      logo.addEventListener("dblclick", () => {
+        logoDblClicks++;
         clearTimeout(logoResetTimer);
-
-        if (logoClicks >= 7) {
-          logoClicks = 0;
+        if (logoDblClicks >= 7) {
+          logoDblClicks = 0;
           window.location.href = "super-admin-login.html";
         } else {
-          logoResetTimer = setTimeout(() => {
-            logoClicks = 0;
-          }, 5000);
+          logoResetTimer = setTimeout(() => logoDblClicks = 0, 4000);
         }
       });
     });
