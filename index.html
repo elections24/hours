@@ -187,20 +187,43 @@
        4) Store a role field, e.g. "admin", "observer", "coordinator", "reporter".
        5) Adjust the role-to-dashboard paths below to match your future HTML filenames.
        Username is checked against Firestore profile after authentication. -->
+  <script>
+    // Standalone Super Admin shortcut: seven taps on the central eye icon.
+    // Independent of Firebase; Android taps trigger the click event.
+    (() => {
+      const eyeLogo = document.querySelector(".admin-entry-logo");
+      if (!eyeLogo) return;
+
+      let tapCount = 0;
+      eyeLogo.addEventListener("click", () => {
+        tapCount += 1;
+        if (tapCount >= 7) {
+          tapCount = 0;
+          window.location.assign(new URL("super-admin-login.html", document.baseURI).href);
+        }
+      });
+
+      eyeLogo.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          eyeLogo.click();
+        }
+      });
+    })();
+  </script>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, setPersistence, browserLocalPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
-{
         "apiKey": "AIzaSyAYMRko87BBNT7LKdZ9s2rGHf1BFmggtb8",
         "authDomain": "theeyes-f33cb.firebaseapp.com",
         "projectId": "theeyes-f33cb",
         "storageBucket": "theeyes-f33cb.firebasestorage.app",
         "messagingSenderId": "265085505802",
         "appId": "1:265085505802:web:f81fb50567514b806feaf3"
-      }
     };
 
     const app = initializeApp(firebaseConfig);
@@ -232,30 +255,6 @@
     }
 
     
-    // Super Admin shortcut: tap the centered eye seven times.
-    // Count pointer taps directly (mobile and desktop); do not reset the count by timeout.
-    // No visible counter, popup, tooltip, or animation.
-    const adminLogo = document.querySelector(".admin-entry-logo");
-    let adminTapCount = 0;
-
-    function countAdminTap() {
-      adminTapCount += 1;
-
-      if (adminTapCount === 7) {
-        adminTapCount = 0;
-        window.location.href = new URL("super-admin-login.html", window.location.href).href;
-      }
-    }
-
-    if (adminLogo) {
-      adminLogo.addEventListener("pointerup", countAdminTap);
-      adminLogo.addEventListener("keydown", (event) => {
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          countAdminTap();
-        }
-      });
-    }
 
     document.getElementById("togglePassword").addEventListener("click", () => {
       const isPassword = passwordInput.type === "password";
