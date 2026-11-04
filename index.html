@@ -37,6 +37,11 @@
     .brand-panel:after { width: 330px; height: 330px; right:-120px; top:-100px; }
     .brand-content, .brand-footer { position: relative; z-index: 1; }
     .brand-top { display:flex; align-items:center; gap:14px; }
+    /* Center branding text and remove duplicate eye icons from the side headers. */
+    .brand-top-centered { justify-content:center; text-align:center; }
+    .brand-top-centered .brand-name,
+    .brand-top-centered .brand-sub { text-align:center; }
+
     .logo-mark { width:64px; height:64px; flex:0 0 64px; display:grid; place-items:center; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.28); border-radius:19px; }
     .logo-mark svg { width:47px; height:47px; }
     .brand-name { font-size: 26px; font-weight: 900; letter-spacing: 3px; line-height:1; }
@@ -54,12 +59,17 @@
     .form-panel { padding: 48px clamp(28px, 5vw, 62px); display:flex; flex-direction:column; justify-content:center; }
     .mobile-brand { display:none; }
     .form-heading { text-align:center; margin-bottom:28px; }
-    .form-title { text-align:center; margin-bottom:18px; }
-    .form-brand-name { color:var(--green); font-size:26px; font-weight:900; letter-spacing:3px; line-height:1.1; }
-    .form-brand-sub { margin-top:8px; color:var(--muted); font-size:11px; letter-spacing:1px; text-transform:uppercase; line-height:1.5; }
-    .admin-entry-logo { display:grid; text-decoration:none; cursor:pointer; transition:transform .15s, box-shadow .15s; }
-    .admin-entry-logo:hover { transform:translateY(-2px); box-shadow:0 0 0 4px rgba(11,81,56,.08); }
-    .admin-entry-logo:focus-visible { outline:3px solid var(--gold); outline-offset:4px; }
+    .form-logo {
+      width:76px; height:76px; margin:0 auto 12px; border-radius:0;
+      display:grid; place-items:center; background:transparent; border:0;
+      text-decoration:none; cursor:pointer;
+    }
+    .form-logo svg { width:70px; height:70px; }
+    .form-logo:hover { transform:scale(1.04); }
+    .form-logo:focus-visible { outline:3px solid var(--gold); outline-offset:4px; border-radius:12px; }
+    .form-brand-text { text-align:center; margin:0 auto 20px; }
+    .form-brand-name { color:var(--green); font-size:25px; font-weight:900; letter-spacing:3px; line-height:1.15; }
+    .form-brand-sub { margin-top:7px; color:var(--muted); font-size:10px; letter-spacing:1px; text-transform:uppercase; line-height:1.5; }
 
     .form-heading h2 { margin:0; font-size:29px; letter-spacing:-.7px; }
     .form-heading p { margin:10px 0 0; color:var(--muted); font-size:13px; line-height:1.6; }
@@ -92,11 +102,10 @@
       .mobile-brand .brand-name { color:var(--green); font-size:22px; }
       .mobile-brand .brand-sub { color:#718078; font-size:8px; }
       .form-heading { margin-bottom:23px; }
+      .form-logo { width:65px; height:65px; margin-bottom:10px; }
+      .form-logo svg { width:60px; height:60px; }
       .form-brand-name { font-size:22px; }
       .form-brand-sub { font-size:9px; }
-
-      .form-logo { width:65px; height:65px; border-radius:20px; }
-      .form-logo svg { width:49px; height:49px; }
       .form-heading h2 { font-size:26px; }
     }
   </style>
@@ -105,15 +114,7 @@
   <main class="shell">
     <section class="brand-panel" aria-label="THE EYES platform introduction">
       <div class="brand-content">
-        <div class="brand-top">
-          <div class="logo-mark" aria-hidden="true">
-            <svg viewBox="0 0 64 64" fill="none">
-              <path d="M5 32C12 20 21 14 32 14s20 6 27 18C52 44 43 50 32 50S12 44 5 32Z" stroke="#fff" stroke-width="3.5"/>
-              <circle cx="32" cy="32" r="11" stroke="#E4B54A" stroke-width="3.5"/>
-              <circle cx="32" cy="32" r="4.5" fill="#fff"/>
-              <path d="M12 52h40" stroke="#fff" stroke-width="2.5" stroke-linecap="round" opacity=".55"/>
-            </svg>
-          </div>
+        <div class="brand-top brand-top-centered">
           <div>
             <div class="brand-name">THE EYES</div>
             <div class="brand-sub">Election Monitoring &amp; Reporting System</div>
@@ -138,31 +139,22 @@
     </section>
 
     <section class="form-panel">
-      <div class="mobile-brand">
-        <div class="logo-mark" aria-hidden="true">
-          <svg viewBox="0 0 64 64" fill="none">
-            <path d="M5 32C12 20 21 14 32 14s20 6 27 18C52 44 43 50 32 50S12 44 5 32Z" stroke="#fff" stroke-width="3.5"/>
-            <circle cx="32" cy="32" r="11" stroke="#E4B54A" stroke-width="3.5"/><circle cx="32" cy="32" r="4.5" fill="#fff"/>
-          </svg>
-        </div>
-        <div><div class="brand-name">THE EYES</div><div class="brand-sub">Election Monitoring System</div></div>
-      </div>
+
 
       <div class="form-heading">
-        <div class="form-title">
+        <a class="form-logo admin-entry-logo" href="super-admin-login.html"
+           aria-label="Open Super Admin sign-in" title="Super Admin">
+          <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+            <path d="M5 32C12 20 21 14 32 14s20 6 27 18C52 44 43 50 32 50S12 44 5 32Z" stroke="#0B5138" stroke-width="3.5"/>
+            <circle cx="32" cy="32" r="11" stroke="#D6A32D" stroke-width="3.5"/>
+            <circle cx="32" cy="32" r="4.5" fill="#0B5138"/>
+          </svg>
+        </a>
+        <div class="form-brand-text">
           <div class="form-brand-name">THE EYES</div>
           <div class="form-brand-sub">Election Monitoring &amp; Reporting System</div>
         </div>
-        <a class="form-logo admin-entry-logo" href="super-admin-login.html"
-           aria-label="Open Super Admin sign-in" title="Super Admin">
-
-          <svg viewBox="0 0 64 64" fill="none">
-            <path d="M5 32C12 20 21 14 32 14s20 6 27 18C52 44 43 50 32 50S12 44 5 32Z" stroke="#0B5138" stroke-width="3.5"/>
-            <circle cx="32" cy="32" r="11" stroke="#D6A32D" stroke-width="3.5"/><circle cx="32" cy="32" r="4.5" fill="#0B5138"/>
-          </svg>
-        </a>
         <h2>Sign in</h2>
-        
       </div>
 
       <form id="loginForm">
@@ -240,8 +232,7 @@
     }
 
     
-    // The centered colored eye is a direct shortcut to Super Admin sign-in.
-    // The left-side branding eye remains decorative and does not trigger navigation.
+    // One click on the centered green-and-gold eye opens Super Admin sign-in.
     document.querySelector(".admin-entry-logo")?.addEventListener("click", (event) => {
       event.preventDefault();
       window.location.href = "super-admin-login.html";
