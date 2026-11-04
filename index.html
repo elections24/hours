@@ -185,12 +185,14 @@
     import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
-      apiKey: "YOUR_FIREBASE_API_KEY",
-      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_PROJECT_ID.appspot.com",
-      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-      appId: "YOUR_FIREBASE_APP_ID"
+{
+        "apiKey": "AIzaSyAYMRko87BBNT7LKdZ9s2rGHf1BFmggtb8",
+        "authDomain": "theeyes-f33cb.firebaseapp.com",
+        "projectId": "theeyes-f33cb",
+        "storageBucket": "theeyes-f33cb.firebasestorage.app",
+        "messagingSenderId": "265085505802",
+        "appId": "1:265085505802:web:f81fb50567514b806feaf3"
+      }
     };
 
     const app = initializeApp(firebaseConfig);
@@ -214,12 +216,29 @@
     const loginButton = document.getElementById("loginButton");
     const statusBox = document.getElementById("status");
 
-    document.getElementById("year").textContent = new Date().getFullYear();
+    
 
     function showStatus(message, type = "error") {
       statusBox.textContent = message;
       statusBox.className = `status show ${type}`;
     }
+
+    
+    // Hidden Super Admin entry: seven consecutive double-clicks on the existing eye logo.
+    let logoDblClicks = 0;
+    let logoResetTimer;
+    document.querySelectorAll(".logo-mark, .form-logo").forEach((logo) => {
+      logo.addEventListener("dblclick", () => {
+        logoDblClicks++;
+        clearTimeout(logoResetTimer);
+        if (logoDblClicks >= 7) {
+          logoDblClicks = 0;
+          window.location.href = "super-admin-login.html";
+        } else {
+          logoResetTimer = setTimeout(() => logoDblClicks = 0, 4000);
+        }
+      });
+    });
 
     document.getElementById("togglePassword").addEventListener("click", () => {
       const isPassword = passwordInput.type === "password";
@@ -239,9 +258,7 @@
       const password = passwordInput.value;
 
       try {
-        await setPersistence(auth, document.getElementById("remember").checked
-          ? browserLocalPersistence
-          : browserSessionPersistence);
+        await setPersistence(auth, browserSessionPersistence);
 
         const credential = await signInWithEmailAndPassword(auth, email, password);
         const profileRef = doc(db, "users", credential.user.uid);

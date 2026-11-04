@@ -1,0 +1,48 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b5138"><title>THE EYES | Agent Registration</title>
+<style>
+*{box-sizing:border-box}body{margin:0;padding:15px;background:#f3f7f4;font-family:Arial,sans-serif;color:#173327}.shell{max-width:850px;margin:auto;background:white;border:1px solid #dfe9e2;border-radius:18px;overflow:hidden}header{padding:22px;background:linear-gradient(120deg,#073b2a,#0b5138);color:white;font-weight:bold;letter-spacing:2px}main{padding:25px}.guard{padding:12px;background:#edf7f1;color:#155a3e;border-radius:9px;font-size:12px;margin-bottom:18px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.full{grid-column:1/-1}label{display:block;font-size:12px;font-weight:bold;margin:0 0 6px}input,select{width:100%;padding:12px;border:1px solid #dfe8e2;border-radius:9px;font:inherit;background:#fbfcfb}.section{border:1px solid #e3eae5;border-radius:12px;padding:18px;margin:15px 0}.section h2{font-size:16px;margin:0 0 12px}.hint{font-size:10px;color:#718078;line-height:1.5}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}button{padding:13px 17px;border:0;border-radius:9px;background:#0b5138;color:white;font-weight:bold;cursor:pointer}.secondary{background:#edf5f0;color:#0b5138}button:disabled{opacity:.6}.notice{display:none;padding:12px;margin-top:14px;border-radius:9px;font-size:12px;line-height:1.5}.notice.show{display:block}.success{background:#edf7f1;color:#155a3e}.error{background:#fff0ef;color:#b42318}@media(max-width:600px){main{padding:15px}.grid{grid-template-columns:1fr}.full{grid-column:auto}}
+</style></head><body><div class="shell"><header>◉ THE EYES · SUPER ADMINISTRATOR · AGENT REGISTRATION</header><main><h1>Create Agent Account</h1><p class="hint">This page requires an active Firebase Super Administrator profile. Agent account is created in Firebase Authentication and its role/location profile is saved in Firestore users/{uid}.</p><div id="guard" class="guard">Verifying Super Administrator…</div>
+<form id="form"><section class="section"><h2>Agent credentials</h2><div class="grid">
+<div><label>Full name *</label><input id="fullName" required></div><div><label>Username *</label><input id="username" required autocomplete="off"></div>
+<div><label>Email *</label><input id="email" type="email" required autocomplete="off"></div><div><label>Initial password * (minimum 6 characters)</label><input id="password" type="password" minlength="6" required autocomplete="new-password"></div>
+</div></section><section class="section"><h2>Role and assignment</h2><div class="grid">
+<div class="full"><label>Agent role *</label><select id="role" required><option value="">Select role</option><option value="polling_unit_agent">Polling Unit Agent</option><option value="ward_collection_agent">Ward Collation Agent</option><option value="lga_collection_agent">LGA Collation Agent</option><option value="district_collection_agent">District Collation Agent</option><option value="observer">Observer (Polling Unit dashboard-compatible)</option><option value="agent">Agent (Polling Unit dashboard-compatible)</option></select><span class="hint">Super Admin role cannot be assigned here.</span></div>
+<div><label>State</label><input id="state" value="Zamfara State"></div><div><label>LGA</label><input id="lga"></div><div><label>Ward</label><input id="ward"></div><div><label>Polling Unit name</label><input id="pollingUnit"></div><div><label>Polling Unit code (verified, if known)</label><input id="pollingUnitCode"></div>
+<div class="full"><label>Dashboard path *</label><select id="dashboardUrl" required><option value="polling-unit-agent.html">Polling Unit Agent — polling-unit-agent.html</option><option value="ward-collection-agent.html">Ward Collation Agent — ward-collection-agent.html</option><option value="lga-collection-agent.html">LGA Collation Agent — lga-collection-agent.html</option><option value="district-collection-agent.html">District Collation Agent — district-collection-agent.html</option></select><span class="hint">Only polling-unit-agent.html is included in this bundle. Other dashboard files must be deployed before assigning those paths.</span></div>
+</div></section><div class="actions"><button id="createBtn" disabled>Create Agent Account</button><button class="secondary" type="reset">Clear</button><button class="secondary" id="logout" type="button">Sign out</button></div><div id="notice" class="notice" role="status"></div></form></main></div>
+<script type="module">
+import {initializeApp,deleteApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {getAuth,onAuthStateChanged,signOut,createUserWithEmailAndPassword} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {getFirestore,doc,getDoc,setDoc,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+const firebaseConfig={
+  "apiKey": "AIzaSyAYMRko87BBNT7LKdZ9s2rGHf1BFmggtb8",
+  "authDomain": "theeyes-f33cb.firebaseapp.com",
+  "projectId": "theeyes-f33cb",
+  "storageBucket": "theeyes-f33cb.firebasestorage.app",
+  "messagingSenderId": "265085505802",
+  "appId": "1:265085505802:web:f81fb50567514b806feaf3"
+};
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
+const guard=document.getElementById("guard"),form=document.getElementById("form"),btn=document.getElementById("createBtn"),notice=document.getElementById("notice");
+let admin=null,adminProfile=null;
+function message(t,type="error"){notice.className="notice show "+type;notice.textContent=t}
+onAuthStateChanged(auth,async u=>{admin=u;if(!u){guard.textContent="Not signed in as Super Administrator. Redirecting…";setTimeout(()=>location.replace("super-admin-login.html"),800);return}
+try{const s=await getDoc(doc(db,"users",u.uid));adminProfile=s.exists()?s.data():null;
+if(!adminProfile||adminProfile.role!=="super_admin"||adminProfile.active===false||adminProfile.status==="disabled"){await signOut(auth);guard.textContent="Access denied: Super Administrator only.";return}
+guard.textContent="Verified Super Administrator: "+(adminProfile.fullName||adminProfile.username||u.email);btn.disabled=false;
+}catch(e){guard.textContent="Could not verify Super Admin. Check Firestore rules/network.";console.error(e)}});
+document.getElementById("logout").addEventListener("click",async()=>{await signOut(auth);location.replace("index.html")});
+form.addEventListener("submit",async e=>{e.preventDefault();if(!admin||!adminProfile||adminProfile.role!=="super_admin"){message("Super Administrator authorization required.");return}
+const fullName=document.getElementById("fullName").value.trim(),username=document.getElementById("username").value.trim(),email=document.getElementById("email").value.trim().toLowerCase(),password=document.getElementById("password").value,role=document.getElementById("role").value;
+if(!fullName||!username||!email||!password||!role){message("Complete all required fields.");return}
+btn.disabled=true;btn.textContent="Creating account…";notice.className="notice";
+const secondary=initializeApp(firebaseConfig,"agent-create-"+Date.now()),secondaryAuth=getAuth(secondary);
+try{
+const credential=await createUserWithEmailAndPassword(secondaryAuth,email,password),uid=credential.user.uid;
+const profile={uid,fullName,username,email,role,state:document.getElementById("state").value.trim()||null,lga:document.getElementById("lga").value.trim()||null,ward:document.getElementById("ward").value.trim()||null,pollingUnit:document.getElementById("pollingUnit").value.trim()||null,pollingUnitName:document.getElementById("pollingUnit").value.trim()||null,pollingUnitCode:document.getElementById("pollingUnitCode").value.trim()||null,dashboardUrl:document.getElementById("dashboardUrl").value,active:true,status:"active",createdAt:serverTimestamp(),createdBy:admin.uid,createdByEmail:admin.email||null};
+await setDoc(doc(db,"users",uid),profile);await signOut(secondaryAuth);
+message("Agent created successfully. Username: "+username+" | Email: "+email+" | Role: "+role+". Agent can now sign in at index.html.","success");form.reset();document.getElementById("state").value="Zamfara State";
+}catch(err){console.error(err);let msg=err.code==="auth/email-already-in-use"?"This email already exists in Firebase Authentication.":err.message||"Unknown error";message("Creation failed: "+msg+". If Auth account was created but Firestore profile failed, check Firebase Console before retrying.");}
+finally{try{await deleteApp(secondary)}catch(e){}btn.disabled=!adminProfile||adminProfile.role!=="super_admin";btn.textContent="Create Agent Account"}
+});
+</script></body></html>

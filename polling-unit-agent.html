@@ -185,12 +185,14 @@ import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/fi
 import { getFirestore, doc, getDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "YOUR_FIREBASE_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_FIREBASE_APP_ID"
+{
+    "apiKey": "AIzaSyAYMRko87BBNT7LKdZ9s2rGHf1BFmggtb8",
+    "authDomain": "theeyes-f33cb.firebaseapp.com",
+    "projectId": "theeyes-f33cb",
+    "storageBucket": "theeyes-f33cb.firebasestorage.app",
+    "messagingSenderId": "265085505802",
+    "appId": "1:265085505802:web:f81fb50567514b806feaf3"
+  }
 };
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -236,7 +238,7 @@ function populateProfile(profile, user) {
 
 // In production, require Firebase authentication. Demo profile is shown only when
 // Firebase configuration is still a placeholder, so the interface can be previewed.
-const isConfigured = !firebaseConfig.apiKey.startsWith("YOUR_");
+const isConfigured = true;
 if (isConfigured) {
   onAuthStateChanged(auth, async user => {
     if (!user) { window.location.replace("index.html"); return; }
@@ -258,7 +260,7 @@ if (isConfigured) {
     }
   });
 } else {
-  populateProfile(demoProfile, null);
+  window.location.replace("index.html");
 }
 
 function showView(view) {
