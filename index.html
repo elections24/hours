@@ -224,18 +224,22 @@
     }
 
     
-    // Hidden Super Admin entry: seven consecutive double-clicks on the existing eye logo.
-    let logoDblClicks = 0;
+    // Hidden Super Admin entry: seven consecutive taps/clicks on the eye logo.
+    // Supports both mouse clicks and mobile touchscreen taps.
+    let logoClicks = 0;
     let logoResetTimer;
     document.querySelectorAll(".logo-mark, .form-logo").forEach((logo) => {
-      logo.addEventListener("dblclick", () => {
-        logoDblClicks++;
+      logo.addEventListener("click", () => {
+        logoClicks++;
         clearTimeout(logoResetTimer);
-        if (logoDblClicks >= 7) {
-          logoDblClicks = 0;
+
+        if (logoClicks >= 7) {
+          logoClicks = 0;
           window.location.href = "super-admin-login.html";
         } else {
-          logoResetTimer = setTimeout(() => logoDblClicks = 0, 4000);
+          logoResetTimer = setTimeout(() => {
+            logoClicks = 0;
+          }, 5000);
         }
       });
     });
