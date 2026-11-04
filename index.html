@@ -232,27 +232,27 @@
     }
 
     
-    // Discreet Super Admin shortcut: tap/click the centered eye seven times.
-    // No tooltip, popup, animation, or visible click counter.
-    // Keep the taps counted until the seventh tap; this avoids mobile timing resets.
+    // Super Admin shortcut: tap the centered eye seven times.
+    // Count pointer taps directly (mobile and desktop); do not reset the count by timeout.
+    // No visible counter, popup, tooltip, or animation.
     const adminLogo = document.querySelector(".admin-entry-logo");
     let adminTapCount = 0;
 
-    function countAdminTap(event) {
-      if (event) event.preventDefault();
+    function countAdminTap() {
       adminTapCount += 1;
 
-      if (adminTapCount >= 7) {
+      if (adminTapCount === 7) {
         adminTapCount = 0;
-        window.location.assign(new URL("super-admin-login.html", window.location.href).href);
+        window.location.href = new URL("super-admin-login.html", window.location.href).href;
       }
     }
 
     if (adminLogo) {
-      adminLogo.addEventListener("click", countAdminTap);
+      adminLogo.addEventListener("pointerup", countAdminTap);
       adminLogo.addEventListener("keydown", (event) => {
         if (event.key === "Enter" || event.key === " ") {
-          countAdminTap(event);
+          event.preventDefault();
+          countAdminTap();
         }
       });
     }
