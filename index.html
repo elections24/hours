@@ -65,8 +65,9 @@
       text-decoration:none; cursor:pointer;
     }
     .form-logo svg { width:70px; height:70px; }
-    .form-logo:hover { transform:scale(1.04); }
-    .form-logo:focus-visible { outline:3px solid var(--gold); outline-offset:4px; border-radius:12px; }
+    .form-logo:hover { transform:none; }
+    .form-logo:focus, .form-logo:focus-visible { outline:none; }
+    .form-logo { -webkit-tap-highlight-color:transparent; user-select:none; }
     .form-brand-text { text-align:center; margin:0 auto 20px; }
     .form-brand-name { color:var(--green); font-size:25px; font-weight:900; letter-spacing:3px; line-height:1.15; }
     .form-brand-sub { margin-top:7px; color:var(--muted); font-size:10px; letter-spacing:1px; text-transform:uppercase; line-height:1.5; }
@@ -142,14 +143,14 @@
 
 
       <div class="form-heading">
-        <a class="form-logo admin-entry-logo" href="super-admin-login.html"
-           aria-label="Open Super Admin sign-in" title="Super Admin">
+        <div class="form-logo admin-entry-logo" role="button" tabindex="0"
+           aria-label="Logo">
           <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
             <path d="M5 32C12 20 21 14 32 14s20 6 27 18C52 44 43 50 32 50S12 44 5 32Z" stroke="#0B5138" stroke-width="3.5"/>
             <circle cx="32" cy="32" r="11" stroke="#D6A32D" stroke-width="3.5"/>
             <circle cx="32" cy="32" r="4.5" fill="#0B5138"/>
           </svg>
-        </a>
+        </div>
         <div class="form-brand-text">
           <div class="form-brand-name">THE EYES</div>
           <div class="form-brand-sub">Election Monitoring &amp; Reporting System</div>
@@ -232,10 +233,27 @@
     }
 
     
-    // One click on the centered green-and-gold eye opens Super Admin sign-in.
-    document.querySelector(".admin-entry-logo")?.addEventListener("click", (event) => {
-      event.preventDefault();
-      window.location.href = "super-admin-login.html";
+    // Discreet Super Admin shortcut: tap/click the centered eye seven times.
+    // No tooltip, popup, animation, or visible click counter.
+    const adminLogo = document.querySelector(".admin-entry-logo");
+    let adminTapCount = 0;
+    let adminTapReset;
+    const countAdminTap = () => {
+      adminTapCount += 1;
+      clearTimeout(adminTapReset);
+      if (adminTapCount >= 7) {
+        adminTapCount = 0;
+        window.location.href = "super-admin-login.html";
+      } else {
+        adminTapReset = setTimeout(() => { adminTapCount = 0; }, 5000);
+      }
+    };
+    adminLogo?.addEventListener("click", countAdminTap);
+    adminLogo?.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        countAdminTap();
+      }
     });
 
     document.getElementById("togglePassword").addEventListener("click", () => {
