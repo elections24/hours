@@ -318,7 +318,9 @@ function populateStates(selectId){
   fill($(selectId),states,'Select State',recordName);
 }
 function fillParentOptions(selectId,records,placeholder){
-  fill($(selectId),records,placeholder,recordName);
+  const el=typeof selectId==='string'?$(selectId):selectId;
+  if(!el)throw new Error('Dropdown element not found: '+String(selectId));
+  fill(el,records,placeholder,recordName);
 }
 async function reloadGeoStateOptions(){
   const states=await fetchCollection('geographyStates');
@@ -329,18 +331,18 @@ async function reloadGeoStateOptions(){
 async function reloadGeoWardLgas(){
   const stateId=$('geoWardState').value;
   const lgas=stateId?await getParentRecords('geographyLGAs','stateCode',stateId):[];
-  fillParentOptions($('geoWardLga'),lgas,'Select Local Government Area');
+  fillParentOptions('geoWardLga',lgas,'Select Local Government Area');
 }
 async function reloadGeoPuLgas(){
   const stateId=$('geoPuState').value;
   const lgas=stateId?await getParentRecords('geographyLGAs','stateCode',stateId):[];
-  fillParentOptions($('geoPuLga'),lgas,'Select Local Government Area');
+  fillParentOptions('geoPuLga',lgas,'Select Local Government Area');
   fill($('geoPuWard'),[],'Select LGA first');
 }
 async function reloadGeoPuWards(){
   const lgaId=$('geoPuLga').value;
   const wards=lgaId?await getParentRecords('geographyWards','lgaCode',lgaId):[];
-  fillParentOptions($('geoPuWard'),wards,'Select Ward');
+  fillParentOptions('geoPuWard',wards,'Select Ward');
 }
 function serialCode(records){
   const used=new Set(records.map(r=>String(r.code||'').trim()).filter(c=>/^\d{3,}$/.test(c)));
