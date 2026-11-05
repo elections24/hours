@@ -29,3 +29,7 @@ IMPORTANT DATA INTEGRITY NOTES
 
 LATER UPDATES
 Send me this ZIP or your updated Excel workbook with new data. I will merge new records into the master while preserving existing records, and return an updated ZIP. If a later file corrects an existing record, I will identify the correction rather than silently overwriting the history.
+
+
+USER-REQUESTED CORRECTION (LATEST)
+Kaura has been excluded from the import-ready data. Kaura Namoda is retained as the only LGA entry for source code 036008. The source code is preserved as provided and remains pending official verification. The original uploaded workbook remains unchanged in the ZIP for reference.

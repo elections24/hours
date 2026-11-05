@@ -5,7 +5,7 @@
   "country": "Nigeria",
   "coverage": {
     "states": 1,
-    "lgasListed": 15,
+    "lgasListed": 14,
     "namedWards": 147,
     "actualPollingUnitRecords": 0
   },
@@ -102,18 +102,6 @@
         "wardsReceived": 11,
         "expectedPollingUnits": 564,
         "dataStatus": "Ward list received",
-        "source": "EYES V3 uploaded Zamfara master workbook",
-        "verificationStatus": "pending"
-      },
-      {
-        "code": "NG-ZA-KAURA",
-        "name": "Kaura",
-        "stateCode": "NG-ZA",
-        "sourceLgaCode": "036008",
-        "officialCode": "036008",
-        "wardsReceived": 0,
-        "expectedPollingUnits": null,
-        "dataStatus": "Ward list pending",
         "source": "EYES V3 uploaded Zamfara master workbook",
         "verificationStatus": "pending"
       },
@@ -3034,10 +3022,11 @@
     }
   ],
   "dataQualityWarnings": [
-    "Source workbook contains LGA code 036008 assigned to both Kaura and Kaura Namoda. This collision is preserved as source metadata; do not import the source code as unique document IDs.",
     "The Geographical Data sheet repeats ward source codes across multiple ward names within the same LGA. Internal unique ward document IDs were generated for import, while sourceWardCode/officialCode retains the source code as provided. These generated IDs are internal IDs, not official INEC codes.",
     "The source workbook contains 147 named wards in Geographical Data, while Ward PU Counts contains 151 rows. This discrepancy requires review.",
     "The workbook provides expected polling-unit counts/placeholders only. It contains zero individual polling-unit names/codes; polling-unit records are not generated.",
-    "Data is pending verification against official source. Do not mark verified without validation."
+    "Data is pending verification against official source. Do not mark verified without validation.",
+    "User decision: Kaura was excluded from this import package; Kaura Namoda is retained as the sole LGA entry for source LGA code 036008. The source code is preserved but remains pending official verification.",
+    "The original uploaded workbook is retained unchanged for audit/reference; the import-ready template excludes Kaura."
   ]
 }
