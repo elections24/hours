@@ -47,10 +47,10 @@
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut,createUserWithEmailAndPassword} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import {getFirestore,doc,getDoc,setDoc,collection,addDoc,getDocs,query,where,serverTimestamp,updateDoc} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {initializeFirestore,doc,getDoc,setDoc,collection,addDoc,getDocs,query,where,serverTimestamp,updateDoc} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 // THE EYES V3 Firebase project config copied from the supplied Super Admin login / agent registration files.
 const firebaseConfig={apiKey:"AIzaSyAYMRko87BBNT7LKdZ9s2rGHf1BFmggtb8",authDomain:"theeyes-f33cb.firebaseapp.com",projectId:"theeyes-f33cb",storageBucket:"theeyes-f33cb.firebasestorage.app",messagingSenderId:"265085505802",appId:"1:265085505802:web:f81fb50567514b806feaf3"};
-const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
+const app=initializeApp(firebaseConfig),auth=getAuth(app);\nconst db=initializeFirestore(app,{experimentalForceLongPolling:true});
 let secondaryApp=null,secondaryAuth=null,agentsCache=[],geoCache={};
 const $=id=>document.getElementById(id);const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const electionNames={presidential:"Presidential Election",gubernatorial:"Gubernatorial Election",senatorial:"Senatorial Election",house_of_representatives:"House of Representatives Election"};
