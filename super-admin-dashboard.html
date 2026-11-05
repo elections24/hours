@@ -49,8 +49,9 @@ import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase
 import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut,createUserWithEmailAndPassword} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {initializeFirestore,doc,getDoc,setDoc,collection,addDoc,getDocs,query,where,serverTimestamp,updateDoc} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 // THE EYES V3 Firebase project config copied from the supplied Super Admin login / agent registration files.
-const firebaseConfig={apiKey:"AIzaSyAYMRko87BBNT7LKdZ9s2rGHf1BFmggtb8",authDomain:"theeyes-f33cb.firebaseapp.com",projectId:"theeyes-f33cb",storageBucket:"theeyes-f33cb.firebasestorage.app",messagingSenderId:"265085505802",appId:"1:265085505802:web:f81fb50567514b806feaf3"};
-const app=initializeApp(firebaseConfig),auth=getAuth(app);\nconst db=initializeFirestore(app,{experimentalForceLongPolling:true});
+const firebaseConfig={apiKey:"AIzaSyBEbkeWDLuQOSPz2ojp59UWgqf0OakRrCo",authDomain:"election-8e790.firebaseapp.com",projectId:"election-8e790",storageBucket:"election-8e790.firebasestorage.app",messagingSenderId:"346568561664",appId:"1:346568561664:web:5618be1ebb4057f9c6f4e5"};
+const app=initializeApp(firebaseConfig),auth=getAuth(app);
+const db=initializeFirestore(app,{experimentalForceLongPolling:true});
 let secondaryApp=null,secondaryAuth=null,agentsCache=[],geoCache={};
 const $=id=>document.getElementById(id);const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const electionNames={presidential:"Presidential Election",gubernatorial:"Gubernatorial Election",senatorial:"Senatorial Election",house_of_representatives:"House of Representatives Election"};
