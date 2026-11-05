@@ -16,7 +16,8 @@ const firebaseConfig={
   "appId": "1:346568561664:web:5618be1ebb4057f9c6f4e5"
 };
 const app=initializeApp(firebaseConfig),auth=getAuth(app);
-// Long polling can improve Firestore reliability on some mobile networks.\nconst db=initializeFirestore(app,{experimentalForceLongPolling:true});
+// Long polling can improve Firestore reliability on some mobile networks.
+const db=initializeFirestore(app,{experimentalForceLongPolling:true});
 const form=document.getElementById("form"),btn=document.getElementById("btn"),notice=document.getElementById("notice");
 function show(t){notice.className="notice show error";notice.textContent=t}
 form.addEventListener("submit",async e=>{e.preventDefault();btn.disabled=true;btn.textContent="Verifying…";
