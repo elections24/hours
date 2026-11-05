@@ -355,43 +355,74 @@ function makeDocId(level,parentId,code){
   return level+'_'+geoSlug(parentId||'ROOT')+'_'+code;
 }
 async function createGeoBatch({formId,namesId,noticeId,collectionName,level,parentId,parentField,parentNameField,extraFields={},levelName}){
-  const btn=$(formId).querySelector('button[type="submit"],button:not([type])');
+  const form=$(formId);
+  const btn=form?.querySelector('button[type="submit"],button:not([type])');
+  const originalText=btn?.textContent||'Create Records';
   if(btn){btn.disabled=true;btn.textContent='Creating records…';}
   try{
     if(!auth.currentUser)throw new Error('Please sign in again.');
     const names=cleanNames(namesId);
     if(!names.length)throw new Error('Paste at least one name, one per line.');
+
+    // Fetch once, then update the in-memory list after each successful write.
     const all=await fetchCollection(collectionName);
-    const scoped=parentId?all.filter(r=>String(r[parentField]||'')===String(parentId)):all;
-    let created=0,skipped=0;
+    const scoped=all.filter(r=>parentId
+      ? String(r[parentField]??'')===String(parentId)
+      : !r[parentField]);
+    let created=0,skipped=0,failed=0;
+    const errors=[];
+
     for(const name of names){
-      const duplicate=all.some(r=>recordName(r).toLowerCase()===name.toLowerCase() &&
-        (parentId?String(r[parentField]||'')===String(parentId):!r[parentField]));
+      const duplicate=all.some(r=>
+        recordName(r).trim().toLowerCase()===name.trim().toLowerCase() &&
+        (parentId
+          ? String(r[parentField]??'')===String(parentId)
+          : !r[parentField]));
       if(duplicate){skipped++;continue;}
+
       const code=serialCode(scoped);
       const docId=makeDocId(level,parentId,code);
-      if(all.some(r=>r.id===docId)){skipped++;continue;}
-      const record={code,name,createdBy:auth.currentUser.uid,createdAt:serverTimestamp(),updatedAt:serverTimestamp(),level:levelName||level,...extraFields};
-      if(parentId){
-        record[parentField]=parentId;
-        if(parentNameField)record[parentNameField]=parentNameField==='stateName'?selectedLabel('geo'+level+'State'):null;
+      if(all.some(r=>String(r.id)===docId)){skipped++;continue;}
+
+      const record={
+        code,name,
+        createdBy:auth.currentUser.uid,
+        createdAt:serverTimestamp(),
+        updatedAt:serverTimestamp(),
+        level:levelName||level,
+        ...extraFields
+      };
+      if(parentId)record[parentField]=parentId;
+
+      try{
+        await setDoc(doc(db,collectionName,docId),record);
+        const saved={id:docId,code,name,...record};
+        created++;
+        scoped.push(saved);
+        all.push(saved);
+      }catch(writeError){
+        failed++;
+        errors.push(name+': '+(writeError?.message||String(writeError)));
+        console.error('Failed to create '+collectionName+' record "'+name+'"',writeError);
       }
-      await setDoc(doc(db,collectionName,docId),record);
-      created++;
-      scoped.push({id:docId,code,name,...record});
-      all.push({id:docId,code,name,...record});
     }
-    notice(noticeId,`Completed.\nCreated: ${created}\nSkipped duplicates: ${skipped}\nCodes: ${created? '001 onward, in ascending order (per parent)':'No new codes assigned.'}\nFirestore collection: ${collectionName}`,'success');
-    $(namesId).value='';
+
+    let summary=`Finished creating ${levelName||level} records.\nCreated: ${created}\nSkipped duplicates: ${skipped}\nFailed: ${failed}\nFirestore collection: ${collectionName}`;
+    if(errors.length)summary+='\n\nFailed records:\n'+errors.slice(0,8).join('\n')+(errors.length>8?`\n…and ${errors.length-8} more.`:'');
+    notice(noticeId,summary,failed?'error':'success');
+
+    // Clear only when at least one item was saved; retain pasted names if every write failed.
+    if(created>0)$(namesId).value='';
     await reloadGeoStateOptions();
     await loadGeoManageRecords();
     await loadStates();
-    return {created,skipped};
+    return {created,skipped,failed,errors};
   }catch(err){
     console.error(err);
-    notice(noticeId,'Could not save records: '+(err.message||err),'error');
+    notice(noticeId,'Could not save records: '+(err?.message||err),'error');
+    return {created:0,skipped:0,failed:1,errors:[err?.message||String(err)]};
   }finally{
-    if(btn){btn.disabled=false;btn.textContent='Create Records';}
+    if(btn){btn.disabled=false;btn.textContent=originalText;}
   }
 }
 $('geoStateForm').addEventListener('submit',e=>{
@@ -407,24 +438,44 @@ $('geoLgaForm').addEventListener('submit',e=>{
     collectionName:'geographyLGAs',level:'LGA',levelName:'lga',parentId:stateId,parentField:'stateCode',
     extraFields:{stateCode:stateId,stateName:selectedLabel('geoLgaState')}});
 });
-$('geoWardForm').addEventListener('submit',e=>{
+$('geoWardForm').addEventListener('submit',async e=>{
   e.preventDefault();
   const stateId=$('geoWardState').value,lgaId=$('geoWardLga').value;
   if(!stateId){notice('geoWardNotice','Select a State first.','error');return;}
   if(!lgaId){notice('geoWardNotice','Select a Local Government Area first.','error');return;}
-  createGeoBatch({formId:'geoWardForm',namesId:'geoWardNames',noticeId:'geoWardNotice',
-    collectionName:'geographyWards',level:'WARD',levelName:'ward',parentId:lgaId,parentField:'lgaCode',
-    extraFields:{stateCode:stateId,stateName:selectedLabel('geoWardState'),lgaCode:lgaId,lgaName:selectedLabel('geoWardLga')}});
+  try{
+    const lga=await getDoc(doc(db,'geographyLGAs',lgaId));
+    if(!lga.exists())throw new Error('The selected LGA no longer exists in Firestore. Reload the State/LGA dropdown.');
+    const lgaData=lga.data();
+    if(String(lgaData.stateCode??'')!==String(stateId))
+      throw new Error('The selected LGA does not belong to the selected State. Please reselect the State and LGA.');
+    await createGeoBatch({formId:'geoWardForm',namesId:'geoWardNames',noticeId:'geoWardNotice',
+      collectionName:'geographyWards',level:'WARD',levelName:'ward',parentId:lgaId,parentField:'lgaCode',
+      extraFields:{stateCode:stateId,stateName:selectedLabel('geoWardState'),lgaCode:lgaId,lgaName:selectedLabel('geoWardLga')}});
+  }catch(err){notice('geoWardNotice','Ward creation validation failed: '+(err.message||err),'error');console.error(err);}
 });
-$('geoPuForm').addEventListener('submit',e=>{
+$('geoPuForm').addEventListener('submit',async e=>{
   e.preventDefault();
   const stateId=$('geoPuState').value,lgaId=$('geoPuLga').value,wardId=$('geoPuWard').value;
   if(!stateId){notice('geoPuNotice','Select a State first.','error');return;}
   if(!lgaId){notice('geoPuNotice','Select a Local Government Area first.','error');return;}
   if(!wardId){notice('geoPuNotice','Select a Ward first.','error');return;}
-  createGeoBatch({formId:'geoPuForm',namesId:'geoPuNames',noticeId:'geoPuNotice',
-    collectionName:'geographyPollingUnits',level:'PU',levelName:'polling_unit',parentId:wardId,parentField:'wardCode',
-    extraFields:{stateCode:stateId,stateName:selectedLabel('geoPuState'),lgaCode:lgaId,lgaName:selectedLabel('geoPuLga'),wardCode:wardId,wardName:selectedLabel('geoPuWard')}});
+  try{
+    const [lgaSnap,wardSnap]=await Promise.all([
+      getDoc(doc(db,'geographyLGAs',lgaId)),
+      getDoc(doc(db,'geographyWards',wardId))
+    ]);
+    if(!lgaSnap.exists())throw new Error('The selected LGA no longer exists in Firestore. Reload the dropdown.');
+    if(!wardSnap.exists())throw new Error('The selected Ward no longer exists in Firestore. Reload the dropdown.');
+    const lgaData=lgaSnap.data(),wardData=wardSnap.data();
+    if(String(lgaData.stateCode??'')!==String(stateId))
+      throw new Error('The selected LGA does not belong to the selected State.');
+    if(String(wardData.lgaCode??'')!==String(lgaId))
+      throw new Error('The selected Ward does not belong to the selected LGA.');
+    await createGeoBatch({formId:'geoPuForm',namesId:'geoPuNames',noticeId:'geoPuNotice',
+      collectionName:'geographyPollingUnits',level:'PU',levelName:'polling_unit',parentId:wardId,parentField:'wardCode',
+      extraFields:{stateCode:stateId,stateName:selectedLabel('geoPuState'),lgaCode:lgaId,lgaName:selectedLabel('geoPuLga'),wardCode:wardId,wardName:selectedLabel('geoPuWard')}});
+  }catch(err){notice('geoPuNotice','Polling unit creation validation failed: '+(err.message||err),'error');console.error(err);}
 });
 $('geoWardState').addEventListener('change',async()=>{
   fill($('geoWardLga'),[],'Loading Local Government Areas…');
