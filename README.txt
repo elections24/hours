@@ -1,13 +1,19 @@
-THE EYES Super Admin Dashboard — Dropdown Fix
+THE EYES Super Admin Dashboard - Geography Administration update
 
-File to upload/replace:
-super-admin-dashboard.html
+Replace your existing super-admin-dashboard.html with the included file.
 
-This revision:
-- Normalizes document IDs and imported code fields when populating dropdowns.
-- Uses stateCode/parentCode consistently for LGA filtering.
-- Adds actionable messages when LGAs, wards, or polling units are missing.
-- Preserves existing dashboard pages and Firebase project configuration (election-8e790).
+Added:
+- Geography creation directly in Super Admin Dashboard (no external Excel importer).
+- Bulk paste records, one name per line.
+- State, LGA, Ward, Polling Unit, Senatorial Zone and Federal Constituency creation.
+- Automatic internal IDs and parent links.
+- Senatorial zones are per-state records (e.g. Kwara North/Central/South) and are not hardcoded across all states.
+- LGAs can be linked to a selected state and optionally a senatorial zone or federal constituency.
+- Existing Firestore collections retained.
 
 Important:
-The dropdowns can only display records that exist in Firestore. Import States first, then LGAs, Wards, and actual individual Polling Units through Geographical Administration. The previously supplied Zamfara data contains expected polling-unit counts, not actual individual polling-unit records, so PU options will remain empty until actual PU records are imported.
+- This writes to the active Firebase project configured in the dashboard (election-8e790).
+- Existing Firestore rules must allow active Super Admin create/write operations to the geography collections.
+- Codes are internal system codes, not official INEC codes.
+- Senatorial-zone coverage requires assigning the relevant LGAs to the zone when creating/updating LGAs. This release supports zone selection when adding an LGA; it does not bulk reassign previously existing LGAs.
+- Test with a small number of records before bulk entry.
