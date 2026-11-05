@@ -1,13 +1,54 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b5138"><title>THE EYES | Super Admin Login</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b5138">
+<title>THE EYES | Super Admin Login</title>
 <style>
-*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:16px;background:#f3f7f4;font-family:Arial,sans-serif;color:#173327}.card{width:min(430px,100%);padding:28px;background:#fff;border:1px solid #dfe9e2;border-radius:20px;box-shadow:0 18px 55px #12332218}.brand{font-weight:900;letter-spacing:2px;color:#0b5138;margin-bottom:25px}.eyebrow{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#6c927d;font-weight:bold}h1{margin:8px 0;font-size:28px}p{font-size:13px;color:#718078;line-height:1.6}label{display:block;font-size:12px;font-weight:bold;margin:15px 0 7px}input{width:100%;padding:13px;border:1px solid #dfe8e2;border-radius:10px;font:inherit}button{width:100%;margin-top:18px;padding:14px;border:0;border-radius:10px;background:#0b5138;color:white;font-weight:bold}button:disabled{opacity:.6}.notice{display:none;margin-top:13px;padding:12px;border-radius:9px;font-size:12px;line-height:1.5}.notice.show{display:block}.error{background:#fff0ef;color:#b42318}.back{display:block;text-align:center;margin-top:15px;color:#0b5138;font-size:12px;text-decoration:none}
-</style></head><body><main class="card"><div class="brand">◉ THE EYES</div><div class="eyebrow">Restricted access</div><h1>Super Administrator</h1><p>Sign in with your Super Administrator credentials. Successful Firebase authentication and role verification will open agent registration.</p>
-<form id="form"><label for="loginName">Administrator username or email</label><input id="loginName" type="text" required autocomplete="username" placeholder="superadmin or email"><label for="password">Password</label><input id="password" type="password" required autocomplete="current-password"><button id="btn">Authenticate and continue</button></form><div id="notice" class="notice" role="status"></div><a class="back" href="index.html">Return to ordinary agent login</a></main>
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:grid;place-items:center;padding:16px;background:#f3f7f4;font-family:Arial,sans-serif;color:#173327}
+.card{width:min(430px,100%);padding:28px;background:#fff;border:1px solid #dfe9e2;border-radius:20px;box-shadow:0 18px 55px #12332218}
+.brand{font-weight:900;letter-spacing:2px;color:#0b5138;margin-bottom:25px}
+.eyebrow{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#6c927d;font-weight:bold}
+h1{margin:8px 0;font-size:28px}
+p{font-size:13px;color:#718078;line-height:1.6}
+label{display:block;font-size:12px;font-weight:bold;margin:15px 0 7px}
+input{width:100%;padding:13px;border:1px solid #dfe8e2;border-radius:10px;font:inherit}
+button{width:100%;margin-top:18px;padding:14px;border:0;border-radius:10px;background:#0b5138;color:white;font-weight:bold}
+button:disabled{opacity:.6}
+.notice{display:none;margin-top:13px;padding:12px;border-radius:9px;font-size:12px;line-height:1.5}
+.notice.show{display:block}
+.error{background:#fff0ef;color:#b42318}
+.info{background:#edf7f1;color:#155a3e}
+.back{display:block;text-align:center;margin-top:15px;color:#0b5138;font-size:12px;text-decoration:none}
+</style>
+</head>
+<body>
+<main class="card">
+  <div class="brand">◉ THE EYES</div>
+  <div class="eyebrow">Restricted access</div>
+  <h1>Super Administrator</h1>
+  <p>Sign in with the email and password registered for your Super Administrator account. Firebase authentication and role verification are required before agent registration opens.</p>
+
+  <form id="form">
+    <label for="email">Administrator email</label>
+    <input id="email" type="email" required autocomplete="username" placeholder="Enter your registered email">
+    <label for="password">Password</label>
+    <input id="password" type="password" required autocomplete="current-password" placeholder="Enter your password">
+    <button id="btn" type="submit">Authenticate and continue</button>
+  </form>
+
+  <div id="notice" class="notice" role="status" aria-live="polite"></div>
+  <a class="back" href="index.html">Return to ordinary agent login</a>
+</main>
+
 <script type="module">
-import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {getAuth,signInWithEmailAndPassword} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import {initializeFirestore,doc,getDoc,collection,query,where,getDocs} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-const firebaseConfig={
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { initializeFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
   apiKey: "AIzaSyBEbkeWDLuQOSPz2ojp59UWqf0OakRrCo",
   authDomain: "election-8e790.firebaseapp.com",
   projectId: "election-8e790",
@@ -15,31 +56,84 @@ const firebaseConfig={
   messagingSenderId: "346568561664",
   appId: "1:346568561664:web:5618be1ebb4057f9c6f4e5"
 };
-const app=initializeApp(firebaseConfig),auth=getAuth(app);
-// Long polling can improve Firestore reliability on some mobile networks.\nconst db=initializeFirestore(app,{experimentalForceLongPolling:true});
-const form=document.getElementById("form"),btn=document.getElementById("btn"),notice=document.getElementById("notice");
-const passwordInput=document.getElementById("password");
-function show(t){notice.className="notice show error";notice.textContent=t}
-form.addEventListener("submit",async e=>{e.preventDefault();btn.disabled=true;btn.textContent="Verifying…";
-try{
-const loginValue=document.getElementById("loginName").value.trim();
-let emailAddress=loginValue.toLowerCase();
-// If the user entered a username rather than an email, find its profile in Firestore.
-if(!loginValue.includes("@")){
-  const q=query(collection(db,"users"),where("username","==",loginValue));
-  const matches=await getDocs(q);
-  if(matches.empty) throw Error("Username not found. Check your username or use your registered email.");
-  const profile=matches.docs[0].data();
-  if(!profile.email) throw Error("This username profile has no email address. Please check the users document.");
-  emailAddress=String(profile.email).trim().toLowerCase();
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+// Long polling may improve Firestore connectivity on some mobile networks.
+const db = initializeFirestore(app, { experimentalForceLongPolling: true });
+
+const form = document.getElementById("form");
+const btn = document.getElementById("btn");
+const notice = document.getElementById("notice");
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+
+function showNotice(message, type = "error") {
+  notice.className = `notice show ${type}`;
+  notice.textContent = message;
 }
-const c=await signInWithEmailAndPassword(auth,emailAddress,passwordInput.value);
-const s=await getDoc(doc(db,"users",c.user.uid));const p=s.exists()?s.data():{};
-if(p.role!=="super_admin"||p.active!==true||p.status==="disabled"){await auth.signOut();throw Error("This account is not an active Super Administrator.");}
-location.replace("super-admin-dashboard.html");
-}catch(err){
-let msg=err.message||"Authentication failed.";
-if(err.code==="permission-denied") msg="Firestore rules are blocking username lookup. Please allow a secure username lookup or use your registered email for now.";
-if(err.code==="unavailable"||String(msg).toLowerCase().includes("offline")) msg="Firestore is unreachable. Check internet connection and Firebase Firestore availability, then retry.";
-show(msg);btn.disabled=false;btn.textContent="Authenticate and continue";}});
-</script></body></html>
+
+form.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  btn.disabled = true;
+  btn.textContent = "Verifying…";
+  notice.className = "notice";
+
+  const email = emailInput.value.trim().toLowerCase();
+  const password = passwordInput.value;
+
+  try {
+    const credential = await signInWithEmailAndPassword(auth, email, password);
+
+    // The user's Firestore profile must use the Firebase Auth UID as its document ID.
+    const profileSnapshot = await getDoc(doc(db, "users", credential.user.uid));
+
+    if (!profileSnapshot.exists()) {
+      await signOut(auth);
+      throw new Error("Your account has no registered THE EYES user profile. Contact the Super Administrator.");
+    }
+
+    const profile = profileSnapshot.data();
+
+    if (
+      profile.role !== "super_admin" ||
+      profile.active !== true ||
+      profile.status === "disabled"
+    ) {
+      await signOut(auth);
+      throw new Error("This account is not an active Super Administrator.");
+    }
+
+    window.location.replace("super-admin-dashboard.html");
+  } catch (error) {
+    let message = error?.message || "Authentication failed. Please try again.";
+
+    if (error?.code === "auth/invalid-api-key") {
+      message = "Firebase API key is invalid. Confirm the Firebase configuration matches the election-8e790 project.";
+    } else if (
+      error?.code === "auth/invalid-credential" ||
+      error?.code === "auth/wrong-password" ||
+      error?.code === "auth/user-not-found"
+    ) {
+      message = "Incorrect email or password. Check your Firebase Authentication account.";
+    } else if (error?.code === "auth/operation-not-allowed") {
+      message = "Email/Password sign-in is not enabled in Firebase Authentication.";
+    } else if (error?.code === "auth/too-many-requests") {
+      message = "Too many unsuccessful attempts. Wait a while and try again.";
+    } else if (error?.code === "auth/network-request-failed") {
+      message = "Network connection failed. Check your internet connection and retry.";
+    } else if (error?.code === "permission-denied") {
+      message = "Firestore rules denied access to your user profile. Check the users/{uid} read permission for authenticated users.";
+    } else if (error?.code === "unavailable" || String(message).toLowerCase().includes("offline")) {
+      message = "Firestore is unreachable. Check your internet connection and Firebase service availability.";
+    }
+
+    showNotice(message);
+    btn.disabled = false;
+    btn.textContent = "Authenticate and continue";
+  }
+});
+</script>
+</body>
+</html>
