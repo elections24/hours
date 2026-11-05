@@ -323,10 +323,31 @@ function fillParentOptions(selectId,records,placeholder){
   fill(el,records,placeholder,recordName);
 }
 async function reloadGeoStateOptions(){
+  // Preserve each form's current State selection when refreshing the options.
+  // Previously, refreshing the list reset the State dropdown to its placeholder
+  // while the selected LGA/Ward remained visible, making the form inconsistent.
+  const selectedStates={
+    geoLgaState:$('geoLgaState').value,
+    geoWardState:$('geoWardState').value,
+    geoPuState:$('geoPuState').value
+  };
   const states=await fetchCollection('geographyStates');
   states.sort((a,b)=>recordName(a).localeCompare(recordName(b)));
   geoCache.states=states;
-  ['geoLgaState','geoWardState','geoPuState'].forEach(id=>populateStates(id));
+  ['geoLgaState','geoWardState','geoPuState'].forEach(id=>{
+    populateStates(id);
+    const previous=selectedStates[id];
+    if(previous && states.some(s=>String(recordCode(s))===String(previous))){
+      $(id).value=previous;
+    }else if(previous){
+      // If the previously selected State was deleted, clear dependent dropdowns.
+      if(id==='geoWardState')fill($('geoWardLga'),[],'Select State first');
+      if(id==='geoPuState'){
+        fill($('geoPuLga'),[],'Select State first');
+        fill($('geoPuWard'),[],'Select LGA first');
+      }
+    }
+  });
 }
 async function reloadGeoWardLgas(){
   const stateId=$('geoWardState').value;
@@ -408,8 +429,11 @@ async function createGeoBatch({formId,namesId,noticeId,collectionName,level,pare
     }
 
     let summary=`Finished creating ${levelName||level} records.\nCreated: ${created}\nSkipped duplicates: ${skipped}\nFailed: ${failed}\nFirestore collection: ${collectionName}`;
+    if(created===0 && skipped>0 && failed===0){
+      summary+=`\n\nNo new records were created because all submitted names already exist under the selected parent.`;
+    }
     if(errors.length)summary+='\n\nFailed records:\n'+errors.slice(0,8).join('\n')+(errors.length>8?`\n…and ${errors.length-8} more.`:'');
-    notice(noticeId,summary,failed?'error':'success');
+    notice(noticeId,summary,failed?'error':(created===0&&skipped>0?'info':'success'));
 
     // Clear only when at least one item was saved; retain pasted names if every write failed.
     if(created>0)$(namesId).value='';
