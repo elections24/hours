@@ -41,7 +41,7 @@
 <section class="page hidden" id="geographyPage"><div class="pagehead"><div><h1>Geographical Administration</h1><p class="sub">Maintain the Nigerian state → zone/constituency → LGA → ward → polling unit hierarchy.</p></div></div><div class="panel"><h2>Geographical master data</h2><p class="desc">The dropdowns read from these Firestore collections. Upload/seed the verified national master list before assigning agents across all Nigeria.</p><div class="geo-notice"><b>Data status:</b> The uploaded project files contain some Zamfara LGA/ward data, but not a verified complete national set of states, all LGAs, wards, polling units, senatorial zones, and federal constituencies. This dashboard does not invent missing electoral geography. Add/import the official validated records to enable complete national selection.</div><div class="grid" style="margin-top:15px"><div class="field"><label>Collection</label><select id="geoCollection"><option value="geographyStates">States</option><option value="geographySenatorialZones">Senatorial zones</option><option value="geographyFederalConstituencies">Federal constituencies</option><option value="geographyLGAs">Local Government Areas</option><option value="geographyWards">Wards</option><option value="geographyPollingUnits">Polling units</option></select></div><div class="field"><label>Search master data</label><input id="geoSearch" placeholder="Search name or code"></div></div><div id="geoTable" class="tablewrap" style="margin-top:15px"><div class="empty">Choose a collection to view records.</div></div></div>
 <div class="panel"><h2>Add a geography record</h2><p class="desc">Super Admin only. IDs and parent fields must match the validated master list.</p><form id="geoForm"><div class="grid"><div class="field"><label>Collection</label><select id="geoAddCollection"><option value="geographyStates">States</option><option value="geographySenatorialZones">Senatorial zones</option><option value="geographyFederalConstituencies">Federal constituencies</option><option value="geographyLGAs">LGAs</option><option value="geographyWards">Wards</option><option value="geographyPollingUnits">Polling units</option></select></div><div class="field"><label>Record code / document ID *</label><input id="geoCode" required placeholder="e.g. NG-ZM-GUS-001"></div><div class="field"><label>Display name *</label><input id="geoName" required placeholder="Official name"></div><div class="field"><label>Parent code</label><input id="geoParent" placeholder="State/LGA/Ward code, as applicable"></div><div class="field"><label>State code</label><input id="geoStateCode" placeholder="e.g. ZM"></div><div class="field"><label>Additional zone / constituency code</label><input id="geoDistrictCode" placeholder="Senatorial zone or constituency code"></div></div><div class="actions"><button class="btn primary">Save Geography Record</button></div><div id="geoNotice" class="notice"></div></form></div></section>
 <section class="page hidden" id="statusPage"><div class="pagehead"><div><h1>Agent Account Status</h1><p class="sub">Enable or disable agent accounts and review assignments.</p></div></div><div class="panel"><div id="statusTable" class="tablewrap"><div class="empty">Loading account statuses…</div></div></div></section>
-<section class="page hidden" id="settingsPage"><div class="pagehead"><div><h1>Firebase &amp; Data Guide</h1><p class="sub">Project connection and required data model.</p></div></div><div class="panel"><h2>Connected Firebase project</h2><p class="desc">This file uses the Firebase configuration from your THE EYES V3 agent registration and Super Admin login files.</p><div class="geo-notice"><b>Project ID:</b> theeyes-f33cb<br><b>Firestore:</b> users/{uid} for account role verification; electionAgents/{uid} for agent assignment profiles; geography master collections listed below.</div></div><div class="panel"><h2>Firestore collection structure</h2><ul><li><code>users/{uid}</code> — account profile, role, active/status</li><li><code>electionAgents/{uid}</code> — electionType, agentRole, geography, assigned scope, account status</li><li><code>geographyStates/{stateCode}</code></li><li><code>geographySenatorialZones/{zoneCode}</code> — stateCode parent</li><li><code>geographyFederalConstituencies/{constituencyCode}</code> — stateCode parent</li><li><code>geographyLGAs/{lgaCode}</code> — stateCode plus optional zoneCode/constituencyCode</li><li><code>geographyWards/{wardCode}</code> — lgaCode parent</li><li><code>geographyPollingUnits/{pollingUnitCode}</code> — wardCode parent</li></ul><p class="desc">Reports should store electionType and location identifiers, and Firestore Security Rules must validate those fields against the authenticated user's assignment.</p></div><div class="panel"><h2>Important production security</h2><p class="desc">Firebase web configuration is public by design; Firestore Security Rules and a trusted server-side function are the security boundary. Do not rely on hiding pages or filtering dropdowns to enforce access. The account creation flow is currently client-side and should be migrated to a protected Cloud Function/Admin SDK before broad production deployment.</p></div></section>
+<section class="page hidden" id="settingsPage"><div class="pagehead"><div><h1>Firebase &amp; Data Guide</h1><p class="sub">Project connection and required data model.</p></div></div><div class="panel"><h2>Connected Firebase project</h2><p class="desc">This file uses the Firebase configuration from your THE EYES V3 agent registration and Super Admin login files.</p><div class="geo-notice"><b>Project ID:</b> election-8e790<br><b>Firestore:</b> users/{uid} for account role verification; electionAgents/{uid} for agent assignment profiles; geography master collections listed below.</div></div><div class="panel"><h2>Firestore collection structure</h2><ul><li><code>users/{uid}</code> — account profile, role, active/status</li><li><code>electionAgents/{uid}</code> — electionType, agentRole, geography, assigned scope, account status</li><li><code>geographyStates/{stateCode}</code></li><li><code>geographySenatorialZones/{zoneCode}</code> — stateCode parent</li><li><code>geographyFederalConstituencies/{constituencyCode}</code> — stateCode parent</li><li><code>geographyLGAs/{lgaCode}</code> — stateCode plus optional zoneCode/constituencyCode</li><li><code>geographyWards/{wardCode}</code> — lgaCode parent</li><li><code>geographyPollingUnits/{pollingUnitCode}</code> — wardCode parent</li></ul><p class="desc">Reports should store electionType and location identifiers, and Firestore Security Rules must validate those fields against the authenticated user's assignment.</p></div><div class="panel"><h2>Important production security</h2><p class="desc">Firebase web configuration is public by design; Firestore Security Rules and a trusted server-side function are the security boundary. Do not rely on hiding pages or filtering dropdowns to enforce access. The account creation flow is currently client-side and should be migrated to a protected Cloud Function/Admin SDK before broad production deployment.</p></div></section>
 <div class="footer">THE EYES · Election Monitoring &amp; Reporting System · Secure administration</div>
 </main></div></div>
 <script type="module">
@@ -63,18 +63,129 @@ document.querySelectorAll('.navbtn').forEach(b=>b.addEventListener('click',()=>s
 $('loginForm').addEventListener('submit',async e=>{e.preventDefault();$('loginBtn').disabled=true;try{await signInWithEmailAndPassword(auth,$('loginEmail').value.trim().toLowerCase(),$('loginPassword').value)}catch(err){notice('loginNotice',err.message||'Sign-in failed.','error')}finally{$('loginBtn').disabled=false}});
 onAuthStateChanged(auth,async user=>{if(!user){$('appView').classList.add('hidden');$('loginView').classList.remove('hidden');return}try{const snap=await getDoc(doc(db,'users',user.uid)),profile=snap.exists()?snap.data():{};if(profile.role!=='super_admin'||profile.active===false||profile.status==='disabled'){await signOut(auth);notice('loginNotice','Access denied. This account is not an active Super Administrator.','error');return}$('loginView').classList.add('hidden');$('appView').classList.remove('hidden');$('adminEmail').textContent=user.email||'Super Administrator';await loadStates();showPage('dashboard')}catch(err){await signOut(auth);notice('loginNotice','Could not verify Super Admin role. '+(err.message||''),'error')}});
 $('logoutBtn').onclick=()=>signOut(auth);
-function fill(el,items,placeholder,labelFn=x=>x){el.innerHTML='';const o=document.createElement('option');o.value='';o.textContent=placeholder;el.append(o);items.forEach(x=>{const opt=document.createElement('option');opt.value=x.id;opt.textContent=labelFn(x);opt.dataset.name=x.name||labelFn(x);el.append(opt)})}
-async function fetchCollection(name){const s=await getDocs(collection(db,name));return s.docs.map(d=>({id:d.id,...d.data()}))}
-async function loadStates(){try{geoCache.states=await fetchCollection('geographyStates');geoCache.states.sort((a,b)=>(a.name||'').localeCompare(b.name||''));fill($('stateSelect'),geoCache.states,'Select State',x=>x.name||x.stateName||x.id);if(!geoCache.states.length)notice('agentNotice','No national state records were found in geographyStates. Import the validated Nigerian geography master data in Geographical Administration.','info')}catch(e){fill($('stateSelect'),[],'Could not load states');console.warn(e)}}
-function updateRoleOptions(){const election=$('electionType').value;fill($('agentRole'),(rolesByElection[election]||[]).map(([id,name])=>({id,name})),'Select agent role',x=>x.name);updateGeoVisibility();}
+function recordCode(x){
+  return String(x.code ?? x.stateCode ?? x.lgaCode ?? x.wardCode ?? x.pollingUnitCode ?? x.zoneCode ?? x.constituencyCode ?? x.id ?? '').trim();
+}
+function recordName(x){
+  return String(x.name ?? x.stateName ?? x.lgaName ?? x.wardName ?? x.pollingUnitName ?? x.zoneName ?? x.constituencyName ?? x.label ?? recordCode(x)).trim();
+}
+function normalizeRecord(d){
+  const x=d.data()||{};
+  const id=d.id;
+  return {...x,id,code:String(x.code??id),name:recordName({...x,id,code:x.code??id})};
+}
+function fill(el,items,placeholder,labelFn=x=>recordName(x)){
+  el.innerHTML='';
+  const o=document.createElement('option');o.value='';o.textContent=placeholder;el.append(o);
+  items.forEach(x=>{
+    const code=recordCode(x);
+    const opt=document.createElement('option');
+    opt.value=code;
+    opt.textContent=labelFn(x);
+    opt.dataset.name=recordName(x);
+    el.append(opt);
+  });
+}
+async function fetchCollection(name){
+  const s=await getDocs(collection(db,name));
+  return s.docs.map(normalizeRecord);
+}
+function parentMatches(record, field, selectedCode){
+  if(!selectedCode)return false;
+  const value=String(record[field]??'').trim();
+  return value===selectedCode || value===String(recordCode(geoCache.states?.find(s=>s.id===selectedCode) || {}));
+}
+async function loadStates(){
+  try{
+    geoCache.states=await fetchCollection('geographyStates');
+    geoCache.states.sort((a,b)=>recordName(a).localeCompare(recordName(b)));
+    fill($('stateSelect'),geoCache.states,'Select State',recordName);
+    if(!geoCache.states.length){
+      notice('agentNotice','No state records exist in geographyStates yet. Open Geographical Administration, import the States sheet first, then import LGAs, Wards, and Polling Units in that order.','info');
+    }else{
+      const n=$('agentNotice'); if(n && n.classList.contains('info')){n.className='notice';n.textContent='';}
+    }
+  }catch(e){
+    fill($('stateSelect'),[],'State records could not be loaded');
+    notice('agentNotice','Could not read geographyStates. Check Firestore Rules, internet connection, and that you are signed in with an active Super Admin account. Details: '+(e.message||e),'error');
+    console.error('loadStates error',e);
+  }
+}
+function updateRoleOptions(){
+  const election=$('electionType').value;
+  fill($('agentRole'),(rolesByElection[election]||[]).map(([id,name])=>({id,code:id,name})),'Select agent role',x=>x.name);
+  resetGeoAfter('state');
+  updateGeoVisibility();
+  if($('stateSelect').value) $('stateSelect').dispatchEvent(new Event('change'));
+}
 $('electionType').addEventListener('change',updateRoleOptions);$('agentRole').addEventListener('change',updateGeoVisibility);
 function updateGeoVisibility(){const e=$('electionType').value,r=$('agentRole').value;const isSen=e==='senatorial',isHouse=e==='house_of_representatives';$('zoneField').classList.toggle('hidden',!isSen||!['senatorial_zone_agent','local_government_collation_agent','ward_collation_agent','polling_unit_agent'].includes(r));$('constituencyField').classList.toggle('hidden',!isHouse||!['federal_constituency_agent','local_government_collation_agent','ward_collation_agent','polling_unit_agent'].includes(r));const needLga=['local_government_collation_agent','ward_collation_agent','polling_unit_agent'].includes(r);$('lgaField').classList.toggle('hidden',!needLga);$('wardField').classList.toggle('hidden',!['ward_collation_agent','polling_unit_agent'].includes(r));$('puField').classList.toggle('hidden',r!=='polling_unit_agent');$('zoneLabel').textContent='Senatorial Zone *';}
-$('stateSelect').addEventListener('change',async()=>{const stateCode=$('stateSelect').value;resetGeoAfter('state');const election=$('electionType').value;try{if(election==='senatorial'){const z=(await fetchCollection('geographySenatorialZones')).filter(x=>x.stateCode===stateCode);fill($('zoneSelect'),z,'Select Senatorial Zone',x=>x.name||x.zoneName||x.id)}if(election==='house_of_representatives'){const c=(await fetchCollection('geographyFederalConstituencies')).filter(x=>x.stateCode===stateCode);fill($('constituencySelect'),c,'Select Federal Constituency',x=>x.name||x.constituencyName||x.id)}const l=(await fetchCollection('geographyLGAs')).filter(x=>x.stateCode===stateCode && (!x.zoneCode||!$('zoneSelect').value||x.zoneCode===$('zoneSelect').value) && (!x.constituencyCode||!$('constituencySelect').value||x.constituencyCode===$('constituencySelect').value));fill($('lgaSelect'),l,'Select Local Government',x=>x.name||x.lgaName||x.id)}catch(err){notice('agentNotice','Unable to load geographical options: '+err.message,'error')}});
+$('stateSelect').addEventListener('change',async()=>{
+  const stateCode=$('stateSelect').value;
+  resetGeoAfter('state');
+  if(!stateCode)return;
+  const election=$('electionType').value;
+  try{
+    if(election==='senatorial'){
+      const zones=await fetchCollection('geographySenatorialZones');
+      const z=zones.filter(x=>String(x.stateCode??x.parentCode??'').trim()===stateCode);
+      fill($('zoneSelect'),z,'Select Senatorial Zone',recordName);
+    }
+    if(election==='house_of_representatives'){
+      const constituencies=await fetchCollection('geographyFederalConstituencies');
+      const c=constituencies.filter(x=>String(x.stateCode??x.parentCode??'').trim()===stateCode);
+      fill($('constituencySelect'),c,'Select Federal Constituency',recordName);
+    }
+    await loadLGAsByParent();
+  }catch(err){
+    notice('agentNotice','Unable to load geographical options. Check that imported records use matching parent codes. Details: '+err.message,'error');
+    console.error(err);
+  }
+});
 function resetGeoAfter(level){if(level==='state'){fill($('zoneSelect'),[],'Select State first');fill($('constituencySelect'),[],'Select State first');fill($('lgaSelect'),[],'Select State first')}fill($('wardSelect'),[],'Select LGA first');fill($('puSelect'),[],'Select Ward first')}
 $('zoneSelect').addEventListener('change',loadLGAsByParent);$('constituencySelect').addEventListener('change',loadLGAsByParent);
-async function loadLGAsByParent(){const stateCode=$('stateSelect').value;resetGeoAfter('parent');try{let l=(await fetchCollection('geographyLGAs')).filter(x=>x.stateCode===stateCode);if($('electionType').value==='senatorial'&&$('zoneSelect').value)l=l.filter(x=>x.zoneCode===$('zoneSelect').value);if($('electionType').value==='house_of_representatives'&&$('constituencySelect').value)l=l.filter(x=>x.constituencyCode===$('constituencySelect').value);fill($('lgaSelect'),l,'Select Local Government',x=>x.name||x.lgaName||x.id)}catch(e){console.warn(e)}}
-$('lgaSelect').addEventListener('change',async()=>{fill($('wardSelect'),[],'Loading wards…');fill($('puSelect'),[],'Select Ward first');try{const w=(await fetchCollection('geographyWards')).filter(x=>x.lgaCode===$('lgaSelect').value);fill($('wardSelect'),w,'Select Ward',x=>x.name||x.wardName||x.id)}catch(e){console.warn(e)}});
-$('wardSelect').addEventListener('change',async()=>{try{const p=(await fetchCollection('geographyPollingUnits')).filter(x=>x.wardCode===$('wardSelect').value);fill($('puSelect'),p,'Select Polling Unit',x=>x.name||x.pollingUnitName||x.id)}catch(e){console.warn(e)}});
+async function loadLGAsByParent(){
+  const stateCode=$('stateSelect').value;
+  resetGeoAfter('parent');
+  if(!stateCode)return;
+  try{
+    let l=await fetchCollection('geographyLGAs');
+    l=l.filter(x=>String(x.stateCode??x.parentCode??'').trim()===stateCode);
+    if($('electionType').value==='senatorial'&&$('zoneSelect').value){
+      const zone=$('zoneSelect').value;
+      l=l.filter(x=>!x.zoneCode || String(x.zoneCode).trim()===zone);
+    }
+    if($('electionType').value==='house_of_representatives'&&$('constituencySelect').value){
+      const constituency=$('constituencySelect').value;
+      l=l.filter(x=>!x.constituencyCode || String(x.constituencyCode).trim()===constituency);
+    }
+    fill($('lgaSelect'),l,'Select Local Government Area',recordName);
+    if(!l.length)notice('agentNotice','No LGAs were found for this state. Confirm that the LGAs sheet has been imported and each LGA stateCode matches the State document code.','info');
+  }catch(e){
+    notice('agentNotice','Could not load LGAs: '+e.message,'error');
+    console.error(e);
+  }
+}
+$('lgaSelect').addEventListener('change',async()=>{
+  fill($('wardSelect'),[],'Loading wards…');fill($('puSelect'),[],'Select Ward first');
+  const lgaCode=$('lgaSelect').value;if(!lgaCode)return;
+  try{
+    const wards=await fetchCollection('geographyWards');
+    const w=wards.filter(x=>String(x.lgaCode??x.parentCode??'').trim()===lgaCode);
+    fill($('wardSelect'),w,'Select Ward',recordName);
+    if(!w.length)notice('agentNotice','No wards found for this LGA. Import the Wards sheet and ensure each ward lgaCode matches the LGA document code.','info');
+  }catch(e){notice('agentNotice','Could not load wards: '+e.message,'error');console.error(e)}
+});
+$('wardSelect').addEventListener('change',async()=>{
+  fill($('puSelect'),[],'Loading polling units…');
+  const wardCode=$('wardSelect').value;if(!wardCode)return;
+  try{
+    const units=await fetchCollection('geographyPollingUnits');
+    const p=units.filter(x=>String(x.wardCode??x.parentCode??'').trim()===wardCode);
+    fill($('puSelect'),p,'Select Polling Unit',recordName);
+    if(!p.length)notice('agentNotice','No individual polling units are available for this ward yet. Add actual polling-unit records; expected PU counts alone cannot populate this dropdown.','info');
+  }catch(e){notice('agentNotice','Could not load polling units: '+e.message,'error');console.error(e)}
+});
 function chosenName(id){const el=$(id);return el.selectedOptions[0]?.dataset.name||el.selectedOptions[0]?.textContent||''}
 function getGeo(){const role=$('agentRole').value,election=$('electionType').value;return {stateCode:$('stateSelect').value,state:chosenName('stateSelect'),senatorialZoneCode:$('zoneSelect').value||null,senatorialZone:$('zoneSelect').value?chosenName('zoneSelect'):null,federalConstituencyCode:$('constituencySelect').value||null,federalConstituency:$('constituencySelect').value?chosenName('constituencySelect'):null,lgaCode:$('lgaSelect').value||null,lga:$('lgaSelect').value?chosenName('lgaSelect'):null,wardCode:$('wardSelect').value||null,ward:$('wardSelect').value?chosenName('wardSelect'):null,pollingUnitCode:$('puSelect').value||null,pollingUnit:$('puSelect').value?chosenName('puSelect'):null}}
 function requiredGeoValid(){const r=$('agentRole').value,g=getGeo();if(!g.stateCode)return false;if(['local_government_collation_agent','ward_collation_agent','polling_unit_agent'].includes(r)&&!g.lgaCode)return false;if(['ward_collation_agent','polling_unit_agent'].includes(r)&&!g.wardCode)return false;if(r==='polling_unit_agent'&&!g.pollingUnitCode)return false;if($('electionType').value==='senatorial'&&['senatorial_zone_agent','local_government_collation_agent','ward_collation_agent','polling_unit_agent'].includes(r)&&!g.senatorialZoneCode)return false;if($('electionType').value==='house_of_representatives'&&['federal_constituency_agent','local_government_collation_agent','ward_collation_agent','polling_unit_agent'].includes(r)&&!g.federalConstituencyCode)return false;return true}
