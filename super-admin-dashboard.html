@@ -323,31 +323,10 @@ function fillParentOptions(selectId,records,placeholder){
   fill(el,records,placeholder,recordName);
 }
 async function reloadGeoStateOptions(){
-  // Preserve each form's current State selection when refreshing the options.
-  // Previously, refreshing the list reset the State dropdown to its placeholder
-  // while the selected LGA/Ward remained visible, making the form inconsistent.
-  const selectedStates={
-    geoLgaState:$('geoLgaState').value,
-    geoWardState:$('geoWardState').value,
-    geoPuState:$('geoPuState').value
-  };
   const states=await fetchCollection('geographyStates');
   states.sort((a,b)=>recordName(a).localeCompare(recordName(b)));
   geoCache.states=states;
-  ['geoLgaState','geoWardState','geoPuState'].forEach(id=>{
-    populateStates(id);
-    const previous=selectedStates[id];
-    if(previous && states.some(s=>String(recordCode(s))===String(previous))){
-      $(id).value=previous;
-    }else if(previous){
-      // If the previously selected State was deleted, clear dependent dropdowns.
-      if(id==='geoWardState')fill($('geoWardLga'),[],'Select State first');
-      if(id==='geoPuState'){
-        fill($('geoPuLga'),[],'Select State first');
-        fill($('geoPuWard'),[],'Select LGA first');
-      }
-    }
-  });
+  ['geoLgaState','geoWardState','geoPuState'].forEach(id=>populateStates(id));
 }
 async function reloadGeoWardLgas(){
   const stateId=$('geoWardState').value;
@@ -372,8 +351,16 @@ function serialCode(records){
   return String(n).padStart(3,'0');
 }
 function makeDocId(level,parentId,code){
-  // Keep document IDs unique across parent groups; visible code is just 001, 002, ...
-  return level+'_'+geoSlug(parentId||'ROOT')+'_'+code;
+  // Use the complete Firestore parent document ID, not a shortened slug.
+  // This prevents collisions between different States, LGAs, and Wards.
+  const parentKey=String(parentId||'ROOT').replace(/[\\/\\.#$\\[\\]]/g,'_');
+  return level+'_'+parentKey+'_'+code;
+}
+function belongsToSelectedParent(record,parentId,parentField){
+  // A child belongs only to the exact selected parent document ID.
+  // Same-named records under another parent are not duplicates.
+  if(!parentId)return !String(record[parentField]??'').trim();
+  return String(record[parentField]??'').trim()===String(parentId);
 }
 async function createGeoBatch({formId,namesId,noticeId,collectionName,level,parentId,parentField,parentNameField,extraFields={},levelName}){
   const form=$(formId);
@@ -387,18 +374,14 @@ async function createGeoBatch({formId,namesId,noticeId,collectionName,level,pare
 
     // Fetch once, then update the in-memory list after each successful write.
     const all=await fetchCollection(collectionName);
-    const scoped=all.filter(r=>parentId
-      ? String(r[parentField]??'')===String(parentId)
-      : !r[parentField]);
+    const scoped=all.filter(r=>belongsToSelectedParent(r,parentId,parentField));
     let created=0,skipped=0,failed=0;
     const errors=[];
 
     for(const name of names){
       const duplicate=all.some(r=>
         recordName(r).trim().toLowerCase()===name.trim().toLowerCase() &&
-        (parentId
-          ? String(r[parentField]??'')===String(parentId)
-          : !r[parentField]));
+        belongsToSelectedParent(r,parentId,parentField));
       if(duplicate){skipped++;continue;}
 
       const code=serialCode(scoped);
@@ -429,15 +412,30 @@ async function createGeoBatch({formId,namesId,noticeId,collectionName,level,pare
     }
 
     let summary=`Finished creating ${levelName||level} records.\nCreated: ${created}\nSkipped duplicates: ${skipped}\nFailed: ${failed}\nFirestore collection: ${collectionName}`;
-    if(created===0 && skipped>0 && failed===0){
-      summary+=`\n\nNo new records were created because all submitted names already exist under the selected parent.`;
-    }
     if(errors.length)summary+='\n\nFailed records:\n'+errors.slice(0,8).join('\n')+(errors.length>8?`\n…and ${errors.length-8} more.`:'');
-    notice(noticeId,summary,failed?'error':(created===0&&skipped>0?'info':'success'));
+    notice(noticeId,summary,failed?'error':'success');
 
     // Clear only when at least one item was saved; retain pasted names if every write failed.
     if(created>0)$(namesId).value='';
+    // Refresh dropdown data while preserving the selected State > LGA > Ward path.
+    const selected={
+      lgaState:$('geoLgaState').value,
+      wardState:$('geoWardState').value,
+      wardLga:$('geoWardLga').value,
+      puState:$('geoPuState').value,
+      puLga:$('geoPuLga').value,
+      puWard:$('geoPuWard').value
+    };
     await reloadGeoStateOptions();
+    $('geoLgaState').value=selected.lgaState;
+    $('geoWardState').value=selected.wardState;
+    $('geoPuState').value=selected.puState;
+    await reloadGeoWardLgas();
+    $('geoWardLga').value=selected.wardLga;
+    await reloadGeoPuLgas();
+    $('geoPuLga').value=selected.puLga;
+    await reloadGeoPuWards();
+    $('geoPuWard').value=selected.puWard;
     await loadGeoManageRecords();
     await loadStates();
     return {created,skipped,failed,errors};
