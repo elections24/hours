@@ -8,15 +8,17 @@ import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase
 import {getAuth,signInWithEmailAndPassword} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {initializeFirestore,doc,getDoc,collection,query,where,getDocs} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 const firebaseConfig={
-  "apiKey": "AIzaSyAYMRko87BBNT7LKdZ9s2rGHf1BFmggtb8",
-  "authDomain": "theeyes-f33cb.firebaseapp.com",
-  "projectId": "theeyes-f33cb",
-  "storageBucket": "theeyes-f33cb.firebasestorage.app",
-  "messagingSenderId": "265085505802",
-  "appId": "1:265085505802:web:f81fb50567514b806feaf3"
+  apiKey: "AIzaSyBEbkeWDLuQOSPz2ojp59UWqf0OakRrCo",
+  authDomain: "election-8e790.firebaseapp.com",
+  projectId: "election-8e790",
+  storageBucket: "election-8e790.firebasestorage.app",
+  messagingSenderId: "346568561664",
+  appId: "1:346568561664:web:5618be1ebb4057f9c6f4e5"
 };
-const app=initializeApp(firebaseConfig),auth=getAuth(app);\n// Long polling can improve Firestore reliability on some mobile networks.\nconst db=initializeFirestore(app,{experimentalForceLongPolling:true});
+const app=initializeApp(firebaseConfig),auth=getAuth(app);
+// Long polling can improve Firestore reliability on some mobile networks.\nconst db=initializeFirestore(app,{experimentalForceLongPolling:true});
 const form=document.getElementById("form"),btn=document.getElementById("btn"),notice=document.getElementById("notice");
+const passwordInput=document.getElementById("password");
 function show(t){notice.className="notice show error";notice.textContent=t}
 form.addEventListener("submit",async e=>{e.preventDefault();btn.disabled=true;btn.textContent="Verifying…";
 try{
@@ -31,7 +33,7 @@ if(!loginValue.includes("@")){
   if(!profile.email) throw Error("This username profile has no email address. Please check the users document.");
   emailAddress=String(profile.email).trim().toLowerCase();
 }
-const c=await signInWithEmailAndPassword(auth,emailAddress,password.value);
+const c=await signInWithEmailAndPassword(auth,emailAddress,passwordInput.value);
 const s=await getDoc(doc(db,"users",c.user.uid));const p=s.exists()?s.data():{};
 if(p.role!=="super_admin"||p.active!==true||p.status==="disabled"){await auth.signOut();throw Error("This account is not an active Super Administrator.");}
 location.replace("super-admin-dashboard.html");
