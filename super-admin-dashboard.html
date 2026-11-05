@@ -42,44 +42,21 @@
 <div class="pagehead"><div><h1>Geographical Administration</h1><p class="sub">Create and manage Nigeria's geography directly in Firestore. No Excel importer or external metadata file is required.</p></div><span class="pill">Super Admin only</span></div>
 
 <div class="panel">
-<h2>Geography setup order</h2>
-<p class="desc">Create parent records first. The system generates internal codes automatically and links every child to its parent.</p>
-<div class="grid">
-<div><span class="pill">1</span> <b>States</b><p class="helper">Create states and FCT.</p></div>
-<div><span class="pill">2</span> <b>Senatorial zones / Federal constituencies</b><p class="helper">State-specific electoral districts.</p></div>
-<div><span class="pill">3</span> <b>Local Government Areas</b><p class="helper">Select state and optional zone/constituency.</p></div>
-<div><span class="pill">4</span> <b>Wards</b><p class="helper">Select state and LGA, then paste multiple ward names.</p></div>
-<div><span class="pill">5</span> <b>Polling Units</b><p class="helper">Select state, LGA and ward, then paste multiple PU names.</p></div>
+ <h2>Geography creation order</h2><p class="desc">Create each geographical level in its own section. Select the parent first, then paste one name per line.</p>
+ <div class="geo-notice">Codes are simple serial numbers (001, 002, 003…). A separate sequence is used for each geography collection. Existing records are not overwritten. Senatorial zones and constituencies remain linked to their selected state.</div>
 </div>
-<div class="geo-notice">Generated codes are internal THE EYES identifiers, not official INEC codes. Senatorial zones are created per state (e.g. Kwara North, Kwara Central, Kwara South); the system does not assume that every state has the same zone names.</div>
-</div>
-
-<div class="panel">
-<h2>Create geographical records</h2>
-<p class="desc">Choose a record type, provide the parent selection when required, and paste one name per line for bulk creation.</p>
-<form id="geoBulkForm">
-<div class="grid">
-<div class="field"><label for="geoBulkType">1. Record type</label>
-<select id="geoBulkType">
-<option value="state">State / FCT</option>
-<option value="zone">Senatorial Zone</option>
-<option value="constituency">Federal Constituency</option>
-<option value="lga">Local Government Area</option>
-<option value="ward">Ward</option>
-<option value="pu">Polling Unit</option>
-</select></div>
-<div class="field"><label for="geoBulkState">2. State</label><select id="geoBulkState"><option value="">Select State first / not required for state creation</option></select></div>
-<div class="field" id="geoBulkZoneParentField"><label for="geoBulkZoneParent">Senatorial Zone (optional for LGA, required for zone-specific LGA assignment)</label><select id="geoBulkZoneParent"><option value="">Select state first</option></select></div>
-<div class="field" id="geoBulkConParentField"><label for="geoBulkConParent">Federal Constituency (optional)</label><select id="geoBulkConParent"><option value="">Select state first</option></select></div>
-<div class="field" id="geoBulkLgaField"><label for="geoBulkLga">Local Government Area</label><select id="geoBulkLga"><option value="">Select state first</option></select></div>
-<div class="field" id="geoBulkWardField"><label for="geoBulkWard">Ward</label><select id="geoBulkWard"><option value="">Select LGA first</option></select></div>
-<div class="field full"><label for="geoBulkNames">3. Names (one per line)</label><textarea id="geoBulkNames" rows="8" placeholder="Paste names here, one record per line.&#10;Example:&#10;Kwara North&#10;Kwara Central&#10;Kwara South"></textarea><div class="helper">Blank lines are ignored. Duplicate names within the same parent are skipped. Existing records are not overwritten.</div></div>
-</div>
-<div class="actions"><button class="btn primary" id="geoBulkSave">Create Records</button><button class="btn secondary" type="reset">Clear Form</button></div>
-<div id="geoBulkNotice" class="notice"></div>
-</form>
-</div>
-
+<div class="panel"><h2>1. Create State / FCT</h2><p class="desc">No parent selection is required. Paste state names, one per line.</p>
+<form id="geoStateForm"><div class="field"><label for="geoStateNames">State names</label><textarea id="geoStateNames" rows="6" placeholder="Abia State&#10;Adamawa State&#10;Akwa Ibom State"></textarea></div><div class="helper">The system assigns simple serial codes: 001, 002, 003…</div><div class="actions"><button class="btn primary" id="geoStateSave">Create States</button><button class="btn secondary" type="reset">Clear Form</button></div><div id="geoStateNotice" class="notice"></div></form></div>
+<div class="panel"><h2>2. Create Senatorial Zones</h2><p class="desc">Select the state, then paste that state's senatorial zones.</p>
+<form id="geoZoneForm"><div class="grid"><div class="field"><label for="geoZoneState">State</label><select id="geoZoneState" required><option value="">Select State</option></select></div><div class="field full"><label for="geoZoneNames">Senatorial zone names</label><textarea id="geoZoneNames" rows="4" placeholder="Kwara North&#10;Kwara Central&#10;Kwara South"></textarea></div></div><div class="actions"><button class="btn primary" id="geoZoneSave">Create Senatorial Zones</button><button class="btn secondary" type="reset">Clear Form</button></div><div id="geoZoneNotice" class="notice"></div></form></div>
+<div class="panel"><h2>3. Create Federal Constituencies</h2><p class="desc">Select the state, then paste federal constituency names.</p>
+<form id="geoConForm"><div class="grid"><div class="field"><label for="geoConState">State</label><select id="geoConState" required><option value="">Select State</option></select></div><div class="field full"><label for="geoConNames">Federal constituency names</label><textarea id="geoConNames" rows="4" placeholder="Paste one constituency name per line"></textarea></div></div><div class="actions"><button class="btn primary" id="geoConSave">Create Constituencies</button><button class="btn secondary" type="reset">Clear Form</button></div><div id="geoConNotice" class="notice"></div></form></div>
+<div class="panel"><h2>4. Create Local Government Areas (LGAs)</h2><p class="desc">Select a state first. Senatorial zone and federal constituency are optional parent assignments.</p>
+<form id="geoLgaForm"><div class="grid"><div class="field"><label for="geoLgaState">State</label><select id="geoLgaState" required><option value="">Select State</option></select></div><div class="field"><label for="geoLgaZone">Senatorial Zone (optional)</label><select id="geoLgaZone"><option value="">Select State first</option></select></div><div class="field"><label for="geoLgaCon">Federal Constituency (optional)</label><select id="geoLgaCon"><option value="">Select State first</option></select></div><div class="field full"><label for="geoLgaNames">Local Government Area names</label><textarea id="geoLgaNames" rows="6" placeholder="Paste LGA names for the selected state, one per line"></textarea></div></div><div class="helper">Each LGA receives a simple serial code such as 001, 002, 003…</div><div class="actions"><button class="btn primary" id="geoLgaSave">Create LGAs</button><button class="btn secondary" type="reset">Clear Form</button></div><div id="geoLgaNotice" class="notice"></div></form></div>
+<div class="panel"><h2>5. Create Wards</h2><p class="desc">Select the state and LGA, then paste ward names.</p>
+<form id="geoWardForm"><div class="grid"><div class="field"><label for="geoWardState">State</label><select id="geoWardState" required><option value="">Select State</option></select></div><div class="field"><label for="geoWardLga">Local Government Area</label><select id="geoWardLga" required><option value="">Select State first</option></select></div><div class="field full"><label for="geoWardNames">Ward names</label><textarea id="geoWardNames" rows="6" placeholder="Paste ward names, one per line"></textarea></div></div><div class="actions"><button class="btn primary" id="geoWardSave">Create Wards</button><button class="btn secondary" type="reset">Clear Form</button></div><div id="geoWardNotice" class="notice"></div></form></div>
+<div class="panel"><h2>6. Create Polling Units</h2><p class="desc">Select state, LGA, and ward, then paste polling-unit names.</p>
+<form id="geoPuForm"><div class="grid"><div class="field"><label for="geoPuState">State</label><select id="geoPuState" required><option value="">Select State</option></select></div><div class="field"><label for="geoPuLga">Local Government Area</label><select id="geoPuLga" required><option value="">Select State first</option></select></div><div class="field"><label for="geoPuWard">Ward</label><select id="geoPuWard" required><option value="">Select LGA first</option></select></div><div class="field full"><label for="geoPuNames">Polling unit names</label><textarea id="geoPuNames" rows="6" placeholder="Paste polling-unit names, one per line"></textarea></div></div><div class="actions"><button class="btn primary" id="geoPuSave">Create Polling Units</button><button class="btn secondary" type="reset">Clear Form</button></div><div id="geoPuNotice" class="notice"></div></form></div>
 <div class="panel">
 <h2>Existing geographical records</h2>
 <p class="desc">Search and review records already saved in Firestore.</p>
@@ -108,7 +85,7 @@ const electionNames={presidential:"Presidential Election",gubernatorial:"Guberna
 const rolesByElection={presidential:[['state_collation_agent','State Collation Agent'],['local_government_collation_agent','Local Government Collation Agent'],['ward_collation_agent','Ward Collation Agent'],['polling_unit_agent','Polling Unit Agent']],gubernatorial:[['state_collation_agent','State Collation Agent'],['local_government_collation_agent','Local Government Collation Agent'],['ward_collation_agent','Ward Collation Agent'],['polling_unit_agent','Polling Unit Agent']],senatorial:[['state_collation_agent','State Collation Agent'],['senatorial_zone_agent','Senatorial Zone Agent'],['local_government_collation_agent','Local Government Collation Agent'],['ward_collation_agent','Ward Collation Agent'],['polling_unit_agent','Polling Unit Agent']],house_of_representatives:[['state_collation_agent','State Collation Agent'],['federal_constituency_agent','Federal Constituency Agent'],['local_government_collation_agent','Local Government Collation Agent'],['ward_collation_agent','Ward Collation Agent'],['polling_unit_agent','Polling Unit Agent']]};
 const roleNames=Object.fromEntries(Object.values(rolesByElection).flat().map(x=>[x[0],x[1]]));
 function notice(id,msg,type='info'){const n=$(id);n.textContent=msg;n.className='notice show '+type}
-function showPage(page){document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));$(page+'Page').classList.remove('hidden');document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active',b.dataset.page===page));$('sidebar').classList.remove('open');if(page==='agents'||page==='status'||page==='dashboard')loadAgents();if(page==='geography'){loadGeoTable();reloadGeoBulkParents().catch(console.warn);}}
+function showPage(page){document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));$(page+'Page').classList.remove('hidden');document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active',b.dataset.page===page));$('sidebar').classList.remove('open');if(page==='agents'||page==='status'||page==='dashboard')loadAgents();if(page==='geography'){loadGeoTable();}}
 document.querySelectorAll('.navbtn').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.goto)));$('mobileMenu').onclick=()=>$('sidebar').classList.toggle('open');
 $('loginForm').addEventListener('submit',async e=>{e.preventDefault();$('loginBtn').disabled=true;try{await signInWithEmailAndPassword(auth,$('loginEmail').value.trim().toLowerCase(),$('loginPassword').value)}catch(err){notice('loginNotice',err.message||'Sign-in failed.','error')}finally{$('loginBtn').disabled=false}});
 onAuthStateChanged(auth,async user=>{if(!user){$('appView').classList.add('hidden');$('loginView').classList.remove('hidden');return}try{const snap=await getDoc(doc(db,'users',user.uid)),profile=snap.exists()?snap.data():{};if(profile.role!=='super_admin'||profile.active===false||profile.status==='disabled'){await signOut(auth);notice('loginNotice','Access denied. This account is not an active Super Administrator.','error');return}$('loginView').classList.add('hidden');$('appView').classList.remove('hidden');$('adminEmail').textContent=user.email||'Super Administrator';await loadStates();showPage('dashboard')}catch(err){await signOut(auth);notice('loginNotice','Could not verify Super Admin role. '+(err.message||''),'error')}});
@@ -245,121 +222,55 @@ function renderAgents(){const term=($('agentSearch')?.value||'').toLowerCase(),f
 function scopeText(a){const g=a.geography||{};return [g.state,g.senatorialZone,g.federalConstituency,g.lga,g.ward,g.pollingUnit].filter(Boolean).join(' → ')||'—'}
 function renderRecent(){const rows=[...agentsCache].sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0)).slice(0,5);$('recentAgents').innerHTML=rows.length?`<table><thead><tr><th>Agent</th><th>Election</th><th>Role</th><th>Coverage</th><th>Status</th></tr></thead><tbody>${rows.map(a=>`<tr><td>${esc(a.fullName||a.email||a.id)}</td><td>${esc(a.electionName||electionNames[a.electionType]||'')}</td><td>${esc(a.agentRoleLabel||roleNames[a.agentRole]||'')}</td><td>${esc(scopeText(a))}</td><td>${a.active===false?'Disabled':'Active'}</td></tr>`).join('')}</tbody></table>`:'<div class="empty">No agent records yet.</div>'}
 async function toggleAgent(uid){const a=agentsCache.find(x=>x.id===uid);if(!a)return;const active=a.active===false||a.status==='disabled';try{await updateDoc(doc(db,'electionAgents',uid),{active,status:active?'active':'disabled',updatedAt:serverTimestamp()});await updateDoc(doc(db,'users',uid),{active,status:active?'active':'disabled',updatedAt:serverTimestamp()});await loadAgents()}catch(e){alert('Could not update status: '+e.message)}}$('agentSearch').addEventListener('input',renderAgents);$('agentFilter').addEventListener('change',renderAgents);
-$('geoCollection').addEventListener('change',loadGeoTable);$('geoSearch').addEventListener('input',loadGeoTable);
-$('geoBulkForm').addEventListener('reset',()=>setTimeout(()=>reloadGeoBulkParents().catch(console.warn),0));
 async function loadGeoTable(){const name=$('geoCollection').value;try{const records=await fetchCollection(name),term=$('geoSearch').value.toLowerCase(),filtered=records.filter(x=>JSON.stringify(x).toLowerCase().includes(term));$('geoTable').innerHTML=filtered.length?`<table><thead><tr><th>Code</th><th>Name</th><th>Parent</th><th>State</th><th>Zone/Constituency</th></tr></thead><tbody>${filtered.slice(0,300).map(x=>`<tr><td>${esc(x.id)}</td><td>${esc(x.name||x.stateName||x.lgaName||x.wardName||x.pollingUnitName||x.zoneName||x.constituencyName||'—')}</td><td>${esc(x.parentCode||x.lgaCode||x.wardCode||'—')}</td><td>${esc(x.stateCode||'—')}</td><td>${esc(x.zoneCode||x.constituencyCode||'—')}</td></tr>`).join('')}</tbody></table>`:'<div class="empty">No records in this collection. Import verified master geography records.</div>'}catch(e){$('geoTable').innerHTML='<div class="empty">Could not read geography collection. '+esc(e.message)+'</div>'}}
 
-// ---------- Geographical administration: automatic codes + bulk paste ----------
-function slugCode(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/[^A-Z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,32)||'ITEM'}
-function geoTypeConfig(type){
-  return {
-    state:{collection:'geographyStates',prefix:'NG-ST',parent:null},
-    zone:{collection:'geographySenatorialZones',prefix:'ZONE',parent:'state'},
-    constituency:{collection:'geographyFederalConstituencies',prefix:'FC',parent:'state'},
-    lga:{collection:'geographyLGAs',prefix:'LGA',parent:'state'},
-    ward:{collection:'geographyWards',prefix:'WARD',parent:'lga'},
-    pu:{collection:'geographyPollingUnits',prefix:'PU',parent:'ward'}
-  }[type];
-}
-function setGeoBulkVisibility(){
-  const t=$('geoBulkType').value;
-  $('geoBulkState').disabled=t==='state';
-  $('geoBulkZoneParentField').classList.toggle('hidden',!['lga','ward','pu'].includes(t));
-  $('geoBulkConParentField').classList.toggle('hidden',!['lga','ward','pu'].includes(t));
-  $('geoBulkLgaField').classList.toggle('hidden',!['ward','pu'].includes(t));
-  $('geoBulkWardField').classList.toggle('hidden',t!=='pu');
-  if(t==='state') $('geoBulkState').value='';
-}
-async function reloadGeoBulkParents(){
-  const states=await fetchCollection('geographyStates');
-  states.sort((a,b)=>recordName(a).localeCompare(recordName(b)));
-  fill($('geoBulkState'),states,'Select State',recordName);
-  const stateCode=$('geoBulkState').value;
-  const zones=(await fetchCollection('geographySenatorialZones')).filter(x=>String(x.stateCode||'')===stateCode);
-  const cons=(await fetchCollection('geographyFederalConstituencies')).filter(x=>String(x.stateCode||'')===stateCode);
-  fill($('geoBulkZoneParent'),zones,'Optional / Select Senatorial Zone',recordName);
-  fill($('geoBulkConParent'),cons,'Optional / Select Federal Constituency',recordName);
-  const lgas=(await fetchCollection('geographyLGAs')).filter(x=>String(x.stateCode||'')===stateCode);
-  fill($('geoBulkLga'),lgas,'Select Local Government Area',recordName);
-  const lgaCode=$('geoBulkLga').value;
-  const wards=(await fetchCollection('geographyWards')).filter(x=>String(x.lgaCode||'')===lgaCode);
-  fill($('geoBulkWard'),wards,'Select Ward',recordName);
-  setGeoBulkVisibility();
-}
-$('geoBulkType').addEventListener('change',setGeoBulkVisibility);
-$('geoBulkState').addEventListener('change',reloadGeoBulkParents);
-$('geoBulkLga').addEventListener('change',reloadGeoBulkParents);
-
-async function nextCode(collectionName,prefix,parentCode,name){
-  const docs=await fetchCollection(collectionName);
-  const sameParent=docs.filter(x=>String(x.parentCode||x.stateCode||x.lgaCode||x.wardCode||'')===String(parentCode||''));
-  const base=prefix+'-'+(parentCode?slugCode(parentCode)+'-':'');
-  const nameSlug=slugCode(name);
-  // Stable, readable ID; if already occupied, append a sequence suffix.
-  let candidate=base+nameSlug, n=2;
-  while(docs.some(x=>x.id===candidate)){
-    candidate=base+nameSlug+'-'+String(n++).padStart(3,'0');
-  }
-  return candidate;
-}
-$('geoBulkForm').addEventListener('submit',async e=>{
-  e.preventDefault();
-  const btn=$('geoBulkSave');btn.disabled=true;btn.textContent='Saving records…';
-  try{
-    if(!auth.currentUser)throw new Error('Please sign in again.');
-    const type=$('geoBulkType').value, cfg=geoTypeConfig(type);
-    const names=[...new Set($('geoBulkNames').value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean))];
-    if(!names.length)throw new Error('Paste at least one name, one per line.');
-    const stateCode=$('geoBulkState').value;
-    const stateName=stateCode?chosenGeoBulkName('geoBulkState'):'';
-    if(type!=='state'&&!stateCode)throw new Error('Select a State first.');
-    const zoneCode=$('geoBulkZoneParent').value||null;
-    const constituencyCode=$('geoBulkConParent').value||null;
-    const lgaCode=$('geoBulkLga').value||null;
-    const wardCode=$('geoBulkWard').value||null;
-    if(['ward','pu'].includes(type)&&!lgaCode)throw new Error('Select a Local Government Area.');
-    if(type==='pu'&&!wardCode)throw new Error('Select a Ward.');
-    let created=0,skipped=0;
-    for(const name of names){
-      const collectionName=cfg.collection;
-      let parentCode=null, codePrefix=cfg.prefix;
-      if(type==='zone'||type==='constituency'||type==='lga')parentCode=stateCode;
-      if(type==='ward')parentCode=lgaCode;
-      if(type==='pu')parentCode=wardCode;
-      const existing=await fetchCollection(collectionName);
-      const duplicate=existing.some(x=>recordName(x).toLowerCase()===name.toLowerCase() &&
-        String(x.stateCode||x.parentCode||x.lgaCode||x.wardCode||'')===String(parentCode||stateCode||''));
-      if(duplicate){skipped++;continue;}
-      let code;
-      if(type==='state')code='NG-ST-'+String(existing.length+1).padStart(3,'0')+'-'+slugCode(name);
-      else if(type==='zone')code='NG-ST-'+slugCode(stateCode)+'-SZ-'+slugCode(name);
-      else if(type==='constituency')code='NG-ST-'+slugCode(stateCode)+'-FC-'+slugCode(name);
-      else if(type==='lga')code='NG-ST-'+slugCode(stateCode)+'-LGA-'+String(existing.filter(x=>x.stateCode===stateCode).length+1).padStart(3,'0')+'-'+slugCode(name);
-      else if(type==='ward')code=String(lgaCode)+'-W-'+String(existing.filter(x=>x.lgaCode===lgaCode).length+1).padStart(3,'0')+'-'+slugCode(name);
-      else code=String(wardCode)+'-PU-'+String(existing.filter(x=>x.wardCode===wardCode).length+1).padStart(4,'0')+'-'+slugCode(name);
-      // Avoid any collision with an existing Firestore document ID.
-      let candidate=code,suffix=2;
-      while(existing.some(x=>x.id===candidate))candidate=code+'-'+String(suffix++).padStart(3,'0');
-      const record={code:candidate,name,createdBy:auth.currentUser.uid,createdAt:serverTimestamp(),updatedAt:serverTimestamp()};
-      if(type==='state'){record.stateName=name;record.level='state';}
-      else {
-        record.stateCode=stateCode;record.stateName;
-        if(type==='zone'){record.zoneName=name;record.level='senatorial_zone';}
-        if(type==='constituency'){record.constituencyName=name;record.level='federal_constituency';}
-        if(type==='lga'){record.lgaName=name;record.parentCode=stateCode;record.level='lga';if(zoneCode){record.zoneCode=zoneCode;record.senatorialZoneCode=zoneCode;}if(constituencyCode)record.constituencyCode=constituencyCode;}
-        if(type==='ward'){record.wardName=name;record.lgaCode=lgaCode;record.parentCode=lgaCode;record.level='ward';}
-        if(type==='pu'){record.pollingUnitName=name;record.wardCode=wardCode;record.lgaCode=lgaCode;record.parentCode=wardCode;record.level='polling_unit';}
-      }
-      await setDoc(doc(db,collectionName,candidate),record);
-      created++;
-    }
-    notice('geoBulkNotice',`Completed.\nCreated: ${created}\nSkipped duplicates: ${skipped}\nFirestore collection: ${cfg.collection}`,'success');
-    $('geoBulkNames').value='';
-    await reloadGeoBulkParents();await loadGeoTable();await loadStates();
-  }catch(err){console.error(err);notice('geoBulkNotice','Could not save geographical records: '+(err.message||err),'error');}
-  finally{btn.disabled=false;btn.textContent='Create Records';}
-});
-function chosenGeoBulkName(id){const el=$(id);return el.selectedOptions[0]?.dataset.name||el.selectedOptions[0]?.textContent||'';}
+ // ---------- Geographical administration: separate forms + simple serial codes ----------
+ const geoCollections={state:'geographyStates',zone:'geographySenatorialZones',constituency:'geographyFederalConstituencies',lga:'geographyLGAs',ward:'geographyWards',pu:'geographyPollingUnits'};
+ function selectedGeoName(id){const el=$(id);return el.selectedOptions[0]?.dataset.name||el.selectedOptions[0]?.textContent||''}
+ async function refreshStateForms(){
+   const states=await fetchCollection('geographyStates');
+   for(const id of ['geoZoneState','geoConState','geoLgaState','geoWardState','geoPuState']) fill($(id),[...states].sort((a,b)=>recordName(a).localeCompare(recordName(b))),'Select State',recordName);
+   await refreshLgaSelect('geoWardState','geoWardLga');await refreshLgaSelect('geoPuState','geoPuLga');await refreshZoneCon('geoLgaState');await refreshWardSelect('geoPuLga','geoPuWard');
+ }
+ async function refreshZoneCon(stateId){const stateCode=$(stateId).value;const zones=(await fetchCollection('geographySenatorialZones')).filter(x=>String(x.stateCode||x.parentCode||'')===stateCode);const cons=(await fetchCollection('geographyFederalConstituencies')).filter(x=>String(x.stateCode||x.parentCode||'')===stateCode);fill($('geoLgaZone'),zones,'Optional: select zone',recordName);fill($('geoLgaCon'),cons,'Optional: select constituency',recordName)}
+ async function refreshLgaSelect(stateId,lgaId){const stateCode=$(stateId).value;const lgas=(await fetchCollection('geographyLGAs')).filter(x=>String(x.stateCode||x.parentCode||'')===stateCode);fill($(lgaId),lgas,'Select Local Government Area',recordName)}
+ async function refreshWardSelect(lgaId,wardId){const lgaCode=$(lgaId).value;const wards=(await fetchCollection('geographyWards')).filter(x=>String(x.lgaCode||x.parentCode||'')===lgaCode);fill($(wardId),wards,'Select Ward',recordName)}
+ $('geoLgaState').addEventListener('change',()=>refreshZoneCon('geoLgaState').catch(console.error));
+ $('geoWardState').addEventListener('change',()=>refreshLgaSelect('geoWardState','geoWardLga').catch(console.error));
+ $('geoPuState').addEventListener('change',()=>refreshLgaSelect('geoPuState','geoPuLga').catch(console.error));
+ $('geoPuLga').addEventListener('change',()=>refreshWardSelect('geoPuLga','geoPuWard').catch(console.error));
+ async function nextSerialCode(collectionName){const records=await fetchCollection(collectionName),used=new Set();for(const r of records){for(const rawValue of [r.code,r.id]){const raw=String(rawValue??'').trim();if(/^\d+$/.test(raw))used.add(Number(raw));}}let n=1;while(used.has(n))n++;return String(n).padStart(3,'0')}
+ async function createGeoRecords({type,names,stateId=null,zoneId=null,constId=null,lgaId=null,wardId=null,noticeId,buttonId}){
+   const btn=$(buttonId);btn.disabled=true;const oldText=btn.textContent;btn.textContent='Creating records…';
+   try{
+     if(!auth.currentUser)throw new Error('Please sign in again.');const clean=[...new Set(names.split(/\r?\n/).map(x=>x.trim()).filter(Boolean))];if(!clean.length)throw new Error('Paste at least one name, one per line.');
+     const stateCode=stateId?$(stateId).value:null;if(type!=='state'&&!stateCode)throw new Error('Select a State first.');if(type==='ward'&&!lgaId)throw new Error('Select an LGA first.');if(type==='pu'&&(!lgaId||!wardId))throw new Error('Select an LGA and Ward first.');
+     const collectionName=geoCollections[type];let created=0,skipped=0;
+     for(const name of clean){const records=await fetchCollection(collectionName);const parentKey=type==='ward'?lgaId:type==='pu'?wardId:stateCode;
+       const duplicate=records.some(r=>{if(recordName(r).toLowerCase()!==name.toLowerCase())return false;if(type==='state')return true;if(type==='zone'||type==='constituency'||type==='lga')return String(r.stateCode||r.parentCode||'')===String(stateCode);if(type==='ward')return String(r.lgaCode||r.parentCode||'')===String(lgaId);if(type==='pu')return String(r.wardCode||r.parentCode||'')===String(wardId);return false});
+       if(duplicate){skipped++;continue;}const code=await nextSerialCode(collectionName);const record={code,name,createdBy:auth.currentUser.uid,createdAt:serverTimestamp(),updatedAt:serverTimestamp()};
+       if(type==='state'){record.stateName=name;record.level='state';}
+       else {record.stateCode=stateCode;record.stateName=selectedGeoName(stateId);
+         if(type==='zone'){record.zoneName=name;record.level='senatorial_zone';record.parentCode=stateCode;}
+         if(type==='constituency'){record.constituencyName=name;record.level='federal_constituency';record.parentCode=stateCode;}
+         if(type==='lga'){record.lgaName=name;record.parentCode=stateCode;record.level='lga';if(zoneId&&$(zoneId).value){record.zoneCode=$(zoneId).value;record.senatorialZoneCode=$(zoneId).value;record.senatorialZone=selectedGeoName(zoneId)}if(constId&&$(constId).value){record.constituencyCode=$(constId).value;record.federalConstituency=selectedGeoName(constId)}}
+         if(type==='ward'){record.wardName=name;record.lgaCode=lgaId;record.parentCode=lgaId;record.level='ward'}
+         if(type==='pu'){record.pollingUnitName=name;record.wardCode=wardId;record.lgaCode=lgaId;record.parentCode=wardId;record.level='polling_unit'}
+       }
+       await setDoc(doc(db,collectionName,code),record);created++;
+     }
+     notice(noticeId,`Completed.\nCreated: ${created}\nSkipped duplicates: ${skipped}\nFirestore collection: ${collectionName}`,'success');await refreshStateForms();await loadGeoTable();await loadStates();
+   }catch(err){console.error(err);notice(noticeId,'Could not save geographical records: '+(err.message||err),'error')}finally{btn.disabled=false;btn.textContent=oldText}
+ }
+ $('geoStateForm').addEventListener('submit',e=>{e.preventDefault();createGeoRecords({type:'state',names:$('geoStateNames').value,noticeId:'geoStateNotice',buttonId:'geoStateSave'})});
+ $('geoZoneForm').addEventListener('submit',e=>{e.preventDefault();createGeoRecords({type:'zone',names:$('geoZoneNames').value,stateId:'geoZoneState',noticeId:'geoZoneNotice',buttonId:'geoZoneSave'})});
+ $('geoConForm').addEventListener('submit',e=>{e.preventDefault();createGeoRecords({type:'constituency',names:$('geoConNames').value,stateId:'geoConState',noticeId:'geoConNotice',buttonId:'geoConSave'})});
+ $('geoLgaForm').addEventListener('submit',e=>{e.preventDefault();createGeoRecords({type:'lga',names:$('geoLgaNames').value,stateId:'geoLgaState',zoneId:'geoLgaZone',constId:'geoLgaCon',noticeId:'geoLgaNotice',buttonId:'geoLgaSave'})});
+ $('geoWardForm').addEventListener('submit',e=>{e.preventDefault();createGeoRecords({type:'ward',names:$('geoWardNames').value,stateId:'geoWardState',lgaId:$('geoWardLga').value,noticeId:'geoWardNotice',buttonId:'geoWardSave'})});
+ $('geoPuForm').addEventListener('submit',e=>{e.preventDefault();createGeoRecords({type:'pu',names:$('geoPuNames').value,stateId:'geoPuState',lgaId:$('geoPuLga').value,wardId:$('geoPuWard').value,noticeId:'geoPuNotice',buttonId:'geoPuSave'})});
+ for(const id of ['geoStateForm','geoZoneForm','geoConForm','geoLgaForm','geoWardForm','geoPuForm']) $(id).addEventListener('reset',()=>setTimeout(()=>refreshStateForms().catch(console.warn),0));
+ $('geoCollection').addEventListener('change',loadGeoTable);$('geoSearch').addEventListener('input',loadGeoTable);
+ const originalShowPage=showPage;showPage=function(page){originalShowPage(page);if(page==='geography')refreshStateForms().catch(console.warn)};
 
 </script>
 </body></html>
