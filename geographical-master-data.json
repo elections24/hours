@@ -1,0 +1,3043 @@
+{
+  "datasetName": "THE EYES Nigeria Geography Master",
+  "version": "1.1",
+  "sourceWorkbook": "EYES_V3_Zamfara_Consolidated_LGAs_Wards_Master_UPDATED_Zurmi-1.xlsx",
+  "country": "Nigeria",
+  "coverage": {
+    "states": 1,
+    "lgasListed": 15,
+    "namedWards": 147,
+    "actualPollingUnitRecords": 0
+  },
+  "records": {
+    "states": [
+      {
+        "code": "NG-ZA",
+        "name": "Zamfara",
+        "country": "Nigeria",
+        "officialCode": "036",
+        "source": "User uploaded Zamfara workbook",
+        "verificationStatus": "pending"
+      }
+    ],
+    "lgas": [
+      {
+        "code": "NG-ZA-ANKA",
+        "name": "Anka",
+        "stateCode": "NG-ZA",
+        "sourceLgaCode": "036001",
+        "officialCode": "036001",
+        "wardsReceived": 10,
+        "expectedPollingUnits": 164,
+        "dataStatus": "Ward list received",
+        "source": "EYES V3 uploaded Zamfara master workbook",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BAKURA",
+        "name": "Bakura",
+        "stateCode": "NG-ZA",
+        "sourceLgaCode": "036002",
+        "officialCode": "036002",
+        "wardsReceived": 10,
+        "expectedPollingUnits": 189,
+        "dataStatus": "Ward list received",
+        "source": "EYES V3 uploaded Zamfara master workbook",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BIRNIN-MAGAJI-KIYAW",
+        "name": "Birnin Magaji/Kiyaw",
+        "stateCode": "NG-ZA",
+        "sourceLgaCode": "036003",
+        "officialCode": "036003",
+        "wardsReceived": 10,
+        "expectedPollingUnits": 187,
+        "dataStatus": "Ward list received",
+        "source": "EYES V3 uploaded Zamfara master workbook",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BUKKUYUM",
+        "name": "Bukkuyum",
+        "stateCode": "NG-ZA",
+        "sourceLgaCode": "036004",
+        "officialCode": "036004",
+        "wardsReceived": 10,
+        "expectedPollingUnits": 193,
+        "dataStatus": "Ward list received",
+        "source": "EYES V3 uploaded Zamfara master workbook",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BUNGUDU",
+        "name": "Bungudu",
+        "stateCode": "NG-ZA",
+        "sourceLgaCode": "036005",
+        "officialCode": "036005",
+        "wardsReceived": 11,
+        "expectedPollingUnits": 325,
+        "dataStatus": "Ward list received",
+        "source": "EYES V3 uploaded Zamfara master workbook",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-GUMMI",
+        "name": "Gummi",
+        "stateCode": "NG-ZA",
+        "sourceLgaCode": "036006",
+        "officialCode": "036006",
+        "wardsReceived": 11,
+        "expectedPollingUnits": 221,
+        "dataStatus": "Ward list received",
+        "source": "EYES V3 uploaded Zamfara master workbook",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-GUSAU",
+        "name": "Gusau",
+        "stateCode": "NG-ZA",
+        "sourceLgaCode": "036007",
+        "officialCode": "036007",
+        "wardsReceived": 11,
+        "expectedPollingUnits": 564,
+        "dataStatus": "Ward list received",
+        "source": "EYES V3 uploaded Zamfara master workbook",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-KAURA",
+        "name": "Kaura",
+        "stateCode": "NG-ZA",
+        "sourceLgaCode": "036008",
+        "officialCode": "036008",
+        "wardsReceived": 0,
+        "expectedPollingUnits": null,
+        "dataStatus": "Ward list pending",
+        "source": "EYES V3 uploaded Zamfara master workbook",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-MARADUN",
+        "name": "Maradun",
+        "stateCode": "NG-ZA",
+        "sourceLgaCode": "036009",
+        "officialCode": "036009",
+        "wardsReceived": 10,
+        "expectedPollingUnits": null,
+        "dataStatus": "Ward list received; PU count pending",
+        "source": "EYES V3 uploaded Zamfara master workbook",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-MARU",
+        "name": "Maru",
+        "stateCode": "NG-ZA",
+        "sourceLgaCode": "036010",
+        "officialCode": "036010",
+        "wardsReceived": 10,
+        "expectedPollingUnits": null,
+        "dataStatus": "Ward list received; PU count pending",
+        "source": "EYES V3 uploaded Zamfara master workbook",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-SHINKAFI",
+        "name": "Shinkafi",
+        "stateCode": "NG-ZA",
+        "sourceLgaCode": "036011",
+        "officialCode": "036011",
+        "wardsReceived": 10,
+        "expectedPollingUnits": null,
+        "dataStatus": "Ward list received; PU count pending",
+        "source": "EYES V3 uploaded Zamfara master workbook",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-TALATA-MAFARA",
+        "name": "Talata Mafara",
+        "stateCode": "NG-ZA",
+        "sourceLgaCode": "036012",
+        "officialCode": "036012",
+        "wardsReceived": 11,
+        "expectedPollingUnits": null,
+        "dataStatus": "Ward list received; PU count pending",
+        "source": "EYES V3 uploaded Zamfara master workbook",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-TSAFE",
+        "name": "Tsafe",
+        "stateCode": "NG-ZA",
+        "sourceLgaCode": "036013",
+        "officialCode": "036013",
+        "wardsReceived": 11,
+        "expectedPollingUnits": null,
+        "dataStatus": "Ward list received; PU count pending",
+        "source": "EYES V3 uploaded Zamfara master workbook",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-ZURMI",
+        "name": "Zurmi",
+        "stateCode": "NG-ZA",
+        "sourceLgaCode": "036014",
+        "officialCode": "036014",
+        "wardsReceived": 11,
+        "expectedPollingUnits": null,
+        "dataStatus": "Ward list received; PU count pending",
+        "source": "EYES V3 uploaded Zamfara master workbook",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-KAURA-NAMODA",
+        "name": "Kaura Namoda",
+        "stateCode": "NG-ZA",
+        "sourceLgaCode": "036008",
+        "officialCode": "036008",
+        "wardsReceived": 11,
+        "expectedPollingUnits": 261,
+        "dataStatus": "Ward list received",
+        "source": "EYES V3 uploaded Zamfara master workbook",
+        "verificationStatus": "pending"
+      }
+    ],
+    "wards": [
+      {
+        "code": "NG-ZA-ANKA-W001",
+        "name": "Bagega",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-ANKA",
+        "sourceWardCode": "036001001",
+        "officialCode": "036001001",
+        "expectedPollingUnits": 22,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-ANKA-W002",
+        "name": "Barayar-Zaki",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-ANKA",
+        "sourceWardCode": "036001001",
+        "officialCode": "036001001",
+        "expectedPollingUnits": 17,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-ANKA-W003",
+        "name": "Dan Galadima",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-ANKA",
+        "sourceWardCode": "036001001",
+        "officialCode": "036001001",
+        "expectedPollingUnits": 12,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-ANKA-W004",
+        "name": "Galadima",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-ANKA",
+        "sourceWardCode": "036001001",
+        "officialCode": "036001001",
+        "expectedPollingUnits": 14,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-ANKA-W005",
+        "name": "Magaji",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-ANKA",
+        "sourceWardCode": "036001001",
+        "officialCode": "036001001",
+        "expectedPollingUnits": 18,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-ANKA-W006",
+        "name": "Matseri",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-ANKA",
+        "sourceWardCode": "036001001",
+        "officialCode": "036001001",
+        "expectedPollingUnits": 20,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-ANKA-W007",
+        "name": "Sabon Birini",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-ANKA",
+        "sourceWardCode": "036001001",
+        "officialCode": "036001001",
+        "expectedPollingUnits": 16,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-ANKA-W008",
+        "name": "Waramu",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-ANKA",
+        "sourceWardCode": "036001001",
+        "officialCode": "036001001",
+        "expectedPollingUnits": 15,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-ANKA-W009",
+        "name": "Wuya",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-ANKA",
+        "sourceWardCode": "036001001",
+        "officialCode": "036001001",
+        "expectedPollingUnits": 17,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-ANKA-W010",
+        "name": "Yar'Sabaya",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-ANKA",
+        "sourceWardCode": "036001001",
+        "officialCode": "036001001",
+        "expectedPollingUnits": 13,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BAKURA-W001",
+        "name": "Bakura",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-BAKURA",
+        "sourceWardCode": "036002001",
+        "officialCode": "036002001",
+        "expectedPollingUnits": 37,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BAKURA-W002",
+        "name": "Birnin Tudu",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-BAKURA",
+        "sourceWardCode": "036002001",
+        "officialCode": "036002001",
+        "expectedPollingUnits": 18,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BAKURA-W003",
+        "name": "Damri",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-BAKURA",
+        "sourceWardCode": "036002001",
+        "officialCode": "036002001",
+        "expectedPollingUnits": 15,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BAKURA-W004",
+        "name": "Dankadu",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-BAKURA",
+        "sourceWardCode": "036002001",
+        "officialCode": "036002001",
+        "expectedPollingUnits": 23,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BAKURA-W005",
+        "name": "Dan Manau",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-BAKURA",
+        "sourceWardCode": "036002001",
+        "officialCode": "036002001",
+        "expectedPollingUnits": 26,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BAKURA-W006",
+        "name": "Yar Kufoji",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-BAKURA",
+        "sourceWardCode": "036002001",
+        "officialCode": "036002001",
+        "expectedPollingUnits": 22,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BAKURA-W007",
+        "name": "Dakko",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-BAKURA",
+        "sourceWardCode": "036002001",
+        "officialCode": "036002001",
+        "expectedPollingUnits": 12,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BAKURA-W008",
+        "name": "Nasarawa",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-BAKURA",
+        "sourceWardCode": "036002001",
+        "officialCode": "036002001",
+        "expectedPollingUnits": 12,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BAKURA-W009",
+        "name": "Rini",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-BAKURA",
+        "sourceWardCode": "036002001",
+        "officialCode": "036002001",
+        "expectedPollingUnits": 14,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BAKURA-W010",
+        "name": "Yar Geda",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-BAKURA",
+        "sourceWardCode": "036002001",
+        "officialCode": "036002001",
+        "expectedPollingUnits": 10,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BIRNIN-MAGAJI-KIYAW-W001",
+        "name": "Birnin Magaji",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-BIRNIN-MAGAJI-KIYAW",
+        "sourceWardCode": "036003001",
+        "officialCode": "036003001",
+        "expectedPollingUnits": 26,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BIRNIN-MAGAJI-KIYAW-W002",
+        "name": "Danfami Sabon Birini",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-BIRNIN-MAGAJI-KIYAW",
+        "sourceWardCode": "036003001",
+        "officialCode": "036003001",
+        "expectedPollingUnits": 18,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BIRNIN-MAGAJI-KIYAW-W003",
+        "name": "Gora",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-BIRNIN-MAGAJI-KIYAW",
+        "sourceWardCode": "036003001",
+        "officialCode": "036003001",
+        "expectedPollingUnits": 27,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BIRNIN-MAGAJI-KIYAW-W004",
+        "name": "Gusami Gari",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-BIRNIN-MAGAJI-KIYAW",
+        "sourceWardCode": "036003001",
+        "officialCode": "036003001",
+        "expectedPollingUnits": 14,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BIRNIN-MAGAJI-KIYAW-W005",
+        "name": "Gusami Hayi",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-BIRNIN-MAGAJI-KIYAW",
+        "sourceWardCode": "036003001",
+        "officialCode": "036003001",
+        "expectedPollingUnits": 11,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BIRNIN-MAGAJI-KIYAW-W006",
+        "name": "Kiyawa",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-BIRNIN-MAGAJI-KIYAW",
+        "sourceWardCode": "036003001",
+        "officialCode": "036003001",
+        "expectedPollingUnits": 20,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BIRNIN-MAGAJI-KIYAW-W007",
+        "name": "Modomawa East",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-BIRNIN-MAGAJI-KIYAW",
+        "sourceWardCode": "036003001",
+        "officialCode": "036003001",
+        "expectedPollingUnits": 15,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BIRNIN-MAGAJI-KIYAW-W008",
+        "name": "Modomawa West",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-BIRNIN-MAGAJI-KIYAW",
+        "sourceWardCode": "036003001",
+        "officialCode": "036003001",
+        "expectedPollingUnits": 21,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BIRNIN-MAGAJI-KIYAW-W009",
+        "name": "Nasarawa Godal East",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-BIRNIN-MAGAJI-KIYAW",
+        "sourceWardCode": "036003001",
+        "officialCode": "036003001",
+        "expectedPollingUnits": 15,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BIRNIN-MAGAJI-KIYAW-W010",
+        "name": "Nasarawa Godal West",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-BIRNIN-MAGAJI-KIYAW",
+        "sourceWardCode": "036003001",
+        "officialCode": "036003001",
+        "expectedPollingUnits": 20,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-GUSAU-W001",
+        "name": "Galadima",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-GUSAU",
+        "sourceWardCode": "036007001",
+        "officialCode": "036007001",
+        "expectedPollingUnits": 61,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-GUSAU-W002",
+        "name": "Madawaki",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-GUSAU",
+        "sourceWardCode": "036007001",
+        "officialCode": "036007001",
+        "expectedPollingUnits": 36,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-GUSAU-W003",
+        "name": "Mada",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-GUSAU",
+        "sourceWardCode": "036007001",
+        "officialCode": "036007001",
+        "expectedPollingUnits": 48,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-GUSAU-W004",
+        "name": "Magami",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-GUSAU",
+        "sourceWardCode": "036007001",
+        "officialCode": "036007001",
+        "expectedPollingUnits": 31,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-GUSAU-W005",
+        "name": "Mayana",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-GUSAU",
+        "sourceWardCode": "036007001",
+        "officialCode": "036007001",
+        "expectedPollingUnits": 87,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-GUSAU-W006",
+        "name": "Rijiya",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-GUSAU",
+        "sourceWardCode": "036007001",
+        "officialCode": "036007001",
+        "expectedPollingUnits": 22,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-GUSAU-W007",
+        "name": "Ruwan Bore",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-GUSAU",
+        "sourceWardCode": "036007001",
+        "officialCode": "036007001",
+        "expectedPollingUnits": 27,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-GUSAU-W008",
+        "name": "Sabon Gari",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-GUSAU",
+        "sourceWardCode": "036007001",
+        "officialCode": "036007001",
+        "expectedPollingUnits": 43,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-GUSAU-W009",
+        "name": "Tudun Wada",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-GUSAU",
+        "sourceWardCode": "036007001",
+        "officialCode": "036007001",
+        "expectedPollingUnits": 145,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-GUSAU-W010",
+        "name": "Wanke",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-GUSAU",
+        "sourceWardCode": "036007001",
+        "officialCode": "036007001",
+        "expectedPollingUnits": 32,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-GUSAU-W011",
+        "name": "Wonaka",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-GUSAU",
+        "sourceWardCode": "036007001",
+        "officialCode": "036007001",
+        "expectedPollingUnits": 32,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BUKKUYUM-W001",
+        "name": "Adabka",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-BUKKUYUM",
+        "sourceWardCode": "036004001",
+        "officialCode": "036004001",
+        "expectedPollingUnits": 22,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BUKKUYUM-W002",
+        "name": "Bukkuyum",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-BUKKUYUM",
+        "sourceWardCode": "036004002",
+        "officialCode": "036004002",
+        "expectedPollingUnits": 26,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BUKKUYUM-W003",
+        "name": "Gwashi",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-BUKKUYUM",
+        "sourceWardCode": "036004003",
+        "officialCode": "036004003",
+        "expectedPollingUnits": 24,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BUKKUYUM-W004",
+        "name": "Kyaram",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-BUKKUYUM",
+        "sourceWardCode": "036004004",
+        "officialCode": "036004004",
+        "expectedPollingUnits": 21,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BUKKUYUM-W005",
+        "name": "Masama",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-BUKKUYUM",
+        "sourceWardCode": "036004005",
+        "officialCode": "036004005",
+        "expectedPollingUnits": 9,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BUKKUYUM-W006",
+        "name": "Nasarawa",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-BUKKUYUM",
+        "sourceWardCode": "036004006",
+        "officialCode": "036004006",
+        "expectedPollingUnits": 31,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BUKKUYUM-W007",
+        "name": "Ruwan Jema",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-BUKKUYUM",
+        "sourceWardCode": "036004007",
+        "officialCode": "036004007",
+        "expectedPollingUnits": 17,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BUKKUYUM-W008",
+        "name": "Yashi",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-BUKKUYUM",
+        "sourceWardCode": "036004008",
+        "officialCode": "036004008",
+        "expectedPollingUnits": 9,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BUKKUYUM-W009",
+        "name": "Zarummai",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-BUKKUYUM",
+        "sourceWardCode": "036004009",
+        "officialCode": "036004009",
+        "expectedPollingUnits": 24,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BUKKUYUM-W010",
+        "name": "Zauma",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-BUKKUYUM",
+        "sourceWardCode": "036004010",
+        "officialCode": "036004010",
+        "expectedPollingUnits": 10,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BUNGUDU-W001",
+        "name": "Bingi North",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-BUNGUDU",
+        "sourceWardCode": "036005001",
+        "officialCode": "036005001",
+        "expectedPollingUnits": 29,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BUNGUDU-W002",
+        "name": "Bingi South",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-BUNGUDU",
+        "sourceWardCode": "036005002",
+        "officialCode": "036005002",
+        "expectedPollingUnits": 26,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BUNGUDU-W003",
+        "name": "Bungudu",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-BUNGUDU",
+        "sourceWardCode": "036005003",
+        "officialCode": "036005003",
+        "expectedPollingUnits": 38,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BUNGUDU-W004",
+        "name": "Furfuri/Kwai-Kwai",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-BUNGUDU",
+        "sourceWardCode": "036005004",
+        "officialCode": "036005004",
+        "expectedPollingUnits": 36,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BUNGUDU-W005",
+        "name": "Gada/Karakkai",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-BUNGUDU",
+        "sourceWardCode": "036005005",
+        "officialCode": "036005005",
+        "expectedPollingUnits": 28,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BUNGUDU-W006",
+        "name": "Nahuce",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-BUNGUDU",
+        "sourceWardCode": "036005006",
+        "officialCode": "036005006",
+        "expectedPollingUnits": 29,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BUNGUDU-W007",
+        "name": "Kwatarkwashi",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-BUNGUDU",
+        "sourceWardCode": "036005007",
+        "officialCode": "036005007",
+        "expectedPollingUnits": 38,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BUNGUDU-W008",
+        "name": "Rawayya/Bela",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-BUNGUDU",
+        "sourceWardCode": "036005008",
+        "officialCode": "036005008",
+        "expectedPollingUnits": 41,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BUNGUDU-W009",
+        "name": "Samawa",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-BUNGUDU",
+        "sourceWardCode": "036005009",
+        "officialCode": "036005009",
+        "expectedPollingUnits": 17,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BUNGUDU-W010",
+        "name": "Sankalawa",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-BUNGUDU",
+        "sourceWardCode": "036005010",
+        "officialCode": "036005010",
+        "expectedPollingUnits": 22,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-BUNGUDU-W011",
+        "name": "Tofa",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-BUNGUDU",
+        "sourceWardCode": "036005011",
+        "officialCode": "036005011",
+        "expectedPollingUnits": 21,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-GUMMI-W001",
+        "name": "Bardoki",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-GUMMI",
+        "sourceWardCode": "036006001",
+        "officialCode": "036006001",
+        "expectedPollingUnits": 25,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-GUMMI-W002",
+        "name": "Birnin Magaji",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-GUMMI",
+        "sourceWardCode": "036006002",
+        "officialCode": "036006002",
+        "expectedPollingUnits": 13,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-GUMMI-W003",
+        "name": "Birnin Tudu",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-GUMMI",
+        "sourceWardCode": "036006003",
+        "officialCode": "036006003",
+        "expectedPollingUnits": 25,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-GUMMI-W004",
+        "name": "Falale",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-GUMMI",
+        "sourceWardCode": "036006004",
+        "officialCode": "036006004",
+        "expectedPollingUnits": 11,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-GUMMI-W005",
+        "name": "Felfeldu/Gamo",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-GUMMI",
+        "sourceWardCode": "036006005",
+        "officialCode": "036006005",
+        "expectedPollingUnits": 11,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-GUMMI-W006",
+        "name": "Gayari",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-GUMMI",
+        "sourceWardCode": "036006006",
+        "officialCode": "036006006",
+        "expectedPollingUnits": 19,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-GUMMI-W007",
+        "name": "Gyalange",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-GUMMI",
+        "sourceWardCode": "036006007",
+        "officialCode": "036006007",
+        "expectedPollingUnits": 14,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-GUMMI-W008",
+        "name": "Illelar Awal",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-GUMMI",
+        "sourceWardCode": "036006008",
+        "officialCode": "036006008",
+        "expectedPollingUnits": 20,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-GUMMI-W009",
+        "name": "Magajin Gari",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-GUMMI",
+        "sourceWardCode": "036006009",
+        "officialCode": "036006009",
+        "expectedPollingUnits": 44,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-GUMMI-W010",
+        "name": "Shiyar Rafi",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-GUMMI",
+        "sourceWardCode": "036006010",
+        "officialCode": "036006010",
+        "expectedPollingUnits": 17,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-GUMMI-W011",
+        "name": "Ubandawaki",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-GUMMI",
+        "sourceWardCode": "036006011",
+        "officialCode": "036006011",
+        "expectedPollingUnits": 22,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-KAURA-NAMODA-W001",
+        "name": "Banga",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-KAURA-NAMODA",
+        "sourceWardCode": "036008001",
+        "officialCode": "036008001",
+        "expectedPollingUnits": 21,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-KAURA-NAMODA-W002",
+        "name": "Danisa",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-KAURA-NAMODA",
+        "sourceWardCode": "036008002",
+        "officialCode": "036008002",
+        "expectedPollingUnits": 26,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-KAURA-NAMODA-W003",
+        "name": "Gabake",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-KAURA-NAMODA",
+        "sourceWardCode": "036008003",
+        "officialCode": "036008003",
+        "expectedPollingUnits": 18,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-KAURA-NAMODA-W004",
+        "name": "Galadima Dan Galadima",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-KAURA-NAMODA",
+        "sourceWardCode": "036008004",
+        "officialCode": "036008004",
+        "expectedPollingUnits": 39,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-KAURA-NAMODA-W005",
+        "name": "Kagara",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-KAURA-NAMODA",
+        "sourceWardCode": "036008005",
+        "officialCode": "036008005",
+        "expectedPollingUnits": 12,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-KAURA-NAMODA-W006",
+        "name": "Kungurki",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-KAURA-NAMODA",
+        "sourceWardCode": "036008006",
+        "officialCode": "036008006",
+        "expectedPollingUnits": 29,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-KAURA-NAMODA-W007",
+        "name": "Kurya Madaro",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-KAURA-NAMODA",
+        "sourceWardCode": "036008007",
+        "officialCode": "036008007",
+        "expectedPollingUnits": 19,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-KAURA-NAMODA-W008",
+        "name": "Kyam Barawa",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-KAURA-NAMODA",
+        "sourceWardCode": "036008008",
+        "officialCode": "036008008",
+        "expectedPollingUnits": 18,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-KAURA-NAMODA-W009",
+        "name": "Sakajiki",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-KAURA-NAMODA",
+        "sourceWardCode": "036008009",
+        "officialCode": "036008009",
+        "expectedPollingUnits": 13,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-KAURA-NAMODA-W010",
+        "name": "S/Baura/S/Mafara",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-KAURA-NAMODA",
+        "sourceWardCode": "036008010",
+        "officialCode": "036008010",
+        "expectedPollingUnits": 53,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-KAURA-NAMODA-W011",
+        "name": "Yankaba",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-KAURA-NAMODA",
+        "sourceWardCode": "036008011",
+        "officialCode": "036008011",
+        "expectedPollingUnits": 13,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-MARADUN-W001",
+        "name": "Birnin Kaya/Dosara",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-MARADUN",
+        "sourceWardCode": "036009001",
+        "officialCode": "036009001",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-MARADUN-W002",
+        "name": "Damaga/Damagiwa",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-MARADUN",
+        "sourceWardCode": "036009002",
+        "officialCode": "036009002",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-MARADUN-W003",
+        "name": "Faru/Magami",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-MARADUN",
+        "sourceWardCode": "036009003",
+        "officialCode": "036009003",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-MARADUN-W004",
+        "name": "Gora",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-MARADUN",
+        "sourceWardCode": "036009004",
+        "officialCode": "036009004",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-MARADUN-W005",
+        "name": "Gidan Goga",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-MARADUN",
+        "sourceWardCode": "036009005",
+        "officialCode": "036009005",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-MARADUN-W006",
+        "name": "Janbako",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-MARADUN",
+        "sourceWardCode": "036009006",
+        "officialCode": "036009006",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-MARADUN-W007",
+        "name": "Kaya",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-MARADUN",
+        "sourceWardCode": "036009007",
+        "officialCode": "036009007",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-MARADUN-W008",
+        "name": "Maradun North",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-MARADUN",
+        "sourceWardCode": "036009008",
+        "officialCode": "036009008",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-MARADUN-W009",
+        "name": "Maradun South",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-MARADUN",
+        "sourceWardCode": "036009009",
+        "officialCode": "036009009",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-MARADUN-W010",
+        "name": "Tsibiri",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-MARADUN",
+        "sourceWardCode": "036009010",
+        "officialCode": "036009010",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-MARU-W001",
+        "name": "Bindin",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-MARU",
+        "sourceWardCode": "036010001",
+        "officialCode": "036010001",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-MARU-W002",
+        "name": "Bingi",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-MARU",
+        "sourceWardCode": "036010002",
+        "officialCode": "036010002",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-MARU-W003",
+        "name": "Dan Gulbi",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-MARU",
+        "sourceWardCode": "036010003",
+        "officialCode": "036010003",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-MARU-W004",
+        "name": "Dan Kurmi",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-MARU",
+        "sourceWardCode": "036010004",
+        "officialCode": "036010004",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-MARU-W005",
+        "name": "Dan Sadau",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-MARU",
+        "sourceWardCode": "036010005",
+        "officialCode": "036010005",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-MARU-W006",
+        "name": "Kanoma",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-MARU",
+        "sourceWardCode": "036010006",
+        "officialCode": "036010006",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-MARU-W007",
+        "name": "Kuyan Bana",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-MARU",
+        "sourceWardCode": "036010007",
+        "officialCode": "036010007",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-MARU-W008",
+        "name": "Maru",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-MARU",
+        "sourceWardCode": "036010008",
+        "officialCode": "036010008",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-MARU-W009",
+        "name": "Mayanchi",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-MARU",
+        "sourceWardCode": "036010009",
+        "officialCode": "036010009",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-MARU-W010",
+        "name": "Ruwan Dorawa",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-MARU",
+        "sourceWardCode": "036010010",
+        "officialCode": "036010010",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-SHINKAFI-W001",
+        "name": "Badarawa",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-SHINKAFI",
+        "sourceWardCode": "036011001",
+        "officialCode": "036011001",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-SHINKAFI-W002",
+        "name": "Birnin Yaro",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-SHINKAFI",
+        "sourceWardCode": "036011002",
+        "officialCode": "036011002",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-SHINKAFI-W003",
+        "name": "Galadi",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-SHINKAFI",
+        "sourceWardCode": "036011003",
+        "officialCode": "036011003",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-SHINKAFI-W004",
+        "name": "Jangeru",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-SHINKAFI",
+        "sourceWardCode": "036011004",
+        "officialCode": "036011004",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-SHINKAFI-W005",
+        "name": "Katuru",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-SHINKAFI",
+        "sourceWardCode": "036011005",
+        "officialCode": "036011005",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-SHINKAFI-W006",
+        "name": "Kware",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-SHINKAFI",
+        "sourceWardCode": "036011006",
+        "officialCode": "036011006",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-SHINKAFI-W007",
+        "name": "Kurya",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-SHINKAFI",
+        "sourceWardCode": "036011007",
+        "officialCode": "036011007",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-SHINKAFI-W008",
+        "name": "Shinkafi North",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-SHINKAFI",
+        "sourceWardCode": "036011008",
+        "officialCode": "036011008",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-SHINKAFI-W009",
+        "name": "Shinkafi South",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-SHINKAFI",
+        "sourceWardCode": "036011009",
+        "officialCode": "036011009",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-SHINKAFI-W010",
+        "name": "Shanawa",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-SHINKAFI",
+        "sourceWardCode": "036011010",
+        "officialCode": "036011010",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-TALATA-MAFARA-W001",
+        "name": "Garbadu",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-TALATA-MAFARA",
+        "sourceWardCode": "036012001",
+        "officialCode": "036012001",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-TALATA-MAFARA-W002",
+        "name": "Gwaram",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-TALATA-MAFARA",
+        "sourceWardCode": "036012002",
+        "officialCode": "036012002",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-TALATA-MAFARA-W003",
+        "name": "Jangebe",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-TALATA-MAFARA",
+        "sourceWardCode": "036012003",
+        "officialCode": "036012003",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-TALATA-MAFARA-W004",
+        "name": "Kagara",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-TALATA-MAFARA",
+        "sourceWardCode": "036012004",
+        "officialCode": "036012004",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-TALATA-MAFARA-W005",
+        "name": "Morai",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-TALATA-MAFARA",
+        "sourceWardCode": "036012005",
+        "officialCode": "036012005",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-TALATA-MAFARA-W006",
+        "name": "Ruwan Bore",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-TALATA-MAFARA",
+        "sourceWardCode": "036012006",
+        "officialCode": "036012006",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-TALATA-MAFARA-W007",
+        "name": "Ruwan Gizo",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-TALATA-MAFARA",
+        "sourceWardCode": "036012007",
+        "officialCode": "036012007",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-TALATA-MAFARA-W008",
+        "name": "Sauna R/Gora",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-TALATA-MAFARA",
+        "sourceWardCode": "036012008",
+        "officialCode": "036012008",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-TALATA-MAFARA-W009",
+        "name": "Shiyar Galadima",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-TALATA-MAFARA",
+        "sourceWardCode": "036012009",
+        "officialCode": "036012009",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-TALATA-MAFARA-W010",
+        "name": "Shiyar Kayaye/Matusgi",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-TALATA-MAFARA",
+        "sourceWardCode": "036012010",
+        "officialCode": "036012010",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-TALATA-MAFARA-W011",
+        "name": "Take Tsaba/Makera",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-TALATA-MAFARA",
+        "sourceWardCode": "036012011",
+        "officialCode": "036012011",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-TSAFE-W001",
+        "name": "Kwaren Ganuwa",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-TSAFE",
+        "sourceWardCode": "036013001",
+        "officialCode": "036013001",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-TSAFE-W002",
+        "name": "Yan Kuzo \"B\"",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-TSAFE",
+        "sourceWardCode": "036013002",
+        "officialCode": "036013002",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-TSAFE-W003",
+        "name": "Yandoton Daji",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-TSAFE",
+        "sourceWardCode": "036013003",
+        "officialCode": "036013003",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-TSAFE-W004",
+        "name": "Yankuzo \"A\"",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-TSAFE",
+        "sourceWardCode": "036013004",
+        "officialCode": "036013004",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-TSAFE-W005",
+        "name": "Danjibga/Kunchinkalgo",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-TSAFE",
+        "sourceWardCode": "036013005",
+        "officialCode": "036013005",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-TSAFE-W006",
+        "name": "Dauki",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-TSAFE",
+        "sourceWardCode": "036013006",
+        "officialCode": "036013006",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-TSAFE-W007",
+        "name": "Keta/Kizara",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-TSAFE",
+        "sourceWardCode": "036013007",
+        "officialCode": "036013007",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-TSAFE-W008",
+        "name": "Tsafe",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-TSAFE",
+        "sourceWardCode": "036013008",
+        "officialCode": "036013008",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-TSAFE-W009",
+        "name": "Chediya",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-TSAFE",
+        "sourceWardCode": "036013009",
+        "officialCode": "036013009",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-TSAFE-W010",
+        "name": "Yan Waren Daji",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-TSAFE",
+        "sourceWardCode": "036013010",
+        "officialCode": "036013010",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-TSAFE-W011",
+        "name": "Bilbis",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-TSAFE",
+        "sourceWardCode": "036013011",
+        "officialCode": "036013011",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-ZURMI-W001",
+        "name": "Boko",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-ZURMI",
+        "sourceWardCode": "036014001",
+        "officialCode": "036014001",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-ZURMI-W002",
+        "name": "Dauran/Birnin-Tsaba",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-ZURMI",
+        "sourceWardCode": "036014002",
+        "officialCode": "036014002",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-ZURMI-W003",
+        "name": "Dole",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-ZURMI",
+        "sourceWardCode": "036014003",
+        "officialCode": "036014003",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-ZURMI-W004",
+        "name": "Galadima/Yanruwa",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-ZURMI",
+        "sourceWardCode": "036014004",
+        "officialCode": "036014004",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-ZURMI-W005",
+        "name": "Kanwa",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-ZURMI",
+        "sourceWardCode": "036014005",
+        "officialCode": "036014005",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-ZURMI-W006",
+        "name": "Kwashbawa",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-ZURMI",
+        "sourceWardCode": "036014006",
+        "officialCode": "036014006",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-ZURMI-W007",
+        "name": "Mashem",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-ZURMI",
+        "sourceWardCode": "036014007",
+        "officialCode": "036014007",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-ZURMI-W008",
+        "name": "Kuturu/Mayasa",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-ZURMI",
+        "sourceWardCode": "036014008",
+        "officialCode": "036014008",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-ZURMI-W009",
+        "name": "Rukudawa",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-ZURMI",
+        "sourceWardCode": "036014009",
+        "officialCode": "036014009",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-ZURMI-W010",
+        "name": "Yan Buki/Dutsi",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-ZURMI",
+        "sourceWardCode": "036014010",
+        "officialCode": "036014010",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      },
+      {
+        "code": "NG-ZA-ZURMI-W011",
+        "name": "Zurmi",
+        "stateCode": "NG-ZA",
+        "lgaCode": "NG-ZA-ZURMI",
+        "sourceWardCode": "036014011",
+        "officialCode": "036014011",
+        "expectedPollingUnits": null,
+        "source": "EYES V3 Geographical Data sheet",
+        "verificationStatus": "pending"
+      }
+    ],
+    "pollingUnits": []
+  },
+  "pollingUnitCountsByWard": [
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036001",
+      "lgaName": "Anka",
+      "sourceWardCode": "036001001",
+      "wardName": "Bagega",
+      "expectedPollingUnits": 22
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036001",
+      "lgaName": "Anka",
+      "sourceWardCode": "036001001",
+      "wardName": "Barayar-Zaki",
+      "expectedPollingUnits": 17
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036001",
+      "lgaName": "Anka",
+      "sourceWardCode": "036001001",
+      "wardName": "Dan Galadima",
+      "expectedPollingUnits": 12
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036001",
+      "lgaName": "Anka",
+      "sourceWardCode": "036001001",
+      "wardName": "Galadima",
+      "expectedPollingUnits": 14
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036001",
+      "lgaName": "Anka",
+      "sourceWardCode": "036001001",
+      "wardName": "Magaji",
+      "expectedPollingUnits": 18
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036001",
+      "lgaName": "Anka",
+      "sourceWardCode": "036001001",
+      "wardName": "Matseri",
+      "expectedPollingUnits": 20
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036001",
+      "lgaName": "Anka",
+      "sourceWardCode": "036001001",
+      "wardName": "Sabon Birini",
+      "expectedPollingUnits": 16
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036001",
+      "lgaName": "Anka",
+      "sourceWardCode": "036001001",
+      "wardName": "Waramu",
+      "expectedPollingUnits": 15
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036001",
+      "lgaName": "Anka",
+      "sourceWardCode": "036001001",
+      "wardName": "Wuya",
+      "expectedPollingUnits": 17
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036001",
+      "lgaName": "Anka",
+      "sourceWardCode": "036001001",
+      "wardName": "Yar'Sabaya",
+      "expectedPollingUnits": 13
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036001",
+      "lgaName": "Anka",
+      "sourceWardCode": "036001001",
+      "wardName": "LGA TOTAL",
+      "expectedPollingUnits": 164
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036002",
+      "lgaName": "Bakura",
+      "sourceWardCode": "036002001",
+      "wardName": "Bakura",
+      "expectedPollingUnits": 37
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036002",
+      "lgaName": "Bakura",
+      "sourceWardCode": "036002001",
+      "wardName": "Birnin Tudu",
+      "expectedPollingUnits": 18
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036002",
+      "lgaName": "Bakura",
+      "sourceWardCode": "036002001",
+      "wardName": "Damri",
+      "expectedPollingUnits": 15
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036002",
+      "lgaName": "Bakura",
+      "sourceWardCode": "036002001",
+      "wardName": "Dankadu",
+      "expectedPollingUnits": 23
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036002",
+      "lgaName": "Bakura",
+      "sourceWardCode": "036002001",
+      "wardName": "Dan Manau",
+      "expectedPollingUnits": 26
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036002",
+      "lgaName": "Bakura",
+      "sourceWardCode": "036002001",
+      "wardName": "Yar Kufoji",
+      "expectedPollingUnits": 22
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036002",
+      "lgaName": "Bakura",
+      "sourceWardCode": "036002001",
+      "wardName": "Dakko",
+      "expectedPollingUnits": 12
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036002",
+      "lgaName": "Bakura",
+      "sourceWardCode": "036002001",
+      "wardName": "Nasarawa",
+      "expectedPollingUnits": 12
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036002",
+      "lgaName": "Bakura",
+      "sourceWardCode": "036002001",
+      "wardName": "Rini",
+      "expectedPollingUnits": 14
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036002",
+      "lgaName": "Bakura",
+      "sourceWardCode": "036002001",
+      "wardName": "Yar Geda",
+      "expectedPollingUnits": 10
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036002",
+      "lgaName": "Bakura",
+      "sourceWardCode": "036002001",
+      "wardName": "LGA TOTAL",
+      "expectedPollingUnits": 189
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036003",
+      "lgaName": "Birnin Magaji/Kiyaw",
+      "sourceWardCode": "036003001",
+      "wardName": "Birnin Magaji",
+      "expectedPollingUnits": 26
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036003",
+      "lgaName": "Birnin Magaji/Kiyaw",
+      "sourceWardCode": "036003001",
+      "wardName": "Danfami Sabon Birini",
+      "expectedPollingUnits": 18
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036003",
+      "lgaName": "Birnin Magaji/Kiyaw",
+      "sourceWardCode": "036003001",
+      "wardName": "Gora",
+      "expectedPollingUnits": 27
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036003",
+      "lgaName": "Birnin Magaji/Kiyaw",
+      "sourceWardCode": "036003001",
+      "wardName": "Gusami Gari",
+      "expectedPollingUnits": 14
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036003",
+      "lgaName": "Birnin Magaji/Kiyaw",
+      "sourceWardCode": "036003001",
+      "wardName": "Gusami Hayi",
+      "expectedPollingUnits": 11
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036003",
+      "lgaName": "Birnin Magaji/Kiyaw",
+      "sourceWardCode": "036003001",
+      "wardName": "Kiyawa",
+      "expectedPollingUnits": 20
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036003",
+      "lgaName": "Birnin Magaji/Kiyaw",
+      "sourceWardCode": "036003001",
+      "wardName": "Modomawa East",
+      "expectedPollingUnits": 15
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036003",
+      "lgaName": "Birnin Magaji/Kiyaw",
+      "sourceWardCode": "036003001",
+      "wardName": "Modomawa West",
+      "expectedPollingUnits": 21
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036003",
+      "lgaName": "Birnin Magaji/Kiyaw",
+      "sourceWardCode": "036003001",
+      "wardName": "Nasarawa Godal East",
+      "expectedPollingUnits": 15
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036003",
+      "lgaName": "Birnin Magaji/Kiyaw",
+      "sourceWardCode": "036003001",
+      "wardName": "Nasarawa Godal West",
+      "expectedPollingUnits": 20
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036003",
+      "lgaName": "Birnin Magaji/Kiyaw",
+      "sourceWardCode": "036003001",
+      "wardName": "LGA TOTAL",
+      "expectedPollingUnits": 187
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036007",
+      "lgaName": "Gusau",
+      "sourceWardCode": "036007001",
+      "wardName": "Galadima",
+      "expectedPollingUnits": 61
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036007",
+      "lgaName": "Gusau",
+      "sourceWardCode": "036007001",
+      "wardName": "Madawaki",
+      "expectedPollingUnits": 36
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036007",
+      "lgaName": "Gusau",
+      "sourceWardCode": "036007001",
+      "wardName": "Mada",
+      "expectedPollingUnits": 48
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036007",
+      "lgaName": "Gusau",
+      "sourceWardCode": "036007001",
+      "wardName": "Magami",
+      "expectedPollingUnits": 31
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036007",
+      "lgaName": "Gusau",
+      "sourceWardCode": "036007001",
+      "wardName": "Mayana",
+      "expectedPollingUnits": 87
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036007",
+      "lgaName": "Gusau",
+      "sourceWardCode": "036007001",
+      "wardName": "Rijiya",
+      "expectedPollingUnits": 22
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036007",
+      "lgaName": "Gusau",
+      "sourceWardCode": "036007001",
+      "wardName": "Ruwan Bore",
+      "expectedPollingUnits": 27
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036007",
+      "lgaName": "Gusau",
+      "sourceWardCode": "036007001",
+      "wardName": "Sabon Gari",
+      "expectedPollingUnits": 43
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036007",
+      "lgaName": "Gusau",
+      "sourceWardCode": "036007001",
+      "wardName": "Tudun Wada",
+      "expectedPollingUnits": 145
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036007",
+      "lgaName": "Gusau",
+      "sourceWardCode": "036007001",
+      "wardName": "Wanke",
+      "expectedPollingUnits": 32
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036007",
+      "lgaName": "Gusau",
+      "sourceWardCode": "036007001",
+      "wardName": "Wonaka",
+      "expectedPollingUnits": 32
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036007",
+      "lgaName": "Gusau",
+      "sourceWardCode": "036007001",
+      "wardName": "LGA TOTAL",
+      "expectedPollingUnits": 564
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036004",
+      "lgaName": "Bukkuyum",
+      "sourceWardCode": "036004001",
+      "wardName": "Adabka",
+      "expectedPollingUnits": 22
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036004",
+      "lgaName": "Bukkuyum",
+      "sourceWardCode": "036004002",
+      "wardName": "Bukkuyum",
+      "expectedPollingUnits": 26
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036004",
+      "lgaName": "Bukkuyum",
+      "sourceWardCode": "036004003",
+      "wardName": "Gwashi",
+      "expectedPollingUnits": 24
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036004",
+      "lgaName": "Bukkuyum",
+      "sourceWardCode": "036004004",
+      "wardName": "Kyaram",
+      "expectedPollingUnits": 21
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036004",
+      "lgaName": "Bukkuyum",
+      "sourceWardCode": "036004005",
+      "wardName": "Masama",
+      "expectedPollingUnits": 9
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036004",
+      "lgaName": "Bukkuyum",
+      "sourceWardCode": "036004006",
+      "wardName": "Nasarawa",
+      "expectedPollingUnits": 31
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036004",
+      "lgaName": "Bukkuyum",
+      "sourceWardCode": "036004007",
+      "wardName": "Ruwan Jema",
+      "expectedPollingUnits": 17
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036004",
+      "lgaName": "Bukkuyum",
+      "sourceWardCode": "036004008",
+      "wardName": "Yashi",
+      "expectedPollingUnits": 9
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036004",
+      "lgaName": "Bukkuyum",
+      "sourceWardCode": "036004009",
+      "wardName": "Zarummai",
+      "expectedPollingUnits": 24
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036004",
+      "lgaName": "Bukkuyum",
+      "sourceWardCode": "036004010",
+      "wardName": "Zauma",
+      "expectedPollingUnits": 10
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036005",
+      "lgaName": "Bungudu",
+      "sourceWardCode": "036005001",
+      "wardName": "Bingi North",
+      "expectedPollingUnits": 29
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036005",
+      "lgaName": "Bungudu",
+      "sourceWardCode": "036005002",
+      "wardName": "Bingi South",
+      "expectedPollingUnits": 26
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036005",
+      "lgaName": "Bungudu",
+      "sourceWardCode": "036005003",
+      "wardName": "Bungudu",
+      "expectedPollingUnits": 38
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036005",
+      "lgaName": "Bungudu",
+      "sourceWardCode": "036005004",
+      "wardName": "Furfuri/Kwai-Kwai",
+      "expectedPollingUnits": 36
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036005",
+      "lgaName": "Bungudu",
+      "sourceWardCode": "036005005",
+      "wardName": "Gada/Karakkai",
+      "expectedPollingUnits": 28
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036005",
+      "lgaName": "Bungudu",
+      "sourceWardCode": "036005006",
+      "wardName": "Nahuce",
+      "expectedPollingUnits": 29
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036005",
+      "lgaName": "Bungudu",
+      "sourceWardCode": "036005007",
+      "wardName": "Kwatarkwashi",
+      "expectedPollingUnits": 38
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036005",
+      "lgaName": "Bungudu",
+      "sourceWardCode": "036005008",
+      "wardName": "Rawayya/Bela",
+      "expectedPollingUnits": 41
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036005",
+      "lgaName": "Bungudu",
+      "sourceWardCode": "036005009",
+      "wardName": "Samawa",
+      "expectedPollingUnits": 17
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036005",
+      "lgaName": "Bungudu",
+      "sourceWardCode": "036005010",
+      "wardName": "Sankalawa",
+      "expectedPollingUnits": 22
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036005",
+      "lgaName": "Bungudu",
+      "sourceWardCode": "036005011",
+      "wardName": "Tofa",
+      "expectedPollingUnits": 21
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036006",
+      "lgaName": "Gummi",
+      "sourceWardCode": "036006001",
+      "wardName": "Bardoki",
+      "expectedPollingUnits": 25
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036006",
+      "lgaName": "Gummi",
+      "sourceWardCode": "036006002",
+      "wardName": "Birnin Magaji",
+      "expectedPollingUnits": 13
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036006",
+      "lgaName": "Gummi",
+      "sourceWardCode": "036006003",
+      "wardName": "Birnin Tudu",
+      "expectedPollingUnits": 25
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036006",
+      "lgaName": "Gummi",
+      "sourceWardCode": "036006004",
+      "wardName": "Falale",
+      "expectedPollingUnits": 11
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036006",
+      "lgaName": "Gummi",
+      "sourceWardCode": "036006005",
+      "wardName": "Felfeldu/Gamo",
+      "expectedPollingUnits": 11
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036006",
+      "lgaName": "Gummi",
+      "sourceWardCode": "036006006",
+      "wardName": "Gayari",
+      "expectedPollingUnits": 19
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036006",
+      "lgaName": "Gummi",
+      "sourceWardCode": "036006007",
+      "wardName": "Gyalange",
+      "expectedPollingUnits": 14
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036006",
+      "lgaName": "Gummi",
+      "sourceWardCode": "036006008",
+      "wardName": "Illelar Awal",
+      "expectedPollingUnits": 20
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036006",
+      "lgaName": "Gummi",
+      "sourceWardCode": "036006009",
+      "wardName": "Magajin Gari",
+      "expectedPollingUnits": 44
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036006",
+      "lgaName": "Gummi",
+      "sourceWardCode": "036006010",
+      "wardName": "Shiyar Rafi",
+      "expectedPollingUnits": 17
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036006",
+      "lgaName": "Gummi",
+      "sourceWardCode": "036006011",
+      "wardName": "Ubandawaki",
+      "expectedPollingUnits": 22
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036008",
+      "lgaName": "Kaura Namoda",
+      "sourceWardCode": "036008001",
+      "wardName": "Banga",
+      "expectedPollingUnits": 21
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036008",
+      "lgaName": "Kaura Namoda",
+      "sourceWardCode": "036008002",
+      "wardName": "Danisa",
+      "expectedPollingUnits": 26
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036008",
+      "lgaName": "Kaura Namoda",
+      "sourceWardCode": "036008003",
+      "wardName": "Gabake",
+      "expectedPollingUnits": 18
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036008",
+      "lgaName": "Kaura Namoda",
+      "sourceWardCode": "036008004",
+      "wardName": "Galadima Dan Galadima",
+      "expectedPollingUnits": 39
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036008",
+      "lgaName": "Kaura Namoda",
+      "sourceWardCode": "036008005",
+      "wardName": "Kagara",
+      "expectedPollingUnits": 12
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036008",
+      "lgaName": "Kaura Namoda",
+      "sourceWardCode": "036008006",
+      "wardName": "Kungurki",
+      "expectedPollingUnits": 29
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036008",
+      "lgaName": "Kaura Namoda",
+      "sourceWardCode": "036008007",
+      "wardName": "Kurya Madaro",
+      "expectedPollingUnits": 19
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036008",
+      "lgaName": "Kaura Namoda",
+      "sourceWardCode": "036008008",
+      "wardName": "Kyam Barawa",
+      "expectedPollingUnits": 18
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036008",
+      "lgaName": "Kaura Namoda",
+      "sourceWardCode": "036008009",
+      "wardName": "Sakajiki",
+      "expectedPollingUnits": 13
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036008",
+      "lgaName": "Kaura Namoda",
+      "sourceWardCode": "036008010",
+      "wardName": "S/Baura/S/Mafara",
+      "expectedPollingUnits": 53
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036008",
+      "lgaName": "Kaura Namoda",
+      "sourceWardCode": "036008011",
+      "wardName": "Yankaba",
+      "expectedPollingUnits": 13
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036009",
+      "lgaName": "Maradun",
+      "sourceWardCode": "036009001",
+      "wardName": "Birnin Kaya/Dosara",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036009",
+      "lgaName": "Maradun",
+      "sourceWardCode": "036009002",
+      "wardName": "Damaga/Damagiwa",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036009",
+      "lgaName": "Maradun",
+      "sourceWardCode": "036009003",
+      "wardName": "Faru/Magami",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036009",
+      "lgaName": "Maradun",
+      "sourceWardCode": "036009004",
+      "wardName": "Gora",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036009",
+      "lgaName": "Maradun",
+      "sourceWardCode": "036009005",
+      "wardName": "Gidan Goga",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036009",
+      "lgaName": "Maradun",
+      "sourceWardCode": "036009006",
+      "wardName": "Janbako",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036009",
+      "lgaName": "Maradun",
+      "sourceWardCode": "036009007",
+      "wardName": "Kaya",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036009",
+      "lgaName": "Maradun",
+      "sourceWardCode": "036009008",
+      "wardName": "Maradun North",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036009",
+      "lgaName": "Maradun",
+      "sourceWardCode": "036009009",
+      "wardName": "Maradun South",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036009",
+      "lgaName": "Maradun",
+      "sourceWardCode": "036009010",
+      "wardName": "Tsibiri",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036010",
+      "lgaName": "Maru",
+      "sourceWardCode": "036010001",
+      "wardName": "Bindin",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036010",
+      "lgaName": "Maru",
+      "sourceWardCode": "036010002",
+      "wardName": "Bingi",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036010",
+      "lgaName": "Maru",
+      "sourceWardCode": "036010003",
+      "wardName": "Dan Gulbi",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036010",
+      "lgaName": "Maru",
+      "sourceWardCode": "036010004",
+      "wardName": "Dan Kurmi",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036010",
+      "lgaName": "Maru",
+      "sourceWardCode": "036010005",
+      "wardName": "Dan Sadau",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036010",
+      "lgaName": "Maru",
+      "sourceWardCode": "036010006",
+      "wardName": "Kanoma",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036010",
+      "lgaName": "Maru",
+      "sourceWardCode": "036010007",
+      "wardName": "Kuyan Bana",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036010",
+      "lgaName": "Maru",
+      "sourceWardCode": "036010008",
+      "wardName": "Maru",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036010",
+      "lgaName": "Maru",
+      "sourceWardCode": "036010009",
+      "wardName": "Mayanchi",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036010",
+      "lgaName": "Maru",
+      "sourceWardCode": "036010010",
+      "wardName": "Ruwan Dorawa",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036011",
+      "lgaName": "Shinkafi",
+      "sourceWardCode": "036011001",
+      "wardName": "Badarawa",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036011",
+      "lgaName": "Shinkafi",
+      "sourceWardCode": "036011002",
+      "wardName": "Birnin Yaro",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036011",
+      "lgaName": "Shinkafi",
+      "sourceWardCode": "036011003",
+      "wardName": "Galadi",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036011",
+      "lgaName": "Shinkafi",
+      "sourceWardCode": "036011004",
+      "wardName": "Jangeru",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036011",
+      "lgaName": "Shinkafi",
+      "sourceWardCode": "036011005",
+      "wardName": "Katuru",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036011",
+      "lgaName": "Shinkafi",
+      "sourceWardCode": "036011006",
+      "wardName": "Kware",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036011",
+      "lgaName": "Shinkafi",
+      "sourceWardCode": "036011007",
+      "wardName": "Kurya",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036011",
+      "lgaName": "Shinkafi",
+      "sourceWardCode": "036011008",
+      "wardName": "Shinkafi North",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036011",
+      "lgaName": "Shinkafi",
+      "sourceWardCode": "036011009",
+      "wardName": "Shinkafi South",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036011",
+      "lgaName": "Shinkafi",
+      "sourceWardCode": "036011010",
+      "wardName": "Shanawa",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036012",
+      "lgaName": "Talata Mafara",
+      "sourceWardCode": "036012001",
+      "wardName": "Garbadu",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036012",
+      "lgaName": "Talata Mafara",
+      "sourceWardCode": "036012002",
+      "wardName": "Gwaram",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036012",
+      "lgaName": "Talata Mafara",
+      "sourceWardCode": "036012003",
+      "wardName": "Jangebe",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036012",
+      "lgaName": "Talata Mafara",
+      "sourceWardCode": "036012004",
+      "wardName": "Kagara",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036012",
+      "lgaName": "Talata Mafara",
+      "sourceWardCode": "036012005",
+      "wardName": "Morai",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036012",
+      "lgaName": "Talata Mafara",
+      "sourceWardCode": "036012006",
+      "wardName": "Ruwan Bore",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036012",
+      "lgaName": "Talata Mafara",
+      "sourceWardCode": "036012007",
+      "wardName": "Ruwan Gizo",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036012",
+      "lgaName": "Talata Mafara",
+      "sourceWardCode": "036012008",
+      "wardName": "Sauna R/Gora",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036012",
+      "lgaName": "Talata Mafara",
+      "sourceWardCode": "036012009",
+      "wardName": "Shiyar Galadima",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036012",
+      "lgaName": "Talata Mafara",
+      "sourceWardCode": "036012010",
+      "wardName": "Shiyar Kayaye/Matusgi",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036012",
+      "lgaName": "Talata Mafara",
+      "sourceWardCode": "036012011",
+      "wardName": "Take Tsaba/Makera",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036013",
+      "lgaName": "Tsafe",
+      "sourceWardCode": "036013001",
+      "wardName": "Kwaren Ganuwa",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036013",
+      "lgaName": "Tsafe",
+      "sourceWardCode": "036013002",
+      "wardName": "Yan Kuzo \"B\"",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036013",
+      "lgaName": "Tsafe",
+      "sourceWardCode": "036013003",
+      "wardName": "Yandoton Daji",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036013",
+      "lgaName": "Tsafe",
+      "sourceWardCode": "036013004",
+      "wardName": "Yankuzo \"A\"",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036013",
+      "lgaName": "Tsafe",
+      "sourceWardCode": "036013005",
+      "wardName": "Danjibga/Kunchinkalgo",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036013",
+      "lgaName": "Tsafe",
+      "sourceWardCode": "036013006",
+      "wardName": "Dauki",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036013",
+      "lgaName": "Tsafe",
+      "sourceWardCode": "036013007",
+      "wardName": "Keta/Kizara",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036013",
+      "lgaName": "Tsafe",
+      "sourceWardCode": "036013008",
+      "wardName": "Tsafe",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036013",
+      "lgaName": "Tsafe",
+      "sourceWardCode": "036013009",
+      "wardName": "Chediya",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036013",
+      "lgaName": "Tsafe",
+      "sourceWardCode": "036013010",
+      "wardName": "Yan Waren Daji",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036013",
+      "lgaName": "Tsafe",
+      "sourceWardCode": "036013011",
+      "wardName": "Bilbis",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036014",
+      "lgaName": "Zurmi",
+      "sourceWardCode": "036014001",
+      "wardName": "Boko",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036014",
+      "lgaName": "Zurmi",
+      "sourceWardCode": "036014002",
+      "wardName": "Dauran/Birnin-Tsaba",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036014",
+      "lgaName": "Zurmi",
+      "sourceWardCode": "036014003",
+      "wardName": "Dole",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036014",
+      "lgaName": "Zurmi",
+      "sourceWardCode": "036014004",
+      "wardName": "Galadima/Yanruwa",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036014",
+      "lgaName": "Zurmi",
+      "sourceWardCode": "036014005",
+      "wardName": "Kanwa",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036014",
+      "lgaName": "Zurmi",
+      "sourceWardCode": "036014006",
+      "wardName": "Kwashbawa",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036014",
+      "lgaName": "Zurmi",
+      "sourceWardCode": "036014007",
+      "wardName": "Mashem",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036014",
+      "lgaName": "Zurmi",
+      "sourceWardCode": "036014008",
+      "wardName": "Kuturu/Mayasa",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036014",
+      "lgaName": "Zurmi",
+      "sourceWardCode": "036014009",
+      "wardName": "Rukudawa",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036014",
+      "lgaName": "Zurmi",
+      "sourceWardCode": "036014010",
+      "wardName": "Yan Buki/Dutsi",
+      "expectedPollingUnits": null
+    },
+    {
+      "stateCode": "NG-ZA",
+      "sourceLgaCode": "036014",
+      "lgaName": "Zurmi",
+      "sourceWardCode": "036014011",
+      "wardName": "Zurmi",
+      "expectedPollingUnits": null
+    }
+  ],
+  "dataQualityWarnings": [
+    "Source workbook contains LGA code 036008 assigned to both Kaura and Kaura Namoda. This collision is preserved as source metadata; do not import the source code as unique document IDs.",
+    "The Geographical Data sheet repeats ward source codes across multiple ward names within the same LGA. Internal unique ward document IDs were generated for import, while sourceWardCode/officialCode retains the source code as provided. These generated IDs are internal IDs, not official INEC codes.",
+    "The source workbook contains 147 named wards in Geographical Data, while Ward PU Counts contains 151 rows. This discrepancy requires review.",
+    "The workbook provides expected polling-unit counts/placeholders only. It contains zero individual polling-unit names/codes; polling-unit records are not generated.",
+    "Data is pending verification against official source. Do not mark verified without validation."
+  ]
+}

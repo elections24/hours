@@ -1,0 +1,24 @@
+THE EYES Geography Data Validation Report
+Source workbook: EYES_V3_Zamfara_Consolidated_LGAs_Wards_Master_UPDATED_Zurmi-1.xlsx
+
+Summary:
+- State: Zamfara (state source code 036)
+- LGA Summary: 15 rows
+- Geographical Data: 157 rows including placeholders
+- Named wards: 147
+- Ward PU Counts: 151 rows
+- Individual polling-unit records: 0
+
+Issues:
+1. LGA code 036008 appears for both Kaura and Kaura Namoda.
+2. Ward source codes repeat across multiple ward names within the same LGA. Example: Anka ward names all share source ward code 036001001.
+3. 147 named wards in Geographical Data vs 151 Ward PU Counts rows. Difference: 4 rows.
+4. 10 placeholder/blank ward-name rows appear in Geographical Data and are not converted into actual ward records.
+5. Polling unit names/codes are absent. Expected PU counts are not polling-unit records.
+6. Codes described by source workbook as proposed internal codes, not verified official INEC codes.
+
+Data handling:
+- Source workbook retained unchanged.
+- Normalized upload workbook uses generated unique internal document IDs to avoid Firestore ID collisions.
+- Source codes are preserved separately in sourceLgaCode/sourceWardCode and officialCode columns (officialCode values remain unverified).
+- verificationStatus remains pending.

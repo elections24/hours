@@ -1,0 +1,67 @@
+{
+  "version": "1.1",
+  "country": "Nigeria",
+  "collections": {
+    "States": {
+      "collection": "geographyStates",
+      "required": [
+        "code",
+        "name"
+      ]
+    },
+    "SenatorialZones": {
+      "collection": "geographySenatorialZones",
+      "required": [
+        "code",
+        "name",
+        "stateCode"
+      ]
+    },
+    "FederalConstituencies": {
+      "collection": "geographyFederalConstituencies",
+      "required": [
+        "code",
+        "name",
+        "stateCode"
+      ]
+    },
+    "LGAs": {
+      "collection": "geographyLGAs",
+      "required": [
+        "code",
+        "name",
+        "stateCode"
+      ]
+    },
+    "Wards": {
+      "collection": "geographyWards",
+      "required": [
+        "code",
+        "name",
+        "stateCode",
+        "lgaCode"
+      ]
+    },
+    "PollingUnits": {
+      "collection": "geographyPollingUnits",
+      "required": [
+        "code",
+        "name",
+        "stateCode",
+        "lgaCode",
+        "wardCode"
+      ]
+    }
+  },
+  "currentImport": {
+    "states": 1,
+    "lgas": 15,
+    "namedWards": 147,
+    "pollingUnitRecords": 0
+  },
+  "source": "User-provided Zamfara workbook",
+  "cautions": [
+    "Some source codes collide/repeat; internal IDs are generated to prevent Firestore document collisions.",
+    "Do not treat expected PU counts as actual polling unit records."
+  ]
+}
