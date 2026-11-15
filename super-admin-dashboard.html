@@ -31,7 +31,7 @@
 <div class="sectionstep">1. Select Election Type</div>
 <div class="grid">
 <div class="field"><label for="electionType">Election Type *</label><select id="electionType" required><option value="">Select Election Type</option><option value="presidential">Presidential Election</option><option value="gubernatorial">Gubernatorial Election</option><option value="senatorial">Senatorial Election</option><option value="house_of_representatives">House of Representatives Election</option></select></div>
-<div class="field"><label for="candidateName">Candidate Name *</label><input id="candidateName" type="text" required autocomplete="off" placeholder="Enter candidate full name"></div>
+<div class="field"><label for="candidateSelect">Candidate *</label><select id="candidateSelect" required disabled><option value="">Select election type first</option></select></div>
 </div>
 <div class="sectionstep">2. Geographical Mapping</div>
 <div class="grid">
@@ -61,6 +61,23 @@
 <section class="page hidden" id="agentsPage"><div class="pagehead"><div><h1>Registered Agents</h1><p class="sub">Search, inspect, and manage election-specific agent assignments.</p></div><button class="btn primary" data-goto="register">＋ Register Agent</button></div><div class="panel"><div class="grid"><div class="field"><label>Search agents</label><input id="agentSearch" placeholder="Name, username, email, state, election…"></div><div class="field"><label>Filter election</label><select id="agentFilter"><option value="">All elections</option><option value="presidential">Presidential</option><option value="gubernatorial">Gubernatorial</option><option value="senatorial">Senatorial</option><option value="house_of_representatives">House of Representatives</option></select></div></div><div id="agentsTable" class="tablewrap" style="margin-top:15px"><div class="empty">Loading agents…</div></div></div></section>
 <section class="page hidden" id="geographyPage">
 <div class="pagehead"><div><h1>Geographical Administration</h1><p class="sub">Create States, LGAs, Wards, and Polling Units in four separate sections.</p></div><span class="pill">Super Admin only</span></div>
+
+<div class="panel" id="candidateManagePanel">
+<h2>Candidate Management</h2>
+<p class="desc">Create candidates here first. They will appear in Register Agent after you select the matching election type.</p>
+<form id="candidateForm">
+<div class="grid">
+<div class="field"><label for="candidateElectionType">Election Type *</label><select id="candidateElectionType" required><option value="">Select Election Type</option><option value="presidential">Presidential Election</option><option value="gubernatorial">Gubernatorial Election</option><option value="senatorial">Senatorial Election</option><option value="house_of_representatives">House of Representatives Election</option></select></div>
+<div class="field"><label for="candidateNameInput">Candidate Name *</label><input id="candidateNameInput" required autocomplete="off" placeholder="Enter candidate full name"></div>
+</div>
+<div class="actions"><button class="btn primary" id="saveCandidateBtn">Create Candidate</button><button class="btn secondary" type="reset">Clear</button></div>
+<div id="candidateNotice" class="notice"></div>
+</form>
+<div class="grid" style="margin-top:18px">
+<div class="field"><label for="candidateListElection">Filter Candidates by Election</label><select id="candidateListElection"><option value="">All Elections</option><option value="presidential">Presidential Election</option><option value="gubernatorial">Gubernatorial Election</option><option value="senatorial">Senatorial Election</option><option value="house_of_representatives">House of Representatives Election</option></select></div>
+</div>
+<div id="candidateTable" class="tablewrap" style="margin-top:12px"><div class="empty">Loading candidates…</div></div>
+</div>
 
 <div class="panel">
 <h2>1. Create State / FCT</h2>
@@ -128,7 +145,7 @@
 </div>
 </section>
 <section class="page hidden" id="statusPage"><div class="pagehead"><div><h1>Agent Account Status</h1><p class="sub">Enable or disable agent accounts and review assignments.</p></div></div><div class="panel"><div id="statusTable" class="tablewrap"><div class="empty">Loading account statuses…</div></div></div></section>
-<section class="page hidden" id="settingsPage"><div class="pagehead"><div><h1>Firebase &amp; Data Guide</h1><p class="sub">Project connection and required data model.</p></div></div><div class="panel"><h2>Connected Firebase project</h2><p class="desc">This file uses the Firebase configuration from your THE EYES V3 agent registration and Super Admin login files.</p><div class="geo-notice"><b>Project ID:</b> election-8e790<br><b>Firestore:</b> users/{uid} for account role verification; electionAgents/{uid} for agent assignment profiles; geography master collections listed below.</div></div><div class="panel"><h2>Firestore collection structure</h2><ul><li><code>users/{uid}</code> — account profile, role, active/status</li><li><code>electionAgents/{uid}</code> — electionType, agentRole, geography, assigned scope, account status</li><li><code>geographyStates/{stateCode}</code></li><li><code>geographySenatorialZones/{zoneCode}</code> — stateCode parent</li><li><code>geographyFederalConstituencies/{constituencyCode}</code> — stateCode parent</li><li><code>geographyLGAs/{lgaCode}</code> — stateCode plus optional zoneCode/constituencyCode</li><li><code>geographyWards/{wardCode}</code> — lgaCode parent</li><li><code>geographyPollingUnits/{pollingUnitCode}</code> — wardCode parent</li></ul><p class="desc">Reports should store electionType and location identifiers, and Firestore Security Rules must validate those fields against the authenticated user's assignment.</p></div><div class="panel"><h2>Important production security</h2><p class="desc">Firebase web configuration is public by design; Firestore Security Rules and a trusted server-side function are the security boundary. Do not rely on hiding pages or filtering dropdowns to enforce access. The account creation flow is currently client-side and should be migrated to a protected Cloud Function/Admin SDK before broad production deployment.</p></div></section>
+<section class="page hidden" id="settingsPage"><div class="pagehead"><div><h1>Firebase &amp; Data Guide</h1><p class="sub">Project connection and required data model.</p></div></div><div class="panel"><h2>Connected Firebase project</h2><p class="desc">This file uses the Firebase configuration from your THE EYES V3 agent registration and Super Admin login files.</p><div class="geo-notice"><b>Project ID:</b> election-8e790<br><b>Firestore:</b> users/{uid} for account role verification; electionAgents/{uid} for agent assignment profiles; geography master collections listed below.</div></div><div class="panel"><h2>Firestore collection structure</h2><ul><li><code>users/{uid}</code> — account profile, role, active/status</li><li><code>electionAgents/{uid}</code> — candidateId, candidateName, electionType, agentRole, geography, assigned scope, account status</li><li><code>candidates/{candidateId}</code> — candidate master record, electionType, active status</li><li><code>geographyStates/{stateCode}</code></li><li><code>geographySenatorialZones/{zoneCode}</code> — stateCode parent</li><li><code>geographyFederalConstituencies/{constituencyCode}</code> — stateCode parent</li><li><code>geographyLGAs/{lgaCode}</code> — stateCode plus optional zoneCode/constituencyCode</li><li><code>geographyWards/{wardCode}</code> — lgaCode parent</li><li><code>geographyPollingUnits/{pollingUnitCode}</code> — wardCode parent</li></ul><p class="desc">Reports should store electionType and location identifiers, and Firestore Security Rules must validate those fields against the authenticated user's assignment.</p></div><div class="panel"><h2>Important production security</h2><p class="desc">Firebase web configuration is public by design; Firestore Security Rules and a trusted server-side function are the security boundary. Do not rely on hiding pages or filtering dropdowns to enforce access. The account creation flow is currently client-side and should be migrated to a protected Cloud Function/Admin SDK before broad production deployment.</p></div></section>
 <div class="footer">THE EYES · Election Monitoring &amp; Reporting System · Secure administration</div>
 </main></div></div>
 <script type="module">
@@ -237,7 +254,7 @@ function inecZonesForState(stateName){
 
 
 function notice(id,msg,type='info'){const n=$(id);n.textContent=msg;n.className='notice show '+type}
-function showPage(page){document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));$(page+'Page').classList.remove('hidden');document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active',b.dataset.page===page));$('sidebar').classList.remove('open');if(page==='agents'||page==='status'||page==='dashboard')loadAgents();if(page==='geography'){reloadGeoStateOptions().catch(console.warn);initGeoManage().catch(console.warn);}}
+function showPage(page){document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));$(page+'Page').classList.remove('hidden');document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active',b.dataset.page===page));$('sidebar').classList.remove('open');if(page==='agents'||page==='status'||page==='dashboard')loadAgents();if(page==='geography'){reloadGeoStateOptions().catch(console.warn);initGeoManage().catch(console.warn);loadCandidates().catch(console.warn);}}
 document.querySelectorAll('.navbtn').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.goto)));$('mobileMenu').onclick=()=>$('sidebar').classList.toggle('open');
 $('loginForm').addEventListener('submit',async e=>{e.preventDefault();$('loginBtn').disabled=true;try{await signInWithEmailAndPassword(auth,$('loginEmail').value.trim().toLowerCase(),$('loginPassword').value)}catch(err){notice('loginNotice',err.message||'Sign-in failed.','error')}finally{$('loginBtn').disabled=false}});
 onAuthStateChanged(auth,async user=>{if(!user){$('appView').classList.add('hidden');$('loginView').classList.remove('hidden');return}try{const snap=await getDoc(doc(db,'users',user.uid)),profile=snap.exists()?snap.data():{};if(profile.role!=='super_admin'||profile.active===false||profile.status==='disabled'){await signOut(auth);notice('loginNotice','Access denied. This account is not an active Super Administrator.','error');return}$('loginView').classList.add('hidden');$('appView').classList.remove('hidden');$('adminEmail').textContent=user.email||'Super Administrator';await loadStates();showPage('dashboard')}catch(err){await signOut(auth);notice('loginNotice','Could not verify Super Admin role. '+(err.message||''),'error')}});
@@ -298,7 +315,7 @@ function updateRoleOptions(){
   updateGeoVisibility();
   if($('stateSelect').value) $('stateSelect').dispatchEvent(new Event('change'));
 }
-$('electionType').addEventListener('change',updateRoleOptions);$('agentRole').addEventListener('change',updateGeoVisibility);
+$('electionType').addEventListener('change',async()=>{updateRoleOptions();await loadCandidates();});$('agentRole').addEventListener('change',updateGeoVisibility);
 function updateGeoVisibility(){const e=$('electionType').value,r=$('agentRole').value;const isSen=e==='senatorial',isHouse=e==='house_of_representatives';$('zoneField').classList.toggle('hidden',!isSen||!['senatorial_zone_agent','local_government_collation_agent','ward_collation_agent','polling_unit_agent'].includes(r));$('constituencyField').classList.toggle('hidden',!isHouse||!['federal_constituency_agent','local_government_collation_agent','ward_collation_agent','polling_unit_agent'].includes(r));const needLga=['local_government_collation_agent','ward_collation_agent','polling_unit_agent'].includes(r);$('lgaField').classList.toggle('hidden',!needLga);$('wardField').classList.toggle('hidden',!['ward_collation_agent','polling_unit_agent'].includes(r));$('puField').classList.toggle('hidden',r!=='polling_unit_agent');$('zoneLabel').textContent='Senatorial Zone *';}
 $('stateSelect').addEventListener('change',async()=>{
   const stateCode=$('stateSelect').value;
@@ -404,22 +421,107 @@ $('wardSelect').addEventListener('change',async()=>{
   }catch(e){notice('agentNotice','Could not load polling units: '+e.message,'error');console.error(e)}
 });
 
-function buildCandidateIdentity(name,electionType){
-  const clean=String(name||'').trim().replace(/\\s+/g,' ');
-  const normalized=clean.normalize('NFKD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase();
-  const slug=normalized.replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-  if(!slug)throw new Error('Enter a valid candidate name.');
-  return {candidateId:electionType+'__'+slug,candidateName:clean,candidateNameNormalized:normalized};
+let candidatesCache=[];
+async function loadCandidates(){
+  try{
+    candidatesCache=(await fetchCollection('candidates')).sort((a,b)=>(a.candidateName||a.name||'').localeCompare(b.candidateName||b.name||''));
+    renderCandidateTable();
+    await refreshAgentCandidateOptions();
+  }catch(err){
+    console.warn('Candidate load failed',err);
+    if($('candidateTable'))$('candidateTable').innerHTML='<div class="empty">Could not load candidates. Check Firestore rules for the candidates collection.</div>';
+    if($('candidateSelect'))fill($('candidateSelect'),[],'Candidates could not be loaded');
+  }
+}
+function renderCandidateTable(){
+  if(!$('candidateTable'))return;
+  const filter=$('candidateListElection').value;
+  const rows=candidatesCache.filter(c=>(!filter||c.electionType===filter));
+  $('candidateTable').innerHTML=rows.length?`<table><thead><tr><th>Candidate</th><th>Election</th><th>Candidate ID</th><th>Status</th><th>Action</th></tr></thead><tbody>${rows.map(c=>`<tr><td><b>${esc(c.candidateName||c.name||'—')}</b></td><td>${esc(electionNames[c.electionType]||c.electionType||'—')}</td><td>${esc(c.candidateId||c.id)}</td><td><span class="status ${c.active===false?'disabled':''}">${c.active===false?'Inactive':'Active'}</span></td><td><button class="smallbtn" data-candidate-toggle="${esc(c.id)}">${c.active===false?'Activate':'Deactivate'}</button></td></tr>`).join('')}</tbody></table>`:'<div class="empty">No candidates created for this election yet.</div>';
+  document.querySelectorAll('[data-candidate-toggle]').forEach(btn=>btn.onclick=()=>toggleCandidate(btn.dataset.candidateToggle));
+}
+async function refreshAgentCandidateOptions(){
+  if(!$('candidateSelect'))return;
+  const election=$('electionType').value;
+  const list=candidatesCache.filter(c=>c.electionType===election&&c.active!==false);
+  fill($('candidateSelect'),list,election?'Select Candidate':'Select election type first',c=>c.candidateName||c.name||c.id);
+  $('candidateSelect').disabled=!election||!list.length;
+  if(election&&!list.length)notice('agentNotice','No active candidates exist for this election. Create one in Geographical Administration → Candidate Management first.','info');
+}
+async function toggleCandidate(id){
+  const c=candidatesCache.find(x=>x.id===id);if(!c)return;
+  const active=c.active===false;
+  try{
+    await updateDoc(doc(db,'candidates',id),{active,updatedAt:serverTimestamp()});
+    await loadCandidates();
+    notice('candidateNotice',`Candidate ${active?'activated':'deactivated'} successfully.`,'success');
+  }catch(e){notice('candidateNotice','Could not update candidate: '+e.message,'error')}
 }
 function chosenName(id){const el=$(id);return el.selectedOptions[0]?.dataset.name||el.selectedOptions[0]?.textContent||''}
 function getGeo(){const role=$('agentRole').value,election=$('electionType').value;return {stateCode:$('stateSelect').value,state:chosenName('stateSelect'),senatorialZoneCode:$('zoneSelect').value||null,senatorialZone:$('zoneSelect').value?chosenName('zoneSelect'):null,federalConstituencyCode:$('constituencySelect').value||null,federalConstituency:$('constituencySelect').value?chosenName('constituencySelect'):null,lgaCode:$('lgaSelect').value||null,lga:$('lgaSelect').value?chosenName('lgaSelect'):null,wardCode:$('wardSelect').value||null,ward:$('wardSelect').value?chosenName('wardSelect'):null,pollingUnitCode:$('puSelect').value||null,pollingUnit:$('puSelect').value?chosenName('puSelect'):null}}
 function requiredGeoValid(){const r=$('agentRole').value,g=getGeo();if(!g.stateCode)return false;if(['local_government_collation_agent','ward_collation_agent','polling_unit_agent'].includes(r)&&!g.lgaCode)return false;if(['ward_collation_agent','polling_unit_agent'].includes(r)&&!g.wardCode)return false;if(r==='polling_unit_agent'&&!g.pollingUnitCode)return false;if($('electionType').value==='senatorial'&&['senatorial_zone_agent','local_government_collation_agent','ward_collation_agent','polling_unit_agent'].includes(r)&&!g.senatorialZoneCode)return false;if($('electionType').value==='house_of_representatives'&&['federal_constituency_agent','local_government_collation_agent','ward_collation_agent','polling_unit_agent'].includes(r)&&!g.federalConstituencyCode)return false;return true}
-$('agentForm').addEventListener('submit',async e=>{e.preventDefault();const user=auth.currentUser;if(!user){notice('agentNotice','Please sign in again.','error');return}if(!$('candidateName').value.trim()){notice('agentNotice','Please enter the candidate name.','error');return}if(!requiredGeoValid()){notice('agentNotice','Please complete the geographical assignment required for the selected agent role.','error');return}const btn=$('createAgentBtn');btn.disabled=true;btn.textContent='Creating account…';let createdUser=null;try{if(!secondaryApp){secondaryApp=initializeApp(firebaseConfig,'THE_EYES_AGENT_CREATION');secondaryAuth=getAuth(secondaryApp)}const email=$('agentEmail').value.trim().toLowerCase();const cred=await createUserWithEmailAndPassword(secondaryAuth,email,$('agentPassword').value);createdUser=cred.user;const electionType=$('electionType').value,agentRole=$('agentRole').value,geo=getGeo();const status=$('agentStatus').value;const candidate=buildCandidateIdentity($('candidateName').value,electionType);const profile={candidateId:candidate.candidateId,candidateName:candidate.candidateName,candidateNameNormalized:candidate.candidateNameNormalized,uid:createdUser.uid,fullName:$('fullName').value.trim(),username:$('username').value.trim(),email,phone:$('phone').value.trim()||null,role:'agent',agentRole,agentRoleLabel:roleNames[agentRole],electionType,electionName:electionNames[electionType],geography:geo,assignedScope:{stateCode:geo.stateCode,senatorialZoneCode:geo.senatorialZoneCode,federalConstituencyCode:geo.federalConstituencyCode,lgaCode:geo.lgaCode,wardCode:geo.wardCode,pollingUnitCode:geo.pollingUnitCode},active:status==='active',status,assignmentNotes:$('notes').value.trim()||null,createdBy:user.uid,createdAt:serverTimestamp(),updatedAt:serverTimestamp()};await setDoc(doc(db,'candidates',candidate.candidateId),{candidateId:candidate.candidateId,candidateName:candidate.candidateName,candidateNameNormalized:candidate.candidateNameNormalized,electionType,electionName:electionNames[electionType],updatedAt:serverTimestamp(),createdBy:user.uid},{merge:true});await setDoc(doc(db,'users',createdUser.uid),profile);await setDoc(doc(db,'electionAgents',createdUser.uid),profile);notice('agentNotice',`Agent account created successfully.\nCandidate: ${profile.candidateName}\nCandidate ID: ${profile.candidateId}\nName: ${profile.fullName}\nElection: ${profile.electionName}\nRole: ${profile.agentRoleLabel}\nScope: ${geo.state}${geo.senatorialZone?' → '+geo.senatorialZone:''}${geo.federalConstituency?' → '+geo.federalConstituency:''}${geo.lga?' → '+geo.lga:''}${geo.ward?' → '+geo.ward:''}${geo.pollingUnit?' → '+geo.pollingUnit:''}\nUID: ${createdUser.uid}\n\nPlease provide the temporary password securely to the agent.`, 'success');$('agentForm').reset();fill($('agentRole'),[],'Select election type first');resetGeoAfter('state');await loadStates();updateGeoVisibility();await loadAgents()}catch(err){console.error(err);let msg=err.message||'Could not create agent.';if(createdUser)msg+='\nFirebase Auth user was created (UID '+createdUser.uid+'), but Firestore profile save failed. Check Firestore rules and add the profile manually or retry profile creation.';notice('agentNotice',msg,'error')}finally{btn.disabled=false;btn.textContent='Create Agent Account'}});
+$('agentForm').addEventListener('submit',async e=>{
+ e.preventDefault();
+ const user=auth.currentUser;
+ if(!user){notice('agentNotice','Please sign in again.','error');return}
+ const electionType=$('electionType').value;
+ const candidate=candidatesCache.find(c=>c.id===$('candidateSelect').value&&c.electionType===electionType&&c.active!==false);
+ if(!candidate){notice('agentNotice','Select an active candidate created for this election.','error');return}
+ if(!requiredGeoValid()){notice('agentNotice','Please complete the geographical assignment required for the selected agent role.','error');return}
+ const btn=$('createAgentBtn');btn.disabled=true;btn.textContent='Creating account…';let createdUser=null;
+ try{
+  if(!secondaryApp){secondaryApp=initializeApp(firebaseConfig,'THE_EYES_AGENT_CREATION');secondaryAuth=getAuth(secondaryApp)}
+  const email=$('agentEmail').value.trim().toLowerCase();
+  const cred=await createUserWithEmailAndPassword(secondaryAuth,email,$('agentPassword').value);
+  createdUser=cred.user;
+  const agentRole=$('agentRole').value,geo=getGeo(),status=$('agentStatus').value;
+  const profile={
+   candidateId:candidate.candidateId||candidate.id,
+   candidateName:candidate.candidateName||candidate.name,
+   candidateNameNormalized:candidate.candidateNameNormalized||String(candidate.candidateName||candidate.name||'').trim().toLowerCase(),
+   uid:createdUser.uid,fullName:$('fullName').value.trim(),username:$('username').value.trim(),email,
+   phone:$('phone').value.trim()||null,role:'agent',agentRole,agentRoleLabel:roleNames[agentRole],
+   electionType,electionName:electionNames[electionType],geography:geo,
+   assignedScope:{stateCode:geo.stateCode,senatorialZoneCode:geo.senatorialZoneCode,federalConstituencyCode:geo.federalConstituencyCode,lgaCode:geo.lgaCode,wardCode:geo.wardCode,pollingUnitCode:geo.pollingUnitCode},
+   active:status==='active',status,assignmentNotes:$('notes').value.trim()||null,
+   createdBy:user.uid,createdAt:serverTimestamp(),updatedAt:serverTimestamp()
+  };
+  await setDoc(doc(db,'users',createdUser.uid),profile);
+  await setDoc(doc(db,'electionAgents',createdUser.uid),profile);
+  notice('agentNotice',`Agent account created successfully.\nCandidate: ${profile.candidateName}\nCandidate ID: ${profile.candidateId}\nName: ${profile.fullName}\nElection: ${profile.electionName}\nRole: ${profile.agentRoleLabel}\nScope: ${geo.state}${geo.senatorialZone?' → '+geo.senatorialZone:''}${geo.federalConstituency?' → '+geo.federalConstituency:''}${geo.lga?' → '+geo.lga:''}${geo.ward?' → '+geo.ward:''}${geo.pollingUnit?' → '+geo.pollingUnit:''}\nUID: ${createdUser.uid}\n\nPlease provide the temporary password securely to the agent.`, 'success');
+  $('agentForm').reset();fill($('agentRole'),[],'Select election type first');fill($('candidateSelect'),[],'Select election type first');$('candidateSelect').disabled=true;resetGeoAfter('state');await loadStates();updateGeoVisibility();await loadAgents();
+ }catch(err){
+  console.error(err);let msg=err.message||'Could not create agent.';
+  if(createdUser)msg+='\nFirebase Auth user was created (UID '+createdUser.uid+'), but Firestore profile save failed. Check Firestore rules and add the profile manually or retry profile creation.';
+  notice('agentNotice',msg,'error');
+ }finally{btn.disabled=false;btn.textContent='Create Agent Account'}
+});
 async function loadAgents(){try{const snap=await getDocs(collection(db,'electionAgents'));agentsCache=snap.docs.map(d=>({id:d.id,...d.data()}));$('statAgents').textContent=agentsCache.length;$('statActive').textContent=agentsCache.filter(a=>a.active!==false&&a.status!=='disabled').length;$('statDisabled').textContent=agentsCache.filter(a=>a.active===false||a.status==='disabled').length;renderAgents();renderRecent()}catch(e){console.warn(e);$('statAgents').textContent='—';$('recentAgents').innerHTML='<div class="empty">Unable to read electionAgents. Check Firestore rules.</div>';}}
 function renderAgents(){const term=($('agentSearch')?.value||'').toLowerCase(),filter=$('agentFilter')?.value||'';const rows=agentsCache.filter(a=>(!filter||a.electionType===filter)&&JSON.stringify([a.fullName,a.username,a.email,a.electionName,a.geography?.state,a.geography?.lga]).toLowerCase().includes(term));const html=rows.map(a=>`<tr><td><b>${esc(a.fullName||'—')}</b><div class="helper">${esc(a.username||'')}</div></td><td>${esc(a.electionName||electionNames[a.electionType]||a.electionType||'—')}</td><td>${esc(a.agentRoleLabel||roleNames[a.agentRole]||a.agentRole||'—')}</td><td>${esc(scopeText(a))}</td><td><span class="status ${a.active===false||a.status==='disabled'?'disabled':''}">${a.active===false||a.status==='disabled'?'Disabled':'Active'}</span></td><td><div class="rowactions"><button class="smallbtn" data-toggle="${esc(a.id)}">${a.active===false||a.status==='disabled'?'Enable':'Disable'}</button></div></td></tr>`).join('');$('agentsTable').innerHTML=rows?`<table><thead><tr><th>Agent</th><th>Election</th><th>Role</th><th>Assigned coverage</th><th>Status</th><th>Action</th></tr></thead><tbody>${html}</tbody></table>`:'<div class="empty">No agents match this filter.</div>';document.querySelectorAll('[data-toggle]').forEach(b=>b.onclick=()=>toggleAgent(b.dataset.toggle));$('statusTable').innerHTML=rows?`<table><thead><tr><th>Agent</th><th>Election</th><th>Role</th><th>Coverage</th><th>Account</th><th>Action</th></tr></thead><tbody>${html}</tbody></table>`:'<div class="empty">No agents registered.</div>';document.querySelectorAll('#statusTable [data-toggle]').forEach(b=>b.onclick=()=>toggleAgent(b.dataset.toggle));}
 function scopeText(a){const g=a.geography||{};return [g.state,g.senatorialZone,g.federalConstituency,g.lga,g.ward,g.pollingUnit].filter(Boolean).join(' → ')||'—'}
 function renderRecent(){const rows=[...agentsCache].sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0)).slice(0,5);$('recentAgents').innerHTML=rows.length?`<table><thead><tr><th>Agent</th><th>Election</th><th>Role</th><th>Coverage</th><th>Status</th></tr></thead><tbody>${rows.map(a=>`<tr><td>${esc(a.fullName||a.email||a.id)}</td><td>${esc(a.electionName||electionNames[a.electionType]||'')}</td><td>${esc(a.agentRoleLabel||roleNames[a.agentRole]||'')}</td><td>${esc(scopeText(a))}</td><td>${a.active===false?'Disabled':'Active'}</td></tr>`).join('')}</tbody></table>`:'<div class="empty">No agent records yet.</div>'}
 async function toggleAgent(uid){const a=agentsCache.find(x=>x.id===uid);if(!a)return;const active=a.active===false||a.status==='disabled';try{await updateDoc(doc(db,'electionAgents',uid),{active,status:active?'active':'disabled',updatedAt:serverTimestamp()});await updateDoc(doc(db,'users',uid),{active,status:active?'active':'disabled',updatedAt:serverTimestamp()});await loadAgents()}catch(e){alert('Could not update status: '+e.message)}}$('agentSearch').addEventListener('input',renderAgents);$('agentFilter').addEventListener('change',renderAgents);
+// ---------- Candidate master records (managed from Geographical Administration) ----------
+$('candidateForm').addEventListener('submit',async e=>{
+ e.preventDefault();
+ const electionType=$('candidateElectionType').value;
+ const candidateName=$('candidateNameInput').value.trim().replace(/\\s+/g,' ');
+ if(!electionType||!candidateName){notice('candidateNotice','Select an election and enter the candidate name.','error');return}
+ const normalized=candidateName.normalize('NFKD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase();
+ const slug=normalized.replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+ if(!slug){notice('candidateNotice','Enter a valid candidate name.','error');return}
+ const candidateId=electionType+'__'+slug;
+ const btn=$('saveCandidateBtn');btn.disabled=true;btn.textContent='Saving…';
+ try{
+  const ref=doc(db,'candidates',candidateId),existing=await getDoc(ref);
+  if(existing.exists())throw new Error('This candidate already exists under the selected election.');
+  await setDoc(ref,{candidateId,candidateName,candidateNameNormalized:normalized,electionType,electionName:electionNames[electionType],active:true,createdBy:auth.currentUser.uid,createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
+  $('candidateForm').reset();notice('candidateNotice',`Candidate created successfully. Candidate ID: ${candidateId}`,'success');await loadCandidates();
+ }catch(err){notice('candidateNotice',err.message||'Could not create candidate.','error')}
+ finally{btn.disabled=false;btn.textContent='Create Candidate'}
+});
+$('candidateListElection').addEventListener('change',renderCandidateTable);
+$('electionType').addEventListener('change',refreshAgentCandidateOptions);
 // ---------- Firestore geography management (filtered query, edit, delete) ----------
 const geoManageCollections={geographyStates:{label:'States / FCT'},geographyLGAs:{label:'Local Government Areas'},geographyWards:{label:'Wards'},geographyPollingUnits:{label:'Polling Units'},geographySenatorialZones:{label:'Senatorial Zones'},geographyFederalConstituencies:{label:'Federal Constituencies'}};
 function geoManageType(){return $('geoManageType').value}
