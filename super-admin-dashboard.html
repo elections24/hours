@@ -49,7 +49,7 @@
 </section>
 <section class="page hidden" id="agentsPage"><div class="pagehead"><div><h1>Registered Agents</h1><p class="sub">Search, inspect, and manage election-specific agent assignments.</p></div><button class="btn primary" data-goto="register">＋ Register Agent</button></div><div class="panel"><div class="grid"><div class="field"><label>Search agents</label><input id="agentSearch" placeholder="Name, username, email, state, election…"></div><div class="field"><label>Filter election</label><select id="agentFilter"><option value="">All elections</option><option value="presidential">Presidential</option><option value="gubernatorial">Gubernatorial</option><option value="senatorial">Senatorial</option><option value="house_of_representatives">House of Representatives</option></select></div></div><div id="agentsTable" class="tablewrap" style="margin-top:15px"><div class="empty">Loading agents…</div></div></div></section>
 <section class="page hidden" id="geographyPage">
-<div class="pagehead"><div><h1>Geographical Administration</h1><p class="sub">Create States, LGAs, Wards, and Polling Units in four separate sections.</p></div><span class="pill">Super Admin only</span></div>
+<div class="pagehead"><div><h1>Geographical Administration</h1><p class="sub">Create States, Senatorial Zones, LGAs, Wards, and Polling Units, then connect each existing record to its correct parent.</p></div><span class="pill">Super Admin only</span></div>
 
 <div class="panel">
 <h2>1. Create State / FCT</h2>
@@ -62,10 +62,33 @@
 </div>
 
 <div class="panel">
-<h2>2. Create Local Government Areas</h2>
+<h2>2. Create Senatorial Zones</h2>
+<p class="desc">Select an existing State, enter its Senatorial Zone names (one per line), and create zone records linked to that State. This does not create or duplicate any LGAs.</p>
+<form id="geoZoneForm">
+<div class="field"><label for="geoZoneState">Select State</label><select id="geoZoneState" required><option value="">Loading states…</option></select></div>
+<div class="field" style="margin-top:14px"><label for="geoZoneNames">Senatorial Zone names</label><textarea id="geoZoneNames" rows="5" placeholder="Zamfara North&#10;Zamfara Central&#10;Zamfara West" required></textarea></div>
+<div class="actions"><button class="btn primary" id="geoZoneSave" type="submit">Create Zone Records</button><button class="btn secondary" type="reset">Clear Form</button></div>
+<div id="geoZoneNotice" class="notice"></div>
+</form>
+</div>
+
+<div class="panel">
+<h2>3. Assign Existing LGAs to Senatorial Zones</h2>
+<p class="desc">Choose a State and Zone, then select the existing LGAs that belong to that zone. Saving updates the selected LGA documents in place; it does not recreate them or change their document IDs, wards, or polling units.</p>
+<div class="grid">
+<div class="field"><label for="geoAssignState">Select State</label><select id="geoAssignState" required><option value="">Loading states…</option></select></div>
+<div class="field"><label for="geoAssignZone">Select Senatorial Zone</label><select id="geoAssignZone" required><option value="">Select State first</option></select></div>
+</div>
+<div class="field" style="margin-top:14px"><label>Existing Local Government Areas</label><div id="geoAssignLgas" class="geo-notice">Select a State and Senatorial Zone to load existing LGAs.</div><div class="helper">An LGA already assigned to another zone will be moved only if you select it and confirm the reassignment.</div></div>
+<div class="actions"><button class="btn primary" id="geoAssignSave" type="button">Save LGA Zone Assignments</button><button class="btn secondary" id="geoAssignClear" type="button">Clear Selection</button></div>
+<div id="geoAssignNotice" class="notice"></div>
+</div>
+
+<div class="panel">
+<h2>4. Create Local Government Areas</h2>
 <p class="desc">Select an existing State, paste its LGA names, and create records.</p>
 <form id="geoLgaForm">
-<div class="field"><label for="geoLgaState">Select State</label><select id="geoLgaState" required><option value="">Loading states…</option></select></div>
+<div class="grid"><div class="field"><label for="geoLgaState">Select State</label><select id="geoLgaState" required><option value="">Loading states…</option></select></div><div class="field"><label for="geoLgaZone">Senatorial Zone (optional)</label><select id="geoLgaZone"><option value="">No zone assignment</option></select></div></div>
 <div class="field" style="margin-top:14px"><label for="geoLgaNames">Local Government Area names</label><textarea id="geoLgaNames" rows="7" placeholder="Paste one LGA name per line"></textarea></div>
 <div class="actions"><button class="btn primary" id="geoLgaSave">Create Records</button><button class="btn secondary" type="reset">Clear Form</button></div>
 <div id="geoLgaNotice" class="notice"></div>
@@ -73,7 +96,7 @@
 </div>
 
 <div class="panel">
-<h2>3. Create Wards</h2>
+<h2>5. Create Wards</h2>
 <p class="desc">Select State, then its Local Government Area, paste ward names, and create records.</p>
 <form id="geoWardForm">
 <div class="grid">
@@ -87,7 +110,7 @@
 </div>
 
 <div class="panel">
-<h2>4. Create Polling Units</h2>
+<h2>6. Create Polling Units</h2>
 <p class="desc">Select State, Local Government Area, and Ward, paste polling-unit names, and create records.</p>
 <form id="geoPuForm">
 <div class="grid">
@@ -117,7 +140,7 @@
 </div>
 </section>
 <section class="page hidden" id="statusPage"><div class="pagehead"><div><h1>Agent Account Status</h1><p class="sub">Enable or disable agent accounts and review assignments.</p></div></div><div class="panel"><div id="statusTable" class="tablewrap"><div class="empty">Loading account statuses…</div></div></div></section>
-<section class="page hidden" id="settingsPage"><div class="pagehead"><div><h1>Firebase &amp; Data Guide</h1><p class="sub">Project connection and required data model.</p></div></div><div class="panel"><h2>Connected Firebase project</h2><p class="desc">This file uses the Firebase configuration from your THE EYES V3 agent registration and Super Admin login files.</p><div class="geo-notice"><b>Project ID:</b> election-8e790<br><b>Firestore:</b> users/{uid} for account role verification; electionAgents/{uid} for agent assignment profiles; geography master collections listed below.</div></div><div class="panel"><h2>Firestore collection structure</h2><ul><li><code>users/{uid}</code> — account profile, role, active/status</li><li><code>electionAgents/{uid}</code> — electionType, agentRole, geography, assigned scope, account status</li><li><code>geographyStates/{stateCode}</code></li><li><code>geographySenatorialZones/{zoneCode}</code> — stateCode parent</li><li><code>geographyFederalConstituencies/{constituencyCode}</code> — stateCode parent</li><li><code>geographyLGAs/{lgaCode}</code> — stateCode plus optional zoneCode/constituencyCode</li><li><code>geographyWards/{wardCode}</code> — lgaCode parent</li><li><code>geographyPollingUnits/{pollingUnitCode}</code> — wardCode parent</li></ul><p class="desc">Reports should store electionType and location identifiers, and Firestore Security Rules must validate those fields against the authenticated user's assignment.</p></div><div class="panel"><h2>Important production security</h2><p class="desc">Firebase web configuration is public by design; Firestore Security Rules and a trusted server-side function are the security boundary. Do not rely on hiding pages or filtering dropdowns to enforce access. The account creation flow is currently client-side and should be migrated to a protected Cloud Function/Admin SDK before broad production deployment.</p></div></section>
+<section class="page hidden" id="settingsPage"><div class="pagehead"><div><h1>Firebase &amp; Data Guide</h1><p class="sub">Project connection and required data model.</p></div></div><div class="panel"><h2>Connected Firebase project</h2><p class="desc">This file uses the Firebase configuration from your THE EYES V3 agent registration and Super Admin login files.</p><div class="geo-notice"><b>Project ID:</b> election-8e790<br><b>Firestore:</b> users/{uid} for account role verification; electionAgents/{uid} for agent assignment profiles; geography master collections listed below.</div></div><div class="panel"><h2>Firestore collection structure</h2><ul><li><code>users/{uid}</code> — account profile, role, active/status</li><li><code>electionAgents/{uid}</code> — electionType, agentRole, geography, assigned scope, account status</li><li><code>geographyStates/{stateCode}</code></li><li><code>geographySenatorialZones/{zoneCode}</code> — stateCode parent</li><li><code>geographyFederalConstituencies/{constituencyCode}</code> — stateCode parent</li><li><code>geographyLGAs/{lgaCode}</code> — stateCode plus zoneCode/zoneName for Senatorial Zone assignment and optional constituencyCode</li><li><code>geographyWards/{wardCode}</code> — lgaCode parent</li><li><code>geographyPollingUnits/{pollingUnitCode}</code> — wardCode parent</li></ul><p class="desc">Reports should store electionType and location identifiers, and Firestore Security Rules must validate those fields against the authenticated user's assignment.</p></div><div class="panel"><h2>Important production security</h2><p class="desc">Firebase web configuration is public by design; Firestore Security Rules and a trusted server-side function are the security boundary. Do not rely on hiding pages or filtering dropdowns to enforce access. The account creation flow is currently client-side and should be migrated to a protected Cloud Function/Admin SDK before broad production deployment.</p></div></section>
 <div class="footer">THE EYES · Election Monitoring &amp; Reporting System · Secure administration</div>
 </main></div></div>
 <script type="module">
@@ -230,11 +253,11 @@ async function loadLGAsByParent(){
     l=l.filter(x=>String(x.stateCode??x.parentCode??'').trim()===stateCode);
     if($('electionType').value==='senatorial'&&$('zoneSelect').value){
       const zone=$('zoneSelect').value;
-      l=l.filter(x=>!x.zoneCode || String(x.zoneCode).trim()===zone);
+      l=l.filter(x=>String(x.zoneCode??'').trim()===zone);
     }
     if($('electionType').value==='house_of_representatives'&&$('constituencySelect').value){
       const constituency=$('constituencySelect').value;
-      l=l.filter(x=>!x.constituencyCode || String(x.constituencyCode).trim()===constituency);
+      l=l.filter(x=>String(x.constituencyCode??'').trim()===constituency);
     }
     fill($('lgaSelect'),l,'Select Local Government Area',recordName);
     if(!l.length)notice('agentNotice','No LGAs were found for this state. Confirm that the LGAs sheet has been imported and each LGA stateCode matches the State document code.','info');
@@ -336,7 +359,7 @@ async function reloadGeoStateOptions(){
   const states=await fetchCollection('geographyStates');
   states.sort((a,b)=>recordName(a).localeCompare(recordName(b)));
   geoCache.states=states;
-  ['geoLgaState','geoWardState','geoPuState'].forEach(id=>populateStates(id));
+  ['geoLgaState','geoWardState','geoPuState','geoZoneState','geoAssignState'].forEach(id=>populateStates(id));
 }
 async function reloadGeoWardLgas(){
   const stateId=$('geoWardState').value;
@@ -457,6 +480,87 @@ async function createGeoBatch({formId,namesId,noticeId,collectionName,level,pare
     if(btn){btn.disabled=false;btn.textContent=originalText;}
   }
 }
+async function loadZonesForState(stateId,selectId,placeholder='Select Senatorial Zone'){
+  const select=$(selectId);
+  if(!stateId){fill(select,[], 'Select State first');return [];}
+  const zones=(await fetchCollection('geographySenatorialZones'))
+    .filter(z=>String(z.stateCode??'').trim()===String(stateId));
+  zones.sort((a,b)=>recordName(a).localeCompare(recordName(b)));
+  fill(select,zones,placeholder,recordName);
+  return zones;
+}
+$('geoZoneState').addEventListener('change',()=>{$('geoZoneNotice').textContent='';});
+$('geoZoneForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const stateId=$('geoZoneState').value;
+  if(!stateId){notice('geoZoneNotice','Select a State first.','error');return;}
+  try{
+    const state=(geoCache.states||[]).find(x=>String(x.id)===String(stateId));
+    if(!state)throw new Error('Selected State could not be found. Reload the State list.');
+    await createGeoBatch({formId:'geoZoneForm',namesId:'geoZoneNames',noticeId:'geoZoneNotice',
+      collectionName:'geographySenatorialZones',level:'ZONE',levelName:'senatorial zone',parentId:stateId,parentField:'stateCode',
+      extraFields:{stateCode:stateId,stateName:recordName(state)}});
+    await loadZonesForState(stateId,'geoLgaZone','No zone assignment');
+    await loadZonesForState(stateId,'geoAssignZone');
+  }catch(err){notice('geoZoneNotice','Could not create Senatorial Zones: '+(err.message||err),'error');}
+});
+$('geoLgaState').addEventListener('change',async()=>{
+  try{await loadZonesForState($('geoLgaState').value,'geoLgaZone','No zone assignment');}
+  catch(e){notice('geoLgaNotice','Could not load Senatorial Zones: '+e.message,'error');}
+});
+$('geoAssignState').addEventListener('change',async()=>{
+  fill($('geoAssignZone'),[],'Loading Senatorial Zones…');
+  $('geoAssignLgas').textContent='Select a Senatorial Zone to load existing LGAs.';
+  try{await loadZonesForState($('geoAssignState').value,'geoAssignZone');}
+  catch(e){notice('geoAssignNotice','Could not load zones: '+e.message,'error');}
+});
+$('geoAssignZone').addEventListener('change',async()=>{
+  const stateId=$('geoAssignState').value,zoneId=$('geoAssignZone').value;
+  const host=$('geoAssignLgas');host.innerHTML='';
+  if(!stateId||!zoneId){host.textContent='Select a State and Senatorial Zone first.';return;}
+  try{
+    const lgas=(await fetchCollection('geographyLGAs')).filter(x=>String(x.stateCode??'').trim()===String(stateId));
+    lgas.sort((a,b)=>recordName(a).localeCompare(recordName(b)));
+    if(!lgas.length){host.textContent='No existing LGAs were found for this State.';return;}
+    host.innerHTML=lgas.map(l=>{
+      const assigned=String(l.zoneCode??'').trim();
+      const zoneName=String(l.zoneName??'').trim();
+      const checked=assigned===zoneId;
+      const other=assigned&&assigned!==zoneId;
+      return `<label class="checkboxrow" style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)"><input type="checkbox" class="geo-lga-zone-choice" value="${esc(l.id)}" ${checked?'checked':''} data-current-zone="${esc(assigned)}" data-lga-name="${esc(recordName(l))}"><span>${esc(recordName(l))}<small class="helper">${checked?'Already assigned to this zone':other?'Currently assigned to another zone'+(zoneName?' ('+esc(zoneName)+')':''):'Not yet assigned to a Senatorial Zone'}</small></span></label>`;
+    }).join('');
+    notice('geoAssignNotice',`Loaded ${lgas.length} existing LGA(s). Select the LGAs belonging to ${recordName((await fetchCollection('geographySenatorialZones')).find(z=>z.id===zoneId)||{name:'the selected zone'})}.`,'info');
+  }catch(e){host.textContent='Unable to load existing LGAs.';notice('geoAssignNotice','Could not load LGAs: '+e.message,'error');}
+});
+$('geoAssignClear').addEventListener('click',()=>document.querySelectorAll('.geo-lga-zone-choice').forEach(c=>c.checked=false));
+$('geoAssignSave').addEventListener('click',async()=>{
+  const stateId=$('geoAssignState').value,zoneId=$('geoAssignZone').value;
+  if(!stateId||!zoneId){notice('geoAssignNotice','Select a State and Senatorial Zone first.','error');return;}
+  const selected=[...document.querySelectorAll('.geo-lga-zone-choice:checked')];
+  if(!selected.length){notice('geoAssignNotice','Select at least one existing LGA.','error');return;}
+  const moved=selected.filter(c=>c.dataset.currentZone&&c.dataset.currentZone!==zoneId);
+  if(moved.length&&!confirm(`${moved.length} selected LGA(s) are currently assigned to another zone. Reassign them to the selected zone?`))return;
+  const btn=$('geoAssignSave');btn.disabled=true;btn.textContent='Saving assignments…';
+  try{
+    const zoneSnap=await getDoc(doc(db,'geographySenatorialZones',zoneId));
+    if(!zoneSnap.exists())throw new Error('Selected Senatorial Zone no longer exists. Reload the list.');
+    const zone=zoneSnap.data();
+    if(String(zone.stateCode??'').trim()!==String(stateId))throw new Error('The selected Senatorial Zone does not belong to the selected State.');
+    let saved=0;
+    for(const choice of selected){
+      const ref=doc(db,'geographyLGAs',choice.value),snap=await getDoc(ref);
+      if(!snap.exists())throw new Error(`LGA ${choice.dataset.lgaName} no longer exists. Reload the list.`);
+      const lga=snap.data();
+      if(String(lga.stateCode??'').trim()!==String(stateId))throw new Error(`LGA ${choice.dataset.lgaName} does not belong to the selected State.`);
+      await updateDoc(ref,{zoneCode:zoneId,zoneName:recordName({...zone,id:zoneId}),updatedAt:serverTimestamp(),zoneAssignedAt:serverTimestamp(),zoneAssignedBy:auth.currentUser.uid});
+      saved++;
+    }
+    notice('geoAssignNotice',`Successfully assigned ${saved} existing LGA(s) to ${recordName({...zone,id:zoneId})}. Existing LGA document IDs, wards and polling units were preserved.`,'success');
+    $('geoAssignZone').dispatchEvent(new Event('change'));
+  }catch(e){notice('geoAssignNotice','Assignment stopped: '+e.message,'error');}
+  finally{btn.disabled=false;btn.textContent='Save LGA Zone Assignments';}
+});
+
 $('geoStateForm').addEventListener('submit',e=>{
   e.preventDefault();
   createGeoBatch({formId:'geoStateForm',namesId:'geoStateNames',noticeId:'geoStateNotice',
@@ -466,9 +570,20 @@ $('geoLgaForm').addEventListener('submit',e=>{
   e.preventDefault();
   const stateId=$('geoLgaState').value;
   if(!stateId){notice('geoLgaNotice','Select a State first.','error');return;}
-  createGeoBatch({formId:'geoLgaForm',namesId:'geoLgaNames',noticeId:'geoLgaNotice',
-    collectionName:'geographyLGAs',level:'LGA',levelName:'lga',parentId:stateId,parentField:'stateCode',
-    extraFields:{stateCode:stateId,stateName:selectedLabel('geoLgaState')}});
+  const zoneId=$('geoLgaZone').value;
+  const saveLgas=async()=>{
+    const extraFields={stateCode:stateId,stateName:selectedLabel('geoLgaState')};
+    if(zoneId){
+      const zoneSnap=await getDoc(doc(db,'geographySenatorialZones',zoneId));
+      if(!zoneSnap.exists())throw new Error('Selected Senatorial Zone no longer exists.');
+      const zone=zoneSnap.data();
+      if(String(zone.stateCode??'').trim()!==String(stateId))throw new Error('Selected Senatorial Zone does not belong to the selected State.');
+      extraFields.zoneCode=zoneId;extraFields.zoneName=recordName({...zone,id:zoneId});
+    }
+    await createGeoBatch({formId:'geoLgaForm',namesId:'geoLgaNames',noticeId:'geoLgaNotice',
+      collectionName:'geographyLGAs',level:'LGA',levelName:'lga',parentId:stateId,parentField:'stateCode',extraFields});
+  };
+  saveLgas().catch(err=>notice('geoLgaNotice','Could not create LGAs: '+err.message,'error'));
 });
 $('geoWardForm').addEventListener('submit',async e=>{
   e.preventDefault();
@@ -523,9 +638,10 @@ $('geoWardState').addEventListener('change',async()=>{
 });
 $('geoPuState').addEventListener('change',()=>reloadGeoPuLgas().catch(e=>notice('geoPuNotice',e.message,'error')));
 $('geoPuLga').addEventListener('change',()=>reloadGeoPuWards().catch(e=>notice('geoPuNotice',e.message,'error')));
-['geoStateForm','geoLgaForm','geoWardForm','geoPuForm'].forEach(formId=>{
+['geoStateForm','geoZoneForm','geoLgaForm','geoWardForm','geoPuForm'].forEach(formId=>{
   $(formId).addEventListener('reset',()=>setTimeout(()=>{
-    if(formId==='geoLgaForm')populateStates('geoLgaState');
+    if(formId==='geoZoneForm')populateStates('geoZoneState');
+    if(formId==='geoLgaForm'){populateStates('geoLgaState');fill($('geoLgaZone'),[],'Select State first');}
     if(formId==='geoWardForm'){populateStates('geoWardState');fill($('geoWardLga'),[],'Select State first');}
     if(formId==='geoPuForm'){populateStates('geoPuState');fill($('geoPuLga'),[],'Select State first');fill($('geoPuWard'),[],'Select LGA first');}
   },0));
