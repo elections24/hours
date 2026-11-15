@@ -32,7 +32,7 @@
 <div class="sectionstep">2. Agent Account Details</div><div class="grid"><div class="field"><label for="fullName">Full name *</label><input id="fullName" required autocomplete="name"></div><div class="field"><label for="username">Username *</label><input id="username" required autocomplete="username"></div><div class="field"><label for="agentEmail">Email address *</label><input id="agentEmail" type="email" required autocomplete="email"></div><div class="field"><label for="agentPassword">Temporary password *</label><input id="agentPassword" type="password" minlength="6" required autocomplete="new-password"><div class="helper">Minimum 6 characters. Give the agent the password securely and ask them to change it after first login.</div></div><div class="field"><label for="phone">Phone number</label><input id="phone" type="tel"></div><div class="field"><label for="agentStatus">Initial account status</label><select id="agentStatus"><option value="active">Active</option><option value="disabled">Disabled</option></select></div></div>
 <div class="sectionstep">3. Assign Geographical Coverage</div><p class="desc">Choose State first. Each next dropdown is filtered by the preceding selection. For State Collation Agent, State is the only required geographical level. Senatorial District options include all 36 states and the FCT.</p>
 <div class="grid"><div class="field"><label for="stateSelect">State *</label><select id="stateSelect" required><option value="">Loading Nigerian states…</option></select></div><div class="field" id="zoneField"><label for="zoneSelect" id="zoneLabel">Senatorial Zone</label><select id="zoneSelect"><option value="">Select State first</option></select></div><div class="field" id="constituencyField"><label for="constituencySelect">Federal Constituency</label><select id="constituencySelect"><option value="">Select State first</option></select></div><div class="field" id="lgaField"><label for="lgaSelect">Local Government Area</label><select id="lgaSelect"><option value="">Select State first</option></select></div><div class="field" id="wardField"><label for="wardSelect">Ward</label><select id="wardSelect"><option value="">Select LGA first</option></select></div><div class="field" id="puField"><label for="puSelect">Polling Unit</label><select id="puSelect"><option value="">Select Ward first</option></select></div></div>
-<div class="geo-notice" style="margin-top:15px"><b>Senatorial Election:</b> State → INEC Senatorial District → matching Local Government Area → Ward → Polling Unit. Includes the single FCT Senatorial District. Only existing Firebase LGAs that match the selected INEC district are displayed. The Senatorial Zone Agent receives access to all LGAs assigned to that district.<br><b>House of Representatives:</b> State → Federal Constituency → Local Government → Ward → Polling Unit.</div>
+<div class="geo-notice" style="margin-top:15px"><b>Senatorial Election:</b> State → INEC Senatorial District → matching Local Government Area → Ward → Polling Unit. Includes the single FCT Senatorial District. Only existing Firebase LGAs that match the selected INEC district are displayed. The Senatorial Zone Agent receives access to all LGAs assigned to that district.<br><b>House of Representatives:</b> State → Federal Constituency → only its mapped Local Governments → Ward → Polling Unit. Federal Constituency-to-LGA links are read from the existing geography mapping; unrelated LGAs are never included.</div>
 <div class="field full" style="margin-top:15px"><label for="notes">Assignment notes (optional)</label><textarea id="notes" rows="2" placeholder="Additional administrative note"></textarea></div><label class="checkboxrow"><input type="checkbox" id="confirmScope" required><span>I confirm that the election type, role, and geographical coverage are correct.</span></label>
 <div class="actions"><button class="btn primary" id="createAgentBtn">Create Agent Account</button><button class="btn secondary" type="reset">Clear Form</button></div><div id="agentNotice" class="notice"></div></form>
 <div class="panel"><h2>Account creation note</h2><p class="desc">This HTML uses a secondary Firebase Auth instance so creating an agent does not sign the Super Administrator out. For stronger production security, move account creation to a protected Cloud Function/Admin SDK endpoint.</p></div>
@@ -107,7 +107,7 @@
 </div>
 </section>
 <section class="page hidden" id="statusPage"><div class="pagehead"><div><h1>Agent Account Status</h1><p class="sub">Enable or disable agent accounts and review assignments.</p></div></div><div class="panel"><div id="statusTable" class="tablewrap"><div class="empty">Loading account statuses…</div></div></div></section>
-<section class="page hidden" id="settingsPage"><div class="pagehead"><div><h1>Firebase &amp; Data Guide</h1><p class="sub">Project connection and required data model.</p></div></div><div class="panel"><h2>Connected Firebase project</h2><p class="desc">This file uses the Firebase configuration from your THE EYES V3 agent registration and Super Admin login files.</p><div class="geo-notice"><b>Project ID:</b> election-8e790<br><b>Firestore:</b> users/{uid} for account role verification; electionAgents/{uid} for agent assignment profiles; geography master collections listed below.</div></div><div class="panel"><h2>Firestore collection structure</h2><ul><li><code>users/{uid}</code> — account profile, role, active/status</li><li><code>electionAgents/{uid}</code> — electionType, agentRole, geography, assigned scope, account status</li><li><code>geographyStates/{stateCode}</code></li><li><code>geographySenatorialZones/{zoneCode}</code> — optional legacy collection; registration uses the built-in INEC district reference list (including FCT) and existing geographyLGAs records.</li><li><code>geographyFederalConstituencies/{constituencyCode}</code> — stateCode parent</li><li><code>geographyLGAs/{lgaCode}</code> — stateCode plus optional zoneCode/constituencyCode</li><li><code>geographyWards/{wardCode}</code> — lgaCode parent</li><li><code>geographyPollingUnits/{pollingUnitCode}</code> — wardCode parent</li></ul><p class="desc">Reports should store electionType and location identifiers, and Firestore Security Rules must validate those fields against the authenticated user's assignment.</p></div><div class="panel"><h2>Important production security</h2><p class="desc">Firebase web configuration is public by design; Firestore Security Rules and a trusted server-side function are the security boundary. Do not rely on hiding pages or filtering dropdowns to enforce access. The account creation flow is currently client-side and should be migrated to a protected Cloud Function/Admin SDK before broad production deployment.</p></div></section>
+<section class="page hidden" id="settingsPage"><div class="pagehead"><div><h1>Firebase &amp; Data Guide</h1><p class="sub">Project connection and required data model.</p></div></div><div class="panel"><h2>Connected Firebase project</h2><p class="desc">This file uses the Firebase configuration from your THE EYES V3 agent registration and Super Admin login files.</p><div class="geo-notice"><b>Project ID:</b> election-8e790<br><b>Firestore:</b> users/{uid} for account role verification; electionAgents/{uid} for agent assignment profiles; geography master collections listed below.</div></div><div class="panel"><h2>Firestore collection structure</h2><ul><li><code>users/{uid}</code> — account profile, role, active/status</li><li><code>electionAgents/{uid}</code> — electionType, agentRole, geography, assigned scope, account status</li><li><code>geographyStates/{stateCode}</code></li><li><code>geographySenatorialZones/{zoneCode}</code> — optional legacy collection; registration uses the built-in INEC district reference list (including FCT) and existing geographyLGAs records.</li><li><code>geographyFederalConstituencies/{constituencyCode}</code> — stateCode parent</li><li><code>geographyLGAs/{lgaCode}</code> — stateCode plus optional zoneCode/federalConstituencyCode (or constituencyCode)</li><li><code>geographyWards/{wardCode}</code> — lgaCode parent</li><li><code>geographyPollingUnits/{pollingUnitCode}</code> — wardCode parent</li></ul><p class="desc">Reports should store electionType and location identifiers, and Firestore Security Rules must validate those fields against the authenticated user's assignment.</p></div><div class="panel"><h2>Important production security</h2><p class="desc">Firebase web configuration is public by design; Firestore Security Rules and a trusted server-side function are the security boundary. Do not rely on hiding pages or filtering dropdowns to enforce access. The account creation flow is currently client-side and should be migrated to a protected Cloud Function/Admin SDK before broad production deployment.</p></div></section>
 <div class="footer">THE EYES · Election Monitoring &amp; Reporting System · Secure administration</div>
 </main></div></div>
 <script type="module">
@@ -295,9 +295,15 @@ $('stateSelect').addEventListener('change',async()=>{
       if(!zones.length)notice('agentNotice','No INEC Senatorial District mapping was found for '+stateName+'. Please confirm the State record name.','error');
     }
     if(election==='house_of_representatives'){
+      const stateName=chosenName('stateSelect');
       const constituencies=await fetchCollection('geographyFederalConstituencies');
-      const c=constituencies.filter(x=>String(x.stateCode??x.parentCode??'').trim()===stateCode);
-      fill($('constituencySelect'),c,'Select Federal Constituency',recordName);
+      const c=constituencies.filter(x=>sameGeoParent(x.stateCode??x.parentCode??x.state??x.stateName,stateCode,stateName));
+      c.sort((a,b)=>recordName(a).localeCompare(recordName(b)));
+      geoCache.federalConstituencies=c;
+      fill($('constituencySelect'),c,'Select Federal Constituency',x=>`${recordName(x)}${x.officialCode||x.inecCode?' · '+(x.officialCode||x.inecCode):''}`);
+      if(!c.length){
+        notice('agentNotice',`No Federal Constituency records were found for ${stateName} in geographyFederalConstituencies. Import the FederalConstituencies dataset first; no substitute list or unrelated LGA records will be shown.`,'error');
+      }
     }
     await loadLGAsByParent();
   }catch(err){
@@ -305,7 +311,35 @@ $('stateSelect').addEventListener('change',async()=>{
     console.error(err);
   }
 });
-function resetGeoAfter(level){if(level==='state'){fill($('zoneSelect'),[],'Select State first');fill($('constituencySelect'),[],'Select State first');fill($('lgaSelect'),[],'Select State first')}fill($('wardSelect'),[],'Select LGA first');fill($('puSelect'),[],'Select Ward first')}
+function resetGeoAfter(level){if(level==='state'){fill($('zoneSelect'),[],'Select State first');fill($('constituencySelect'),[],'Select State first');fill($('lgaSelect'),[],'Select State first');geoCache.federalConstituencies=[];}fill($('wardSelect'),[],'Select LGA first');fill($('puSelect'),[],'Select Ward first')}
+function sameGeoParent(value,selectedCode,selectedName){
+  const v=String(value??'').trim();
+  if(!v)return false;
+  return v===String(selectedCode) || geoNormalizeName(v)===geoNormalizeName(selectedName);
+}
+function selectedFederalConstituency(){
+  const code=$('constituencySelect').value;
+  return (geoCache.federalConstituencies||[]).find(x=>String(recordCode(x))===String(code)||String(x.code||'')===String(code))||null;
+}
+function listFieldValues(value){
+  if(Array.isArray(value))return value.map(x=>typeof x==='object'?(x.code??x.id??x.name??x.lgaName??''):x).map(x=>String(x).trim()).filter(Boolean);
+  if(typeof value==='string'&&value.trim())return value.split(/[;,|]/).map(x=>x.trim()).filter(Boolean);
+  return [];
+}
+function lgaBelongsToFederalConstituency(lga,constituency){
+  if(!constituency)return false;
+  const codes=[recordCode(constituency),constituency.code,constituency.officialCode,constituency.inecCode].filter(Boolean).map(String);
+  const name=recordName(constituency);
+  const direct=[lga.federalConstituencyCode,lga.constituencyCode,lga.federalConstituencyId,lga.federalConstituency].filter(v=>v!==undefined&&v!==null&&String(v).trim());
+  if(direct.some(v=>codes.includes(String(v).trim())||geoNormalizeName(v)===geoNormalizeName(name)))return true;
+  const lgaCodes=[recordCode(lga),lga.code,lga.lgaCode,lga.id].filter(Boolean).map(String);
+  const lgaName=recordName(lga);
+  const codeLists=['lgaCodes','memberLgaCodes','lgaIds','lgasCodes'].flatMap(k=>listFieldValues(constituency[k]));
+  if(codeLists.some(v=>lgaCodes.includes(v)))return true;
+  const nameLists=['lgaNames','memberLGAs','lgas','localGovernmentAreas'].flatMap(k=>listFieldValues(constituency[k]));
+  if(nameLists.some(v=>geoNormalizeName(v)===geoNormalizeName(lgaName)))return true;
+  return false;
+}
 $('zoneSelect').addEventListener('change',loadLGAsByParent);$('constituencySelect').addEventListener('change',loadLGAsByParent);
 async function loadLGAsByParent(){
   const stateCode=$('stateSelect').value;
@@ -313,7 +347,7 @@ async function loadLGAsByParent(){
   if(!stateCode)return;
   try{
     let l=await fetchCollection('geographyLGAs');
-    l=l.filter(x=>String(x.stateCode??x.parentCode??'').trim()===stateCode);
+    l=l.filter(x=>sameGeoParent(x.stateCode??x.parentCode??x.state??x.stateName,stateCode,chosenName('stateSelect')));
     if($('electionType').value==='senatorial'){
       const zoneCode=$('zoneSelect').value;
       if(!zoneCode){
@@ -335,9 +369,28 @@ async function loadLGAsByParent(){
       }
       return;
     }
-    if($('electionType').value==='house_of_representatives'&&$('constituencySelect').value){
-      const constituency=$('constituencySelect').value;
-      l=l.filter(x=>!x.constituencyCode || String(x.constituencyCode).trim()===constituency);
+    if($('electionType').value==='house_of_representatives'){
+      const selectedCode=$('constituencySelect').value;
+      if(!selectedCode){
+        fill($('lgaSelect'),[],'Select Federal Constituency first');
+        return;
+      }
+      const constituency=selectedFederalConstituency();
+      if(!constituency)throw new Error('The selected Federal Constituency record could not be resolved. Reload the State dropdown and select it again.');
+      const matched=l.filter(x=>lgaBelongsToFederalConstituency(x,constituency));
+      const hasDirectMapping=l.some(x=>x.federalConstituencyCode||x.constituencyCode||x.federalConstituencyId||x.federalConstituency);
+      const hasConstituencyLists=['lgaCodes','memberLgaCodes','lgaIds','lgasCodes','lgaNames','memberLGAs','lgas','localGovernmentAreas'].some(k=>Array.isArray(constituency[k])&&constituency[k].length);
+      fill($('lgaSelect'),matched,'Select Local Government Area',recordName);
+      if(!matched.length){
+        const hint=hasDirectMapping||hasConstituencyLists?'The selected mapping contains no LGA that matches your existing geographyLGAs records. Check the LGA codes/names and Federal Constituency mapping.':'This Federal Constituency has no LGA membership mapping in Firestore yet. Add federalConstituencyCode to each relevant geographyLGAs record, or add lgaCodes/lgaNames to the constituency record using the Geographical Administration importer.';
+        notice('agentNotice',`${recordName(constituency)} (${recordCode(constituency)})
+${hint}
+
+No unrelated LGAs were displayed and no geographical records were changed.`,'error');
+      }else{
+        const n=$('agentNotice');if(n&&n.classList.contains('error')){n.className='notice';n.textContent='';}
+      }
+      return;
     }
     fill($('lgaSelect'),l,'Select Local Government Area',recordName);
     if(!l.length)notice('agentNotice','No LGAs were found for this state. Confirm that the existing LGA records use the selected State parent code.','info');
