@@ -130,6 +130,57 @@ const stateCodeForName=name=>String(name||"").toLowerCase().replace(/[^a-z0-9]+/
 const rolesByElection={presidential:[['state_collation_agent','State Collation Agent'],['local_government_collation_agent','Local Government Collation Agent'],['ward_collation_agent','Ward Collation Agent'],['polling_unit_agent','Polling Unit Agent']],gubernatorial:[['state_collation_agent','State Collation Agent'],['local_government_collation_agent','Local Government Collation Agent'],['ward_collation_agent','Ward Collation Agent'],['polling_unit_agent','Polling Unit Agent']],senatorial:[['state_collation_agent','State Collation Agent'],['senatorial_zone_agent','Senatorial Zone Agent'],['local_government_collation_agent','Local Government Collation Agent'],['ward_collation_agent','Ward Collation Agent'],['polling_unit_agent','Polling Unit Agent']],house_of_representatives:[['state_collation_agent','State Collation Agent'],['federal_constituency_agent','Federal Constituency Agent'],['local_government_collation_agent','Local Government Collation Agent'],['ward_collation_agent','Ward Collation Agent'],['polling_unit_agent','Polling Unit Agent']]};
 const roleNames=Object.fromEntries(Object.values(rolesByElection).flat().map(x=>[x[0],x[1]]));
 function notice(id,msg,type='info'){const n=$(id);n.textContent=msg;n.className='notice show '+type}
+// Load and render agent records. This function is intentionally defined before
+// showPage() uses it, fixing the previous "loadAgents is not defined" login error.
+function agentLocation(a){const g=a.geography||{};return [g.pollingUnit,g.ward,g.lga,g.state].filter(Boolean).join(' → ')||g.state||'—'}
+function agentRows(list,withActions=false){
+  if(!list.length)return '<div class="empty">No agent records found.</div>';
+  return `<table><thead><tr><th>Agent</th><th>Election / Contest</th><th>Party</th><th>Geographical scope</th><th>Status</th>${withActions?'<th>Action</th>':''}</tr></thead><tbody>${list.map(a=>{
+    const active=a.active!==false&&a.status!=='disabled';
+    return `<tr><td><b>${esc(a.fullName||'Unnamed agent')}</b><br><span class="helper">${esc(a.email||a.username||a.uid||a.id)}</span></td><td>${esc(a.contestName||a.electionName||electionNames[a.electionType]||a.electionType||'—')}<br><span class="helper">${esc(a.agentRoleLabel||a.agentRole||'')}</span></td><td>${esc(a.partyName||'—')}</td><td>${esc(agentLocation(a))}</td><td><span class="status ${active?'':'disabled'}">${active?'Active':'Disabled'}</span></td>${withActions?`<td><button class="smallbtn ${active?'red':''}" data-agent-toggle="${esc(a.uid||a.id)}" data-agent-active="${active?'1':'0'}">${active?'Disable':'Activate'}</button></td>`:''}</tr>`;
+  }).join('')}</tbody></table>`;
+}
+async function loadAgents(){
+  const targets=['recentAgents','agentsTable','statusTable'];
+  try{
+    const snap=await getDocs(collection(db,'electionAgents'));
+    agentsCache=snap.docs.map(d=>({id:d.id,uid:d.id,...d.data()}));
+    const active=agentsCache.filter(a=>a.active!==false&&a.status!=='disabled').length;
+    if($('statAgents'))$('statAgents').textContent=String(agentsCache.length);
+    if($('statActive'))$('statActive').textContent=String(active);
+    if($('statDisabled'))$('statDisabled').textContent=String(agentsCache.length-active);
+    const recent=[...agentsCache].sort((a,b)=>((b.createdAt?.seconds||0)-(a.createdAt?.seconds||0))).slice(0,8);
+    if($('recentAgents'))$('recentAgents').innerHTML=agentRows(recent,false);
+    const term=($('agentSearch')?.value||'').trim().toLowerCase();
+    const filter=$('agentFilter')?.value||'';
+    const filtered=agentsCache.filter(a=>{
+      const hay=[a.fullName,a.username,a.email,a.partyName,a.contestName,a.electionName,a.geography?.state,a.geography?.lga,a.geography?.ward].join(' ').toLowerCase();
+      return (!term||hay.includes(term))&&(!filter||a.electionType===filter);
+    });
+    if($('agentsTable'))$('agentsTable').innerHTML=agentRows(filtered,true);
+    if($('statusTable'))$('statusTable').innerHTML=agentRows(agentsCache,true);
+    document.querySelectorAll('[data-agent-toggle]').forEach(btn=>btn.addEventListener('click',async()=>{
+      const uid=btn.dataset.agentToggle;const currentlyActive=btn.dataset.agentActive==='1';
+      btn.disabled=true;
+      try{
+        const next=currentlyActive?'disabled':'active';
+        const patch={active:!currentlyActive,status:next,updatedAt:serverTimestamp()};
+        await updateDoc(doc(db,'electionAgents',uid),patch);
+        await updateDoc(doc(db,'users',uid),patch);
+        await loadAgents();
+      }catch(err){console.error(err);alert('Could not update agent status: '+(err.message||'Unknown error'));btn.disabled=false;}
+    }));
+  }catch(err){
+    console.error('loadAgents failed:',err);
+    for(const id of targets){if($(id))$(id).innerHTML='<div class="empty">Unable to load agent records. Check Firestore access and internet connection.</div>';}
+    if($('statAgents'))$('statAgents').textContent='—';
+    if($('statActive'))$('statActive').textContent='—';
+    if($('statDisabled'))$('statDisabled').textContent='—';
+    throw err;
+  }
+}
+$('agentSearch')?.addEventListener('input',()=>{if(agentsCache.length)loadAgents()});
+$('agentFilter')?.addEventListener('change',()=>{if(agentsCache.length)loadAgents()});
 function showPage(page){document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));$(page+'Page').classList.remove('hidden');document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active',b.dataset.page===page));$('sidebar').classList.remove('open');if(page==='agents'||page==='status'||page==='dashboard')loadAgents();if(page==='geography'){reloadGeoStateOptions().catch(console.warn);initGeoManage().catch(console.warn);}}
 document.querySelectorAll('.navbtn').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.goto)));$('mobileMenu').onclick=()=>$('sidebar').classList.toggle('open');
 $('loginForm').addEventListener('submit',async e=>{e.preventDefault();$('loginBtn').disabled=true;try{await signInWithEmailAndPassword(auth,$('loginEmail').value.trim().toLowerCase(),$('loginPassword').value)}catch(err){notice('loginNotice',err.message||'Sign-in failed.','error')}finally{$('loginBtn').disabled=false}});
