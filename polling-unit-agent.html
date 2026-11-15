@@ -171,7 +171,7 @@ h1{font-size:clamp(30px,4vw,42px);letter-spacing:-1.4px;margin:8px 0 10px;line-h
     <div class="profile-item"><small>State</small><strong id="profileState">—</strong></div>
     <div class="profile-item"><small>Local Government Area</small><strong id="profileLga">—</strong></div>
     <div class="profile-item"><small>Ward</small><strong id="profileWard">—</strong></div>
-    <div class="profile-item"><small>Polling unit</small><strong id="profilePollingUnit">—</strong></div><div class="profile-item"><small>Assigned election</small><strong id="profileElection">—</strong></div><div class="profile-item"><small>Political party</small><strong id="profileParty">—</strong></div><div class="profile-item"><small>Assigned candidate</small><strong id="profileCandidate">—</strong></div>
+    <div class="profile-item"><small>Polling unit</small><strong id="profilePollingUnit">—</strong></div><div class="profile-item"><small>Assigned election</small><strong id="profileElection">—</strong></div><div class="profile-item"><small>Political party</small><strong id="profileParty">—</strong></div>
   </div></div>
 </section>
 <div class="footer">THE EYES · Election Monitoring &amp; Reporting System</div>
@@ -234,9 +234,8 @@ function populateProfile(profile, user) {
   document.getElementById("profilePollingUnit").textContent = profile.pollingUnitName || profile.pollingUnit || profile.geography?.pollingUnit || "—";
   document.getElementById("profileElection").textContent = profile.electionName || "—";
   document.getElementById("profileParty").textContent = profile.partyName ? `${profile.partyName}${profile.partyAbbreviation ? ` (${profile.partyAbbreviation})` : ""}` : "—";
-  document.getElementById("profileCandidate").textContent = profile.candidateName || "—";
   document.getElementById("assignedUnit").textContent = profile.pollingUnitName || profile.pollingUnit || profile.geography?.pollingUnit || demoProfile.pollingUnit;
-  document.getElementById("assignedAddress").textContent = [profile.candidateName, profile.partyName, profile.electionName, profile.ward, profile.lga, profile.state].filter(Boolean).join(" · ");
+  document.getElementById("assignedAddress").textContent = [profile.partyName, profile.electionName, profile.ward, profile.lga, profile.state].filter(Boolean).join(" · ");
 }
 
 // In production, require Firebase authentication. Demo profile is shown only when
@@ -296,8 +295,8 @@ async function submitReport(collectionName, formId, noticeId, typeKey) {
   const notice = document.getElementById(noticeId);
   form.addEventListener("submit", async event => {
     event.preventDefault();
-    if (!currentUser || !currentProfile.electionId || !currentProfile.partyId || !currentProfile.candidateId) {
-      notice.textContent = "This account does not have a complete approved election, party and candidate assignment. Contact Super Admin before submitting reports.";
+    if (!currentUser || !(currentProfile.contestId || currentProfile.electionId) || !currentProfile.partyName) {
+      notice.textContent = "This account does not have a complete approved election-contest and party assignment. Contact Super Admin before submitting reports.";
       notice.classList.add("show");
       return;
     }
@@ -306,15 +305,13 @@ async function submitReport(collectionName, formId, noticeId, typeKey) {
       ...currentProfile,
       userId: currentUser.uid,
       agentUid: currentUser.uid,
-      assignmentMode: "candidate_party_specific",
-      electionId: currentProfile.electionId,
+      assignmentMode: "contest_party",
+      contestId: currentProfile.contestId || currentProfile.electionId,
+      electionId: currentProfile.contestId || currentProfile.electionId,
       electionType: currentProfile.electionType,
-      electionName: currentProfile.electionName,
-      partyId: currentProfile.partyId,
+      electionName: currentProfile.contestName || currentProfile.electionName,
       partyName: currentProfile.partyName,
       partyAbbreviation: currentProfile.partyAbbreviation || null,
-      candidateId: currentProfile.candidateId,
-      candidateName: currentProfile.candidateName,
       geography: assignedGeo,
       assignedScope: currentProfile.assignedScope || {},
       category: document.getElementById(typeKey)?.value || "",
@@ -335,7 +332,7 @@ async function submitReport(collectionName, formId, noticeId, typeKey) {
     try {
       if (isConfigured && currentUser) {
         await addDoc(collection(db, collectionName), payload);
-        notice.textContent = `Your report has been submitted to Firebase under ${currentProfile.candidateName} (${currentProfile.partyAbbreviation || currentProfile.partyName}) for ${currentProfile.electionName}.`;
+        notice.textContent = `Your report has been submitted to Firebase for ${currentProfile.electionName} under ${currentProfile.partyName}.`;
       } else {
         notice.textContent = "Demo preview: form validated. Connect Firebase to save reports.";
       }
