@@ -171,7 +171,7 @@ h1{font-size:clamp(30px,4vw,42px);letter-spacing:-1.4px;margin:8px 0 10px;line-h
     <div class="profile-item"><small>State</small><strong id="profileState">—</strong></div>
     <div class="profile-item"><small>Local Government Area</small><strong id="profileLga">—</strong></div>
     <div class="profile-item"><small>Ward</small><strong id="profileWard">—</strong></div>
-    <div class="profile-item"><small>Polling unit</small><strong id="profilePollingUnit">—</strong></div><div class="profile-item"><small>Assigned election</small><strong id="profileElection">—</strong></div><div class="profile-item"><small>Political party</small><strong id="profileParty">—</strong></div>
+    <div class="profile-item"><small>Polling unit</small><strong id="profilePollingUnit">—</strong></div>
   </div></div>
 </section>
 <div class="footer">THE EYES · Election Monitoring &amp; Reporting System</div>
@@ -185,12 +185,14 @@ import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/fi
 import { getFirestore, doc, getDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBEbkeWDLuQOSPz2ojp59UWgqf0OakRrCo",
-  authDomain: "election-8e790.firebaseapp.com",
-  projectId: "election-8e790",
-  storageBucket: "election-8e790.firebasestorage.app",
-  messagingSenderId: "346568561664",
-  appId: "1:346568561664:web:5618be1ebb4057f9c6f4e5"
+{
+    "apiKey": "AIzaSyAYMRko87BBNT7LKdZ9s2rGHf1BFmggtb8",
+    "authDomain": "theeyes-f33cb.firebaseapp.com",
+    "projectId": "theeyes-f33cb",
+    "storageBucket": "theeyes-f33cb.firebasestorage.app",
+    "messagingSenderId": "265085505802",
+    "appId": "1:265085505802:web:f81fb50567514b806feaf3"
+  }
 };
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -231,11 +233,7 @@ function populateProfile(profile, user) {
   document.getElementById("profileState").textContent = profile.state || "—";
   document.getElementById("profileLga").textContent = profile.lga || "—";
   document.getElementById("profileWard").textContent = profile.ward || "—";
-  document.getElementById("profilePollingUnit").textContent = profile.pollingUnitName || profile.pollingUnit || profile.geography?.pollingUnit || "—";
-  document.getElementById("profileElection").textContent = profile.electionName || "—";
-  document.getElementById("profileParty").textContent = profile.partyName ? `${profile.partyName}${profile.partyAbbreviation ? ` (${profile.partyAbbreviation})` : ""}` : "—";
-  document.getElementById("assignedUnit").textContent = profile.pollingUnitName || profile.pollingUnit || profile.geography?.pollingUnit || demoProfile.pollingUnit;
-  document.getElementById("assignedAddress").textContent = [profile.partyName, profile.electionName, profile.ward, profile.lga, profile.state].filter(Boolean).join(" · ");
+  document.getElementById("profilePollingUnit").textContent = profile.pollingUnitName || profile.pollingUnit || "—";
 }
 
 // In production, require Firebase authentication. Demo profile is shown only when
@@ -295,28 +293,12 @@ async function submitReport(collectionName, formId, noticeId, typeKey) {
   const notice = document.getElementById(noticeId);
   form.addEventListener("submit", async event => {
     event.preventDefault();
-    if (!currentUser || !(currentProfile.contestId || currentProfile.electionId) || !currentProfile.partyName) {
-      notice.textContent = "This account does not have a complete approved election-contest and party assignment. Contact Super Admin before submitting reports.";
-      notice.classList.add("show");
-      return;
-    }
-    const assignedGeo = currentProfile.geography || {};
     const payload = {
       ...currentProfile,
-      userId: currentUser.uid,
-      agentUid: currentUser.uid,
-      assignmentMode: "contest_party",
-      contestId: currentProfile.contestId || currentProfile.electionId,
-      electionId: currentProfile.contestId || currentProfile.electionId,
-      electionType: currentProfile.electionType,
-      electionName: currentProfile.contestName || currentProfile.electionName,
-      partyName: currentProfile.partyName,
-      partyAbbreviation: currentProfile.partyAbbreviation || null,
-      geography: assignedGeo,
-      assignedScope: currentProfile.assignedScope || {},
+      userId: currentUser?.uid || "demo-user",
       category: document.getElementById(typeKey)?.value || "",
       details: form.querySelector("textarea")?.value.trim() || "",
-      createdAt: serverTimestamp(),
+      createdAt: isConfigured ? serverTimestamp() : new Date().toISOString(),
       status: "submitted"
     };
     if (formId === "reportForm") {
@@ -332,7 +314,7 @@ async function submitReport(collectionName, formId, noticeId, typeKey) {
     try {
       if (isConfigured && currentUser) {
         await addDoc(collection(db, collectionName), payload);
-        notice.textContent = `Your report has been submitted to Firebase for ${currentProfile.electionName} under ${currentProfile.partyName}.`;
+        notice.textContent = "Your report has been submitted to Firebase.";
       } else {
         notice.textContent = "Demo preview: form validated. Connect Firebase to save reports.";
       }
