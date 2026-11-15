@@ -143,6 +143,98 @@ const $=id=>document.getElementById(id);const esc=s=>String(s??"").replace(/[&<>
 const electionNames={presidential:"Presidential Election",gubernatorial:"Gubernatorial Election",senatorial:"Senatorial Election",house_of_representatives:"House of Representatives Election"};
 const rolesByElection={presidential:[['state_collation_agent','State Collation Agent'],['local_government_collation_agent','Local Government Collation Agent'],['ward_collation_agent','Ward Collation Agent'],['polling_unit_agent','Polling Unit Agent']],gubernatorial:[['state_collation_agent','State Collation Agent'],['local_government_collation_agent','Local Government Collation Agent'],['ward_collation_agent','Ward Collation Agent'],['polling_unit_agent','Polling Unit Agent']],senatorial:[['state_collation_agent','State Collation Agent'],['senatorial_zone_agent','Senatorial Zone Agent'],['local_government_collation_agent','Local Government Collation Agent'],['ward_collation_agent','Ward Collation Agent'],['polling_unit_agent','Polling Unit Agent']],house_of_representatives:[['state_collation_agent','State Collation Agent'],['federal_constituency_agent','Federal Constituency Agent'],['local_government_collation_agent','Local Government Collation Agent'],['ward_collation_agent','Ward Collation Agent'],['polling_unit_agent','Polling Unit Agent']]};
 const roleNames=Object.fromEntries(Object.values(rolesByElection).flat().map(x=>[x[0],x[1]]));
+const INEC_SENATORIAL_DISTRICTS = [{"state":"ABIA","name":"ABIA NORTH","code":"SD/001/AB","lgas":["Umunneochi","Isuikwuato","Ohafia","Arochukwu","Bende"]},{"state":"ABIA","name":"ABIA CENTRAL","code":"SD/002/AB","lgas":["Umuahia North","Umuahia South","Ikwuano","Isiala Ngwa North","Isiala Ngwa South","Osisioma"]},{"state":"ABIA","name":"ABIA SOUTH","code":"SD/003/AB","lgas":["Aba North","Aba South","Ugwunagbo","Obingwa","Ukwa East","Ukwa West"]},{"state":"ADAMAWA","name":"ADAMAWA NORTH","code":"SD/004/AD","lgas":["Madagali","Maiha","Michika","Mubi North","Mubi South"]},{"state":"ADAMAWA","name":"ADAMAWA SOUTH","code":"SD/005/AD","lgas":["Demsa","Ganye","Guyuk","Jada","Lamurde","Mayo-Belwa","Numan","Shelleng","Toungo"]},{"state":"ADAMAWA","name":"ADAMAWA CENTRAL","code":"SD/006/AD","lgas":["Fufore","Girei","Gombi","Hong","Song","Yola North","Yola South"]},{"state":"AKWA IBOM","name":"AKWA IBOM NORTH EAST","code":"SD/007/AK","lgas":["Etinan","Ibesikpo Asutan","Ibono Ibom","Itu","Nsit Atai","Nsit Ibom","Nsit Ubium","Uruan","Uyo"]},{"state":"AKWA IBOM","name":"AKWA IBOM NORTH WEST","code":"SD/008/AK","lgas":["Abak","Essien Udim","Etim Ekpo","Ika","Ikono","Ikot Ekpene","Ini","Obot Akara","Oruk Anam","Ukanafun"]},{"state":"AKWA IBOM","name":"AKWA IBOM SOUTH","code":"SD/009/AK","lgas":["Eastern Obolo","Eket","Esit Eket","Ibeno","Ikot Abasi","Mbo","Mkpat Enin","Okobo","Onna","Oron","Udung Uko","Urue Offong/Oruko"]},{"state":"ANAMBRA","name":"ANAMBRA NORTH","code":"SD/010/AN","lgas":["Onitsha North","Onitsha South","Oyi","Ogbaru","Anambra East","Anambra West","Ayamelum"]},{"state":"ANAMBRA","name":"ANAMBRA CENTRAL","code":"SD/011/AN","lgas":["Awka North","Awka South","Njikoka","Anaocha","Idemili North","Idemili South","Dunukofia"]},{"state":"ANAMBRA","name":"ANAMBRA SOUTH","code":"SD/012/AN","lgas":["Ihiala","Nnewi North","Nnewi South","Orumba South","Orumba North","Aguata","Ekwusigo"]},{"state":"BAUCHI","name":"BAUCHI SOUTH","code":"SD/013/BA","lgas":["Alkaleri","Kirfi","Bauchi","Tafawa Balewa","Bogoro","Dass","Toro"]},{"state":"BAUCHI","name":"BAUCHI CENTRAL","code":"SD/014/BA","lgas":["Ningi","Warji","Darazo","Ganjuwa","Misau","Damban"]},{"state":"BAUCHI","name":"BAUCHI NORTH","code":"SD/015/BA","lgas":["Zaki","Gamawa","Jama'are","Itas/Gadau","Shira","Giade","Katagum"]},{"state":"BAYELSA","name":"BAYELSA EAST","code":"SD/016/BY","lgas":["Brass","Nembe","Ogbia"]},{"state":"BAYELSA","name":"BAYELSA CENTRAL","code":"SD/017/BY","lgas":["Kolokuma/Opokuma","Southern Ijaw","Yenagoa"]},{"state":"BAYELSA","name":"BAYELSA WEST","code":"SD/018/BY","lgas":["Ekeremor","Sagbama"]},{"state":"BENUE","name":"BENUE NORTH EAST","code":"SD/019/BN","lgas":["Katsina-Ala","Konshisha","Kwande","Logo","Ukum","Ushongo","Vandeikya"]},{"state":"BENUE","name":"BENUE NORTH WEST","code":"SD/020/BN","lgas":["Buruku","Gboko","Guma","Gwer East","Gwer West","Markurdi","Tarka"]},{"state":"BENUE","name":"BENUE SOUTH","code":"SD/021/BN","lgas":["Ado","Agatu","Apa","Obi","Ogbadibo","Ohimini","Oju","Okpokwu","Otukpo"]},{"state":"BORNO","name":"BORNO NORTH","code":"SD/022/BO","lgas":["Abadam","Gubio","Guzamala","Kukawa","Magumeri","Marte","Mobbar","Nganza","Monguno"]},{"state":"BORNO","name":"BORNO CENTRAL","code":"SD/023/BO","lgas":["Dikwa","Jere","Kala Balge","Mafa","Maiduguri","Ngala","Konduga","Bama","Kaga"]},{"state":"BORNO","name":"BORNO SOUTH","code":"SD/024/BO","lgas":["Askira/Uba","Bayo","Biu","Chibok","Damboa","Gwoza","Hawul","Kwaya Kusar","Shani"]},{"state":"CROSS RIVER","name":"CROSS RIVER NORTH","code":"SD/025/CR","lgas":["Bekwarra","Obanliku","Obudu","Ogoja","Yala","Biase"]},{"state":"CROSS RIVER","name":"CROSS RIVER CENTRAL","code":"SD/026/CR","lgas":["Abi","Boki","Etung","Ikom","Obubra","Yakurr"]},{"state":"CROSS RIVER","name":"CROSS RIVER SOUTH","code":"SD/027/CR","lgas":["Calabar Municipal","Calabar South","Akamkpa","Akpabuyo","Bakassi","Odukpani"]},{"state":"DELTA","name":"DELTA CENTRAL","code":"SD/028/DT","lgas":["Ethiope East","Ethiope West","Okpe","Sapele","Udu","Ughelli North","Ughelli South","Uvwie"]},{"state":"DELTA","name":"DELTA NORTH","code":"SD/029/DT","lgas":["Aniocha North","Aniocha South","Ika North East","Ika South","Ndokwa East","Ndokwa West","Oshimili North","Oshimili South","Ukwuani"]},{"state":"DELTA","name":"DELTA SOUTH","code":"SD/030/DT","lgas":["Bomadi","Burutu","Isoko North","Isoko South","Patani","Warri North","Warri South","Warri South West"]},{"state":"EBONYI","name":"EBONYI NORTH","code":"SD/031/EB","lgas":["Abakaliki","Ebonyi","Izzi","Ohaukwu"]},{"state":"EBONYI","name":"EBONYI CENTRAL","code":"SD/032/EB","lgas":["Ezza North","Ezza South","Ikwo","Ishielu"]},{"state":"EBONYI","name":"EBONYI SOUTH","code":"SD/033/EB","lgas":["Afikpo North","Afikpo South","Ivo","Ohaozara","Onicha"]},{"state":"EDO","name":"EDO CENTRAL","code":"SD/034/ED","lgas":["Esan Central","Esan North East","Esan South East","Esan West","Igueben"]},{"state":"EDO","name":"EDO NORTH","code":"SD/035/ED","lgas":["Akoko Edo","Etsako East","Etsako Central","Etsako West","Owan East","Owan West"]},{"state":"EDO","name":"EDO SOUTH","code":"SD/036/ED","lgas":["Oredo","Orhionmwon","Ovia North East","Ovia South West","Egor","Uhunmwonde","Ikpoba Okha"]},{"state":"EKITI","name":"EKITI NORTH","code":"SD/037/EK","lgas":["Ikole","Oye","Ido/Osi","Moba","Ilejemeje"]},{"state":"EKITI","name":"EKITI CENTRAL","code":"SD/038/EK","lgas":["Ado Ekiti","Irepodun/Ifelodun","Ijero","Efon","Ekiti West"]},{"state":"EKITI","name":"EKITI SOUTH","code":"SD/039/EK","lgas":["Ekiti South West","Ikere","Emure","Ise/Orun","Ido Osi","Ekiti East"]},{"state":"ENUGU","name":"ENUGU EAST","code":"SD/040/EN","lgas":["Enugu East","Enugu North","Enugu South","Isi Uzo","Nkanu East","Nkanu West"]},{"state":"ENUGU","name":"ENUGU WEST","code":"SD/041/EN","lgas":["Aninri","Awgu","Ezeagu","Oji River","Udi"]},{"state":"ENUGU","name":"ENUGU NORTH","code":"SD/042/EN","lgas":["Igbo Etiti","Igbo Eze North","Igbo Eze South","Uzo Uwani","Udenu","Nsukka"]},{"state":"GOMBE","name":"GOMBE CENTRAL","code":"SD/043/GM","lgas":["Akko","Yamaltu/Deba"]},{"state":"GOMBE","name":"GOMBE SOUTH","code":"SD/044/GM","lgas":["Balanga","Billiri","Kaltungo","Shongom"]},{"state":"GOMBE","name":"GOMBE NORTH","code":"SD/045/GM","lgas":["Funakaye","Nafada","Gombe","Kwami","Dukku"]},{"state":"IMO","name":"IMO EAST","code":"SD/046/IM","lgas":["Aboh Mbaise","Ahiazu Mbaise","Ezinihitte","Ikeduru","Mbaitoli","Ngor Okpala","Owerri Municipal","Owerri North","Owerri West"]},{"state":"IMO","name":"IMO WEST","code":"SD/047/IM","lgas":["Ideato North","Ideato South","Isu","Njaba","Nkwere","Nwangele","Oguta","Ohaji/Egbema","Orlu","Orsu","Oru West","Oru East"]},{"state":"IMO","name":"IMO NORTH","code":"SD/048/IM","lgas":["Ehime Mbano","Ihitte/Uboma","Isiala Mbano","Obowo","Okigwe","Onuimo"]},{"state":"JIGAWA","name":"JIGAWA SOUTH WEST","code":"SD/049/JG","lgas":["Birnin Kudu","Buji","Dutse","Gwaram","Kiyawa","Jahun","Miga"]},{"state":"JIGAWA","name":"JIGAWA NORTH EAST","code":"SD/050/JG","lgas":["Auyo","Birniwa","Guri","Hadejia","Kaugama","K/Hausa","K/Kasamma","M/Madori"]},{"state":"JIGAWA","name":"JIGAWA NORTH WEST","code":"SD/051/JG","lgas":["Babura","Gagarawa","Garki","Gwiwa","Kazaure","Maigatari","Roni","Ringim","S/Tankarkar","Taura","Yankwashi","Gumel"]},{"state":"KADUNA","name":"KADUNA NORTH","code":"SD/052/KD","lgas":["Kubau","Ikara","Makarfi","Soba","Sabon Gari","Zaria","Lere","Kudan"]},{"state":"KADUNA","name":"KADUNA CENTRAL","code":"SD/053/KD","lgas":["Birnin Gwari","Giwa","Igabi","Kaduna North","Kaduna South","Chikun","Kajuru"]},{"state":"KADUNA","name":"KADUNA SOUTH","code":"SD/054/KD","lgas":["Jema'a","Jaba","Kaura","Kauru","Zangon Kataf","Kachia","Kagarko","Sanga"]},{"state":"KANO","name":"KANO CENTRAL","code":"SD/055/KN","lgas":["Dala","Gwale","Dawakin Kudu","Gezawa","Tarauni","Fagge","Garum Mallam","Kano Municipal","Kumbotso","Kura","Madobi","Minjibir","Nassarawa","Ungogo","Warawa"]},{"state":"KANO","name":"KANO NORTH","code":"SD/056/KN","lgas":["Bichi","Shanono","Bagwai","Dambatta","Makoda","Dawakin Tofa","Gabasawa","Gwarzo","Kabo","Rimi Gado","Tofa","Tsanyawa","Kunchi","Karaye"]},{"state":"KANO","name":"KANO SOUTH","code":"SD/057/KN","lgas":["Albasu","Bebeji","Bunkure","Doguwa","Gaya","Kiru","Rano","Takai","Ajingi","Rogo","Kibiya","Tudun Wada","Garko","Wudil","Sumaila"]},{"state":"KATSINA","name":"KATSINA NORTH","code":"SD/058/KT","lgas":["Daura","Zango","Mai'adua","Mashi","Mani","Ingawa","Bindawa","Sandamu","Dutsi","Kankia","Kusada","Baure"]},{"state":"KATSINA","name":"KATSINA SOUTH","code":"SD/059/KT","lgas":["Funtua","Faskari","Danja","Dandume","Bakori","Kankara","Malumfashi","Kafur","Musawa","Matazu","Sabuwa"]},{"state":"KATSINA","name":"KATSINA CENTRAL","code":"SD/060/KT","lgas":["Katsina","Kaita","Jibia","Batsari","Safana","Dutsin-Ma","Kurfi","Batagarawa","Rimi","Charanchi","Dan Musa"]},{"state":"KEBBI","name":"KEBBI NORTH","code":"SD/061/KB","lgas":["Arewa","Argungu","Augie","Bagudo","Dandi","Suru","Jega"]},{"state":"KEBBI","name":"KEBBI CENTRAL","code":"SD/062/KB","lgas":["Aleiro","Birnin Kebbi","Bunza","Gwandu","Kalgo","Koko/Besse","Maiyama"]},{"state":"KEBBI","name":"KEBBI SOUTH","code":"SD/063/KB","lgas":["Fakai","Ngaski","Sakaba","Shanga","Wasagu/Danko","Yauri","Zuru"]},{"state":"KOGI","name":"KOGI CENTRAL","code":"SD/064/KG","lgas":["Adavi","Ajaokuta","Ogori/Magongo","Okehi","Okene"]},{"state":"KOGI","name":"KOGI EAST","code":"SD/065/KG","lgas":["Ankpa","Bassa","Dekina","Ibaji","Idah","Igalamela-Odolu","Ofu","Olamaboro","Omala"]},{"state":"KOGI","name":"KOGI WEST","code":"SD/066/KG","lgas":["Ijumu","Kabba/Bunu","Kogi","Lokoja","Mopamuro","Yagba East","Yagba West"]},{"state":"KWARA","name":"KWARA NORTH","code":"SD/067/KW","lgas":["Baruten","Edu","Patigi","Kaiama","Moro"]},{"state":"KWARA","name":"KWARA CENTRAL","code":"SD/068/KW","lgas":["Asa","Ilorin East","Ilorin South","Ilorin West","Offa"]},{"state":"KWARA","name":"KWARA SOUTH","code":"SD/069/KW","lgas":["Ekiti","Oke Ero","Ifelodun","Irepodun","Isin","Oyun"]},{"state":"LAGOS","name":"LAGOS CENTRAL","code":"SD/070/LA","lgas":["Lagos Island","Lagos Mainland","Surulere","Apapa","Eti-Osa"]},{"state":"LAGOS","name":"LAGOS EAST","code":"SD/071/LA","lgas":["Shomolu","Kosofe","Epe","Ibeju-Lekki","Ikorodu"]},{"state":"LAGOS","name":"LAGOS WEST","code":"SD/072/LA","lgas":["Agege","Ifako-Ijaiye","Alimosho","Badagry","Ojo","Ajeromi-Ifelodun","Amuwo-Odofin","Oshodi-Isolo","Ikeja","Mushin"]},{"state":"NASARAWA","name":"NASARAWA NORTH","code":"SD/073/NW","lgas":["Akwanga","Nasarawa Eggon","Wamba"]},{"state":"NASARAWA","name":"NASARAWA WEST","code":"SD/074/NW","lgas":["Nasarawa","Keffi","Kokona","Karu","Toto"]},{"state":"NASARAWA","name":"NASARAWA SOUTH","code":"SD/075/NW","lgas":["Lafia","Awe","Doma","Keana","Obi"]},{"state":"NIGER","name":"NIGER EAST","code":"SD/076/NG","lgas":["Bosso","Chanchaga","Gurara","Paikoro","Rafi","Shiroro","Muya","Suleja","Tafa"]},{"state":"NIGER","name":"NIGER NORTH","code":"SD/077/NG","lgas":["Agwara","Borgu","Kotangora","Mariga","Rijau","Wushishi","Mashegu","Magama"]},{"state":"NIGER","name":"NIGER SOUTH","code":"SD/078/NG","lgas":["Agaie","Bida","Gbako","Katcha","Edati","Lapai","Lavun","Mokwa"]},{"state":"OGUN","name":"OGUN CENTRAL","code":"SD/079/OG","lgas":["Ifo","Ewekoro","Obafemi/Owode","Abeokuta North","Abeokuta South","Odeda"]},{"state":"OGUN","name":"OGUN EAST","code":"SD/080/OG","lgas":["Sagamu","Ikenne","Remo North","Ijebu Ode","Odogbolu","Ijebu North East","Ijebu North","Ijebu East","Ogun Waterside"]},{"state":"OGUN","name":"OGUN WEST","code":"SD/081/OG","lgas":["Imeko Afon","Yewa North","Yewa South","Ipokia","Ado-Odo/Ota"]},{"state":"ONDO","name":"ONDO NORTH","code":"SD/082/OD","lgas":["Akoko North East","Akoko North West","Akoko South West","Akoko South East","Ose","Owo"]},{"state":"ONDO","name":"ONDO CENTRAL","code":"SD/083/OD","lgas":["Akure North","Akure South","Ifedore","Idanre","Ondo East","Ondo West"]},{"state":"ONDO","name":"ONDO SOUTH","code":"SD/084/OD","lgas":["Ile Oluji/Okeigbo","Odigbo","Irele","Okitipupa","Ese Odo","Ilaje"]},{"state":"OSUN","name":"OSUN CENTRAL","code":"SD/085/OS","lgas":["Boripe","Boluwaduro","Ifelodun","Ila","Ifedayo","Irepodun","Orolu","Odo Otin","Olorunda","Osogbo"]},{"state":"OSUN","name":"OSUN EAST","code":"SD/086/OS","lgas":["Atakumosa East","Atakumosa West","Ife Central","Ife East","Ife North","Ife South","Ilesa East","Ilesa West","Obokun","Oriade"]},{"state":"OSUN","name":"OSUN WEST","code":"SD/087/OS","lgas":["Ayedaade","Ayedire","Ede North","Ede South","Egbedore","Ejigbo","Irewole","Isokan","Iwo","Ola Oluwa"]},{"state":"OYO","name":"OYO CENTRAL","code":"SD/088/OY","lgas":["Afijio","Akinyele","Egbeda","Ogo Oluwa","Surulere","Lagelu","Oluyole","Ona Ara","Oyo East","Oyo West","Atiba"]},{"state":"OYO","name":"OYO NORTH","code":"SD/089/OY","lgas":["Saki West","Saki East","Atisbo","Irepo","Olorunsogo","Kajola","Iwajowa","Ogbomoso North","Ogbomoso South","Iseyin","Oorelope","Orire","Itesiwaju"]},{"state":"OYO","name":"OYO SOUTH","code":"SD/090/OY","lgas":["Ibadan North","Ibadan North East","Ibadan North West","Ibadan South East","Ibadan South West","Ibarapa Central","Ibarapa North","Ibarapa East","Ido"]},{"state":"PLATEAU","name":"PLATEAU SOUTH","code":"SD/091/PL","lgas":["Langtang North","Langtang South","Mikang","Qua'an Pan","Shendam","Wase"]},{"state":"PLATEAU","name":"PLATEAU CENTRAL","code":"SD/092/PL","lgas":["Bokkos","Kanke","Mangu","Pankshin","Kanam"]},{"state":"PLATEAU","name":"PLATEAU NORTH","code":"SD/093/PL","lgas":["Barkin Ladi","Bassa","Jos East","Jos North","Jos South","Riyom"]},{"state":"RIVERS","name":"RIVERS EAST","code":"SD/094/RV","lgas":["Etche","Omuma","Ikwerre","Obio/Akpor","Port Harcourt","Okrika","Ogu/Bolo","Emohua"]},{"state":"RIVERS","name":"RIVERS SOUTH EAST","code":"SD/095/RV","lgas":["Opobo/Nkoro","Andoni","Oyigbo","Tai","Eleme","Gokana","Khana"]},{"state":"RIVERS","name":"RIVERS WEST","code":"SD/096/RV","lgas":["Asari-Toru","Akuku-Toru","Degema","Ogba/Egbema/Ndoni","Abua/Odual","Ahoada East","Ahoada West","Bonny"]},{"state":"SOKOTO","name":"SOKOTO EAST","code":"SD/097/SO","lgas":["Isa","Sabon Birni","Wurno","Goronyo","Rabah","Gada","Illela","Gwadabawa"]},{"state":"SOKOTO","name":"SOKOTO NORTH","code":"SD/098/SO","lgas":["Tangaza","Binji","Silame","Gudu","Kware","Wamakko","Sokoto North","Sokoto South"]},{"state":"SOKOTO","name":"SOKOTO SOUTH","code":"SD/099/SO","lgas":["Dange Shuni","Tureta","Bodinga","Shagari","Yabo","Tambuwal","Kebbe"]},{"state":"TARABA","name":"TARABA SOUTH","code":"SD/100/TR","lgas":["Wukari","Ibi","Donga","Ussa","Takum"]},{"state":"TARABA","name":"TARABA CENTRAL","code":"SD/101/TR","lgas":["Sardauna","Kurmi","Bali","Gashaka","Gassol"]},{"state":"TARABA","name":"TARABA NORTH","code":"SD/102/TR","lgas":["Jalingo","Yorro","Zing","Lau","Ardo Kola","Karim Lamido"]},{"state":"YOBE","name":"YOBE EAST","code":"SD/103/YB","lgas":["Bursari","Geidam","Gujba","Gulani","Tarmuwa","Yunusari"]},{"state":"YOBE","name":"YOBE NORTH","code":"SD/104/YB","lgas":["Bade","Jakusko","Machina","Karasuwa","Nguru","Yusufari"]},{"state":"YOBE","name":"YOBE SOUTH","code":"SD/105/YB","lgas":["Fika","Fune","Nangere","Potiskum","Damaturu"]},{"state":"ZAMFARA","name":"ZAMFARA NORTH","code":"SD/106/ZF","lgas":["Kaura Namoda","Shinkafi","Zurmi","Birnin Magaji","Talata Mafara"]},{"state":"ZAMFARA","name":"ZAMFARA CENTRAL","code":"SD/107/ZF","lgas":["Gusau","Tsafe","Bungudu","Maru"]},{"state":"ZAMFARA","name":"ZAMFARA WEST","code":"SD/108/ZF","lgas":["Maradun","Bakura","Anka","Bukkuyum","Gummi"]},{"state":"FCT","name":"FCT SENATORIAL DISTRICT","code":"SD/109/FCT","lgas":["Abaji","Bwari","Gwagwalada","Kuje","Kwali","Abuja Municipal"]}];
+
+function geoNormalizeName(value){
+  let v=String(value??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+  v=v.replace(/\b(local government area|lga|area council|municipal area council)\b/g,' ');
+  v=v.replace(/&/g,' and ').replace(/[^a-z0-9]+/g,' ').trim().replace(/\s+/g,' ');
+  const aliases={
+    'abuja municipal':'abuja municipal',
+    'amac':'abuja municipal',
+    'municipal':'abuja municipal',
+    'am a c':'abuja municipal',
+    'am ac':'abuja municipal',
+    'maiduguri metropolitan':'maiduguri',
+    'metropolitan':'maiduguri',
+    'maradun':'maradun',
+    'talata mafara':'talata mafara',
+    'talata mafarra':'talata mafara',
+    'k namoda':'kaura namoda',
+    'kaura namoda':'kaura namoda',
+    'kankia':'kankia',
+    'dutsin ma':'dutsin ma',
+    'dutsinma':'dutsin ma',
+    'kazaure':'kazaure',
+    'gagarawa':'gagarawa',
+    'gagara':'gagarawa',
+    'kotangora':'kontagora',
+    'kontogora':'kontagora',
+    'kontagora':'kontagora',
+    'edati idati':'edati',
+    'edati':'edati',
+    'batagi':'edati',
+    'markurdi':'makurdi',
+    'makurdi':'makurdi',
+    'ogo oluwo':'ogo oluwa',
+    'ogo oluwa':'ogo oluwa',
+    'damaboa':'damboa',
+    'damboa':'damboa',
+    'kwaya':'kwaya kusar',
+    'kwaya kusar':'kwaya kusar',
+    'zangon':'zangon kataf',
+    'zangon kataf':'zangon kataf',
+    'kaura':'kaura',
+    'kaura namoda':'kaura namoda',
+    's tankar':'s tankarkar',
+    's tankarkar':'s tankarkar',
+    'k hausa':'kafin hausa',
+    'kafin hausa':'kafin hausa',
+    'k kasamma':'kiri kasamma',
+    'kiri kasamma':'kiri kasamma',
+    'm madori':'malam madori',
+    'malam madori':'malam madori',
+    'jaun':'jahun',
+    'jahun':'jahun',
+    'nassarawo':'nasarawa',
+    'nassarawa':'nasarawa',
+    'nasarawa':'nasarawa',
+    'akawanga':'akwanga',
+    'akwanga':'akwanga',
+    'bolowaduro':'boluwaduro',
+    'boluwaduro':'boluwaduro',
+    'ayadaade':'ayedaade',
+    'ayedaade':'ayedaade',
+    'ati gbo':'atisbo',
+    'atigbo':'atisbo',
+    'atisbo':'atisbo',
+    'igo eze south':'igbo eze south',
+    'igbo eze south':'igbo eze south',
+    'an iniri':'aninri',
+    'aniniri':'aninri',
+    'urue offong oruko':'urue offong oruko',
+    'urue offong oruko':'urue offong oruko',
+    'ibono ibom':'ibiono ibom',
+    'ibiono ibom':'ibiono ibom',
+    'mobi':'mubi',
+    'mubi north':'mubi north',
+    'mubi south':'mubi south',
+    'gummi':'gummi',
+    'gume':'gummi'
+  };
+  return aliases[v] || v;
+}
+function inecStateKey(name){
+  const n=geoNormalizeName(name).replace(/\bstate\b/g,'').trim();
+  if(n.includes('federal capital') || n==='fct' || n==='abuja') return 'FCT';
+  return n.toUpperCase();
+}
+function inecZonesForState(stateName){
+  const key=inecStateKey(stateName);
+  return INEC_SENATORIAL_DISTRICTS.filter(z=>z.state===key);
+}
+
+
 function notice(id,msg,type='info'){const n=$(id);n.textContent=msg;n.className='notice show '+type}
 function showPage(page){document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));$(page+'Page').classList.remove('hidden');document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active',b.dataset.page===page));$('sidebar').classList.remove('open');if(page==='agents'||page==='status'||page==='dashboard')loadAgents();if(page==='geography'){reloadGeoStateOptions().catch(console.warn);initGeoManage().catch(console.warn);}}
 document.querySelectorAll('.navbtn').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.goto)));$('mobileMenu').onclick=()=>$('sidebar').classList.toggle('open');
@@ -214,9 +306,10 @@ $('stateSelect').addEventListener('change',async()=>{
   const election=$('electionType').value;
   try{
     if(election==='senatorial'){
-      const zones=await fetchCollection('geographySenatorialZones');
-      const z=zones.filter(x=>String(x.stateCode??x.parentCode??'').trim()===stateCode);
-      fill($('zoneSelect'),z,'Select Senatorial Zone',recordName);
+      const stateName=chosenName('stateSelect');
+      const zones=inecZonesForState(stateName).map(z=>({id:z.code,code:z.code,name:z.name,zoneCode:z.code,stateCode}));
+      fill($('zoneSelect'),zones,'Select Senatorial District',recordName);
+      if(!zones.length)notice('agentNotice','No INEC Senatorial District mapping was found for '+stateName+'.','error');
     }
     if(election==='house_of_representatives'){
       const constituencies=await fetchCollection('geographyFederalConstituencies');
@@ -253,9 +346,22 @@ async function loadLGAsByParent(){
   try{
     let l=await fetchCollection('geographyLGAs');
     l=l.filter(x=>String(x.stateCode??x.parentCode??'').trim()===stateCode);
-    if($('electionType').value==='senatorial'&&$('zoneSelect').value){
-      const zone=$('zoneSelect').value;
-      l=l.filter(x=>!x.zoneCode || String(x.zoneCode).trim()===zone);
+    if($('electionType').value==='senatorial'){
+      const zoneCode=$('zoneSelect').value;
+      if(!zoneCode){
+        fill($('lgaSelect'),[],'Select Senatorial District first');
+        return;
+      }
+      const district=INEC_SENATORIAL_DISTRICTS.find(z=>z.code===zoneCode);
+      if(!district)throw new Error('The selected Senatorial District is not in the INEC reference list.');
+      const allowed=new Set(district.lgas.map(geoNormalizeName));
+      const matched=l.filter(x=>allowed.has(geoNormalizeName(recordName(x))));
+      const missing=district.lgas.filter(n=>!l.some(x=>geoNormalizeName(recordName(x))===geoNormalizeName(n)));
+      fill($('lgaSelect'),matched,'Select Local Government Area',recordName);
+      if(missing.length){
+        notice('agentNotice',`INEC district: ${district.name}. Matched existing Firebase LGAs: ${matched.length}/${district.lgas.length}. Missing: ${missing.join(', ')}`,'info');
+      }
+      return;
     }
     if($('electionType').value==='house_of_representatives'&&$('constituencySelect').value){
       const selectedCode=$('constituencySelect').value;
