@@ -243,7 +243,7 @@ h1{font-size:clamp(28px,3.5vw,44px);letter-spacing:-1.2px;margin:8px 0 10px;line
         <table style="width:100%;border-collapse:collapse;min-width:680px;font-size:12px">
           <thead><tr style="background:#f0f7f3;text-align:left"><th style="padding:11px">S/N</th><th style="padding:11px">Political Party</th><th style="padding:11px">Votes in Figures</th><th style="padding:11px">Votes in Words</th><th style="padding:11px">Name of Polling Agent</th></tr></thead>
           <tbody id="ec8aPartyRows"></tbody>
-          <tfoot><tr style="background:#f0f7f3;font-weight:800"><td colspan="2" style="padding:12px">Total valid votes</td><td id="ec8aPartyTotal" style="padding:12px">0</td><td colspan="2"></td></tr></tfoot>
+          <tfoot><tr style="background:#f0f7f3;font-weight:800"><td colspan="2" style="padding:12px">Total valid votes</td><td id="ec8aPartyTotal" style="padding:12px">0</td><td id="ec8aPartyTotalWords" style="padding:12px;font-weight:600">ZERO</td><td></td></tr></tfoot>
         </table>
       </div>
     </div>
@@ -600,7 +600,7 @@ window.addEventListener("beforeunload",()=>Object.keys(evidenceUrls).forEach(key
 const partyCodes=["A","AA","AAC","ADC","ADP","APC","APGA","APM","APP","BP","LP","NNPP","NRM","PDP","PRP","SDP","YPP","ZLP"];
 function numberToWords(value){
   const n=Math.max(0,Math.floor(Number(value)||0));
-  if(n===0)return "Zero";
+  if(n===0)return "ZERO";
   const ones=["","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten","Eleven","Twelve","Thirteen","Fourteen","Fifteen","Sixteen","Seventeen","Eighteen","Nineteen"];
   const tens=["","","Twenty","Thirty","Forty","Fifty","Sixty","Seventy","Eighty","Ninety"];
   function under1000(x){
@@ -614,10 +614,10 @@ function numberToWords(value){
   const units=["","Thousand","Million","Billion"];
   let i=0,x=n;
   while(x>0&&i<units.length){const part=x%1000;if(part)chunks.unshift(under1000(part)+(units[i]?" "+units[i]:""));x=Math.floor(x/1000);i++}
-  return chunks.join(" ");
+  return chunks.join(" ").toUpperCase();
 }
 function renderPartyRows(){
-  $("ec8aPartyRows").innerHTML=partyCodes.map((party,i)=>`<tr><td>${i+1}</td><td><strong>${party}</strong></td><td><input type="number" min="0" step="1" value="0" data-party-votes="${party}" aria-label="${party} votes"></td><td class="words" data-party-words="${party}">Zero</td><td><input type="text" data-party-agent="${party}" aria-label="${party} polling agent name"></td></tr>`).join("");
+  $("ec8aPartyRows").innerHTML=partyCodes.map((party,i)=>`<tr><td>${i+1}</td><td><strong>${party}</strong></td><td><input type="number" min="0" step="1" value="0" data-party-votes="${party}" aria-label="${party} votes"></td><td class="words" data-party-words="${party}">ZERO</td><td><input type="text" data-party-agent="${party}" aria-label="${party} polling agent name"></td></tr>`).join("");
   $("ec8aPartyRows").querySelectorAll("[data-party-votes]").forEach(input=>input.addEventListener("input",updateEc8aTotals));
   updateEc8aTotals();
 }
@@ -625,7 +625,7 @@ function readNum(id){return Math.max(0,Number($(id).value)||0)}
 function updateEc8aTotals(){
   let total=0;
   partyCodes.forEach(p=>{const v=Math.max(0,Number(document.querySelector(`[data-party-votes="${p}"]`)?.value)||0);total+=v;const w=document.querySelector(`[data-party-words="${p}"]`);if(w)w.textContent=numberToWords(v)});
-  $("ec8aPartyTotal").textContent=String(total);
+  $("ec8aPartyTotal").textContent=String(total);$("ec8aPartyTotalWords").textContent=numberToWords(total);
   const valid=total,rejected=readNum("ec8aRejected"),used=valid+rejected;
   $("ec8aValid").value=String(valid);$("ec8aUsed").value=String(used);
   const warnings=[];
