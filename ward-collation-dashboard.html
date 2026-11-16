@@ -72,6 +72,22 @@
  .result-status{white-space:normal;text-align:center;line-height:1.25;padding:6px}
 }
 
+
+.submitted-evidence-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 18px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 18px;box-shadow:var(--shadow)}
+.evidence-grid-title{grid-column:1/-1;font-size:17px;font-weight:850;padding:3px 0 12px;border-bottom:2px solid #aeb8b5;margin-bottom:2px}
+.evidence-grid-button{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:78px;text-align:left;border:0;border-bottom:1px solid #b9c3c0;background:#fff;color:var(--ink);font-size:15px;font-weight:750;padding:15px 2px}
+.evidence-grid-button:nth-last-child(-n+2){border-bottom:0}
+.evidence-grid-button .arrow{font-size:22px;color:#52645a}
+.evidence-grid-button:focus-visible{outline:2px solid var(--g);outline-offset:2px}
+.evidence-category-panel{margin-top:14px;border:1px solid var(--line);border-radius:13px;background:#fff;padding:15px}
+.evidence-category-panel h3{margin:0 0 10px;font-size:15px}
+.evidence-category-item{padding:12px 0;border-top:1px solid #edf1ee}
+.evidence-category-item:first-of-type{border-top:0}
+.evidence-category-item strong{display:block;font-size:13px}
+.evidence-category-item .muted{font-size:11px;margin:4px 0 8px}
+.evidence-category-item img,.evidence-category-item video{display:block;width:100%;max-height:390px;object-fit:contain;border-radius:9px;background:#f2f5f3;margin:9px 0}
+@media(max-width:520px){.submitted-evidence-grid{gap:0 12px;padding:12px}.evidence-grid-button{font-size:13px;min-height:74px}.evidence-grid-title{font-size:16px}}
+
 </style>
 </head>
 <body>
@@ -217,34 +233,59 @@ function openPuView(code){
   const records=recordsForPu(code);
   const pu=p||{pollingUnitName:first(records[0]&&nameOf(records[0]),'Polling unit')};
   const title=puNameOf(pu);
-  $('detailTitle').textContent=`${title} — Submission details`;
-  const ec8a=records.filter(d=>d._collection==='ec8aResults');
+  $('detailTitle').textContent=`${title} — Submitted evidence`;
   const evidence=records.filter(d=>d._collection==='evidenceUploads');
-  const other=records.filter(d=>!['ec8aResults','evidenceUploads'].includes(d._collection));
-  const section=(heading,items,emptyText,renderer)=>`<section class="pu-detail-section"><h3>${heading} <span class="tag">${items.length}</span></h3>${items.length?items.map(renderer).join(''):`<p class="muted">${emptyText}</p>`}</section>`;
-  const recordCard=d=>{
-    const label=typeLabel(d),url=first(d.cloudinaryUrl,d.secure_url,d.cloudinary?.secure_url,'');
-    const candidate=d.candidateName?` · ${esc(d.candidateName)}`:'';
-    return `<div class="pu-file"><div><strong>${esc(label)}</strong><div class="muted">${esc(agentName(d))}${candidate} · ${esc(fmt(d.createdAt))}</div></div><span>${statusTag(d.status||d.reportStatus)}</span></div>`;
+  const ec8a=records.filter(d=>d._collection==='ec8aResults');
+  const evidenceMatches=(kind)=>{
+    if(kind==='ec8a')return evidence.filter(d=>{const t=[d.evidenceType,d.fileType,d.fileName,d.reportType].join(' ').toLowerCase();return t.includes('ec8a')||t.includes('form')||t.includes('result')});
+    if(kind==='eform')return evidence.filter(d=>{const t=[d.evidenceType,d.fileType,d.fileName,d.reportType].join(' ').toLowerCase();return t.includes('e-form')||t.includes('eform')||t.includes('electronic form')});
+    if(kind==='media')return evidence.filter(d=>{const k=evidenceKind(d);return k==='video'||String(d.fileType||'').startsWith('image/')||String(d.mimeType||'').startsWith('image/')});
+    if(kind==='duplicate')return evidence.filter(d=>evidenceKind(d)==='duplicate'||[d.evidenceType,d.fileName,d.fileType].join(' ').toLowerCase().includes('duplicate'));
+    return [];
   };
-  let content=`<div class="detailgrid"><div><small>Polling unit</small><b>${esc(title)}</b></div><div><small>Polling unit code</small><b>${esc(code)}</b></div><div><small>Assigned ward</small><b>${esc(assignment.ward||'—')}</b></div><div><small>Total submissions</small><b>${records.length}</b></div></div>`;
-  content+=section('EC8A election results',ec8a,'No EC8A result has been submitted for this polling unit.',d=>{
-    const ba=d.ballotAccounting||{},parties=Array.isArray(d.partyResults)?d.partyResults:[];
-    const ballotRows=[['Registered / recorded voters',ba.voters],['Accredited voters',ba.accreditedVoters],['Ballot papers issued',ba.ballotPapersIssued],['Unused ballot papers',ba.unusedBallotPapers],['Spoilt ballot papers',ba.spoiltBallotPapers],['Rejected ballots',ba.rejectedBallots],['Total used ballot papers',ba.totalUsedBallotPapers],['Total valid votes',ba.totalValidVotes]];
-    const partyTable=parties.length?`<div class="tablewrap"><table><thead><tr><th>Party</th><th>Votes</th><th>Votes in words</th></tr></thead><tbody>${parties.map(x=>`<tr><td>${esc(x.party||'—')}</td><td>${esc(x.votes??'—')}</td><td>${esc(x.votesInWords||'—')}</td></tr>`).join('')}</tbody></table></div>`:'<p class="muted">No party-by-party results were stored in this record.</p>';
-    return `<div class="pu-detail-section"><div class="pu-file"><div><strong>${esc(typeLabel(d))}</strong><div class="muted">${esc(agentName(d))} · ${esc(fmt(d.createdAt))} · ${esc(d.reportStatus||d.status||'submitted')}</div></div></div><h4>Ballot accounting</h4><div class="detailgrid">${ballotRows.filter(x=>x[1]!==undefined&&x[1]!==null).map(([k,v])=>`<div><small>${esc(k)}</small><b>${esc(v)}</b></div>`).join('')||'<p class="muted">No ballot accounting fields found.</p>'}</div><h4>Party results</h4>${partyTable}<div class="muted">Candidate: ${esc(d.candidateName||'—')} · Election: ${esc(d.electionName||d.electionType||'—')}</div></div>`;
-  });
-  content+=section('Video, EC8A form and duplicate evidence',evidence,'No evidence files have been uploaded for this polling unit.',d=>{
-    const kind=evidenceKind(d),url=first(d.cloudinaryUrl,d.secure_url,d.cloudinary?.secure_url,'');
-    const label=first(d.fileName,d.evidenceType,d.fileType,'Evidence file');
-    let preview='';
-    if(url&&kind==='video')preview=`<video class="pu-preview" controls playsinline preload="metadata" src="${esc(url)}"></video>`;
-    else if(url&&String(d.fileType||'').startsWith('image/'))preview=`<img class="pu-preview" src="${esc(url)}" alt="${esc(label)}">`;
-    const link=url?`<a class="evidence-link" href="${esc(url)}" target="_blank" rel="noopener">${kind==='video'?'View video':kind==='form'?'View e-form / EC8A':kind==='duplicate'?'View duplicate copy':'View file'}</a>`:'<span class="muted">No file URL saved</span>';
-    return `<div class="pu-detail-section"><div class="pu-file"><div><strong>${esc(label)}</strong><div class="muted">${esc(d.evidenceType||d.reportType||'Evidence')} · ${esc(fmt(d.createdAt))}</div></div>${link}</div>${preview}</div>`;
-  });
-  content+=section('Incident reports and support requests',other,'No incident, alert or backup request has been submitted.',recordCard);
-  $('detailContent').innerHTML=content;
+  const categoryItems=(kind)=>{
+    let items=evidenceMatches(kind);
+    if(kind==='ec8a'&&!items.length)items=ec8a;
+    if(!items.length)return '<p class="muted">No files or records of this type have been submitted for this polling unit.</p>';
+    return items.map(d=>{
+      const url=first(d.cloudinaryUrl,d.secure_url,d.cloudinary?.secure_url,'');
+      const label=first(d.fileName,d.evidenceType,d.fileType,typeLabel(d));
+      const isVideo=evidenceKind(d)==='video'||String(d.mimeType||'').startsWith('video/');
+      const isImage=String(d.fileType||'').startsWith('image/')||String(d.mimeType||'').startsWith('image/');
+      let preview='';
+      if(url&&isVideo)preview=`<video controls playsinline preload="metadata" src="${esc(url)}"></video>`;
+      else if(url&&isImage)preview=`<img src="${esc(url)}" alt="${esc(label)}">`;
+      const link=url?`<a class="evidence-link" href="${esc(url)}" target="_blank" rel="noopener">Open submitted file</a>`:'<span class="muted">No file URL is available for this record.</span>';
+      const details=`${esc(agentName(d))} · ${esc(fmt(d.createdAt))} · ${esc(d.status||d.reportStatus||'submitted')}`;
+      if(d._collection==='ec8aResults'){
+        const ba=d.ballotAccounting||{},parties=Array.isArray(d.partyResults)?d.partyResults:[];
+        const nums=[['Accredited voters',ba.accreditedVoters],['Valid votes',ba.totalValidVotes],['Rejected ballots',ba.rejectedBallots]];
+        return `<div class="evidence-category-item"><strong>${esc(typeLabel(d))}</strong><div class="muted">${details}</div><div class="detailgrid">${nums.filter(x=>x[1]!==undefined&&x[1]!==null).map(([k,v])=>`<div><small>${esc(k)}</small><b>${esc(v)}</b></div>`).join('')}</div>${parties.length?`<div class="tablewrap"><table><thead><tr><th>Party</th><th>Votes</th></tr></thead><tbody>${parties.map(x=>`<tr><td>${esc(x.party||'—')}</td><td>${esc(x.votes??'—')}</td></tr>`).join('')}</tbody></table></div>`:''}</div>`;
+      }
+      return `<div class="evidence-category-item"><strong>${esc(label)}</strong><div class="muted">${details}</div>${preview}${link}</div>`;
+    }).join('');
+  };
+  const other=records.filter(d=>!['ec8aResults','evidenceUploads'].includes(d._collection));
+  const otherHtml=other.length?`<section class="pu-detail-section"><h3>Other submitted reports <span class="tag">${other.length}</span></h3>${other.map(d=>`<div class="evidence-category-item"><strong>${esc(typeLabel(d))}</strong><div class="muted">${esc(agentName(d))} · ${esc(fmt(d.createdAt))}</div><div>${esc(d.details||d.description||d.message||d.category||'Report submitted')}</div></div>`).join('')}</section>`:'';
+  $('detailContent').innerHTML=`
+    <div class="detailgrid"><div><small>Polling unit</small><b>${esc(title)}</b></div><div><small>Polling unit code</small><b>${esc(code)}</b></div><div><small>Assigned ward</small><b>${esc(assignment.ward||'—')}</b></div><div><small>Total submissions</small><b>${records.length}</b></div></div>
+    <section class="submitted-evidence-grid" aria-label="Submitted evidence">
+      <div class="evidence-grid-title">Submitted evidence</div>
+      <button class="evidence-grid-button" type="button" data-evidence-kind="ec8a"><span>View Form EC8A</span><span class="arrow">›</span></button>
+      <button class="evidence-grid-button" type="button" data-evidence-kind="eform"><span>View E-Form</span><span class="arrow">›</span></button>
+      <button class="evidence-grid-button" type="button" data-evidence-kind="media"><span>View Video / Picture</span><span class="arrow">›</span></button>
+      <button class="evidence-grid-button" type="button" data-evidence-kind="duplicate"><span>View Duplicate Copy</span><span class="arrow">›</span></button>
+    </section>
+    <section id="evidenceCategoryPanel" class="evidence-category-panel" hidden></section>
+    ${otherHtml}`;
+  document.querySelectorAll('[data-evidence-kind]').forEach(btn=>btn.addEventListener('click',()=>{
+    const kind=btn.dataset.evidenceKind;
+    const names={ec8a:'Form EC8A',eform:'E-Form',media:'Video / Picture',duplicate:'Duplicate Copy'};
+    const panel=$('evidenceCategoryPanel');
+    panel.innerHTML=`<h3>${names[kind]}</h3>${categoryItems(kind)}`;
+    panel.hidden=false;
+    panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+  }));
   $('detailModal').classList.add('show');
 }
 function renderCollation(){const sources=allSubmissions();const units=new Set(data.ec8a.map(unitCode).filter(x=>x!=='—'));$('cEc8a').textContent=data.ec8a.length;$('cUnits').textContent=units.size;$('cIncidents').textContent=data.reports.length+data.alerts.length;$('cEvidence').textContent=data.evidence.length;const groups=[['EC8A results',data.ec8a],['Evidence uploads',data.evidence],['Polling-unit reports',data.reports],['Vote-buying alerts',data.alerts],['Backup requests',data.backups]];$('collationSources').innerHTML=groups.map(([label,items])=>`<div class="source-item"><div><strong>${label}</strong><p>${items.length} record(s) in ${items[0]?esc(items[0]._collection):'existing collection'}${items.length?' · Latest: '+esc(fmt(items.slice().sort((a,b)=>dateMs(b.createdAt)-dateMs(a.createdAt))[0].createdAt)):''}</p></div><span class="tag">${items.length}</span></div>`).join('');}
