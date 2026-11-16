@@ -130,9 +130,6 @@ h1{font-size:clamp(28px,3.5vw,44px);letter-spacing:-1.2px;margin:8px 0 10px;line
   <nav class="nav">
     <button class="active" data-view="dashboard"><span class="nav-icon">▦</span> Dashboard</button>
     <button data-view="upload"><span class="nav-icon">↑</span> Upload</button>
-    <button data-view="backup"><span class="nav-icon">⚑</span> Backup Request</button>
-    <button data-view="vote-alert"><span class="nav-icon">!</span> Vote Buying Alert</button>
-    <button data-view="profile"><span class="nav-icon">◎</span> User Profile</button>
     <button id="logoutBtn"><span class="nav-icon">↗</span> Log Out</button>
   </nav>
   <div class="sidebar-bottom">THE EYES · Election Monitoring &amp; Reporting System<br>Authorized polling unit reporting portal</div>
@@ -167,10 +164,8 @@ h1{font-size:clamp(28px,3.5vw,44px);letter-spacing:-1.2px;margin:8px 0 10px;line
     </div>
   </div>
   <div class="cards">
-    <button class="action-card primary" data-open="upload"><span class="action-icon">↑</span><span class="action-text"><strong>Upload</strong><small>Submit a polling-unit report</small></span><span class="chevron">›</span></button>
-    <button class="action-card" data-open="backup"><span class="action-icon">⚑</span><span class="action-text"><strong>Backup Request</strong><small>Request support for a serious incident</small></span><span class="chevron">›</span></button>
-    <button class="action-card" data-open="vote-alert"><span class="action-icon">!</span><span class="action-text"><strong>Vote Buying Alert</strong><small>Report suspected vote buying at this polling unit</small></span><span class="chevron">›</span></button>
-    <button class="action-card" data-open="profile"><span class="action-icon">◎</span><span class="action-text"><strong>User Profile</strong><small>View your account and assigned details</small></span><span class="chevron">›</span></button>
+    <button class="action-card primary" data-open="upload"><span class="action-icon">↑</span><span class="action-text"><strong>Upload</strong><small>Submit election results and evidence</small></span><span class="chevron">›</span></button>
+    <button class="action-card" data-open="upload-report"><span class="action-icon">▤</span><span class="action-text"><strong>Upload Reports</strong><small>Submit polling-unit observation reports</small></span><span class="chevron">›</span></button>
     <button class="action-card" data-action="logout"><span class="action-icon">↗</span><span class="action-text"><strong>Log Out</strong><small>End your secure session</small></span><span class="chevron">›</span></button>
   </div>
 </section>
@@ -182,6 +177,7 @@ h1{font-size:clamp(28px,3.5vw,44px);letter-spacing:-1.2px;margin:8px 0 10px;line
     <button class="action-card" data-open="over-voting"><span class="action-icon">▣</span><span class="action-text"><strong>Over Voting</strong><small>Report an over-voting incident</small></span><span class="chevron">›</span></button>
     <button class="action-card" data-open="violence"><span class="action-icon">▣</span><span class="action-text"><strong>Violence</strong><small>Report violence or disruption</small></span><span class="chevron">›</span></button>
   </div>
+  <div class="form-actions"><button class="btn secondary" type="button" data-open="dashboard">Back to Dashboard</button></div>
 </section>
 
 
@@ -370,6 +366,7 @@ h1{font-size:clamp(28px,3.5vw,44px);letter-spacing:-1.2px;margin:8px 0 10px;line
 </section>
 
 
+<section class="view-section" id="view-upload-report">
   <div class="role-label">Field report</div><h1>Upload report</h1><p class="subtitle">Record the activity observed at your assigned polling unit.</p>
   <div class="panel"><h2>Polling unit report</h2><p class="desc">Your identity and assigned location are attached automatically from your approved account.</p>
     <form id="reportForm"><div class="form-grid">
@@ -379,6 +376,7 @@ h1{font-size:clamp(28px,3.5vw,44px);letter-spacing:-1.2px;margin:8px 0 10px;line
       <div class="field full"><label for="evidencePhoto">Evidence photo (optional)</label><input id="evidencePhoto" type="file" accept="image/*" capture="environment"><small style="color:#7b8b81">Photo attachment storage will require the project's approved media-storage connection.</small></div>
     </div><div class="form-actions"><button class="btn" type="submit">Submit report</button><button class="btn secondary" type="reset">Clear form</button></div><div class="notice" id="reportNotice"></div></form>
   </div>
+  <div class="form-actions"><button class="btn secondary" type="button" data-open="dashboard">Back to Dashboard</button></div>
 </section>
 
 <section class="view-section" id="view-backup">
@@ -532,7 +530,7 @@ async function loadAuthenticatedProfile(user){
 function showView(view){
   document.querySelectorAll(".view-section").forEach(section=>section.classList.toggle("active",section.id===`view-${view}`));
   document.querySelectorAll(".nav button[data-view]").forEach(button=>button.classList.toggle("active",button.dataset.view===view));
-  const titles={dashboard:"Operations overview",upload:"Upload","evidence-upload":"Upload evidence",successful:"Successful Election","ec8a-form":"Digital EC8A","ov-ec8a-form":"Over Voting E-Form","over-voting":"Over Voting",violence:"Violence","violence-eform":"Violence E-Form",backup:"Backup request","vote-alert":"Vote buying alert",profile:"User profile"};
+  const titles={dashboard:"Operations overview",upload:"Upload","upload-report":"Upload Reports","evidence-upload":"Upload evidence",successful:"Successful Election","ec8a-form":"Digital EC8A","ov-ec8a-form":"Over Voting E-Form","over-voting":"Over Voting",violence:"Violence","violence-eform":"Violence E-Form",backup:"Backup request","vote-alert":"Vote buying alert",profile:"User profile"};
   text("topTitle",titles[view]||"Operations overview");
   closeMenu();
   window.scrollTo({top:0,behavior:"smooth"});
