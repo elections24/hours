@@ -60,6 +60,7 @@
 .result-status{display:inline-block;border-radius:30px;padding:6px 9px;font-size:9px;font-weight:800;white-space:nowrap;background:#e9f6ee;color:#17603f}
 .result-status.warn{background:#fff4df;color:#98600a}
 .result-status.bad{background:#fff0ef;color:#a52c25}
+.result-status.pending{background:#f1f4f2;color:#75847b}
 .result-time{font-size:11px;color:#52645a;line-height:1.45}
 .result-view{border:0;background:transparent;color:var(--g);font-weight:850;font-size:18px;padding:7px}
 .result-pagination{display:flex;align-items:center;justify-content:center;gap:12px;margin:14px 0 2px;font-size:11px;color:var(--muted)}
@@ -175,16 +176,19 @@ function puRecordStatus(records,predicate){return records.some(predicate)}
 let resultsPage=1;
 const RESULTS_PAGE_SIZE=10;
 function resultStatus(records){
+  if(!records.length)return {label:'Waiting',cls:'pending'};
+  const states=records.map(d=>String(first(d.reportStatus,d.status,d.reviewStatus,'submitted')).toLowerCase().replaceAll('_',' '));
+  if(states.some(v=>v==='completed'||v.includes('complete')))return {label:'Completed',cls:'done'};
   const ec=records.filter(d=>d._collection==='ec8aResults');
   const reports=records.filter(d=>d._collection==='pollingUnitReports');
-  if(ec.some(d=>d.reportType==='over_voting'))return {label:'Over Voting',cls:'warn'};
-  if(ec.some(d=>d.reportType==='successful_election'))return {label:'Successful Election',cls:''};
+  if(ec.some(d=>d.reportType==='over_voting')||reports.some(d=>String(first(d.reportType,d.category,d.incidentType,'')).toLowerCase().includes('over')))return {label:'Over Voting',cls:'warn'};
   if(reports.some(d=>String(first(d.reportType,d.category,d.incidentType,'')).toLowerCase().includes('violence')))return {label:'Violence',cls:'bad'};
-  if(ec.length)return {label:'EC8A Submitted',cls:''};
-  if(records.some(d=>d._collection==='evidenceUploads'))return {label:'Evidence Submitted',cls:''};
-  if(records.some(d=>d._collection==='voteBuyingAlerts'))return {label:'Vote Buying Alert',cls:'warn'};
-  if(records.some(d=>d._collection==='backupRequests'))return {label:'Backup Request',cls:'warn'};
-  return {label:'Report Submitted',cls:''};
+  if(ec.some(d=>d.reportType==='successful_election'))return {label:'Received',cls:'done'};
+  if(ec.length)return {label:'Received',cls:'done'};
+  if(records.some(d=>d._collection==='evidenceUploads'))return {label:'Evidence Received',cls:'done'};
+  if(records.some(d=>d._collection==='voteBuyingAlerts'))return {label:'Vote Buying',cls:'warn'};
+  if(records.some(d=>d._collection==='backupRequests'))return {label:'Backup Requested',cls:'warn'};
+  return {label:'Report Received',cls:'done'};
 }
 function renderSubmissions(){
   const term=$('submissionSearch').value.trim().toLowerCase(),type=$('submissionType').value;
@@ -198,13 +202,12 @@ function renderSubmissions(){
     const code=puCodeOf(d);if(code&&!map.has(code))map.set(code,{_puCode:code,_puName:nameOf(d),_fromSubmission:true});
   });
   let units=[...map.values()].map(p=>({...p,_records:recordsForPu(p._puCode)}))
-    .filter(p=>p._records.length>0)
     .filter(p=>{
       const r=p._records,ec8a=r.filter(d=>d._collection==='ec8aResults');
       const ev=r.filter(d=>d._collection==='evidenceUploads');
       const other=r.filter(d=>!['ec8aResults','evidenceUploads'].includes(d._collection));
       const filterOk=type==='all'
-        ||(type==='votes'&&ec8a.some(d=>d.reportType!=='over_voting'))
+        ||(type==='votes'&&ec8a.some(d=>d.reportType==='successful_election'))
         ||(type==='over_voting'&&ec8a.some(d=>d.reportType==='over_voting'))
         ||(type==='ec8a'&&ec8a.length)
         ||(type==='evidence'&&ev.length)
@@ -215,23 +218,24 @@ function renderSubmissions(){
       return filterOk&&text.includes(term);
     })
     .map(p=>({...p,_latest:p._records.slice().sort((a,b)=>dateMs(b.createdAt)-dateMs(a.createdAt))[0],_status:resultStatus(p._records)}))
-    .sort((a,b)=>dateMs(b._latest.createdAt)-dateMs(a._latest.createdAt));
+    .sort((a,b)=>a._puName.localeCompare(b._puName,undefined,{numeric:true,sensitivity:'base'}));
   const pages=Math.max(1,Math.ceil(units.length/RESULTS_PAGE_SIZE));
   resultsPage=Math.min(resultsPage,pages);
   const start=(resultsPage-1)*RESULTS_PAGE_SIZE;
   const pageRows=units.slice(start,start+RESULTS_PAGE_SIZE);
   $('resultsElectionLabel').textContent=assignment.electionName||'Election results';
-  $('submissionSummary').textContent=`${units.length} submitted polling-unit result(s) found in ${assignment.ward||'your assigned ward'}.`;
+  const receivedCount=units.filter(p=>p._records.length>0).length;
+  $('submissionSummary').textContent=`${units.length} assigned polling unit(s) listed · ${receivedCount} with submissions · ${units.length-receivedCount} waiting in ${assignment.ward||'your assigned ward'}.`;
   $('submissionTable').innerHTML=units.length?`<div class="results-table">
     <div class="results-head"><span>Polling unit</span><span>Status</span><span>Submitted</span><span></span></div>
     ${pageRows.map(p=>`<div class="result-row">
       <div class="result-pu"><strong>${esc(p._puName)}</strong><small>${esc(p._puCode)}</small></div>
       <div><span class="result-status ${p._status.cls}">${esc(p._status.label)}</span></div>
-      <div class="result-time">${esc(fmt(p._latest.createdAt))}</div>
+      <div class="result-time">${p._latest?esc(fmt(p._latest.createdAt)):'—'}</div>
       <button class="result-view" type="button" data-pu-view="${esc(p._puCode)}" aria-label="View ${esc(p._puName)} results">View</button>
     </div>`).join('')}
   </div><div class="result-pagination"><button type="button" id="resultsPrev" ${resultsPage<=1?'disabled':''}>Previous</button><span>Page ${resultsPage} of ${pages}</span><button type="button" id="resultsNext" ${resultsPage>=pages?'disabled':''}>Next</button></div>`:
-    '<div class="empty">No submitted polling-unit results match this search or filter yet.</div>';
+    '<div class="empty">No assigned polling units match this search or filter.</div>';
   $('resultsPrev')?.addEventListener('click',()=>{resultsPage=Math.max(1,resultsPage-1);renderSubmissions()});
   $('resultsNext')?.addEventListener('click',()=>{resultsPage=Math.min(pages,resultsPage+1);renderSubmissions()});
 }
