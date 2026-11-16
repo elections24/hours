@@ -261,13 +261,87 @@ h1{font-size:clamp(28px,3.5vw,44px);letter-spacing:-1.2px;margin:8px 0 10px;line
   </form>
 </section>
 
+<section class="view-section" id="view-ov-ec8a-form">
+  <div class="role-label">Over-voting result entry</div><h1 id="ovEc8aHeading">Over Voting — Presidential Election</h1>
+  <p class="subtitle">Enter the structured polling-unit result directly. This digital record is separate from uploaded physical EC8A evidence.</p>
+  <div class="panel">
+    <h2>Election information</h2>
+    <div class="context-grid">
+      <div class="context-item"><small>Structured form</small><strong>EC8A - Polling Unit</strong></div>
+      <div class="context-item"><small>Election</small><strong id="ovEc8aElection">—</strong></div>
+      <div class="context-item"><small>State</small><strong id="ovEc8aState">—</strong></div>
+      <div class="context-item"><small>Local Government Area / Ward</small><strong id="ovEc8aLgaWard">—</strong></div>
+      <div class="context-item"><small>Polling Unit</small><strong id="ovEc8aPollingUnit">—</strong></div>
+      <div class="context-item"><small>Polling Unit Code</small><strong id="ovEc8aPollingCode">—</strong></div>
+      <div class="context-item"><small>Candidate</small><strong id="ovEc8aCandidate">—</strong></div>
+    </div>
+  </div>
+  <form id="ovEc8aForm">
+    <div class="panel">
+      <h2>Ballot accounting</h2>
+      <div class="form-grid">
+        <div class="field"><label for="ovEc8aVoters">Number of voters</label><input id="ovEc8aVoters" type="number" min="0" step="1" value="0" required></div>
+        <div class="field"><label for="ovEc8aAccredited">Number of accredited voters</label><input id="ovEc8aAccredited" type="number" min="0" step="1" value="0" required></div>
+        <div class="field"><label for="ovEc8aIssued">Number of ballot papers issued to the polling unit</label><input id="ovEc8aIssued" type="number" min="0" step="1" value="0" required></div>
+        <div class="field"><label for="ovEc8aUnused">Number of unused ballot papers</label><input id="ovEc8aUnused" type="number" min="0" step="1" value="0" required></div>
+        <div class="field"><label for="ovEc8aSpoilt">Number of spoilt ballot papers</label><input id="ovEc8aSpoilt" type="number" min="0" step="1" value="0" required></div>
+        <div class="field"><label for="ovEc8aRejected">Number of rejected ballots</label><input id="ovEc8aRejected" type="number" min="0" step="1" value="0" required></div>
+        <div class="field"><label for="ovEc8aUsed">Total number of used ballot papers</label><input id="ovEc8aUsed" type="number" readonly value="0"></div>
+        <div class="field"><label for="ovEc8aValid">Total valid votes</label><input id="ovEc8aValid" type="number" readonly value="0"></div>
+      </div>
+      <div class="notice" id="ovEc8aAccountingNotice"></div>
+    </div>
+    <div class="panel">
+      <h2>Political-party results</h2>
+      <p class="desc">Enter the votes recorded for each political party and the polling agent's name.</p>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;min-width:680px;font-size:12px">
+          <thead><tr style="background:#f0f7f3;text-align:left"><th style="padding:11px">S/N</th><th style="padding:11px">Political Party</th><th style="padding:11px">Votes in Figures</th><th style="padding:11px">Votes in Words</th><th style="padding:11px">Name of Polling Agent</th></tr></thead>
+          <tbody id="ovEc8aPartyRows"></tbody>
+          <tfoot><tr style="background:#f0f7f3;font-weight:800"><td colspan="2" style="padding:12px">Total valid votes</td><td id="ovEc8aPartyTotal" style="padding:12px">0</td><td id="ovEc8aPartyTotalWords" style="padding:12px;font-weight:600">ZERO</td><td></td></tr></tfoot>
+        </table>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>Certification</h2>
+      <div class="form-grid">
+        <div class="field"><label for="ovEc8aOfficer">Name of Presiding Officer</label><input id="ovEc8aOfficer" required placeholder="Enter presiding officer's name"></div>
+        <div class="field"><label for="ovEc8aSignature">Presiding Officer signature / confirmation</label><input id="ovEc8aSignature" required placeholder="Type name as confirmation"></div>
+        <div class="field"><label for="ovEc8aDate">Form date</label><input id="ovEc8aDate" type="date" required></div>
+        <div class="field"><label>Report status</label><input value="Over Voting" readonly></div>
+      </div>
+      <div class="form-actions"><button class="btn" id="saveEc8aBtn" type="submit">Save Over Voting EC8A</button><button class="btn secondary" type="button" data-open="over-voting">Back</button></div>
+      <div class="notice" id="ovEc8aNotice"></div>
+    </div>
+  </form>
+</section>
+
 <section class="view-section" id="view-over-voting">
-  <div class="role-label">Incident reporting</div><h1>Over Voting</h1><p class="subtitle">Record the over-voting incident observed at your assigned polling unit.</p>
-  <div class="panel"><form id="overVotingForm"><div class="form-grid">
-    <div class="field"><label for="overVotingTime">Time observed</label><input id="overVotingTime" type="datetime-local" required></div>
-    <div class="field"><label for="overVotingCount">Number of excess votes (if established)</label><input id="overVotingCount" type="number" min="0" step="1" value="0"></div>
-    <div class="field full"><label for="overVotingDetails">Incident details</label><textarea id="overVotingDetails" required placeholder="Describe what happened and how the incident was identified…"></textarea></div>
-  </div><div class="form-actions"><button class="btn" type="submit">Submit over-voting report</button><button class="btn secondary" type="button" data-open="upload">Back</button></div><div class="notice" id="overVotingNotice"></div></form></div>
+  <div class="role-label">Election result reporting</div><h1>Over Voting</h1>
+  <p class="subtitle">Choose how to submit over-voting evidence or complete the digital EC8A form.</p>
+  <div class="cards">
+    <button class="action-card" data-action="ov-ec8a-file"><span class="action-icon">⇧</span><span class="action-text"><strong>Upload Form EC8A</strong><small>Select a photo of the physical EC8A form from your phone gallery</small></span><span class="chevron">›</span></button>
+    <button class="action-card" data-open="ov-ec8a-form"><span class="action-icon">☷</span><span class="action-text"><strong>Fill E-Form</strong><small>Open the digital Over Voting EC8A form</small></span><span class="chevron">›</span></button>
+    <button class="action-card" data-action="ov-video-file"><span class="action-icon">▶</span><span class="action-text"><strong>Upload Video</strong><small>Select video evidence from your phone gallery</small></span><span class="chevron">›</span></button>
+    <button class="action-card" data-action="ov-duplicate-file"><span class="action-icon">⇧</span><span class="action-text"><strong>Upload Duplicate Copy</strong><small>Select a duplicate EC8A copy from your phone</small></span><span class="chevron">›</span></button>
+  </div>
+  <input id="ovEc8aFileInput" type="file" accept="image/*" hidden>
+  <input id="ovVideoFileInput" type="file" accept="video/*" hidden>
+  <input id="ovDuplicateFileInput" type="file" accept="image/*,.pdf" hidden>
+  <div class="evidence-panel"><h2>Physical EC8A Form — Over Voting</h2><p class="hint">Choose the completed physical EC8A photo from your phone gallery, preview it, then upload it.</p>
+    <div class="file-actions"><button class="btn" type="button" data-action="ov-ec8a-file">Choose EC8A Photo</button><button class="btn secondary" type="button" data-remove-file="ov-ec8a">Remove</button><button class="btn" type="button" data-upload-file="ov-ec8a">Upload to Cloudinary</button></div>
+    <div class="evidence-preview" id="ovEc8aPreview"><div id="ovEc8aPreviewContent"></div><div class="file-meta" id="ovEc8aFileMeta"></div><div class="file-state">Selected on this device until uploaded.</div><div class="file-meta" id="ovEc8aUploadStatus" aria-live="polite"></div></div>
+  </div>
+  <div class="evidence-panel"><h2>Over Voting Video Evidence</h2><p class="hint">Choose a video from your phone gallery, preview it, then upload it.</p>
+    <div class="file-actions"><button class="btn" type="button" data-action="ov-video-file">Choose Video</button><button class="btn secondary" type="button" data-remove-file="ov-video">Remove</button><button class="btn" type="button" data-upload-file="ov-video">Upload to Cloudinary</button></div>
+    <div class="evidence-preview" id="ovVideoPreview"><div id="ovVideoPreviewContent"></div><div class="file-meta" id="ovVideoFileMeta"></div><div class="file-state">Selected on this device until uploaded.</div><div class="file-meta" id="ovVideoUploadStatus" aria-live="polite"></div></div>
+  </div>
+  <div class="evidence-panel"><h2>Over Voting Duplicate EC8A Copy</h2><p class="hint">Choose a duplicate EC8A image from your gallery or a PDF from your device files, preview it, then upload it.</p>
+    <div class="file-actions"><button class="btn" type="button" data-action="ov-duplicate-file">Choose Duplicate Copy</button><button class="btn secondary" type="button" data-remove-file="ov-duplicate">Remove</button><button class="btn" type="button" data-upload-file="ov-duplicate">Upload to Cloudinary</button></div>
+    <div class="evidence-preview" id="ovDuplicatePreview"><div id="ovDuplicatePreviewContent"></div><div class="file-meta" id="ovDuplicateFileMeta"></div><div class="file-state">Selected on this device until uploaded.</div><div class="file-meta" id="ovDuplicateUploadStatus" aria-live="polite"></div></div>
+  </div>
+  <div class="notice" id="overVotingUploadNotice"></div>
+  <div class="form-actions"><button class="btn secondary" type="button" data-open="upload">Back</button></div>
 </section>
 
 <section class="view-section" id="view-violence">
@@ -442,7 +516,7 @@ async function loadAuthenticatedProfile(user){
 function showView(view){
   document.querySelectorAll(".view-section").forEach(section=>section.classList.toggle("active",section.id===`view-${view}`));
   document.querySelectorAll(".nav button[data-view]").forEach(button=>button.classList.toggle("active",button.dataset.view===view));
-  const titles={dashboard:"Operations overview",upload:"Upload",successful:"Successful Election","ec8a-form":"Digital EC8A","over-voting":"Over Voting",violence:"Violence",backup:"Backup request","vote-alert":"Vote buying alert",profile:"User profile"};
+  const titles={dashboard:"Operations overview",upload:"Upload",successful:"Successful Election","ec8a-form":"Digital EC8A","ov-ec8a-form":"Over Voting E-Form","over-voting":"Over Voting",violence:"Violence",backup:"Backup request","vote-alert":"Vote buying alert",profile:"User profile"};
   text("topTitle",titles[view]||"Operations overview");
   closeMenu();
   window.scrollTo({top:0,behavior:"smooth"});
@@ -474,12 +548,18 @@ const CLOUDINARY_UPLOAD_PRESET="hjdnytcb";
 const evidenceConfig={
   ec8a:{input:"ec8aFileInput",preview:"ec8aPreview",content:"ec8aPreviewContent",meta:"ec8aFileMeta",label:"EC8A photo",kind:"image",resource:"image"},
   video:{input:"videoFileInput",preview:"videoPreview",content:"videoPreviewContent",meta:"videoFileMeta",label:"Video evidence",kind:"video",resource:"video"},
-  duplicate:{input:"duplicateFileInput",preview:"duplicatePreview",content:"duplicatePreviewContent",meta:"duplicateFileMeta",label:"Duplicate copy",kind:"document",resource:"image"}
+  duplicate:{input:"duplicateFileInput",preview:"duplicatePreview",content:"duplicatePreviewContent",meta:"duplicateFileMeta",label:"Duplicate copy",kind:"document",resource:"image"},
+  "ov-ec8a":{input:"ovEc8aFileInput",preview:"ovEc8aPreview",content:"ovEc8aPreviewContent",meta:"ovEc8aFileMeta",label:"Over Voting EC8A photo",kind:"image",resource:"image"},
+  "ov-video":{input:"ovVideoFileInput",preview:"ovVideoPreview",content:"ovVideoPreviewContent",meta:"ovVideoFileMeta",label:"Over Voting video evidence",kind:"video",resource:"video"},
+  "ov-duplicate":{input:"ovDuplicateFileInput",preview:"ovDuplicatePreview",content:"ovDuplicatePreviewContent",meta:"ovDuplicateFileMeta",label:"Over Voting duplicate copy",kind:"document",resource:"image"}
 };
 const evidenceUrls={};
 document.querySelectorAll('[data-action="ec8a-file"]').forEach(b=>b.addEventListener("click",()=>$("ec8aFileInput").click()));
 document.querySelectorAll('[data-action="video-file"]').forEach(b=>b.addEventListener("click",()=>$("videoFileInput").click()));
 document.querySelectorAll('[data-action="duplicate-file"]').forEach(b=>b.addEventListener("click",()=>$("duplicateFileInput").click()));
+document.querySelectorAll('[data-action="ov-ec8a-file"]').forEach(b=>b.addEventListener("click",()=>$("ovEc8aFileInput").click()));
+document.querySelectorAll('[data-action="ov-video-file"]').forEach(b=>b.addEventListener("click",()=>$("ovVideoFileInput").click()));
+document.querySelectorAll('[data-action="ov-duplicate-file"]').forEach(b=>b.addEventListener("click",()=>$("ovDuplicateFileInput").click()));
 
 function formatFileSize(bytes){
   if(bytes<1024)return `${bytes} B`;
@@ -646,6 +726,79 @@ function prepareEc8a(){
 }
 renderPartyRows();
 document.querySelectorAll('[data-open="ec8a-form"]').forEach(b=>b.addEventListener("click",prepareEc8a));
+
+function renderOvEc8aPartyRows(){
+  $("ovEc8aPartyRows").innerHTML=partyCodes.map((party,i)=>`<tr><td>${i+1}</td><td><strong>${party}</strong></td><td><input type="number" min="0" step="1" value="0" data-ov-party-votes="${party}" aria-label="${party} over-voting votes"></td><td class="words" data-ov-party-words="${party}">ZERO</td><td><input type="text" data-ov-party-agent="${party}" aria-label="${party} polling agent name"></td></tr>`).join("");
+  $("ovEc8aPartyRows").querySelectorAll("[data-ov-party-votes]").forEach(input=>input.addEventListener("input",updateOvEc8aTotals));
+  updateOvEc8aTotals();
+}
+function updateOvEc8aTotals(){
+  let total=0;
+  partyCodes.forEach(p=>{
+    const v=Math.max(0,Number(document.querySelector(`[data-ov-party-votes="${p}"]`)?.value)||0);
+    total+=v;
+    const words=document.querySelector(`[data-ov-party-words="${p}"]`);
+    if(words)words.textContent=numberToWords(v);
+  });
+  $("ovEc8aPartyTotal").textContent=String(total);
+  $("ovEc8aPartyTotalWords").textContent=numberToWords(total);
+  const rejected=readNum("ovEc8aRejected"),used=total+rejected;
+  $("ovEc8aValid").value=String(total);
+  $("ovEc8aUsed").value=String(used);
+  const accredited=readNum("ovEc8aAccredited"),voters=readNum("ovEc8aVoters");
+  const excess=Math.max(0,used-accredited);
+  $("ovEc8aExcess").value=String(excess);
+  $("ovEc8aExcessWords").textContent=numberToWords(excess);
+  const warnings=[];
+  if(accredited>voters)warnings.push("Accredited voters cannot exceed the number of voters.");
+  if(used>accredited)warnings.push(`OVER-VOTING DETECTED: total votes cast exceed accredited voters by ${excess}.`);
+  else warnings.push("No over-voting detected from the figures entered so far.");
+  if(readNum("ovEc8aIssued")<readNum("ovEc8aUnused")+readNum("ovEc8aSpoilt")+used)warnings.push("Issued ballot papers are fewer than unused + spoilt + total used ballot papers.");
+  const n=$("ovEc8aAccountingNotice");
+  n.textContent=warnings.join(" ");
+  n.className="notice show "+(used>accredited||accredited>voters?"error":"");
+}
+["ovEc8aVoters","ovEc8aAccredited","ovEc8aIssued","ovEc8aUnused","ovEc8aSpoilt","ovEc8aRejected"].forEach(id=>$(id).addEventListener("input",updateOvEc8aTotals));
+function prepareOvEc8a(){
+  text("ovEc8aHeading",`Over Voting — ${first(currentAgent?.electionName,electionNames[currentAgent?.electionType],currentProfile?.electionName,electionNames[currentProfile?.electionType],"Election")}`);
+  text("ovEc8aElection",first(currentAgent?.electionName,electionNames[currentAgent?.electionType],currentProfile?.electionName,electionNames[currentProfile?.electionType]));
+  text("ovEc8aState",assignment.state);
+  text("ovEc8aLgaWard",[assignment.lga,assignment.ward].filter(Boolean).join(" / "));
+  text("ovEc8aPollingUnit",assignment.pollingUnit);
+  text("ovEc8aPollingCode",assignment.pollingUnitCode);
+  text("ovEc8aCandidate",first(currentAgent?.candidateName,currentProfile?.candidateName,"Not assigned"));
+  renderOvEc8aPartyRows();
+}
+document.querySelectorAll('[data-open="ov-ec8a-form"]').forEach(b=>b.addEventListener("click",prepareOvEc8a));
+$("ovEc8aForm").addEventListener("submit",async event=>{
+  event.preventDefault();
+  if(!currentUser||!currentAgent){notice("ovEc8aNotice","Agent profile is not ready. Please sign in again.",true);return;}
+  updateOvEc8aTotals();
+  const voters=readNum("ovEc8aVoters"),accredited=readNum("ovEc8aAccredited");
+  const issued=readNum("ovEc8aIssued"),unused=readNum("ovEc8aUnused"),spoilt=readNum("ovEc8aSpoilt");
+  const rejected=readNum("ovEc8aRejected"),validVotes=readNum("ovEc8aValid"),used=readNum("ovEc8aUsed");
+  if(accredited>voters){notice("ovEc8aNotice","Accredited voters cannot exceed the number of voters.",true);return;}
+  if(used<=accredited){notice("ovEc8aNotice","The figures do not currently establish over-voting. Check accredited voters, valid votes and rejected ballots.",true);return;}
+  if(issued<unused+spoilt+used){notice("ovEc8aNotice","Issued ballot papers are fewer than unused + spoilt + total used ballot papers. Correct the ballot accounting before saving.",true);return;}
+  const parties=partyCodes.map(p=>({party:p,votes:Number(document.querySelector(`[data-ov-party-votes="${p}"]`).value)||0,votesInWords:numberToWords(document.querySelector(`[data-ov-party-votes="${p}"]`).value),pollingAgentName:document.querySelector(`[data-ov-party-agent="${p}"]`).value.trim()}));
+  const payload={
+    formType:"EC8A-Polling-Unit",reportType:"over_voting",reportStatus:"Over Voting",
+    agentUid:currentUser.uid,userId:currentUser.uid,fullName:first(currentProfile?.fullName,currentAgent?.fullName,currentUser.displayName,""),
+    email:first(currentProfile?.email,currentAgent?.email,currentUser.email,""),role:"polling_unit_agent",
+    electionType:first(currentAgent.electionType,currentProfile?.electionType,""),electionName:first(currentAgent.electionName,electionNames[currentAgent.electionType],""),
+    candidateId:first(currentAgent.candidateId,currentProfile?.candidateId,""),candidateName:first(currentAgent.candidateName,currentProfile?.candidateName,""),
+    geography:{...assignment},stateCode:assignment.stateCode,lgaCode:assignment.lgaCode,wardCode:assignment.wardCode,pollingUnitCode:assignment.pollingUnitCode,
+    state:assignment.state,lga:assignment.lga,ward:assignment.ward,pollingUnit:assignment.pollingUnit,
+    ballotAccounting:{voters,accreditedVoters:accredited,ballotPapersIssued:issued,unusedBallotPapers:unused,spoiltBallotPapers:spoilt,rejectedBallots:rejected,totalUsedBallotPapers:used,totalValidVotes:validVotes,excessVotes:Math.max(0,used-accredited)},
+    partyResults:parties,certification:{presidingOfficerName:$("ovEc8aOfficer").value.trim(),signatureConfirmation:$("ovEc8aSignature").value.trim(),formDate:$("ovEc8aDate").value},
+    status:"submitted",createdAt:serverTimestamp()
+  };
+  const btn=$("saveOvEc8aBtn");btn.disabled=true;btn.textContent="Saving…";
+  try{await addDoc(collection(db,"ec8aResults"),payload);notice("ovEc8aNotice","Over Voting EC8A result saved successfully.",false);}
+  catch(error){console.error("Over Voting EC8A save failed:",error);notice("ovEc8aNotice",error.code==="permission-denied"?"Firebase denied this save. Firestore rules must permit authorised agents to create over_voting ec8aResults records.":"Could not save Over Voting EC8A: "+(error.message||"Please try again."),true);}
+  finally{btn.disabled=false;btn.textContent="Save Over Voting EC8A";}
+});
+
 $("ec8aForm").addEventListener("submit",async event=>{
   event.preventDefault();
   if(!currentUser||!currentAgent){notice("ec8aNotice","Agent profile is not ready. Please sign in again.",true);return}
