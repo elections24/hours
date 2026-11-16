@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#08734f">
+<title>THE EYES | Polling Unit Agent Dashboard</title>
+<style>
+:root{--green:#08734f;--green-dark:#07543b;--mint:#e8f4ee;--bg:#f3f7f5;--ink:#20372d;--muted:#78877f;--line:#e1eae5;--white:#fff;--gold:#dcae43;--red:#b42318;--shadow:0 3px 14px rgba(18,55,37,.055)}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:Inter,"Segoe UI",Arial,sans-serif}
+button,input,textarea,select{font:inherit}button{cursor:pointer}
+.app{display:flex;min-height:100vh;width:100%}
+.sidebar{width:19%;max-width:290px;min-width:220px;flex:0 0 19%;background:#fff;border-right:1px solid var(--line);padding:2.2% 1.2%;display:flex;flex-direction:column;min-height:100vh;transition:transform .22s ease,width .22s ease,flex-basis .22s ease}
+.sidebar.collapsed{width:0;min-width:0;flex-basis:0;padding-left:0;padding-right:0;overflow:hidden;border:0}
+.brand{display:flex;align-items:center;gap:10px;padding:0 7% 11%;color:var(--green);font-weight:900;letter-spacing:2px;font-size:clamp(15px,1.5vw,20px);white-space:nowrap}
+.brand-mark{width:clamp(28px,3vw,36px);height:clamp(28px,3vw,36px);flex:0 0 auto;background:var(--mint);border-radius:11px;display:grid;place-items:center}
+.brand-mark svg{width:82%;height:82%}
+.profile-mini{background:#f8faf9;border:1px solid #edf1ee;border-radius:15px;padding:8%;margin-bottom:11%}
+.profile-mini .caption{font-size:clamp(8px,.7vw,10px);text-transform:uppercase;letter-spacing:1.1px;color:#6e9b84;font-weight:800;margin-bottom:9px}
+.profile-mini strong{display:block;font-size:clamp(11px,1vw,14px);margin-bottom:6px;overflow-wrap:anywhere}
+.profile-mini small{color:var(--muted);line-height:1.5;font-size:clamp(9px,.8vw,11px)}
+.nav{display:grid;gap:5px}
+.nav button{border:0;background:transparent;text-align:left;padding:clamp(9px,.9vw,13px) 7%;border-radius:10px;color:#6e7e75;font-size:clamp(11px,.95vw,13px);font-weight:650;display:flex;gap:10px;align-items:center;white-space:nowrap}
+.nav button:hover,.nav button.active{background:#eaf5ef;color:var(--green)}
+.nav .nav-icon{width:18px;flex:0 0 18px;text-align:center;font-size:15px}
+.sidebar-bottom{margin-top:auto;padding:14% 7% 0;color:#9aa59e;font-size:clamp(9px,.75vw,11px);line-height:1.7}
+.main{min-width:0;flex:1;display:flex;flex-direction:column}
+.topbar{width:100%;min-height:clamp(58px,6.5vw,76px);background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 2.7%;gap:2%}
+.topbar-left{display:flex;align-items:center;gap:14px;min-width:0}
+.menu-btn{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);background:#fff;color:var(--green);border-radius:9px;padding:clamp(7px,.8vw,11px) clamp(10px,1.2vw,15px);font-weight:700;font-size:clamp(11px,1vw,14px)}
+.topbar-title{font-weight:750;font-size:clamp(12px,1.1vw,15px);white-space:nowrap}
+.top-actions{display:flex;align-items:center;gap:10px}
+.tag{font-size:clamp(8px,.7vw,10px);letter-spacing:.8px;text-transform:uppercase;color:#6b9b83;background:#f0f8f3;border:1px solid #dceee3;border-radius:30px;padding:8px 12px;white-space:nowrap}
+.content{width:100%;max-width:1500px;padding:2.5% 3% 4%;margin:0 auto}
+.view-section{display:none}.view-section.active{display:block}
+.role-label{font-size:clamp(9px,.8vw,11px);font-weight:800;letter-spacing:1.5px;color:#6c8f7c;text-transform:uppercase}
+h1{font-size:clamp(28px,3.5vw,44px);letter-spacing:-1.2px;margin:8px 0 10px;line-height:1.15}
+.subtitle{color:var(--muted);font-size:clamp(12px,1.05vw,15px);margin:0 0 2.3%;line-height:1.6}
+.assigned-card{background:#fff;border:1px solid var(--line);border-radius:17px;padding:2.1%;box-shadow:var(--shadow);margin-bottom:2.5%}
+.assigned-card .label{font-size:9px;text-transform:uppercase;letter-spacing:1.2px;color:#6d9a82;font-weight:800;margin-bottom:7px}
+.assigned-card h3{font-size:clamp(13px,1.15vw,16px);margin:0 0 7px;line-height:1.45}
+.assigned-card p{font-size:clamp(11px,.9vw,13px);color:var(--muted);margin:0;line-height:1.6}
+.context-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-top:16px}
+.context-item{background:#f8faf9;border:1px solid #edf1ee;border-radius:10px;padding:10px 12px;min-width:0}
+.context-item small{display:block;color:var(--muted);font-size:9px;margin-bottom:5px}
+.context-item strong{display:block;font-size:clamp(10px,.9vw,12px);overflow-wrap:anywhere;line-height:1.4}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.action-card{display:flex;align-items:center;gap:14px;text-align:left;background:#fff;border:1px solid var(--line);border-radius:15px;padding:clamp(13px,1.4vw,19px);min-height:clamp(72px,8vw,88px);color:inherit;box-shadow:var(--shadow);transition:.15s}
+.action-card:hover{transform:translateY(-2px);border-color:#c4dfd0;box-shadow:0 8px 20px rgba(20,50,35,.06)}
+.action-card.primary{background:var(--green);color:white;border-color:var(--green)}
+.action-card.primary:hover{background:var(--green-dark)}
+.action-icon{width:clamp(34px,3.3vw,42px);height:clamp(34px,3.3vw,42px);flex:0 0 auto;border-radius:11px;background:var(--mint);color:var(--green);display:grid;place-items:center;font-size:18px;font-weight:800}
+.primary .action-icon{background:rgba(255,255,255,.15);color:white}
+.action-text{min-width:0;flex:1}
+.action-text strong{display:block;font-size:clamp(12px,1vw,14px);margin-bottom:5px}
+.action-text small{display:block;font-size:clamp(10px,.82vw,12px);color:#85938b;line-height:1.45}
+.primary .action-text small{color:rgba(255,255,255,.72)}
+.chevron{color:#70b8a1;font-size:20px}
+.primary .chevron{color:#c4e6d6}
+.panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:clamp(16px,2vw,24px);margin-top:18px;box-shadow:var(--shadow)}
+.panel h2{font-size:clamp(16px,1.4vw,19px);margin:0 0 6px}
+.panel p.desc{color:var(--muted);font-size:12px;line-height:1.6;margin:0 0 18px}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.field.full{grid-column:1/-1}
+.field label{display:block;font-size:12px;font-weight:700;margin-bottom:7px}
+.field input,.field select,.field textarea{width:100%;border:1px solid #dfe8e2;background:#fbfcfb;border-radius:10px;padding:12px;color:var(--ink);outline:none}
+.field textarea{min-height:110px;resize:vertical}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:#64a886;box-shadow:0 0 0 3px #eaf5ef}
+.btn{border:0;border-radius:10px;background:var(--green);color:#fff;padding:12px 17px;font-weight:750;font-size:12px}
+.btn.secondary{background:#edf5f0;color:var(--green)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.form-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:17px}
+.notice{margin-top:14px;padding:12px;border-radius:10px;background:#f0f8f3;color:#17603f;font-size:12px;display:none;line-height:1.5;white-space:pre-wrap}
+.notice.show{display:block}.notice.error{background:#fff0ef;color:#9e2923}
+.profile-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#ec8aPartyRows td{padding:7px 9px;border-bottom:1px solid #e7eee9;vertical-align:middle}
+#ec8aPartyRows input{width:100%;min-width:90px;border:1px solid #dfe8e2;border-radius:7px;padding:9px;background:#fff;color:var(--ink)}
+#ec8aPartyRows .words{color:#687970;min-width:95px}
+
+.profile-item{background:#f8faf9;border-radius:11px;padding:14px;min-width:0}
+.profile-item small{display:block;color:var(--muted);font-size:10px;margin-bottom:7px}
+.profile-item strong{font-size:13px;overflow-wrap:anywhere}
+.footer{padding:24px 0 0;color:#9aa59e;font-size:10px}
+.loading{color:var(--muted);font-size:13px;padding:12px 0}
+.overlay{display:none}
+@media(max-width:900px){.sidebar{width:23%;flex-basis:23%;min-width:190px}.context-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.content{padding:3% 2.5% 5%}}
+@media(max-width:650px){
+ .app{display:block}.sidebar{display:none;position:fixed;z-index:40;left:0;top:0;bottom:0;width:78%;max-width:310px;min-width:0;flex-basis:auto;box-shadow:15px 0 40px #102b1c22;padding:22px 15px;overflow-y:auto}
+ .sidebar.open{display:flex}.overlay.show{display:block;position:fixed;inset:0;background:#102b1c55;z-index:30}
+ .topbar{min-height:58px;padding:0 3%}.topbar-left{gap:9px}.menu-btn{padding:8px 10px}.topbar-title{font-size:12px}.tag{display:none}
+ .content{padding:5% 4% 8%}h1{font-size:clamp(27px,8vw,34px)}.subtitle{margin-bottom:5%}
+ .assigned-card{padding:5%;margin-bottom:5%}.context-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .cards{grid-template-columns:1fr;gap:10px}.action-card{min-height:74px}
+ .form-grid,.profile-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.panel{padding:5%}
+}
+
+.evidence-panel{background:#fff;border:1px solid var(--line);border-radius:15px;padding:clamp(14px,1.8vw,21px);margin-top:16px;box-shadow:var(--shadow)}
+.evidence-panel h2{font-size:clamp(14px,1.2vw,17px);margin:0 0 6px}
+.evidence-panel .hint{font-size:12px;color:var(--muted);line-height:1.6;margin:0 0 13px}
+.evidence-preview{display:none;margin-top:13px;border:1px dashed #cbded2;background:#f8fbf9;border-radius:12px;padding:12px;overflow:hidden}
+.evidence-preview.show{display:block}
+.evidence-preview img,.evidence-preview video{display:block;width:100%;max-height:390px;object-fit:contain;border-radius:8px;background:#17231d}
+.evidence-preview iframe{width:100%;height:390px;border:0;border-radius:8px;background:#fff}
+.file-meta{font-size:12px;color:#5e7066;line-height:1.6;overflow-wrap:anywhere;margin-top:9px}
+.file-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.file-actions .btn{font-size:11px}
+.file-state{font-size:11px;color:#17603f;background:#eef8f1;border-radius:8px;padding:8px 10px;margin-top:10px}
+@media(max-width:650px){.evidence-preview iframe{height:300px}.evidence-preview img,.evidence-preview video{max-height:300px}}
+
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar" id="sidebar">
+  <div class="brand"><span class="brand-mark"><svg viewBox="0 0 64 64" fill="none"><path d="M5 32C12 20 21 14 32 14s20 6 27 18C52 44 43 50 32 50S12 44 5 32Z" stroke="#08734f" stroke-width="4"/><circle cx="32" cy="32" r="11" stroke="#dcae43" stroke-width="4"/><circle cx="32" cy="32" r="4" fill="#08734f"/></svg></span> THE EYES</div>
+  <div class="profile-mini"><div class="caption">Authenticated role</div><strong id="sideRole">Polling Unit Agent</strong><small id="sideLocation">Loading assigned location…</small></div>
+  <nav class="nav">
+    <button class="active" data-view="dashboard"><span class="nav-icon">▦</span> Dashboard</button>
+    <button data-view="upload"><span class="nav-icon">↑</span> Upload</button>
+    <button data-view="backup"><span class="nav-icon">⚑</span> Backup Request</button>
+    <button data-view="vote-alert"><span class="nav-icon">!</span> Vote Buying Alert</button>
+    <button data-view="profile"><span class="nav-icon">◎</span> User Profile</button>
+    <button id="logoutBtn"><span class="nav-icon">↗</span> Log Out</button>
+  </nav>
+  <div class="sidebar-bottom">THE EYES · Election Monitoring &amp; Reporting System<br>Authorized polling unit reporting portal</div>
+</aside>
+<div class="overlay" id="overlay"></div>
+<main class="main">
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="menu-btn" id="menuBtn" aria-label="Toggle navigation">☰ Menu</button>
+    <div class="topbar-title" id="topTitle">Operations overview</div>
+  </div>
+  <div class="top-actions"><span class="tag">Polling unit agent portal</span></div>
+</header>
+<div class="content">
+<section class="view-section active" id="view-dashboard">
+  <div class="role-label">Polling Unit Agent</div>
+  <h1>Welcome, <span id="welcomeName">…</span>.</h1>
+  <p class="subtitle">Your assigned polling unit operations and reporting workspace.</p>
+  <div class="assigned-card">
+    <div class="label">Assigned context</div>
+    <h3 id="assignedUnit">Loading assigned polling unit…</h3>
+    <p id="assignedAddress">Loading ward, local government and state…</p>
+    <div class="context-grid">
+      <div class="context-item"><small>Election</small><strong id="ctxElection">—</strong></div>
+      <div class="context-item"><small>Candidate</small><strong id="ctxCandidate">—</strong></div>
+      <div class="context-item"><small>State</small><strong id="ctxState">—</strong></div>
+      <div class="context-item"><small>Senatorial Zone / Constituency</small><strong id="ctxDistrict">—</strong></div>
+      <div class="context-item"><small>Local Government</small><strong id="ctxLga">—</strong></div>
+      <div class="context-item"><small>Ward</small><strong id="ctxWard">—</strong></div>
+      <div class="context-item"><small>Polling Unit Code</small><strong id="ctxPuCode">—</strong></div>
+      <div class="context-item"><small>Agent Status</small><strong id="ctxStatus">—</strong></div>
+    </div>
+  </div>
+  <div class="cards">
+    <button class="action-card primary" data-open="upload"><span class="action-icon">↑</span><span class="action-text"><strong>Upload</strong><small>Submit a polling-unit report</small></span><span class="chevron">›</span></button>
+    <button class="action-card" data-open="backup"><span class="action-icon">⚑</span><span class="action-text"><strong>Backup Request</strong><small>Request support for a serious incident</small></span><span class="chevron">›</span></button>
+    <button class="action-card" data-open="vote-alert"><span class="action-icon">!</span><span class="action-text"><strong>Vote Buying Alert</strong><small>Report suspected vote buying at this polling unit</small></span><span class="chevron">›</span></button>
+    <button class="action-card" data-open="profile"><span class="action-icon">◎</span><span class="action-text"><strong>User Profile</strong><small>View your account and assigned details</small></span><span class="chevron">›</span></button>
+    <button class="action-card" data-action="logout"><span class="action-icon">↗</span><span class="action-text"><strong>Log Out</strong><small>End your secure session</small></span><span class="chevron">›</span></button>
+  </div>
+</section>
+
+<section class="view-section" id="view-upload">
+  <div class="role-label">Polling unit reporting</div><h1>Upload</h1><p class="subtitle">Choose the election outcome or incident you need to report.</p>
+  <div class="cards">
+    <button class="action-card" data-open="successful"><span class="action-icon">▣</span><span class="action-text"><strong>Successful Election</strong><small>Submit the polling-unit EC8A result</small></span><span class="chevron">›</span></button>
+    <button class="action-card" data-open="over-voting"><span class="action-icon">▣</span><span class="action-text"><strong>Over Voting</strong><small>Report an over-voting incident</small></span><span class="chevron">›</span></button>
+    <button class="action-card" data-open="violence"><span class="action-icon">▣</span><span class="action-text"><strong>Violence</strong><small>Report violence or disruption</small></span><span class="chevron">›</span></button>
+  </div>
+</section>
+
+<section class="view-section" id="view-successful">
+  <div class="role-label">Successful election</div><h1>Successful Election</h1><p class="subtitle">Choose how you want to submit the EC8A polling-unit result.</p>
+  <div class="cards">
+    <button class="action-card" data-action="ec8a-file"><span class="action-icon">⇧</span><span class="action-text"><strong>Upload Form EC8A</strong><small>Select a completed physical EC8A result form</small></span><span class="chevron">›</span></button>
+    <button class="action-card" data-open="ec8a-form"><span class="action-icon">☷</span><span class="action-text"><strong>Fill E-Form</strong><small>Open the digital EC8A polling-unit form</small></span><span class="chevron">›</span></button>
+    <button class="action-card" data-action="video-file"><span class="action-icon">▶</span><span class="action-text"><strong>Upload Video</strong><small>Select video evidence from this polling unit</small></span><span class="chevron">›</span></button>
+    <button class="action-card" data-action="duplicate-file"><span class="action-icon">⇧</span><span class="action-text"><strong>Upload Duplicate Copy</strong><small>Select a duplicate copy of the result form</small></span><span class="chevron">›</span></button>
+  </div>
+  <input id="ec8aFileInput" type="file" accept="image/*" hidden>
+  <input id="videoFileInput" type="file" accept="video/*" hidden>
+  <input id="duplicateFileInput" type="file" accept="image/*,.pdf" hidden>
+
+  <div class="evidence-panel">
+    <h2>Physical EC8A Form</h2>
+    <p class="hint">Choose a clear photo of the completed EC8A form from your phone gallery. You can preview, replace or remove it before Cloudinary is connected.</p>
+    <div class="file-actions"><button class="btn" type="button" data-action="ec8a-file">Choose EC8A Photo</button><button class="btn secondary" type="button" data-remove-file="ec8a">Remove</button><button class="btn" type="button" data-upload-file="ec8a">Upload to Cloudinary</button></div>
+    <div class="evidence-preview" id="ec8aPreview"><div id="ec8aPreviewContent"></div><div class="file-meta" id="ec8aFileMeta"></div><div class="file-state">Selected on this device only. It has not been uploaded.</div><div class="file-meta" id="duplicateUploadStatus" aria-live="polite"></div><div class="file-meta" id="videoUploadStatus" aria-live="polite"></div><div class="file-meta" id="ec8aUploadStatus" aria-live="polite"></div></div>
+  </div>
+  <div class="evidence-panel">
+    <h2>Polling Unit Video Evidence</h2>
+    <p class="hint">Choose a video from your phone gallery. Preview the selected video before uploading it later.</p>
+    <div class="file-actions"><button class="btn" type="button" data-action="video-file">Choose Video</button><button class="btn secondary" type="button" data-remove-file="video">Remove</button><button class="btn" type="button" data-upload-file="video">Upload to Cloudinary</button></div>
+    <div class="evidence-preview" id="videoPreview"><div id="videoPreviewContent"></div><div class="file-meta" id="videoFileMeta"></div><div class="file-state">Selected on this device only. It has not been uploaded.</div></div>
+  </div>
+  <div class="evidence-panel">
+    <h2>Duplicate EC8A Copy</h2>
+    <p class="hint">Choose a duplicate EC8A photo from your phone gallery, or select a PDF copy if it is stored in your device files.</p>
+    <div class="file-actions"><button class="btn" type="button" data-action="duplicate-file">Choose Duplicate Copy</button><button class="btn secondary" type="button" data-remove-file="duplicate">Remove</button><button class="btn" type="button" data-upload-file="duplicate">Upload to Cloudinary</button></div>
+    <div class="evidence-preview" id="duplicatePreview"><div id="duplicatePreviewContent"></div><div class="file-meta" id="duplicateFileMeta"></div><div class="file-state">Selected on this device only. It has not been uploaded.</div></div>
+  </div>
+  <div class="notice" id="successfulNotice"></div>
+  <div class="form-actions"><button class="btn secondary" type="button" data-open="upload">Back</button></div>
+</section>
+
+<section class="view-section" id="view-ec8a-form">
+  <div class="role-label">Structured result entry</div><h1 id="ec8aHeading">Presidential Election</h1>
+  <p class="subtitle">Enter the structured polling-unit result directly. This digital record is separate from uploaded physical EC8A evidence.</p>
+  <div class="panel">
+    <h2>Election information</h2>
+    <div class="context-grid">
+      <div class="context-item"><small>Structured form</small><strong>EC8A - Polling Unit</strong></div>
+      <div class="context-item"><small>Election</small><strong id="ec8aElection">—</strong></div>
+      <div class="context-item"><small>State</small><strong id="ec8aState">—</strong></div>
+      <div class="context-item"><small>Local Government Area / Ward</small><strong id="ec8aLgaWard">—</strong></div>
+      <div class="context-item"><small>Polling Unit</small><strong id="ec8aPollingUnit">—</strong></div>
+      <div class="context-item"><small>Polling Unit Code</small><strong id="ec8aPollingCode">—</strong></div>
+      <div class="context-item"><small>Candidate</small><strong id="ec8aCandidate">—</strong></div>
+    </div>
+  </div>
+  <form id="ec8aForm">
+    <div class="panel">
+      <h2>Ballot accounting</h2>
+      <div class="form-grid">
+        <div class="field"><label for="ec8aVoters">Number of voters</label><input id="ec8aVoters" type="number" min="0" step="1" value="0" required></div>
+        <div class="field"><label for="ec8aAccredited">Number of accredited voters</label><input id="ec8aAccredited" type="number" min="0" step="1" value="0" required></div>
+        <div class="field"><label for="ec8aIssued">Number of ballot papers issued to the polling unit</label><input id="ec8aIssued" type="number" min="0" step="1" value="0" required></div>
+        <div class="field"><label for="ec8aUnused">Number of unused ballot papers</label><input id="ec8aUnused" type="number" min="0" step="1" value="0" required></div>
+        <div class="field"><label for="ec8aSpoilt">Number of spoilt ballot papers</label><input id="ec8aSpoilt" type="number" min="0" step="1" value="0" required></div>
+        <div class="field"><label for="ec8aRejected">Number of rejected ballots</label><input id="ec8aRejected" type="number" min="0" step="1" value="0" required></div>
+        <div class="field"><label for="ec8aUsed">Total number of used ballot papers</label><input id="ec8aUsed" type="number" readonly value="0"></div>
+        <div class="field"><label for="ec8aValid">Total valid votes</label><input id="ec8aValid" type="number" readonly value="0"></div>
+      </div>
+      <div class="notice" id="ec8aAccountingNotice"></div>
+    </div>
+    <div class="panel">
+      <h2>Political-party results</h2>
+      <p class="desc">Enter the votes recorded for each political party and the polling agent's name.</p>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;min-width:680px;font-size:12px">
+          <thead><tr style="background:#f0f7f3;text-align:left"><th style="padding:11px">S/N</th><th style="padding:11px">Political Party</th><th style="padding:11px">Votes in Figures</th><th style="padding:11px">Votes in Words</th><th style="padding:11px">Name of Polling Agent</th></tr></thead>
+          <tbody id="ec8aPartyRows"></tbody>
+          <tfoot><tr style="background:#f0f7f3;font-weight:800"><td colspan="2" style="padding:12px">Total valid votes</td><td id="ec8aPartyTotal" style="padding:12px">0</td><td colspan="2"></td></tr></tfoot>
+        </table>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>Certification</h2>
+      <div class="form-grid">
+        <div class="field"><label for="ec8aOfficer">Name of Presiding Officer</label><input id="ec8aOfficer" required placeholder="Enter presiding officer's name"></div>
+        <div class="field"><label for="ec8aSignature">Presiding Officer signature / confirmation</label><input id="ec8aSignature" required placeholder="Type name as confirmation"></div>
+        <div class="field"><label for="ec8aDate">Form date</label><input id="ec8aDate" type="date" required></div>
+        <div class="field"><label>Report status</label><input value="Successful Election" readonly></div>
+      </div>
+      <div class="form-actions"><button class="btn" id="saveEc8aBtn" type="submit">Save EC8A</button><button class="btn secondary" type="button" data-open="successful">Back</button></div>
+      <div class="notice" id="ec8aNotice"></div>
+    </div>
+  </form>
+</section>
+
+<section class="view-section" id="view-over-voting">
+  <div class="role-label">Incident reporting</div><h1>Over Voting</h1><p class="subtitle">Record the over-voting incident observed at your assigned polling unit.</p>
+  <div class="panel"><form id="overVotingForm"><div class="form-grid">
+    <div class="field"><label for="overVotingTime">Time observed</label><input id="overVotingTime" type="datetime-local" required></div>
+    <div class="field"><label for="overVotingCount">Number of excess votes (if established)</label><input id="overVotingCount" type="number" min="0" step="1" value="0"></div>
+    <div class="field full"><label for="overVotingDetails">Incident details</label><textarea id="overVotingDetails" required placeholder="Describe what happened and how the incident was identified…"></textarea></div>
+  </div><div class="form-actions"><button class="btn" type="submit">Submit over-voting report</button><button class="btn secondary" type="button" data-open="upload">Back</button></div><div class="notice" id="overVotingNotice"></div></form></div>
+</section>
+
+<section class="view-section" id="view-violence">
+  <div class="role-label">Incident reporting</div><h1>Violence</h1><p class="subtitle">Record violence, threats or disruption affecting your assigned polling unit.</p>
+  <div class="panel"><form id="violenceForm"><div class="form-grid">
+    <div class="field"><label for="violenceType">Incident type</label><select id="violenceType" required><option value="">Select incident</option><option>Physical assault</option><option>Threat or intimidation</option><option>Vandalism</option><option>Disruption of voting</option><option>Destruction of election materials</option><option>Other</option></select></div>
+    <div class="field"><label for="violenceTime">Time observed</label><input id="violenceTime" type="datetime-local" required></div>
+    <div class="field full"><label for="violenceDetails">Incident details</label><textarea id="violenceDetails" required placeholder="Describe the incident, persons affected if known, and current situation…"></textarea></div>
+  </div><div class="form-actions"><button class="btn" type="submit">Submit violence report</button><button class="btn secondary" type="button" data-open="upload">Back</button></div><div class="notice" id="violenceNotice"></div></form></div>
+</section>
+
+
+  <div class="role-label">Field report</div><h1>Upload report</h1><p class="subtitle">Record the activity observed at your assigned polling unit.</p>
+  <div class="panel"><h2>Polling unit report</h2><p class="desc">Your identity and assigned location are attached automatically from your approved account.</p>
+    <form id="reportForm"><div class="form-grid">
+      <div class="field"><label for="reportCategory">Report category</label><select id="reportCategory" required><option value="">Select category</option><option>Opening of Polls</option><option>Accreditation</option><option>Voting Process</option><option>Vote Counting</option><option>Result Announcement</option><option>Closing of Polls</option><option>General Observation</option></select></div>
+      <div class="field"><label for="reportTime">Observation time</label><input id="reportTime" type="datetime-local" required></div>
+      <div class="field full"><label for="reportDetails">Report details</label><textarea id="reportDetails" placeholder="Describe what you observed clearly and objectively…" required></textarea></div>
+      <div class="field full"><label for="evidencePhoto">Evidence photo (optional)</label><input id="evidencePhoto" type="file" accept="image/*" capture="environment"><small style="color:#7b8b81">Photo attachment storage will require the project's approved media-storage connection.</small></div>
+    </div><div class="form-actions"><button class="btn" type="submit">Submit report</button><button class="btn secondary" type="reset">Clear form</button></div><div class="notice" id="reportNotice"></div></form>
+  </div>
+</section>
+
+<section class="view-section" id="view-backup">
+  <div class="role-label">Field assistance</div><h1>Backup request</h1><p class="subtitle">Request support for a serious incident or operational concern.</p>
+  <div class="panel"><h2>Request response support</h2><p class="desc">Provide factual information. For immediate danger, follow your organisation's emergency procedures and contact the appropriate authorities directly.</p>
+  <form id="backupForm"><div class="form-grid">
+    <div class="field"><label for="backupType">Incident type</label><select id="backupType" required><option value="">Select incident</option><option>Security concern</option><option>Medical emergency</option><option>Disruption at polling unit</option><option>Equipment or materials issue</option><option>Observer assistance</option><option>Other</option></select></div>
+    <div class="field"><label for="backupUrgency">Urgency</label><select id="backupUrgency" required><option>Routine</option><option>Urgent</option><option>Critical</option></select></div>
+    <div class="field full"><label for="backupDetails">Request details</label><textarea id="backupDetails" required placeholder="Describe the issue, current situation, and support needed…"></textarea></div>
+  </div><div class="form-actions"><button class="btn" type="submit">Submit backup request</button></div><div class="notice" id="backupNotice"></div></form></div>
+</section>
+
+<section class="view-section" id="view-vote-alert">
+  <div class="role-label">Incident reporting</div><h1>Vote buying alert</h1><p class="subtitle">Submit a factual report of suspected vote buying or inducement.</p>
+  <div class="panel"><h2>Suspected vote buying</h2><p class="desc">Report only what you directly observed or what was reported to you. Clearly distinguish firsthand observation from hearsay. Do not confront suspected individuals.</p>
+  <form id="alertForm"><div class="form-grid">
+    <div class="field"><label for="alertType">Observation type</label><select id="alertType" required><option value="">Select type</option><option>Cash or money distribution</option><option>Distribution of gifts or goods</option><option>Promise of reward or benefit</option><option>Other suspected inducement</option></select></div>
+    <div class="field"><label for="alertTime">Time observed</label><input id="alertTime" type="datetime-local" required></div>
+    <div class="field"><label for="alertSource">Source of information</label><select id="alertSource" required><option>Direct observation</option><option>Reported by another person</option></select></div>
+    <div class="field"><label for="alertEvidence">Evidence available</label><select id="alertEvidence"><option>No evidence attached</option><option>Photo</option><option>Video</option><option>Witness details</option><option>Other documentation</option></select></div>
+    <div class="field full"><label for="alertDetails">Incident description</label><textarea id="alertDetails" required placeholder="Describe the observed activity, location, and relevant details…"></textarea></div>
+  </div><div class="form-actions"><button class="btn" type="submit">Submit alert</button></div><div class="notice" id="alertNotice"></div></form></div>
+</section>
+
+<section class="view-section" id="view-profile">
+  <div class="role-label">Account information</div><h1>User profile</h1><p class="subtitle">Review your account and assigned election-monitoring location.</p>
+  <div class="panel"><h2>Registration details</h2><div class="profile-grid">
+    <div class="profile-item"><small>Full name</small><strong id="profileName">—</strong></div>
+    <div class="profile-item"><small>Username</small><strong id="profileUsername">—</strong></div>
+    <div class="profile-item"><small>Email</small><strong id="profileEmail">—</strong></div>
+    <div class="profile-item"><small>Phone</small><strong id="profilePhone">—</strong></div>
+    <div class="profile-item"><small>Role</small><strong id="profileRole">—</strong></div>
+    <div class="profile-item"><small>Election</small><strong id="profileElection">—</strong></div>
+    <div class="profile-item"><small>Candidate</small><strong id="profileCandidate">—</strong></div>
+    <div class="profile-item"><small>State</small><strong id="profileState">—</strong></div>
+    <div class="profile-item"><small>Senatorial Zone / Constituency</small><strong id="profileDistrict">—</strong></div>
+    <div class="profile-item"><small>Local Government Area</small><strong id="profileLga">—</strong></div>
+    <div class="profile-item"><small>Ward</small><strong id="profileWard">—</strong></div>
+    <div class="profile-item"><small>Polling unit</small><strong id="profilePollingUnit">—</strong></div>
+    <div class="profile-item"><small>Polling unit code</small><strong id="profilePollingUnitCode">—</strong></div>
+    <div class="profile-item"><small>Account status</small><strong id="profileStatus">—</strong></div>
+  </div></div>
+</section>
+<div class="footer">THE EYES · Election Monitoring &amp; Reporting System</div>
+</div>
+</main>
+</div>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {getAuth,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {initializeFirestore,doc,getDoc,collection,addDoc,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig={apiKey:"AIzaSyBEbkeWDLuQOSPz2ojp59UWgqf0OakRrCo",authDomain:"election-8e790.firebaseapp.com",projectId:"election-8e790",storageBucket:"election-8e790.firebasestorage.app",messagingSenderId:"346568561664",appId:"1:346568561664:web:5618be1ebb4057f9c6f4e5"};
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=initializeFirestore(app,{experimentalForceLongPolling:true});
+const $=id=>document.getElementById(id);
+let currentUser=null,currentProfile=null,currentAgent=null,assignment={};
+
+const electionNames={presidential:"Presidential Election",gubernatorial:"Gubernatorial Election",senatorial:"Senatorial Election",house_of_representatives:"House of Representatives Election"};
+const roleNames={polling_unit_agent:"Polling Unit Agent",agent:"Election Agent",observer:"Polling Unit Agent"};
+function text(id,value){const el=$(id);if(el)el.textContent=value??"—"}
+function notice(id,message,isError=false){const el=$(id);el.textContent=message;el.className="notice show"+(isError?" error":"")}
+function first(...values){return values.find(v=>v!==undefined&&v!==null&&String(v).trim()!=="")}
+function asText(v){return typeof v==="string"?v:(v==null?"":String(v))}
+function getNested(obj,path){return path.split(".").reduce((v,k)=>v&&v[k]!==undefined?v[k]:undefined,obj)}
+function geoValue(key,...paths){
+  const sources=[currentAgent?.geography,currentAgent?.assignedScope,currentProfile?.geography,currentProfile?.assignedScope,currentAgent,currentProfile,assignment];
+  for(const src of sources){for(const path of paths){const v=getNested(src,path);if(v!==undefined&&v!==null&&v!=="")return v}}
+  return "";
+}
+function normalStatus(p){return p?.active===false||p?.status==="disabled"?"Disabled":(p?.status||"Active")}
+function roleText(p){return p?.agentRoleLabel||roleNames[p?.agentRole]||roleNames[p?.role]||p?.role||"Polling Unit Agent"}
+
+async function readGeoDoc(collectionName,id){
+  if(!id)return null;
+  try{const snap=await getDoc(doc(db,collectionName,String(id)));return snap.exists()?{id:snap.id,...snap.data()}:null}
+  catch(e){console.warn("Could not resolve "+collectionName,e);return null}
+}
+function recordName(record){return first(record?.name,record?.stateName,record?.lgaName,record?.wardName,record?.pollingUnitName,record?.unitName,record?.title,record?.label)}
+async function hydrateAssignment(){
+  const stateCode=geoValue("stateCode","stateCode"),zoneCode=geoValue("senatorialZoneCode","senatorialZoneCode"),constCode=geoValue("federalConstituencyCode","federalConstituencyCode"),lgaCode=geoValue("lgaCode","lgaCode"),wardCode=geoValue("wardCode","wardCode"),puCode=geoValue("pollingUnitCode","pollingUnitCode");
+  const [stateDoc,zoneDoc,constDoc,lgaDoc,wardDoc,puDoc]=await Promise.all([
+    readGeoDoc("geographyStates",stateCode),readGeoDoc("geographySenatorialZones",zoneCode),readGeoDoc("geographyFederalConstituencies",constCode),
+    readGeoDoc("geographyLGAs",lgaCode),readGeoDoc("geographyWards",wardCode),readGeoDoc("geographyPollingUnits",puCode)
+  ]);
+  const storedGeo=currentAgent?.geography||currentProfile?.geography||{};
+  assignment={
+    state:first(storedGeo.state,storedGeo.stateName,currentAgent?.state,currentProfile?.state,recordName(stateDoc)),
+    stateCode,
+    senatorialZone:first(storedGeo.senatorialZone,currentAgent?.senatorialZone,currentProfile?.senatorialZone,recordName(zoneDoc)),
+    senatorialZoneCode:zoneCode,
+    federalConstituency:first(storedGeo.federalConstituency,currentAgent?.federalConstituency,currentProfile?.federalConstituency,recordName(constDoc)),
+    federalConstituencyCode:constCode,
+    lga:first(storedGeo.lga,currentAgent?.lga,currentProfile?.lga,recordName(lgaDoc)),
+    lgaCode,
+    ward:first(storedGeo.ward,currentAgent?.ward,currentProfile?.ward,recordName(wardDoc)),
+    wardCode,
+    pollingUnit:first(storedGeo.pollingUnit,storedGeo.pollingUnitName,currentAgent?.pollingUnit,currentAgent?.pollingUnitName,currentProfile?.pollingUnit,currentProfile?.pollingUnitName,recordName(puDoc)),
+    pollingUnitCode:first(puCode,puDoc?.code,puDoc?.serialCode,puDoc?.pollingUnitCode)
+  };
+}
+function displayAssignment(){
+  const district=first(assignment.senatorialZone,assignment.federalConstituency,"—");
+  const districtLabel=assignment.senatorialZone?"Senatorial Zone":(assignment.federalConstituency?"Federal Constituency":"Senatorial Zone / Constituency");
+  text("welcomeName",first(currentProfile?.fullName,currentProfile?.name,currentAgent?.fullName,currentUser?.displayName,"Polling Agent").split(/\s+/)[0]);
+  text("sideRole",roleText(currentAgent||currentProfile));
+  text("sideLocation",[assignment.lga,assignment.state].filter(Boolean).join(" · ")||"Assigned polling unit");
+  text("assignedUnit",assignment.pollingUnit||"Polling unit not found in registration profile");
+  text("assignedAddress",[assignment.ward,assignment.lga,assignment.state].filter(Boolean).join(" · ")||"Location details are not available");
+  text("ctxElection",first(currentAgent?.electionName,electionNames[currentAgent?.electionType],currentProfile?.electionName,electionNames[currentProfile?.electionType]));
+  text("ctxCandidate",first(currentAgent?.candidateName,currentProfile?.candidateName,"Not assigned"));
+  text("ctxState",assignment.state);
+  text("ctxDistrict",district);
+  text("ctxLga",assignment.lga);
+  text("ctxWard",assignment.ward);
+  text("ctxPuCode",assignment.pollingUnitCode);
+  text("ctxStatus",normalStatus(currentAgent||currentProfile));
+  text("profileName",first(currentProfile?.fullName,currentAgent?.fullName,currentUser?.displayName));
+  text("profileUsername",first(currentProfile?.username,currentAgent?.username,currentUser?.email?.split("@")[0]));
+  text("profileEmail",first(currentProfile?.email,currentAgent?.email,currentUser?.email));
+  text("profilePhone",first(currentProfile?.phone,currentAgent?.phone));
+  text("profileRole",roleText(currentAgent||currentProfile));
+  text("profileElection",first(currentAgent?.electionName,electionNames[currentAgent?.electionType],currentProfile?.electionName,electionNames[currentProfile?.electionType]));
+  text("profileCandidate",first(currentAgent?.candidateName,currentProfile?.candidateName,"Not assigned"));
+  text("profileState",assignment.state);
+  text("profileDistrict",district);
+  text("profileLga",assignment.lga);
+  text("profileWard",assignment.ward);
+  text("profilePollingUnit",assignment.pollingUnit);
+  text("profilePollingUnitCode",assignment.pollingUnitCode);
+  text("profileStatus",normalStatus(currentAgent||currentProfile));
+}
+async function loadAuthenticatedProfile(user){
+  currentUser=user;
+  const [userSnap,agentSnap]=await Promise.all([
+    getDoc(doc(db,"users",user.uid)),
+    getDoc(doc(db,"electionAgents",user.uid))
+  ]);
+  if(!userSnap.exists()&&!agentSnap.exists())throw new Error("No registration profile was found for this account.");
+  currentProfile=userSnap.exists()?userSnap.data():{};
+  currentAgent=agentSnap.exists()?agentSnap.data():currentProfile;
+  const active=normalStatus(currentAgent)!=="Disabled"&&normalStatus(currentProfile)!=="Disabled";
+  const role=String(first(currentAgent?.agentRole,currentProfile?.agentRole,currentAgent?.role,currentProfile?.role,"")).toLowerCase();
+  if(!active)throw new Error("This agent account is disabled. Contact the Super Admin.");
+  if(!["polling_unit_agent","observer"].includes(role))throw new Error("This account is not assigned as a Polling Unit Agent.");
+  await hydrateAssignment();
+  if(!assignment.pollingUnit)throw new Error("Your account is signed in, but no polling unit assignment was found. Contact the Super Admin.");
+  displayAssignment();
+}
+
+function showView(view){
+  document.querySelectorAll(".view-section").forEach(section=>section.classList.toggle("active",section.id===`view-${view}`));
+  document.querySelectorAll(".nav button[data-view]").forEach(button=>button.classList.toggle("active",button.dataset.view===view));
+  const titles={dashboard:"Operations overview",upload:"Upload",successful:"Successful Election","ec8a-form":"Digital EC8A","over-voting":"Over Voting",violence:"Violence",backup:"Backup request","vote-alert":"Vote buying alert",profile:"User profile"};
+  text("topTitle",titles[view]||"Operations overview");
+  closeMenu();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function closeMenu(){$("sidebar").classList.remove("open");$("overlay").classList.remove("show")}
+document.querySelectorAll("[data-view]").forEach(btn=>btn.addEventListener("click",()=>showView(btn.dataset.view)));
+document.querySelectorAll("[data-open]").forEach(btn=>btn.addEventListener("click",()=>showView(btn.dataset.open)));
+document.querySelectorAll("[data-action='logout'],#logoutBtn").forEach(btn=>btn.addEventListener("click",logout));
+$("menuBtn").addEventListener("click",()=>{
+  if(window.matchMedia("(max-width:650px)").matches){$("sidebar").classList.toggle("open");$("overlay").classList.toggle("show")}
+  else{$("sidebar").classList.toggle("collapsed")}
+});
+$("overlay").addEventListener("click",closeMenu);
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeMenu()});
+
+async function logout(){
+  try{await signOut(auth)}finally{window.location.replace("index.html")}
+}
+onAuthStateChanged(auth,async user=>{
+  if(!user){window.location.replace("index.html");return}
+  try{await loadAuthenticatedProfile(user)}
+  catch(error){console.error("Polling Unit Agent profile error:",error);alert(error.message||"Could not load your assigned profile.");await signOut(auth);window.location.replace("index.html")}
+});
+
+
+// Cloudinary unsigned uploads for the three Successful Election evidence types.
+const CLOUDINARY_CLOUD_NAME="obaestate";
+const CLOUDINARY_UPLOAD_PRESET="hjdnytcb";
+const evidenceConfig={
+  ec8a:{input:"ec8aFileInput",preview:"ec8aPreview",content:"ec8aPreviewContent",meta:"ec8aFileMeta",label:"EC8A photo",kind:"image",resource:"image"},
+  video:{input:"videoFileInput",preview:"videoPreview",content:"videoPreviewContent",meta:"videoFileMeta",label:"Video evidence",kind:"video",resource:"video"},
+  duplicate:{input:"duplicateFileInput",preview:"duplicatePreview",content:"duplicatePreviewContent",meta:"duplicateFileMeta",label:"Duplicate copy",kind:"document",resource:"image"}
+};
+const evidenceUrls={};
+document.querySelectorAll('[data-action="ec8a-file"]').forEach(b=>b.addEventListener("click",()=>$("ec8aFileInput").click()));
+document.querySelectorAll('[data-action="video-file"]').forEach(b=>b.addEventListener("click",()=>$("videoFileInput").click()));
+document.querySelectorAll('[data-action="duplicate-file"]').forEach(b=>b.addEventListener("click",()=>$("duplicateFileInput").click()));
+
+function formatFileSize(bytes){
+  if(bytes<1024)return `${bytes} B`;
+  if(bytes<1024*1024)return `${(bytes/1024).toFixed(1)} KB`;
+  return `${(bytes/(1024*1024)).toFixed(2)} MB`;
+}
+function clearEvidence(key,clearInput=true){
+  const cfg=evidenceConfig[key];
+  if(evidenceUrls[key]){URL.revokeObjectURL(evidenceUrls[key]);delete evidenceUrls[key];}
+  $(cfg.content).replaceChildren();
+  $(cfg.meta).textContent="";
+  $(cfg.preview).classList.remove("show");
+  if(clearInput)$(cfg.input).value="";
+}
+function showEvidence(key,file){
+  const cfg=evidenceConfig[key];
+  clearEvidence(key,false);
+  const url=URL.createObjectURL(file);
+  evidenceUrls[key]=url;
+  const content=$(cfg.content);
+  if(cfg.kind==="image" || (cfg.kind==="document" && file.type.startsWith("image/"))){
+    const img=document.createElement("img");img.src=url;img.alt=`Preview of ${file.name}`;content.appendChild(img);
+  }else if(cfg.kind==="video"){
+    const video=document.createElement("video");video.src=url;video.controls=true;video.playsInline=true;content.appendChild(video);
+  }else if(file.type==="application/pdf" || file.name.toLowerCase().endsWith(".pdf")){
+    const frame=document.createElement("iframe");frame.src=url;frame.title=`PDF preview: ${file.name}`;content.appendChild(frame);
+  }else{
+    const message=document.createElement("p");message.textContent="This file type can be selected, but an in-page preview is not available.";content.appendChild(message);
+  }
+  $(cfg.meta).textContent=`${file.name} · ${formatFileSize(file.size)} · ${file.type||"Unknown file type"}`;
+  $(cfg.preview).classList.add("show");
+  const status=$(`${key}UploadStatus`);if(status)status.textContent="";
+  notice("successfulNotice",`${cfg.label} selected and previewed. Select “Upload to Cloudinary” when ready.`,false);
+}
+Object.entries(evidenceConfig).forEach(([key,cfg])=>{
+  $(cfg.input).addEventListener("change",()=>{
+    const file=$(cfg.input).files?.[0];
+    if(!file)return;
+    const valid=key==="ec8a" ? file.type.startsWith("image/") :
+      key==="video" ? file.type.startsWith("video/") :
+      (file.type.startsWith("image/") || file.type==="application/pdf" || file.name.toLowerCase().endsWith(".pdf"));
+    if(!valid){clearEvidence(key);notice("successfulNotice",`The selected file is not a supported ${cfg.label.toLowerCase()} format.`,false);return;}
+    showEvidence(key,file);
+  });
+});
+document.querySelectorAll("[data-remove-file]").forEach(button=>button.addEventListener("click",()=>{
+  const key=button.dataset.removeFile;clearEvidence(key);
+  const status=$(`${key}UploadStatus`);if(status)status.textContent="";
+  notice("successfulNotice",`${evidenceConfig[key].label} removed.`,false);
+}));
+
+function uploadEvidenceToCloudinary(key){
+  const cfg=evidenceConfig[key],input=$(cfg.input),file=input.files?.[0],status=$(`${key}UploadStatus`);
+  if(!file){notice("successfulNotice",`Choose a ${cfg.label.toLowerCase()} before uploading.`,true);return;}
+  const button=document.querySelector(`[data-upload-file="${key}"]`);
+  if(button?.disabled)return;
+  button.disabled=true;button.textContent="Uploading…";
+  status.textContent="Preparing secure unsigned upload…";
+  const endpoint=`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/${cfg.resource}/upload`;
+  const formData=new FormData();
+  formData.append("file",file);
+  formData.append("upload_preset",CLOUDINARY_UPLOAD_PRESET);
+  formData.append("folder","the-eyes/election-evidence");
+  formData.append("context",`evidence_type=${key}|agent_uid=${currentUser?.uid||""}|polling_unit_code=${assignment.pollingUnitCode||""}`);
+  const xhr=new XMLHttpRequest();
+  xhr.open("POST",endpoint,true);
+  xhr.upload.addEventListener("progress",event=>{
+    if(event.lengthComputable)status.textContent=`Uploading… ${Math.round(event.loaded/event.total*100)}%`;
+  });
+  xhr.onload=async()=>{
+    try{
+      const result=JSON.parse(xhr.responseText||"{}");
+      if(xhr.status<200||xhr.status>=300)throw new Error(result.error?.message||`Cloudinary upload failed (${xhr.status}).`);
+      const record={
+        agentUid:currentUser?.uid||"",userId:currentUser?.uid||"",
+        fullName:first(currentProfile?.fullName,currentAgent?.fullName,currentUser?.displayName,""),
+        email:first(currentProfile?.email,currentAgent?.email,currentUser?.email,""),
+        role:"polling_unit_agent",
+        electionType:first(currentAgent?.electionType,currentProfile?.electionType,""),
+        electionName:first(currentAgent?.electionName,currentProfile?.electionName,electionNames[currentAgent?.electionType],""),
+        candidateId:first(currentAgent?.candidateId,currentProfile?.candidateId,""),
+        candidateName:first(currentAgent?.candidateName,currentProfile?.candidateName,""),
+        geography:{...assignment},
+        stateCode:assignment.stateCode||"",lgaCode:assignment.lgaCode||"",wardCode:assignment.wardCode||"",pollingUnitCode:assignment.pollingUnitCode||"",
+        state:assignment.state||"",lga:assignment.lga||"",ward:assignment.ward||"",pollingUnit:assignment.pollingUnit||"",
+        evidenceType:key,fileName:file.name,fileType:file.type||"",fileSize:file.size,
+        cloudinaryUrl:result.secure_url||"",cloudinaryPublicId:result.public_id||"",
+        cloudinaryResourceType:result.resource_type||cfg.resource,cloudinaryFormat:result.format||"",
+        cloudinaryBytes:result.bytes||file.size,status:"uploaded",createdAt:serverTimestamp()
+      };
+      try{
+        await addDoc(collection(db,"evidenceUploads"),record);
+        status.textContent=`Uploaded successfully. Cloudinary URL: ${record.cloudinaryUrl} · Evidence record saved.`;
+        notice("successfulNotice",`${cfg.label} uploaded successfully and its record was saved.`,false);
+      }catch(saveError){
+        console.error("Cloudinary uploaded; Firestore metadata save failed:",saveError);
+        status.textContent=`File uploaded to Cloudinary, but Firebase could not save its record. Keep this URL: ${record.cloudinaryUrl}`;
+        notice("successfulNotice",`${cfg.label} reached Cloudinary, but the evidence record could not be saved to Firebase. Check Firestore rules for evidenceUploads.`,true);
+      }
+    }catch(error){
+      console.error("Cloudinary upload error:",error);
+      status.textContent=`Upload failed: ${error.message||"Please try again."}`;
+      notice("successfulNotice",`Could not upload ${cfg.label.toLowerCase()}: ${error.message||"Please try again."}`,true);
+    }finally{
+      button.disabled=false;button.textContent="Upload to Cloudinary";
+    }
+  };
+  xhr.onerror=()=>{
+    status.textContent="Network error. Check your internet connection and try again.";
+    notice("successfulNotice","Cloudinary upload could not complete because of a network error.",true);
+    button.disabled=false;button.textContent="Upload to Cloudinary";
+  };
+  xhr.send(formData);
+}
+document.querySelectorAll("[data-upload-file]").forEach(button=>button.addEventListener("click",()=>uploadEvidenceToCloudinary(button.dataset.uploadFile)));
+window.addEventListener("beforeunload",()=>Object.keys(evidenceUrls).forEach(key=>URL.revokeObjectURL(evidenceUrls[key])));
+
+const partyCodes=["A","AA","AAC","ADC","ADP","APC","APGA","APM","APP","BP","LP","NNPP","NRM","PDP","PRP","SDP","YPP","ZLP"];
+function numberToWords(value){
+  const n=Math.max(0,Math.floor(Number(value)||0));
+  if(n===0)return "Zero";
+  const ones=["","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten","Eleven","Twelve","Thirteen","Fourteen","Fifteen","Sixteen","Seventeen","Eighteen","Nineteen"];
+  const tens=["","","Twenty","Thirty","Forty","Fifty","Sixty","Seventy","Eighty","Ninety"];
+  function under1000(x){
+    let out="";
+    if(x>=100){out+=ones[Math.floor(x/100)]+" Hundred";x%=100;if(x)out+=" ";}
+    if(x>=20){out+=tens[Math.floor(x/10)];x%=10;if(x)out+="-"+ones[x];}
+    else if(x>0)out+=ones[x];
+    return out;
+  }
+  const chunks=[];
+  const units=["","Thousand","Million","Billion"];
+  let i=0,x=n;
+  while(x>0&&i<units.length){const part=x%1000;if(part)chunks.unshift(under1000(part)+(units[i]?" "+units[i]:""));x=Math.floor(x/1000);i++}
+  return chunks.join(" ");
+}
+function renderPartyRows(){
+  $("ec8aPartyRows").innerHTML=partyCodes.map((party,i)=>`<tr><td>${i+1}</td><td><strong>${party}</strong></td><td><input type="number" min="0" step="1" value="0" data-party-votes="${party}" aria-label="${party} votes"></td><td class="words" data-party-words="${party}">Zero</td><td><input type="text" data-party-agent="${party}" aria-label="${party} polling agent name"></td></tr>`).join("");
+  $("ec8aPartyRows").querySelectorAll("[data-party-votes]").forEach(input=>input.addEventListener("input",updateEc8aTotals));
+  updateEc8aTotals();
+}
+function readNum(id){return Math.max(0,Number($(id).value)||0)}
+function updateEc8aTotals(){
+  let total=0;
+  partyCodes.forEach(p=>{const v=Math.max(0,Number(document.querySelector(`[data-party-votes="${p}"]`)?.value)||0);total+=v;const w=document.querySelector(`[data-party-words="${p}"]`);if(w)w.textContent=numberToWords(v)});
+  $("ec8aPartyTotal").textContent=String(total);
+  const valid=total,rejected=readNum("ec8aRejected"),used=valid+rejected;
+  $("ec8aValid").value=String(valid);$("ec8aUsed").value=String(used);
+  const warnings=[];
+  if(readNum("ec8aAccredited")>readNum("ec8aVoters"))warnings.push("Accredited voters cannot exceed the number of voters.");
+  if(readNum("ec8aIssued")<readNum("ec8aUnused")+readNum("ec8aSpoilt")+used)warnings.push("Issued ballot papers are fewer than unused + spoilt + used ballot papers.");
+  if(valid>readNum("ec8aAccredited"))warnings.push("Total valid votes exceed accredited voters.");
+  const n=$("ec8aAccountingNotice");if(warnings.length){n.textContent=warnings.join(" ");n.className="notice show error"}else{n.textContent="Ballot totals are currently consistent.";n.className="notice show"}
+}
+["ec8aVoters","ec8aAccredited","ec8aIssued","ec8aUnused","ec8aSpoilt","ec8aRejected"].forEach(id=>$(id).addEventListener("input",updateEc8aTotals));
+function prepareEc8a(){
+  text("ec8aHeading",first(currentAgent?.electionName,electionNames[currentAgent?.electionType],currentProfile?.electionName,electionNames[currentProfile?.electionType],"Election"));
+  text("ec8aElection",first(currentAgent?.electionName,electionNames[currentAgent?.electionType],currentProfile?.electionName,electionNames[currentProfile?.electionType]));
+  text("ec8aState",assignment.state);
+  text("ec8aLgaWard",[assignment.lga,assignment.ward].filter(Boolean).join(" / "));
+  text("ec8aPollingUnit",assignment.pollingUnit);
+  text("ec8aPollingCode",assignment.pollingUnitCode);
+  text("ec8aCandidate",first(currentAgent?.candidateName,currentProfile?.candidateName,"Not assigned"));
+}
+renderPartyRows();
+document.querySelectorAll('[data-open="ec8a-form"]').forEach(b=>b.addEventListener("click",prepareEc8a));
+$("ec8aForm").addEventListener("submit",async event=>{
+  event.preventDefault();
+  if(!currentUser||!currentAgent){notice("ec8aNotice","Agent profile is not ready. Please sign in again.",true);return}
+  updateEc8aTotals();
+  const validVotes=readNum("ec8aValid"),accredited=readNum("ec8aAccredited"),voters=readNum("ec8aVoters");
+  const issued=readNum("ec8aIssued"),unused=readNum("ec8aUnused"),spoilt=readNum("ec8aSpoilt"),rejected=readNum("ec8aRejected"),used=readNum("ec8aUsed");
+  if(accredited>voters||validVotes>accredited||issued<unused+spoilt+used){notice("ec8aNotice","Please correct the ballot-accounting inconsistencies before saving.",true);return}
+  const parties=partyCodes.map(p=>({party:p,votes:Number(document.querySelector(`[data-party-votes="${p}"]`).value)||0,votesInWords:numberToWords(document.querySelector(`[data-party-votes="${p}"]`).value),pollingAgentName:document.querySelector(`[data-party-agent="${p}"]`).value.trim()}));
+  const payload={
+    formType:"EC8A-Polling-Unit",reportType:"successful_election",reportStatus:"Successful Election",
+    agentUid:currentUser.uid,userId:currentUser.uid,fullName:first(currentProfile?.fullName,currentAgent?.fullName,currentUser.displayName,""),
+    email:first(currentProfile?.email,currentAgent?.email,currentUser.email,""),role:"polling_unit_agent",
+    electionType:first(currentAgent.electionType,currentProfile?.electionType,""),electionName:first(currentAgent.electionName,electionNames[currentAgent.electionType],""),
+    candidateId:first(currentAgent.candidateId,currentProfile?.candidateId,""),candidateName:first(currentAgent.candidateName,currentProfile?.candidateName,""),
+    geography:{...assignment},stateCode:assignment.stateCode,lgaCode:assignment.lgaCode,wardCode:assignment.wardCode,pollingUnitCode:assignment.pollingUnitCode,
+    state:assignment.state,lga:assignment.lga,ward:assignment.ward,pollingUnit:assignment.pollingUnit,
+    ballotAccounting:{voters,accreditedVoters:accredited,ballotPapersIssued:issued,unusedBallotPapers:unused,spoiltBallotPapers:spoilt,rejectedBallots:rejected,totalUsedBallotPapers:used,totalValidVotes:validVotes},
+    partyResults:parties,certification:{presidingOfficerName:$("ec8aOfficer").value.trim(),signatureConfirmation:$("ec8aSignature").value.trim(),formDate:$("ec8aDate").value},
+    status:"submitted",createdAt:serverTimestamp()
+  };
+  const btn=$("saveEc8aBtn");btn.disabled=true;btn.textContent="Saving…";
+  try{
+    await addDoc(collection(db,"ec8aResults"),payload);
+    notice("ec8aNotice","EC8A result saved successfully.",false);
+  }catch(error){
+    console.error("EC8A save failed:",error);
+    notice("ec8aNotice",error.code==="permission-denied"?"Firebase denied this save. The Firestore rules must explicitly permit authorised polling-unit agents to create candidate- and polling-unit-scoped ec8aResults records.":"Could not save EC8A: "+(error.message||"Please try again."),true);
+  }finally{btn.disabled=false;btn.textContent="Save EC8A"}
+});
+
+function attachIncident(formId,noticeId,collectionName,kind,extra){
+  $(formId).addEventListener("submit",async e=>{
+    e.preventDefault();const btn=$(formId).querySelector('button[type="submit"]');btn.disabled=true;btn.textContent="Submitting…";
+    try{
+      const payload={agentUid:currentUser.uid,userId:currentUser.uid,fullName:first(currentProfile?.fullName,currentAgent?.fullName,""),email:first(currentProfile?.email,currentAgent?.email,currentUser.email,""),role:"polling_unit_agent",electionType:first(currentAgent?.electionType,currentProfile?.electionType,""),candidateId:first(currentAgent?.candidateId,currentProfile?.candidateId,""),candidateName:first(currentAgent?.candidateName,currentProfile?.candidateName,""),geography:{...assignment},stateCode:assignment.stateCode,lgaCode:assignment.lgaCode,wardCode:assignment.wardCode,pollingUnitCode:assignment.pollingUnitCode,state:assignment.state,lga:assignment.lga,ward:assignment.ward,pollingUnit:assignment.pollingUnit,reportType:kind,status:"submitted",createdAt:serverTimestamp(),...extra()};
+      await addDoc(collection(db,collectionName),payload);notice(noticeId,"Your report has been saved successfully.",false);$(formId).reset();
+    }catch(err){console.error(err);notice(noticeId,err.code==="permission-denied"?"Firebase rules do not yet permit this report type for this agent assignment.":"Could not save report: "+(err.message||"Please try again."),true)}
+    finally{btn.disabled=false;btn.textContent=kind==="over_voting"?"Submit over-voting report":"Submit violence report"}
+  });
+}
+attachIncident("overVotingForm","overVotingNotice","pollingUnitReports","over_voting",()=>({observationTime:$("overVotingTime").value,excessVotes:readNum("overVotingCount"),details:$("overVotingDetails").value.trim()}));
+attachIncident("violenceForm","violenceNotice","pollingUnitReports","violence",()=>({incidentType:$("violenceType").value,observationTime:$("violenceTime").value,details:$("violenceDetails").value.trim()}));
+
+function buildSubmissionPayload(extra){
+  const base={
+    agentUid:currentUser.uid,userId:currentUser.uid,
+    fullName:first(currentProfile?.fullName,currentAgent?.fullName,currentUser?.displayName,""),
+    email:first(currentProfile?.email,currentAgent?.email,currentUser?.email,""),
+    role:"polling_unit_agent",
+    electionType:first(currentAgent?.electionType,currentProfile?.electionType,""),
+    electionName:first(currentAgent?.electionName,currentProfile?.electionName,electionNames[currentAgent?.electionType],""),
+    candidateId:first(currentAgent?.candidateId,currentProfile?.candidateId,""),
+    candidateName:first(currentAgent?.candidateName,currentProfile?.candidateName,""),
+    geography:{...assignment},
+    stateCode:assignment.stateCode,lgaCode:assignment.lgaCode,wardCode:assignment.wardCode,pollingUnitCode:assignment.pollingUnitCode,
+    state:assignment.state,lga:assignment.lga,ward:assignment.ward,pollingUnit:assignment.pollingUnit,
+    createdAt:serverTimestamp(),status:"submitted",...extra
+  };
+  return base;
+}
+function attachSubmission(formId,noticeId,collectionName,makeExtra){
+  $(formId).addEventListener("submit",async event=>{
+    event.preventDefault();
+    const form=$(formId),submit=form.querySelector('button[type="submit"]'),noticeEl=$(noticeId);
+    submit.disabled=true;submit.textContent="Submitting…";noticeEl.className="notice";
+    try{
+      const payload=buildSubmissionPayload(makeExtra());
+      await addDoc(collection(db,collectionName),payload);
+      notice(noticeId,"Your submission has been saved successfully.",false);
+      form.reset();
+    }catch(error){
+      console.error(collectionName+" submission failed:",error);
+      const message=error.code==="permission-denied"?"Firebase denied this submission. The Firestore rules must allow this agent's assigned polling-unit report for this collection.":(error.message||"Could not submit. Check your connection and try again.");
+      notice(noticeId,message,true);
+    }finally{submit.disabled=false;submit.textContent=collectionName==="pollingUnitReports"?"Submit report":collectionName==="backupRequests"?"Submit backup request":"Submit alert"}
+  });
+}
+attachSubmission("reportForm","reportNotice","pollingUnitReports",()=>({
+  category:$("reportCategory").value,observationTime:$("reportTime").value,details:$("reportDetails").value.trim(),
+  evidenceFileName:$("evidencePhoto").files[0]?.name||""
+}));
+attachSubmission("backupForm","backupNotice","backupRequests",()=>({
+  incidentType:$("backupType").value,urgency:$("backupUrgency").value,details:$("backupDetails").value.trim()
+}));
+attachSubmission("alertForm","alertNotice","voteBuyingAlerts",()=>({
+  alertType:$("alertType").value,observationTime:$("alertTime").value,source:$("alertSource").value,
+  evidenceAvailable:$("alertEvidence").value,details:$("alertDetails").value.trim()
+}));
+</script>
+</body>
+</html>
