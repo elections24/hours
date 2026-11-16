@@ -349,12 +349,24 @@ h1{font-size:clamp(28px,3.5vw,44px);letter-spacing:-1.2px;margin:8px 0 10px;line
 </section>
 
 <section class="view-section" id="view-violence">
-  <div class="role-label">Incident reporting</div><h1>Violence</h1><p class="subtitle">Record violence, threats or disruption affecting your assigned polling unit.</p>
+  <div class="role-label">Incident evidence and reporting</div>
+  <h1>Violence</h1>
+  <p class="subtitle">Choose how to submit violence-related evidence or complete the digital incident report.</p>
+  <div class="cards">
+    <button class="action-card" data-action="violence-ec40g-file"><span class="action-icon">⇧</span><span class="action-text"><strong>Upload Form EC40G</strong><small>Open the upload page, choose an EC40G photo, then submit</small></span><span class="chevron">›</span></button>
+    <button class="action-card" data-open="violence-eform"><span class="action-icon">☷</span><span class="action-text"><strong>Fill E-Form</strong><small>Open the digital violence incident report</small></span><span class="chevron">›</span></button>
+    <button class="action-card" data-action="violence-video-file"><span class="action-icon">▶</span><span class="action-text"><strong>Upload Video</strong><small>Open the upload page, choose a video, then submit</small></span><span class="chevron">›</span></button>
+    <button class="action-card" data-action="violence-duplicate-file"><span class="action-icon">⇧</span><span class="action-text"><strong>Upload Duplicate Copy</strong><small>Open the upload page, choose a duplicate copy, then submit</small></span><span class="chevron">›</span></button>
+  </div>
+</section>
+
+<section class="view-section" id="view-violence-eform">
+  <div class="role-label">Digital incident reporting</div><h1>Violence E-Form</h1><p class="subtitle">Record violence, threats or disruption affecting your assigned polling unit.</p>
   <div class="panel"><form id="violenceForm"><div class="form-grid">
     <div class="field"><label for="violenceType">Incident type</label><select id="violenceType" required><option value="">Select incident</option><option>Physical assault</option><option>Threat or intimidation</option><option>Vandalism</option><option>Disruption of voting</option><option>Destruction of election materials</option><option>Other</option></select></div>
     <div class="field"><label for="violenceTime">Time observed</label><input id="violenceTime" type="datetime-local" required></div>
     <div class="field full"><label for="violenceDetails">Incident details</label><textarea id="violenceDetails" required placeholder="Describe the incident, persons affected if known, and current situation…"></textarea></div>
-  </div><div class="form-actions"><button class="btn" type="submit">Submit violence report</button><button class="btn secondary" type="button" data-open="upload">Back</button></div><div class="notice" id="violenceNotice"></div></form></div>
+  </div><div class="form-actions"><button class="btn" type="submit">Submit violence report</button><button class="btn secondary" type="button" data-open="violence">Back</button></div><div class="notice" id="violenceNotice"></div></form></div>
 </section>
 
 
@@ -520,7 +532,7 @@ async function loadAuthenticatedProfile(user){
 function showView(view){
   document.querySelectorAll(".view-section").forEach(section=>section.classList.toggle("active",section.id===`view-${view}`));
   document.querySelectorAll(".nav button[data-view]").forEach(button=>button.classList.toggle("active",button.dataset.view===view));
-  const titles={dashboard:"Operations overview",upload:"Upload","evidence-upload":"Upload evidence",successful:"Successful Election","ec8a-form":"Digital EC8A","ov-ec8a-form":"Over Voting E-Form","over-voting":"Over Voting",violence:"Violence",backup:"Backup request","vote-alert":"Vote buying alert",profile:"User profile"};
+  const titles={dashboard:"Operations overview",upload:"Upload","evidence-upload":"Upload evidence",successful:"Successful Election","ec8a-form":"Digital EC8A","ov-ec8a-form":"Over Voting E-Form","over-voting":"Over Voting",violence:"Violence","violence-eform":"Violence E-Form",backup:"Backup request","vote-alert":"Vote buying alert",profile:"User profile"};
   text("topTitle",titles[view]||"Operations overview");
   closeMenu();
   window.scrollTo({top:0,behavior:"smooth"});
@@ -578,7 +590,10 @@ const evidencePageSettings={
   duplicate:{title:"Upload Duplicate Copy",subtitle:"Select a duplicate EC8A photo or PDF copy.",accept:"image/*,.pdf",resource:"image",type:"successful_ec8a_duplicate",returnView:"successful"},
   "ov-ec8a":{title:"Upload Form EC8A — Over Voting",subtitle:"Select a photo of the physical EC8A form for the Over Voting report.",accept:"image/*",resource:"image",type:"over_voting_ec8a_photo",returnView:"over-voting"},
   "ov-video":{title:"Upload Video — Over Voting",subtitle:"Select video evidence for the Over Voting report.",accept:"video/*",resource:"video",type:"over_voting_video",returnView:"over-voting"},
-  "ov-duplicate":{title:"Upload Duplicate Copy — Over Voting",subtitle:"Select a duplicate EC8A photo or PDF copy for the Over Voting report.",accept:"image/*,.pdf",resource:"image",type:"over_voting_ec8a_duplicate",returnView:"over-voting"}
+  "ov-duplicate":{title:"Upload Duplicate Copy — Over Voting",subtitle:"Select a duplicate EC8A photo or PDF copy for the Over Voting report.",accept:"image/*,.pdf",resource:"image",type:"over_voting_ec8a_duplicate",returnView:"over-voting"},
+  "violence-ec40g":{title:"Upload Form EC40G",subtitle:"Select a clear photo of the completed physical EC40G violence report form from your phone gallery.",accept:"image/*",resource:"image",type:"violence_ec40g_photo",returnView:"violence"},
+  "violence-video":{title:"Upload Video — Violence",subtitle:"Select video evidence relating to the violence incident from your phone gallery.",accept:"video/*",resource:"video",type:"violence_video",returnView:"violence"},
+  "violence-duplicate":{title:"Upload Duplicate Copy — Violence",subtitle:"Select a duplicate EC40G photo or PDF copy.",accept:"image/*,.pdf",resource:"image",type:"violence_ec40g_duplicate",returnView:"violence"}
 };
 
 function openEvidenceUpload(key){
@@ -692,6 +707,9 @@ document.querySelectorAll('[data-action="duplicate-file"]').forEach(b=>b.addEven
 document.querySelectorAll('[data-action="ov-ec8a-file"]').forEach(b=>b.addEventListener("click",()=>openEvidenceUpload("ov-ec8a")));
 document.querySelectorAll('[data-action="ov-video-file"]').forEach(b=>b.addEventListener("click",()=>openEvidenceUpload("ov-video")));
 document.querySelectorAll('[data-action="ov-duplicate-file"]').forEach(b=>b.addEventListener("click",()=>openEvidenceUpload("ov-duplicate")));
+document.querySelectorAll('[data-action="violence-ec40g-file"]').forEach(b=>b.addEventListener("click",()=>openEvidenceUpload("violence-ec40g")));
+document.querySelectorAll('[data-action="violence-video-file"]').forEach(b=>b.addEventListener("click",()=>openEvidenceUpload("violence-video")));
+document.querySelectorAll('[data-action="violence-duplicate-file"]').forEach(b=>b.addEventListener("click",()=>openEvidenceUpload("violence-duplicate")));
 window.addEventListener("beforeunload",()=>{if(evidenceUrls.shared)URL.revokeObjectURL(evidenceUrls.shared)});
 
 
