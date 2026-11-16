@@ -52,7 +52,7 @@
 
 .results-scroll{width:100%;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:13px;background:#fff}
 .results-table{min-width:0;width:100%;background:#fff}
-.results-head,.result-row{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,.9fr) minmax(0,1fr) 76px;gap:10px;align-items:center;padding:12px 14px}
+.results-head,.result-row{display:grid;grid-template-columns:minmax(0,1fr) auto 54px;gap:10px;align-items:center;padding:12px 14px}
 .results-head{background:#f7faf8;border-bottom:1px solid #dfe9e3;color:#74847b;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
 .result-row{border-bottom:1px solid #edf1ee;min-height:66px}
 .result-row:last-child{border-bottom:0}
@@ -69,15 +69,15 @@
 @media(max-width:600px){
  .results-scroll{overflow-x:hidden;overflow-y:visible}
  .results-table{min-width:0;width:100%}
- .results-head,.result-row{grid-template-columns:minmax(0,1.55fr) minmax(0,.78fr) minmax(0,1fr) 42px;gap:6px;padding:10px 8px}
- .results-head{font-size:8px;letter-spacing:.25px}
- .result-row{min-height:60px}
+ .results-head,.result-row{grid-template-columns:minmax(0,1fr) auto 44px;gap:5px;padding:10px 8px}
+ .results-head{font-size:8px;letter-spacing:.2px}
+ .result-row{min-height:56px}
  .result-pu{min-width:0}
- .result-pu strong{font-size:10px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ .result-pu strong{display:block;font-size:clamp(8px,2.65vw,10px);line-height:1.2;letter-spacing:-.2px;white-space:nowrap;overflow:visible;text-overflow:clip}
  .result-pu small{font-size:9px;white-space:nowrap}
- .result-status{white-space:normal;text-align:center;line-height:1.15;padding:5px 4px;font-size:8px;overflow-wrap:anywhere}
- .result-time{font-size:9px;line-height:1.25;white-space:normal;overflow-wrap:anywhere}
- .result-view{min-width:0;width:42px;padding:8px 3px;font-size:10px;border-radius:7px}
+ .result-status{white-space:nowrap;text-align:center;line-height:1;padding:6px 7px;font-size:8px;overflow-wrap:normal}
+ .result-view{min-width:0;width:44px;padding:6px 4px;font-size:9px;line-height:1;border-radius:20px;background:#08734f;color:#fff;font-weight:800}
+ .result-view:active{background:#055b3e}
 }
 
 
@@ -228,11 +228,10 @@ function renderSubmissions(){
   const receivedCount=units.filter(p=>p._records.length>0).length;
   $('submissionSummary').textContent=`${units.length} assigned polling unit(s) listed · ${receivedCount} with submissions · ${units.length-receivedCount} waiting in ${assignment.ward||'your assigned ward'}.`;
   $('submissionTable').innerHTML=units.length?`<div class="results-scroll"><div class="results-table">
-    <div class="results-head"><span>Polling unit</span><span>Status</span><span>Submission time</span><span>Action</span></div>
+    <div class="results-head"><span>Polling unit</span><span>Status</span><span>View</span></div>
     ${units.map(p=>`<div class="result-row">
       <div class="result-pu"><strong>${esc(p._puName)}</strong><small>${esc(p._puCode)}</small></div>
       <div><span class="result-status ${p._status.cls}">${esc(p._status.label)}</span></div>
-      <div class="result-time">${p._latest?esc(fmt(p._latest.createdAt)):'Not submitted'}</div>
       <button class="result-view" type="button" data-pu-view="${esc(p._puCode)}" aria-label="View ${esc(p._puName)} results">View</button>
     </div>`).join('')}
   </div></div>`:
