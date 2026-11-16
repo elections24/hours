@@ -298,7 +298,9 @@
           throw new Error("Your account is currently disabled. Contact your system administrator.");
         }
 
-        const role = String(profile.role || "").trim().toLowerCase();
+        // Agent accounts are stored with role="agent" and a specific agentRole.
+        // Route by agentRole first so polling_unit_agent accounts reach their dashboard.
+        const role = String(profile.agentRole || profile.role || "").trim().toLowerCase();
         const dashboard = roleDashboards[role] || profile.dashboardUrl;
 
         if (!dashboard || typeof dashboard !== "string" || !dashboard.endsWith(".html")) {
