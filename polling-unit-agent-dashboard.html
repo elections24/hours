@@ -463,6 +463,17 @@ function geoValue(key,...paths){
   for(const src of sources){for(const path of paths){const v=getNested(src,path);if(v!==undefined&&v!==null&&v!=="")return v}}
   return "";
 }
+function assignedCandidateId(){
+  return first(
+    currentAgent?.candidateId,
+    currentAgent?.assignedScope?.candidateId,
+    currentAgent?.candidate?.id,
+    currentProfile?.candidateId,
+    currentProfile?.assignedScope?.candidateId,
+    currentProfile?.candidate?.id,
+    ""
+  );
+}
 function normalStatus(p){return p?.active===false||p?.status==="disabled"?"Disabled":(p?.status||"Active")}
 function roleText(p){return p?.agentRoleLabel||roleNames[p?.agentRole]||roleNames[p?.role]||p?.role||"Polling Unit Agent"}
 
@@ -682,7 +693,7 @@ async function submitSharedEvidence(){
         role:"polling_unit_agent",
         electionType:first(currentAgent?.electionType,currentProfile?.electionType,""),
         electionName:first(currentAgent?.electionName,currentProfile?.electionName,electionNames[currentAgent?.electionType],""),
-        candidateId:first(currentAgent?.candidateId,currentProfile?.candidateId,""),
+        candidateId:assignedCandidateId(),
         candidateName:first(currentAgent?.candidateName,currentProfile?.candidateName,""),
         geography:{...assignment},stateCode:assignment.stateCode||"",lgaCode:assignment.lgaCode||"",
         wardCode:assignment.wardCode||"",pollingUnitCode:assignment.pollingUnitCode||"",
@@ -836,7 +847,7 @@ $("ovEc8aForm").addEventListener("submit",async event=>{
     agentUid:currentUser.uid,userId:currentUser.uid,fullName:first(currentProfile?.fullName,currentAgent?.fullName,currentUser.displayName,""),
     email:first(currentProfile?.email,currentAgent?.email,currentUser.email,""),role:"polling_unit_agent",
     electionType:first(currentAgent.electionType,currentProfile?.electionType,""),electionName:first(currentAgent.electionName,electionNames[currentAgent.electionType],""),
-    candidateId:first(currentAgent.candidateId,currentProfile?.candidateId,""),candidateName:first(currentAgent.candidateName,currentProfile?.candidateName,""),
+    candidateId:assignedCandidateId(),candidateName:first(currentAgent.candidateName,currentProfile?.candidateName,""),
     geography:{...assignment},stateCode:assignment.stateCode,lgaCode:assignment.lgaCode,wardCode:assignment.wardCode,pollingUnitCode:assignment.pollingUnitCode,
     state:assignment.state,lga:assignment.lga,ward:assignment.ward,pollingUnit:assignment.pollingUnit,
     ballotAccounting:{voters,accreditedVoters:accredited,ballotPapersIssued:issued,unusedBallotPapers:unused,spoiltBallotPapers:spoilt,rejectedBallots:rejected,totalUsedBallotPapers:used,totalValidVotes:validVotes,excessVotes:Math.max(0,used-accredited)},
@@ -853,6 +864,14 @@ $("ec8aForm").addEventListener("submit",async event=>{
   event.preventDefault();
   if(!currentUser||!currentAgent){notice("ec8aNotice","Agent profile is not ready. Please sign in again.",true);return}
   updateEc8aTotals();
+  if(!assignedCandidateId()){
+    notice("ec8aNotice","This account has no candidateId assignment in its election-agent profile. Ask the Super Admin to assign the candidate before submitting EC8A.",true);
+    return;
+  }
+  if(!assignment.stateCode||!assignment.lgaCode||!assignment.wardCode||!assignment.pollingUnitCode){
+    notice("ec8aNotice","Your polling-unit assignment is incomplete (state, LGA, ward or polling-unit code is missing). Ask the Super Admin to correct the agent assignment.",true);
+    return;
+  }
   const validVotes=readNum("ec8aValid"),accredited=readNum("ec8aAccredited"),voters=readNum("ec8aVoters");
   const issued=readNum("ec8aIssued"),unused=readNum("ec8aUnused"),spoilt=readNum("ec8aSpoilt"),rejected=readNum("ec8aRejected"),used=readNum("ec8aUsed");
   if(accredited>voters||validVotes>accredited||issued<unused+spoilt+used){notice("ec8aNotice","Please correct the ballot-accounting inconsistencies before saving.",true);return}
@@ -862,7 +881,7 @@ $("ec8aForm").addEventListener("submit",async event=>{
     agentUid:currentUser.uid,userId:currentUser.uid,fullName:first(currentProfile?.fullName,currentAgent?.fullName,currentUser.displayName,""),
     email:first(currentProfile?.email,currentAgent?.email,currentUser.email,""),role:"polling_unit_agent",
     electionType:first(currentAgent.electionType,currentProfile?.electionType,""),electionName:first(currentAgent.electionName,electionNames[currentAgent.electionType],""),
-    candidateId:first(currentAgent.candidateId,currentProfile?.candidateId,""),candidateName:first(currentAgent.candidateName,currentProfile?.candidateName,""),
+    candidateId:assignedCandidateId(),candidateName:first(currentAgent.candidateName,currentProfile?.candidateName,""),
     geography:{...assignment},stateCode:assignment.stateCode,lgaCode:assignment.lgaCode,wardCode:assignment.wardCode,pollingUnitCode:assignment.pollingUnitCode,
     state:assignment.state,lga:assignment.lga,ward:assignment.ward,pollingUnit:assignment.pollingUnit,
     ballotAccounting:{voters,accreditedVoters:accredited,ballotPapersIssued:issued,unusedBallotPapers:unused,spoiltBallotPapers:spoilt,rejectedBallots:rejected,totalUsedBallotPapers:used,totalValidVotes:validVotes},
@@ -909,7 +928,7 @@ function buildSubmissionPayload(extra){
     role:"polling_unit_agent",
     electionType:first(currentAgent?.electionType,currentProfile?.electionType,""),
     electionName:first(currentAgent?.electionName,currentProfile?.electionName,electionNames[currentAgent?.electionType],""),
-    candidateId:first(currentAgent?.candidateId,currentProfile?.candidateId,""),
+    candidateId:assignedCandidateId(),
     candidateName:first(currentAgent?.candidateName,currentProfile?.candidateName,""),
     geography:{...assignment},
     stateCode:assignment.stateCode,lgaCode:assignment.lgaCode,wardCode:assignment.wardCode,pollingUnitCode:assignment.pollingUnitCode,
