@@ -31,7 +31,7 @@
 .ec8a-compare-table thead th:first-child{z-index:4;background:#edf5f0}
 .ec8a-compare-table tfoot td{position:sticky;bottom:0;z-index:2;background:#eaf5ef;font-weight:850;color:#07543b}
 .ec8a-compare-table tfoot td:first-child{z-index:4;background:#eaf5ef}
-.ec8a-compare-table .pu-name{display:block;font-size:10px;line-height:1.25;font-weight:750;overflow-wrap:anywhere}.ec8a-compare-table .pu-code{display:block;color:var(--muted);font-size:9px;margin-top:3px;line-height:1.2}.ec8a-compare-table td{min-width:58px}.ec8a-compare-table .no-result{color:#9aa69f;background:#fbfcfb;font-weight:650}.ec8a-compare-table .waiting-cell{color:#a3ada7;font-style:italic}
+.ec8a-compare-table .pu-view-cell{min-width:48px;width:48px;padding:8px 5px!important;text-align:center}.ec8a-compare-table .pu-view-btn{width:34px;height:24px;min-width:34px;padding:0;border:0;border-radius:7px;background:#087653;color:#fff;font-size:9px;line-height:24px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}.ec8a-compare-table .pu-view-btn:active{transform:scale(.97)}.ec8a-compare-table .pu-name{display:block;font-size:10px;line-height:1.25;font-weight:750;overflow-wrap:anywhere}.ec8a-compare-table .pu-code{display:block;color:var(--muted);font-size:9px;margin-top:3px;line-height:1.2}.ec8a-compare-table td{min-width:58px}.ec8a-compare-table .no-result{color:#9aa69f;background:#fbfcfb;font-weight:650}.ec8a-compare-table .waiting-cell{color:#a3ada7;font-style:italic}
 .ec8a-compare-table .no-result{color:#9aa69f}
 @media(max-width:560px){.ec8a-compare-scroll{max-height:460px}.ec8a-compare-table th,.ec8a-compare-table td{padding:10px 12px}}
 .menu{display:none;border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 10px;color:var(--g)}
@@ -216,10 +216,10 @@ function renderEc8aComparison(){
       const display=v===undefined?'00':v.toLocaleString();
       return `<td class="${v===undefined?'no-result '+(!hasResult?'waiting-cell':''):''}" title="${v===undefined?(hasResult?'No value recorded for this party':'Awaiting EC8A submission'):esc(party+' votes: '+v)}">${display}</td>`;
     }).join('');
-    return `<tr><td><span class="pu-name">${esc(p.name)}</span><span class="pu-code">PU ${esc(p.code)}</span></td>${cells}</tr>`;
+    return `<tr><td><span class="pu-name">${esc(p.name)}</span><span class="pu-code">PU ${esc(p.code)}</span></td><td class="pu-view-cell"><button class="pu-view-btn" type="button" data-pu-view="${esc(p.code)}" aria-label="View submitted evidence for ${esc(p.name)}">View</button></td>${cells}</tr>`;
   }).join('');
   const totalCells=parties.map(p=>`<td>${totals[p].toLocaleString()}</td>`).join('');
-  $('ec8aCompareTable').innerHTML=`<table class="ec8a-compare-table"><thead><tr><th>Polling Unit</th>${parties.map(p=>`<th>${esc(p)}</th>`).join('')}</tr></thead><tbody>${body}</tbody><tfoot><tr><td><span class="pu-name">TOTAL VOTES</span><span class="pu-code">All assigned polling units</span></td>${totalCells}</tr></tfoot></table>`;
+  $('ec8aCompareTable').innerHTML=`<table class="ec8a-compare-table"><thead><tr><th>Polling Unit</th><th>View</th>${parties.map(p=>`<th>${esc(p)}</th>`).join('')}</tr></thead><tbody>${body}</tbody><tfoot><tr><td><span class="pu-name">TOTAL VOTES</span><span class="pu-code">All assigned polling units</span></td><td class="pu-view-cell">—</td>${totalCells}</tr></tfoot></table>`;
 }
 function renderCoverage(){}
 function puCodeOf(d){return String(first(d.pollingUnitCode,d.geography?.pollingUnitCode,d.code,d.unitCode,d.id,'')).trim()}
