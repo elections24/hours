@@ -190,7 +190,7 @@ function allSubmissions(){return [...data.ec8a,...data.evidence,...data.reports,
 
 function renderEc8aComparison(){
   // Keep the party columns identical to the party list used by the Polling Unit Agent EC8A form.
-  const parties=['A','AA','AAC','ADC','ADP','APC','APGA','APM','APP','BP','LP','NNPP','NRM','PDP','PRP','SDP','YPP','ZLP'];
+  const parties=['ADC','APC','A','AA','AAC','ADP','APGA','APM','APP','BP','LP','NNPP','NRM','PDP','PRP','SDP','YPP','ZLP'];
   const units=data.pus.map(p=>({code:String(first(p.pollingUnitCode,p.code,p.unitCode,p.id,'')).trim(),name:puNameOf(p)})).filter(p=>p.code);
   const unique=[...new Map(units.map(p=>[p.code,p])).values()].sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true,sensitivity:'base'}));
   const latestByPu=new Map();
