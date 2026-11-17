@@ -27,11 +27,11 @@
 .ec8a-compare-table{border-collapse:separate;border-spacing:0;min-width:max-content;width:100%}
 .ec8a-compare-table th,.ec8a-compare-table td{padding:11px 14px;border-bottom:1px solid #edf1ee;border-right:1px solid #edf1ee;text-align:center;white-space:nowrap;font-size:12px}
 .ec8a-compare-table th{position:sticky;top:0;z-index:3;background:#edf5f0;color:#315b47}
-.ec8a-compare-table th:first-child,.ec8a-compare-table td:first-child{position:sticky;left:0;z-index:2;text-align:left;min-width:210px;background:#fff}
+.ec8a-compare-table th:first-child,.ec8a-compare-table td:first-child{position:sticky;left:0;z-index:2;text-align:left;width:190px;min-width:190px;max-width:190px;white-space:normal;background:#fff}
 .ec8a-compare-table thead th:first-child{z-index:4;background:#edf5f0}
 .ec8a-compare-table tfoot td{position:sticky;bottom:0;z-index:2;background:#eaf5ef;font-weight:850;color:#07543b}
 .ec8a-compare-table tfoot td:first-child{z-index:4;background:#eaf5ef}
-.ec8a-compare-table .pu-code{display:block;color:var(--muted);font-size:10px;margin-top:4px}
+.ec8a-compare-table .pu-name{display:block;font-size:10px;line-height:1.25;font-weight:750;overflow-wrap:anywhere}.ec8a-compare-table .pu-code{display:block;color:var(--muted);font-size:9px;margin-top:3px;line-height:1.2}.ec8a-compare-table td{min-width:58px}.ec8a-compare-table .no-result{color:#9aa69f;background:#fbfcfb;font-weight:650}.ec8a-compare-table .waiting-cell{color:#a3ada7;font-style:italic}
 .ec8a-compare-table .no-result{color:#9aa69f}
 @media(max-width:560px){.ec8a-compare-scroll{max-height:460px}.ec8a-compare-table th,.ec8a-compare-table td{padding:10px 12px}}
 .menu{display:none;border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 10px;color:var(--g)}
@@ -189,23 +189,38 @@ function allSubmissions(){return [...data.ec8a,...data.evidence,...data.reports,
 
 
 function renderEc8aComparison(){
+  // Keep the party columns identical to the party list used by the Polling Unit Agent EC8A form.
+  const parties=['A','AA','AAC','ADC','ADP','APC','APGA','APM','APP','BP','LP','NNPP','NRM','PDP','PRP','SDP','YPP','ZLP'];
   const units=data.pus.map(p=>({code:String(first(p.pollingUnitCode,p.code,p.unitCode,p.id,'')).trim(),name:puNameOf(p)})).filter(p=>p.code);
   const unique=[...new Map(units.map(p=>[p.code,p])).values()].sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true,sensitivity:'base'}));
   const latestByPu=new Map();
-  data.ec8a.filter(d=>String(d.reportType||'').toLowerCase()==='successful_election').forEach(d=>{const code=puCodeOf(d);if(!code)return;const prev=latestByPu.get(code);if(!prev||dateMs(d.createdAt)>dateMs(prev.createdAt))latestByPu.set(code,d)});
-  const partyNames=new Set(),partyVotes=new Map();
-  latestByPu.forEach((record,code)=>{const arr=Array.isArray(record.partyResults)?record.partyResults:[];const values=new Map();arr.forEach(item=>{const party=String(first(item.party,item.partyName,item.abbreviation,item.partyCode,item.code,'')).trim();if(!party)return;const n=Number(item.votes??item.voteCount??item.totalVotes??0);partyNames.add(party);values.set(party,(values.get(party)||0)+(Number.isFinite(n)?n:0))});partyVotes.set(code,values)});
-  const parties=[...partyNames].sort((a,b)=>a.localeCompare(b,undefined,{sensitivity:'base'}));
+  data.ec8a.filter(d=>String(d.reportType||'').toLowerCase()==='successful_election').forEach(d=>{
+    const code=puCodeOf(d);if(!code)return;const prev=latestByPu.get(code);
+    if(!prev||dateMs(d.createdAt)>dateMs(prev.createdAt))latestByPu.set(code,d);
+  });
+  const partyVotes=new Map();
+  latestByPu.forEach((record,code)=>{
+    const arr=Array.isArray(record.partyResults)?record.partyResults:[];const values=new Map();
+    arr.forEach(item=>{const party=String(first(item.party,item.partyName,item.abbreviation,item.partyCode,item.code,'')).trim().toUpperCase();if(!party)return;const raw=item.votes??item.voteCount??item.totalVotes;const n=Number(raw);if(Number.isFinite(n))values.set(party,n)});
+    partyVotes.set(code,values);
+  });
   const received=unique.filter(p=>latestByPu.has(p.code)).length;
   $('ec8aCompareSummary').textContent=`${unique.length} assigned polling units · ${received} with successful-election EC8A results · ${unique.length-received} awaiting EC8A results.`;
   if(!unique.length){$('ec8aCompareTable').innerHTML='<div class="empty">No assigned polling units were found for this ward.</div>';return}
-  if(!parties.length){$('ec8aCompareTable').innerHTML='<div class="empty">No successful-election EC8A party results have been received yet. The comparison will populate automatically when polling-unit agents submit EC8A results.</div>';return}
   const totals=Object.fromEntries(parties.map(p=>[p,0]));
-  const body=unique.map(p=>{const vals=partyVotes.get(p.code);const cells=parties.map(party=>{const v=vals?.get(party);if(v!==undefined)totals[party]+=v;return `<td class="${v===undefined?'no-result':''}">${v===undefined?'—':v.toLocaleString()}</td>`}).join('');return `<tr><td><strong>${esc(p.name)}</strong><span class="pu-code">${esc(p.code)}</span></td>${cells}</tr>`}).join('');
+  const body=unique.map(p=>{
+    const vals=partyVotes.get(p.code);const hasResult=latestByPu.has(p.code);
+    const cells=parties.map(party=>{
+      const v=vals?.get(party);
+      if(v!==undefined)totals[party]+=v;
+      const display=v===undefined?'00':v.toLocaleString();
+      return `<td class="${v===undefined?'no-result '+(!hasResult?'waiting-cell':''):''}" title="${v===undefined?(hasResult?'No value recorded for this party':'Awaiting EC8A submission'):esc(party+' votes: '+v)}">${display}</td>`;
+    }).join('');
+    return `<tr><td><span class="pu-name">${esc(p.name)}</span><span class="pu-code">PU ${esc(p.code)}</span></td>${cells}</tr>`;
+  }).join('');
   const totalCells=parties.map(p=>`<td>${totals[p].toLocaleString()}</td>`).join('');
-  $('ec8aCompareTable').innerHTML=`<table class="ec8a-compare-table"><thead><tr><th>Polling Unit</th>${parties.map(p=>`<th>${esc(p)}</th>`).join('')}</tr></thead><tbody>${body}</tbody><tfoot><tr><td>TOTAL VOTES</td>${totalCells}</tr></tfoot></table>`;
+  $('ec8aCompareTable').innerHTML=`<table class="ec8a-compare-table"><thead><tr><th>Polling Unit</th>${parties.map(p=>`<th>${esc(p)}</th>`).join('')}</tr></thead><tbody>${body}</tbody><tfoot><tr><td><span class="pu-name">TOTAL VOTES</span><span class="pu-code">All assigned polling units</span></td>${totalCells}</tr></tfoot></table>`;
 }
-
 function renderCoverage(){}
 function puCodeOf(d){return String(first(d.pollingUnitCode,d.geography?.pollingUnitCode,d.code,d.unitCode,d.id,'')).trim()}
 function puNameOf(d){return first(d.pollingUnitName,d.pollingUnit,d.unitName,d.name,d.title,d.label,d.pollingUnitCode,d.code,d.id,'Unnamed polling unit')}
