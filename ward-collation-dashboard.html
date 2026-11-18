@@ -288,7 +288,13 @@ function openPuView(code){
   const evidenceMatches=(kind)=>{
     if(kind==='ec8a')return evidence.filter(d=>{const t=[d.evidenceType,d.fileType,d.fileName,d.reportType].join(' ').toLowerCase();return t.includes('ec8a')||t.includes('form')||t.includes('result')});
     if(kind==='eform')return evidence.filter(d=>{const t=[d.evidenceType,d.fileType,d.fileName,d.reportType].join(' ').toLowerCase();return t.includes('e-form')||t.includes('eform')||t.includes('electronic form')});
-    if(kind==='media')return evidence.filter(d=>{const k=evidenceKind(d);return k==='video'||String(d.fileType||'').startsWith('image/')||String(d.mimeType||'').startsWith('image/')});
+    if(kind==='media')return [
+      ...evidence.filter(d=>{
+        const k=evidenceKind(d);
+        return k==='video'||String(d.fileType||'').startsWith('image/')||String(d.mimeType||'').startsWith('image/');
+      }),
+      ...records.filter(d=>d._collection==='pollingUnitReports'&&first(d.evidenceUrl,d.cloudinaryUrl,d.secure_url,''))
+    ];
     if(kind==='duplicate')return evidence.filter(d=>evidenceKind(d)==='duplicate'||[d.evidenceType,d.fileName,d.fileType].join(' ').toLowerCase().includes('duplicate'));
     return [];
   };
@@ -297,10 +303,10 @@ function openPuView(code){
     if(kind==='ec8a'&&!items.length)items=ec8a;
     if(!items.length)return '<p class="muted">No files or records of this type have been submitted for this polling unit.</p>';
     return items.map(d=>{
-      const url=first(d.cloudinaryUrl,d.secure_url,d.cloudinary?.secure_url,'');
-      const label=first(d.fileName,d.evidenceType,d.fileType,typeLabel(d));
-      const isVideo=evidenceKind(d)==='video'||String(d.mimeType||'').startsWith('video/');
-      const isImage=String(d.fileType||'').startsWith('image/')||String(d.mimeType||'').startsWith('image/');
+      const url=first(d.cloudinaryUrl,d.secure_url,d.cloudinary?.secure_url,d.evidenceUrl,'');
+      const label=first(d.fileName,d.evidenceFileName,d.evidenceType,d.fileType,d.category,typeLabel(d));
+      const isVideo=evidenceKind(d)==='video'||String(first(d.cloudinaryResourceType,d.evidenceResourceType,'')).toLowerCase()==='video'||String(d.fileType||d.evidenceFileType||'').startsWith('video/')||String(d.mimeType||'').startsWith('video/');
+      const isImage=String(d.fileType||d.evidenceFileType||'').startsWith('image/')||String(d.mimeType||'').startsWith('image/')||String(first(d.cloudinaryResourceType,d.evidenceResourceType,'')).toLowerCase()==='image';
       let preview='';
       if(url&&isVideo)preview=`<video controls playsinline preload="metadata" src="${esc(url)}"></video>`;
       else if(url&&isImage)preview=`<img src="${esc(url)}" alt="${esc(label)}">`;
