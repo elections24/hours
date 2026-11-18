@@ -30,7 +30,13 @@
 <section class="page hidden" id="registerPage"><div class="pagehead"><div><h1>Register Agent</h1><p class="sub">Create an agent account and bind it to one election and one geographical scope.</p></div></div>
 <form id="agentForm" class="panel"><div class="sectionstep">1. Select Election Type</div><div class="grid"><div class="field"><label for="electionType">Election type *</label><select id="electionType" required><option value="">Select election type</option><option value="presidential">Presidential Election</option><option value="gubernatorial">Gubernatorial Election</option><option value="senatorial">Senatorial Election</option><option value="house_of_representatives">House of Representatives Election</option></select></div><div class="field"><label for="agentRole">Agent role *</label><select id="agentRole" required><option value="">Select election type first</option></select><div class="helper">Choose an election first. The role list and required geographical fields will update automatically for Presidential, Gubernatorial, Senatorial, and House of Representatives elections.</div></div></div>
 <div class="sectionstep">2. Agent Account Details</div><div class="grid"><div class="field"><label for="fullName">Full name *</label><input id="fullName" required autocomplete="name"></div><div class="field"><label for="username">Username *</label><input id="username" required autocomplete="username"></div><div class="field"><label for="agentEmail">Email address *</label><input id="agentEmail" type="email" required autocomplete="email"></div><div class="field"><label for="agentPassword">Temporary password *</label><input id="agentPassword" type="password" minlength="6" required autocomplete="new-password"><div class="helper">Minimum 6 characters. Give the agent the password securely and ask them to change it after first login.</div></div><div class="field"><label for="phone">Phone number</label><input id="phone" type="tel"></div><div class="field"><label for="agentStatus">Initial account status</label><select id="agentStatus"><option value="active">Active</option><option value="disabled">Disabled</option></select></div></div>
-<div class="sectionstep">3. Assign Geographical Coverage</div><p class="desc">Choose State first. Each next dropdown is filtered by the preceding selection. For State Collation Agent, State is the only required geographical level.</p>
+<div class="sectionstep">3. Assign Candidate (Polling Unit Agents)</div>
+<div class="grid" id="candidateAssignmentFields">
+  <div class="field"><label for="agentCandidateId">Candidate ID *</label><input id="agentCandidateId" placeholder="Exact document ID from candidates collection"></div>
+  <div class="field"><label for="agentCandidateName">Candidate name *</label><input id="agentCandidateName" placeholder="Candidate full name"></div>
+</div>
+<p class="helper" id="candidateAssignmentHelp">For polling-unit agents, enter the exact candidate document ID and candidate name used in the candidates collection. This binds the agent to one candidate.</p>
+<div class="sectionstep">4. Assign Geographical Coverage</div><p class="desc">Choose State first. Each next dropdown is filtered by the preceding selection. For State Collation Agent, State is the only required geographical level.</p>
 <div class="grid"><div class="field"><label for="stateSelect">State *</label><select id="stateSelect" required><option value="">Loading Nigerian states…</option></select></div><div class="field" id="zoneField"><label for="zoneSelect" id="zoneLabel">Senatorial Zone</label><select id="zoneSelect"><option value="">Select State first</option></select></div><div class="field" id="constituencyField"><label for="constituencySelect">Federal Constituency</label><select id="constituencySelect"><option value="">Select State first</option></select></div><div class="field" id="lgaField"><label for="lgaSelect">Local Government Area</label><select id="lgaSelect"><option value="">Select State first</option></select></div><div class="field" id="wardField"><label for="wardSelect">Ward</label><select id="wardSelect"><option value="">Select LGA first</option></select></div><div class="field" id="puField"><label for="puSelect">Polling Unit</label><select id="puSelect"><option value="">Select Ward first</option></select></div></div>
 <div class="geo-notice" style="margin-top:15px"><b>Senatorial Election:</b> State → Senatorial Zone → Local Government → Ward → Polling Unit. The Senatorial Zone Agent receives access to all LGAs assigned to that zone.<br><b>House of Representatives:</b> State → Federal Constituency → Local Government → Ward → Polling Unit.</div>
 <div class="field full" style="margin-top:15px"><label for="notes">Assignment notes (optional)</label><textarea id="notes" rows="2" placeholder="Additional administrative note"></textarea></div><label class="checkboxrow"><input type="checkbox" id="confirmScope" required><span>I confirm that the election type, role, and geographical coverage are correct.</span></label>
@@ -204,7 +210,7 @@ function updateRoleOptions(){
   if($('stateSelect').value) $('stateSelect').dispatchEvent(new Event('change'));
 }
 $('electionType').addEventListener('change',updateRoleOptions);$('agentRole').addEventListener('change',updateGeoVisibility);
-function updateGeoVisibility(){const e=$('electionType').value,r=$('agentRole').value;const isSen=e==='senatorial',isHouse=e==='house_of_representatives';$('zoneField').classList.toggle('hidden',!isSen||!['senatorial_zone_agent','local_government_collation_agent','ward_collation_agent','polling_unit_agent'].includes(r));$('constituencyField').classList.toggle('hidden',!isHouse||!['federal_constituency_agent','local_government_collation_agent','ward_collation_agent','polling_unit_agent'].includes(r));const needLga=['local_government_collation_agent','ward_collation_agent','polling_unit_agent'].includes(r);$('lgaField').classList.toggle('hidden',!needLga);$('wardField').classList.toggle('hidden',!['ward_collation_agent','polling_unit_agent'].includes(r));$('puField').classList.toggle('hidden',r!=='polling_unit_agent');$('zoneLabel').textContent='Senatorial Zone *';}
+function updateGeoVisibility(){const e=$('electionType').value,r=$('agentRole').value;const needsCandidate=r==='polling_unit_agent';$('candidateAssignmentFields').classList.toggle('hidden',!needsCandidate);$('agentCandidateId').required=needsCandidate;$('agentCandidateName').required=needsCandidate;const isSen=e==='senatorial',isHouse=e==='house_of_representatives';$('zoneField').classList.toggle('hidden',!isSen||!['senatorial_zone_agent','local_government_collation_agent','ward_collation_agent','polling_unit_agent'].includes(r));$('constituencyField').classList.toggle('hidden',!isHouse||!['federal_constituency_agent','local_government_collation_agent','ward_collation_agent','polling_unit_agent'].includes(r));const needLga=['local_government_collation_agent','ward_collation_agent','polling_unit_agent'].includes(r);$('lgaField').classList.toggle('hidden',!needLga);$('wardField').classList.toggle('hidden',!['ward_collation_agent','polling_unit_agent'].includes(r));$('puField').classList.toggle('hidden',r!=='polling_unit_agent');$('zoneLabel').textContent='Senatorial Zone *';}
 $('stateSelect').addEventListener('change',async()=>{
   const stateCode=$('stateSelect').value;
   resetGeoAfter('state');
@@ -295,6 +301,10 @@ $('agentForm').addEventListener('submit',async e=>{
  if(!requiredGeoValid()){
   notice('agentNotice','Complete the geographical assignment required for the selected election and agent role.','error');return;
  }
+ const candidateId=$('agentCandidateId').value.trim(),candidateName=$('agentCandidateName').value.trim();
+ if(agentRole==='polling_unit_agent'&&(!candidateId||!candidateName)){
+  notice('agentNotice','Enter the exact Candidate ID and Candidate Name for this polling-unit agent.','error');return;
+ }
  const btn=$('createAgentBtn');btn.disabled=true;btn.textContent='Creating account…';
  let createdUser=null,profileSaved=false;
  try{
@@ -308,10 +318,10 @@ $('agentForm').addEventListener('submit',async e=>{
   const profile={
    uid:createdUser.uid,fullName,username,email,phone:$('phone').value.trim()||null,
    role:'agent',agentRole,agentRoleLabel:roleNames[agentRole],electionType,
-   electionName:electionNames[electionType],geography:geo,
+   electionName:electionNames[electionType],candidateId:candidateId||null,candidateName:candidateName||null,geography:geo,
    assignedScope:{stateCode:geo.stateCode,senatorialZoneCode:geo.senatorialZoneCode,
     federalConstituencyCode:geo.federalConstituencyCode,lgaCode:geo.lgaCode,
-    wardCode:geo.wardCode,pollingUnitCode:geo.pollingUnitCode},
+    wardCode:geo.wardCode,pollingUnitCode:geo.pollingUnitCode,candidateId:candidateId||null,candidateName:candidateName||null},
    active:status==='active',status,assignmentNotes:$('notes').value.trim()||null,
    createdBy:admin.uid,createdAt:serverTimestamp(),updatedAt:serverTimestamp()
   };

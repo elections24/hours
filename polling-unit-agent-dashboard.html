@@ -297,6 +297,8 @@ h1{font-size:clamp(28px,3.5vw,44px);letter-spacing:-1.2px;margin:8px 0 10px;line
         <div class="field"><label for="ovEc8aRejected">Number of rejected ballots</label><input id="ovEc8aRejected" type="number" min="0" step="1" value="0" required></div>
         <div class="field"><label for="ovEc8aUsed">Total number of used ballot papers</label><input id="ovEc8aUsed" type="number" readonly value="0"></div>
         <div class="field"><label for="ovEc8aValid">Total valid votes</label><input id="ovEc8aValid" type="number" readonly value="0"></div>
+        <div class="field"><label for="ovEc8aExcess">Excess votes (over-voting)</label><input id="ovEc8aExcess" type="number" readonly value="0"></div>
+        <div class="field"><label for="ovEc8aExcessWords">Excess votes in words</label><input id="ovEc8aExcessWords" type="text" readonly value="ZERO"></div>
       </div>
       <div class="notice" id="ovEc8aAccountingNotice"></div>
     </div>
@@ -373,7 +375,7 @@ h1{font-size:clamp(28px,3.5vw,44px);letter-spacing:-1.2px;margin:8px 0 10px;line
       <div class="field"><label for="reportCategory">Report category</label><select id="reportCategory" required><option value="">Select category</option><option>Opening of Polls</option><option>Accreditation</option><option>Voting Process</option><option>Vote Counting</option><option>Result Announcement</option><option>Closing of Polls</option><option>Danger</option><option>Vote Buying</option><option>General Observation</option></select></div>
       <div class="field"><label for="reportTime">Observation time</label><input id="reportTime" type="datetime-local" required></div>
       <div class="field full"><label for="reportDetails">Report details</label><textarea id="reportDetails" placeholder="Describe what you observed clearly and objectively…" required></textarea></div>
-      <div class="field full"><label for="evidencePhoto">Evidence photo (optional)</label><input id="evidencePhoto" type="file" accept="image/*" capture="environment"><small style="color:#7b8b81">Photo attachment storage will require the project's approved media-storage connection.</small></div>
+      <div class="field full"><label for="evidencePhoto">Evidence photo (optional)</label><input id="evidencePhoto" type="file" accept="image/*" capture="environment"><small style="color:#7b8b81">Optional photo evidence is uploaded to the configured Cloudinary account and linked to this report.</small></div>
     </div><div class="form-actions"><button class="btn" type="submit">Submit report</button><button class="btn secondary" type="reset">Clear form</button></div><div class="notice" id="reportNotice"></div></form>
   </div>
   <div class="form-actions"><button class="btn secondary" type="button" data-open="dashboard">Back to Dashboard</button></div>
@@ -439,34 +441,50 @@ const electionNames={presidential:"Presidential Election",gubernatorial:"Guberna
 const roleNames={polling_unit_agent:"Polling Unit Agent",agent:"Election Agent",observer:"Polling Unit Agent"};
 function text(id,value){const el=$(id);if(el)el.textContent=value??"—"}
 function notice(id,message,isError=false){const el=$(id);el.textContent=message;el.className="notice show"+(isError?" error":"")}
+// Firestore rejects undefined values. Remove undefined object properties recursively
+// while preserving Firestore Timestamp/FieldValue instances and other SDK objects.
+function stripUndefined(value){
+  if(Array.isArray(value))return value.map(item=>item===undefined?null:stripUndefined(item));
+  if(value&&typeof value==="object"){
+    const proto=Object.getPrototypeOf(value);
+    if(proto!==Object.prototype&&proto!==null)return value;
+    const clean={};
+    for(const [key,item] of Object.entries(value)){if(item!==undefined)clean[key]=stripUndefined(item)}
+    return clean;
+  }
+  return value;
+}
+function addCleanDoc(collectionRef,data){return addDoc(collectionRef,stripUndefined(data))}
 function first(...values){return values.find(v=>v!==undefined&&v!==null&&String(v).trim()!=="")}
 function asText(v){return typeof v==="string"?v:(v==null?"":String(v))}
 function getNested(obj,path){return path.split(".").reduce((v,k)=>v&&v[k]!==undefined?v[k]:undefined,obj)}
-// Firestore rejects undefined values. Keep optional geography fields safe.
-function definedObject(obj){return Object.fromEntries(Object.entries(obj||{}).filter(([,value])=>value!==undefined))}
 function geoValue(key,...paths){
   const sources=[currentAgent?.geography,currentAgent?.assignedScope,currentProfile?.geography,currentProfile?.assignedScope,currentAgent,currentProfile,assignment];
   for(const src of sources){for(const path of paths){const v=getNested(src,path);if(v!==undefined&&v!==null&&v!=="")return v}}
   return "";
 }
-function assignedCandidateId(){
-  return first(currentAgent?.candidateId,currentAgent?.candidateDocId,
-    currentAgent?.assignedScope?.candidateId,currentProfile?.candidateId,
-    currentProfile?.candidateDocId,currentProfile?.assignedScope?.candidateId,"");
+
+function agentCandidateId(){
+  return first(
+    currentAgent?.candidateId,
+    currentAgent?.assignedScope?.candidateId,
+    currentAgent?.candidate?.id,
+    currentProfile?.candidateId,
+    currentProfile?.assignedScope?.candidateId,
+    currentProfile?.candidate?.id,
+    ""
+  );
 }
-function assignedCandidateName(){
-  return first(currentAgent?.candidateName,currentProfile?.candidateName,"Not assigned");
-}
-function validateEc8aAssignment(noticeId){
-  if(!assignedCandidateId()){
-    notice(noticeId,"Your agent profile has no assigned candidate ID. Ask the Super Admin to edit and save the agent assignment before submitting EC8A.",true);
-    return false;
-  }
-  if(!assignment.stateCode||!assignment.lgaCode||!assignment.wardCode||!assignment.pollingUnitCode){
-    notice(noticeId,"Your agent profile is missing one or more assigned geography IDs (State, LGA, Ward or Polling Unit). Ask the Super Admin to correct the assignment.",true);
-    return false;
-  }
-  return true;
+function agentCandidateName(){
+  return first(
+    currentAgent?.candidateName,
+    currentAgent?.assignedScope?.candidateName,
+    currentAgent?.candidate?.name,
+    currentProfile?.candidateName,
+    currentProfile?.assignedScope?.candidateName,
+    currentProfile?.candidate?.name,
+    ""
+  );
 }
 function normalStatus(p){return p?.active===false||p?.status==="disabled"?"Disabled":(p?.status||"Active")}
 function roleText(p){return p?.agentRoleLabel||roleNames[p?.agentRole]||roleNames[p?.role]||p?.role||"Polling Unit Agent"}
@@ -485,18 +503,18 @@ async function hydrateAssignment(){
   ]);
   const storedGeo=currentAgent?.geography||currentProfile?.geography||{};
   assignment={
-    state:first(storedGeo.state,storedGeo.stateName,currentAgent?.state,currentProfile?.state,recordName(stateDoc))||"",
-    stateCode:stateCode||"",
-    senatorialZone:first(storedGeo.senatorialZone,currentAgent?.senatorialZone,currentProfile?.senatorialZone,recordName(zoneDoc))||"",
-    senatorialZoneCode:zoneCode||"",
-    federalConstituency:first(storedGeo.federalConstituency,currentAgent?.federalConstituency,currentProfile?.federalConstituency,recordName(constDoc))||"",
-    federalConstituencyCode:constCode||"",
-    lga:first(storedGeo.lga,currentAgent?.lga,currentProfile?.lga,recordName(lgaDoc))||"",
-    lgaCode:lgaCode||"",
-    ward:first(storedGeo.ward,currentAgent?.ward,currentProfile?.ward,recordName(wardDoc))||"",
-    wardCode:wardCode||"",
-    pollingUnit:first(storedGeo.pollingUnit,storedGeo.pollingUnitName,currentAgent?.pollingUnit,currentAgent?.pollingUnitName,currentProfile?.pollingUnit,currentProfile?.pollingUnitName,recordName(puDoc))||"",
-    pollingUnitCode:first(puCode,puDoc?.code,puDoc?.serialCode,puDoc?.pollingUnitCode)||""
+    state:first(storedGeo.state,storedGeo.stateName,currentAgent?.state,currentProfile?.state,recordName(stateDoc)),
+    stateCode,
+    senatorialZone:first(storedGeo.senatorialZone,currentAgent?.senatorialZone,currentProfile?.senatorialZone,recordName(zoneDoc)),
+    senatorialZoneCode:zoneCode,
+    federalConstituency:first(storedGeo.federalConstituency,currentAgent?.federalConstituency,currentProfile?.federalConstituency,recordName(constDoc)),
+    federalConstituencyCode:constCode,
+    lga:first(storedGeo.lga,currentAgent?.lga,currentProfile?.lga,recordName(lgaDoc)),
+    lgaCode,
+    ward:first(storedGeo.ward,currentAgent?.ward,currentProfile?.ward,recordName(wardDoc)),
+    wardCode,
+    pollingUnit:first(storedGeo.pollingUnit,storedGeo.pollingUnitName,currentAgent?.pollingUnit,currentAgent?.pollingUnitName,currentProfile?.pollingUnit,currentProfile?.pollingUnitName,recordName(puDoc)),
+    pollingUnitCode:first(puCode,puDoc?.code,puDoc?.serialCode,puDoc?.pollingUnitCode)
   };
 }
 function displayAssignment(){
@@ -508,7 +526,7 @@ function displayAssignment(){
   text("assignedUnit",assignment.pollingUnit||"Polling unit not found in registration profile");
   text("assignedAddress",[assignment.ward,assignment.lga,assignment.state].filter(Boolean).join(" · ")||"Location details are not available");
   text("ctxElection",first(currentAgent?.electionName,electionNames[currentAgent?.electionType],currentProfile?.electionName,electionNames[currentProfile?.electionType]));
-  text("ctxCandidate",assignedCandidateName());
+  text("ctxCandidate",first(currentAgent?.candidateName,currentProfile?.candidateName,"Not assigned"));
   text("ctxState",assignment.state);
   text("ctxDistrict",district);
   text("ctxLga",assignment.lga);
@@ -521,7 +539,7 @@ function displayAssignment(){
   text("profilePhone",first(currentProfile?.phone,currentAgent?.phone));
   text("profileRole",roleText(currentAgent||currentProfile));
   text("profileElection",first(currentAgent?.electionName,electionNames[currentAgent?.electionType],currentProfile?.electionName,electionNames[currentProfile?.electionType]));
-  text("profileCandidate",assignedCandidateName());
+  text("profileCandidate",first(currentAgent?.candidateName,currentProfile?.candidateName,"Not assigned"));
   text("profileState",assignment.state);
   text("profileDistrict",district);
   text("profileLga",assignment.lga);
@@ -687,10 +705,9 @@ async function submitSharedEvidence(){
         role:"polling_unit_agent",
         electionType:first(currentAgent?.electionType,currentProfile?.electionType,""),
         electionName:first(currentAgent?.electionName,currentProfile?.electionName,electionNames[currentAgent?.electionType],""),
-        candidateId:assignedCandidateId(),
-        candidateDocId:assignedCandidateId(),
-        candidateName:assignedCandidateName(),
-        geography:definedObject(assignment),stateCode:assignment.stateCode||"",lgaCode:assignment.lgaCode||"",
+        candidateId:agentCandidateId(),
+        candidateName:agentCandidateName(),
+        geography:{...assignment},stateCode:assignment.stateCode||"",lgaCode:assignment.lgaCode||"",
         wardCode:assignment.wardCode||"",pollingUnitCode:assignment.pollingUnitCode||"",
         state:assignment.state||"",lga:assignment.lga||"",ward:assignment.ward||"",pollingUnit:assignment.pollingUnit||"",
         evidenceType:cfg.type,reportType:activeEvidenceKey.startsWith("ov-")?"over_voting":"successful_election",
@@ -700,7 +717,7 @@ async function submitSharedEvidence(){
         status:"uploaded",createdAt:serverTimestamp()
       };
       try{
-        await addDoc(collection(db,"evidenceUploads"),record);
+        await addCleanDoc(collection(db,"evidenceUploads"),record);
         sharedEvidenceStatus.textContent="Upload successful. Your evidence has been uploaded and its record saved.";
       }catch(saveError){
         console.error("Evidence uploaded but Firestore save failed:",saveError);
@@ -778,7 +795,7 @@ function prepareEc8a(){
   text("ec8aLgaWard",[assignment.lga,assignment.ward].filter(Boolean).join(" / "));
   text("ec8aPollingUnit",assignment.pollingUnit);
   text("ec8aPollingCode",assignment.pollingUnitCode);
-  text("ec8aCandidate",assignedCandidateName());
+  text("ec8aCandidate",first(currentAgent?.candidateName,currentProfile?.candidateName,"Not assigned"));
 }
 renderPartyRows();
 document.querySelectorAll('[data-open="ec8a-form"]').forEach(b=>b.addEventListener("click",prepareEc8a));
@@ -822,15 +839,17 @@ function prepareOvEc8a(){
   text("ovEc8aLgaWard",[assignment.lga,assignment.ward].filter(Boolean).join(" / "));
   text("ovEc8aPollingUnit",assignment.pollingUnit);
   text("ovEc8aPollingCode",assignment.pollingUnitCode);
-  text("ovEc8aCandidate",assignedCandidateName());
+  text("ovEc8aCandidate",first(currentAgent?.candidateName,currentProfile?.candidateName,"Not assigned"));
   renderOvEc8aPartyRows();
 }
 document.querySelectorAll('[data-open="ov-ec8a-form"]').forEach(b=>b.addEventListener("click",prepareOvEc8a));
 $("ovEc8aForm").addEventListener("submit",async event=>{
   event.preventDefault();
   if(!currentUser||!currentAgent){notice("ovEc8aNotice","Agent profile is not ready. Please sign in again.",true);return;}
-  if(!validateEc8aAssignment("ovEc8aNotice"))return;
   updateOvEc8aTotals();
+  if(!agentCandidateId()||!assignment.stateCode||!assignment.lgaCode||!assignment.wardCode||!assignment.pollingUnitCode){
+    notice("ovEc8aNotice","Your account is missing its candidate or complete polling-unit assignment. Contact the Super Admin before submitting.",true);return;
+  }
   const voters=readNum("ovEc8aVoters"),accredited=readNum("ovEc8aAccredited");
   const issued=readNum("ovEc8aIssued"),unused=readNum("ovEc8aUnused"),spoilt=readNum("ovEc8aSpoilt");
   const rejected=readNum("ovEc8aRejected"),validVotes=readNum("ovEc8aValid"),used=readNum("ovEc8aUsed");
@@ -843,15 +862,15 @@ $("ovEc8aForm").addEventListener("submit",async event=>{
     agentUid:currentUser.uid,userId:currentUser.uid,fullName:first(currentProfile?.fullName,currentAgent?.fullName,currentUser.displayName,""),
     email:first(currentProfile?.email,currentAgent?.email,currentUser.email,""),role:"polling_unit_agent",
     electionType:first(currentAgent.electionType,currentProfile?.electionType,""),electionName:first(currentAgent.electionName,electionNames[currentAgent.electionType],""),
-    candidateId:assignedCandidateId(),candidateDocId:assignedCandidateId(),candidateName:assignedCandidateName(),
-    geography:definedObject(assignment),stateCode:assignment.stateCode,lgaCode:assignment.lgaCode,wardCode:assignment.wardCode,pollingUnitCode:assignment.pollingUnitCode,
+    candidateId:agentCandidateId(),candidateName:agentCandidateName(),
+    geography:{...assignment},stateCode:assignment.stateCode,lgaCode:assignment.lgaCode,wardCode:assignment.wardCode,pollingUnitCode:assignment.pollingUnitCode,
     state:assignment.state,lga:assignment.lga,ward:assignment.ward,pollingUnit:assignment.pollingUnit,
     ballotAccounting:{voters,accreditedVoters:accredited,ballotPapersIssued:issued,unusedBallotPapers:unused,spoiltBallotPapers:spoilt,rejectedBallots:rejected,totalUsedBallotPapers:used,totalValidVotes:validVotes,excessVotes:Math.max(0,used-accredited)},
     partyResults:parties,certification:{presidingOfficerName:$("ovEc8aOfficer").value.trim(),signatureConfirmation:$("ovEc8aSignature").value.trim(),formDate:$("ovEc8aDate").value},
     status:"submitted",createdAt:serverTimestamp()
   };
   const btn=$("saveOvEc8aBtn");btn.disabled=true;btn.textContent="Saving…";
-  try{await addDoc(collection(db,"ec8aResults"),payload);notice("ovEc8aNotice","Over Voting EC8A result saved successfully.",false);}
+  try{await addCleanDoc(collection(db,"ec8aResults"),payload);notice("ovEc8aNotice","Over Voting EC8A result saved successfully.",false);}
   catch(error){console.error("Over Voting EC8A save failed:",error);notice("ovEc8aNotice",error.code==="permission-denied"?"Firebase denied this save. Firestore rules must permit authorised agents to create over_voting ec8aResults records.":"Could not save Over Voting EC8A: "+(error.message||"Please try again."),true);}
   finally{btn.disabled=false;btn.textContent="Save Over Voting EC8A";}
 });
@@ -859,8 +878,10 @@ $("ovEc8aForm").addEventListener("submit",async event=>{
 $("ec8aForm").addEventListener("submit",async event=>{
   event.preventDefault();
   if(!currentUser||!currentAgent){notice("ec8aNotice","Agent profile is not ready. Please sign in again.",true);return}
-  if(!validateEc8aAssignment("ec8aNotice"))return;
   updateEc8aTotals();
+  if(!agentCandidateId()||!assignment.stateCode||!assignment.lgaCode||!assignment.wardCode||!assignment.pollingUnitCode){
+    notice("ec8aNotice","Your account is missing its candidate or complete polling-unit assignment. Contact the Super Admin before submitting.",true);return;
+  }
   const validVotes=readNum("ec8aValid"),accredited=readNum("ec8aAccredited"),voters=readNum("ec8aVoters");
   const issued=readNum("ec8aIssued"),unused=readNum("ec8aUnused"),spoilt=readNum("ec8aSpoilt"),rejected=readNum("ec8aRejected"),used=readNum("ec8aUsed");
   if(accredited>voters||validVotes>accredited||issued<unused+spoilt+used){notice("ec8aNotice","Please correct the ballot-accounting inconsistencies before saving.",true);return}
@@ -870,8 +891,8 @@ $("ec8aForm").addEventListener("submit",async event=>{
     agentUid:currentUser.uid,userId:currentUser.uid,fullName:first(currentProfile?.fullName,currentAgent?.fullName,currentUser.displayName,""),
     email:first(currentProfile?.email,currentAgent?.email,currentUser.email,""),role:"polling_unit_agent",
     electionType:first(currentAgent.electionType,currentProfile?.electionType,""),electionName:first(currentAgent.electionName,electionNames[currentAgent.electionType],""),
-    candidateId:assignedCandidateId(),candidateDocId:assignedCandidateId(),candidateName:assignedCandidateName(),
-    geography:definedObject(assignment),stateCode:assignment.stateCode,lgaCode:assignment.lgaCode,wardCode:assignment.wardCode,pollingUnitCode:assignment.pollingUnitCode,
+    candidateId:agentCandidateId(),candidateName:agentCandidateName(),
+    geography:{...assignment},stateCode:assignment.stateCode,lgaCode:assignment.lgaCode,wardCode:assignment.wardCode,pollingUnitCode:assignment.pollingUnitCode,
     state:assignment.state,lga:assignment.lga,ward:assignment.ward,pollingUnit:assignment.pollingUnit,
     ballotAccounting:{voters,accreditedVoters:accredited,ballotPapersIssued:issued,unusedBallotPapers:unused,spoiltBallotPapers:spoilt,rejectedBallots:rejected,totalUsedBallotPapers:used,totalValidVotes:validVotes},
     partyResults:parties,certification:{presidingOfficerName:$("ec8aOfficer").value.trim(),signatureConfirmation:$("ec8aSignature").value.trim(),formDate:$("ec8aDate").value},
@@ -879,7 +900,7 @@ $("ec8aForm").addEventListener("submit",async event=>{
   };
   const btn=$("saveEc8aBtn");btn.disabled=true;btn.textContent="Saving…";
   try{
-    await addDoc(collection(db,"ec8aResults"),payload);
+    await addCleanDoc(collection(db,"ec8aResults"),payload);
     notice("ec8aNotice","EC8A result saved successfully.",false);
   }catch(error){
     console.error("EC8A save failed:",error);
@@ -888,18 +909,27 @@ $("ec8aForm").addEventListener("submit",async event=>{
 });
 
 function attachIncident(formId,noticeId,collectionName,kind,extra){
-  $(formId).addEventListener("submit",async e=>{
-    e.preventDefault();const btn=$(formId).querySelector('button[type="submit"]');btn.disabled=true;btn.textContent="Submitting…";
+  const form=$(formId);
+  if(!form)return;
+  form.addEventListener("submit",async event=>{
+    event.preventDefault();
+    const btn=form.querySelector('button[type="submit"]');
+    if(!currentUser||!currentAgent){notice(noticeId,"Agent profile is not ready. Please sign in again.",true);return;}
+    btn.disabled=true;btn.textContent="Submitting…";
     try{
-      const payload={agentUid:currentUser.uid,userId:currentUser.uid,fullName:first(currentProfile?.fullName,currentAgent?.fullName,""),email:first(currentProfile?.email,currentAgent?.email,currentUser.email,""),role:"polling_unit_agent",electionType:first(currentAgent?.electionType,currentProfile?.electionType,""),candidateId:assignedCandidateId(),candidateDocId:assignedCandidateId(),candidateName:assignedCandidateName(),geography:definedObject(assignment),stateCode:assignment.stateCode,lgaCode:assignment.lgaCode,wardCode:assignment.wardCode,pollingUnitCode:assignment.pollingUnitCode,state:assignment.state,lga:assignment.lga,ward:assignment.ward,pollingUnit:assignment.pollingUnit,reportType:kind,status:"submitted",createdAt:serverTimestamp(),...extra()};
-      await addDoc(collection(db,collectionName),payload);notice(noticeId,"Your report has been saved successfully.",false);$(formId).reset();
-    }catch(err){console.error(err);notice(noticeId,err.code==="permission-denied"?"Firebase rules do not yet permit this report type for this agent assignment.":"Could not save report: "+(err.message||"Please try again."),true)}
-    finally{btn.disabled=false;btn.textContent=kind==="over_voting"?"Submit over-voting report":"Submit violence report"}
+      const payload=buildSubmissionPayload({reportType:kind,...extra()});
+      await addCleanDoc(collection(db,collectionName),payload);
+      notice(noticeId,"Your report has been saved successfully.",false);
+      form.reset();
+    }catch(err){
+      console.error(collectionName+" incident submission failed:",err);
+      notice(noticeId,err.code==="permission-denied"?"Firebase rules do not yet permit this report type for this agent assignment.":"Could not save report: "+(err.message||"Please try again."),true);
+    }finally{
+      btn.disabled=false;
+      btn.textContent=kind==="violence"?"Submit violence report":"Submit report";
+    }
   });
 }
-attachIncident("overVotingForm","overVotingNotice","pollingUnitReports","over_voting",()=>({observationTime:$("overVotingTime").value,excessVotes:readNum("overVotingCount"),details:$("overVotingDetails").value.trim()}));
-attachIncident("violenceForm","violenceNotice","pollingUnitReports","violence",()=>({incidentType:$("violenceType").value,observationTime:$("violenceTime").value,details:$("violenceDetails").value.trim()}));
-
 function buildSubmissionPayload(extra){
   const base={
     agentUid:currentUser.uid,userId:currentUser.uid,
@@ -908,10 +938,9 @@ function buildSubmissionPayload(extra){
     role:"polling_unit_agent",
     electionType:first(currentAgent?.electionType,currentProfile?.electionType,""),
     electionName:first(currentAgent?.electionName,currentProfile?.electionName,electionNames[currentAgent?.electionType],""),
-    candidateId:assignedCandidateId(),
-    candidateDocId:assignedCandidateId(),
-    candidateName:assignedCandidateName(),
-    geography:definedObject(assignment),
+    candidateId:agentCandidateId(),
+    candidateName:agentCandidateName(),
+    geography:{...assignment},
     stateCode:assignment.stateCode,lgaCode:assignment.lgaCode,wardCode:assignment.wardCode,pollingUnitCode:assignment.pollingUnitCode,
     state:assignment.state,lga:assignment.lga,ward:assignment.ward,pollingUnit:assignment.pollingUnit,
     createdAt:serverTimestamp(),status:"submitted",...extra
@@ -919,13 +948,17 @@ function buildSubmissionPayload(extra){
   return base;
 }
 function attachSubmission(formId,noticeId,collectionName,makeExtra){
-  $(formId).addEventListener("submit",async event=>{
+  const form=$(formId);
+  if(!form)return;
+  form.addEventListener("submit",async event=>{
     event.preventDefault();
-    const form=$(formId),submit=form.querySelector('button[type="submit"]'),noticeEl=$(noticeId);
+    const submit=form.querySelector('button[type="submit"]'),noticeEl=$(noticeId);
+    if(!submit||!noticeEl)return;
     submit.disabled=true;submit.textContent="Submitting…";noticeEl.className="notice";
     try{
-      const payload=buildSubmissionPayload(makeExtra());
-      await addDoc(collection(db,collectionName),payload);
+      const extra=await makeExtra();
+      const payload=buildSubmissionPayload(extra);
+      await addCleanDoc(collection(db,collectionName),payload);
       notice(noticeId,"Your submission has been saved successfully.",false);
       form.reset();
     }catch(error){
@@ -935,10 +968,25 @@ function attachSubmission(formId,noticeId,collectionName,makeExtra){
     }finally{submit.disabled=false;submit.textContent=collectionName==="pollingUnitReports"?"Submit report":collectionName==="backupRequests"?"Submit backup request":"Submit alert"}
   });
 }
-attachSubmission("reportForm","reportNotice","pollingUnitReports",()=>({
-  category:$("reportCategory").value,observationTime:$("reportTime").value,details:$("reportDetails").value.trim(),
-  evidenceFileName:$("evidencePhoto").files[0]?.name||""
-}));
+attachSubmission("reportForm","reportNotice","pollingUnitReports",async()=>{
+  const file=$("evidencePhoto").files?.[0]||null;
+  let evidence={};
+  if(file){
+    const data=new FormData();
+    data.append("file",file);
+    data.append("upload_preset",CLOUDINARY_UPLOAD_PRESET);
+    data.append("folder","the-eyes/polling-unit-reports");
+    const response=await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,{method:"POST",body:data});
+    const result=await response.json().catch(()=>({}));
+    if(!response.ok)throw new Error(result.error?.message||`Cloudinary upload failed (${response.status}).`);
+    evidence={evidenceUrl:result.secure_url||"",evidencePublicId:result.public_id||"",evidenceResourceType:result.resource_type||"image",evidenceFormat:result.format||""};
+  }
+  return {
+    category:$("reportCategory").value,observationTime:$("reportTime").value,
+    details:$("reportDetails").value.trim(),evidenceFileName:file?.name||"",
+    evidenceFileType:file?.type||"",evidenceFileSize:file?.size||0,...evidence
+  };
+});
 attachSubmission("backupForm","backupNotice","backupRequests",()=>({
   incidentType:$("backupType").value,urgency:$("backupUrgency").value,details:$("backupDetails").value.trim()
 }));
