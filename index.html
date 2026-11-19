@@ -294,10 +294,18 @@
         const userProfile = profileSnap.data();
         // Agent assignment/role is authoritative in electionAgents/{uid}.
         // Keep users/{uid} for login identity and display information.
-        const agentRef = doc(db, "electionAgents", credential.user.uid);
-        const agentSnap = await getDoc(agentRef);
-        const agentProfile = agentSnap.exists() ? agentSnap.data() : {};
-        const profile = { ...agentProfile, ...userProfile };
+        // Agent assignment data is optional for login routing. If this account
+        // cannot read electionAgents/{uid}, continue using users/{uid}.
+        let agentProfile = {};
+        let agentExists = false;
+        try {
+          const agentRef = doc(db, "electionAgents", credential.user.uid);
+          const agentSnap = await getDoc(agentRef);
+          agentExists = agentSnap.exists();
+          agentProfile = agentExists ? agentSnap.data() : {};
+        } catch (agentReadError) {
+          console.warn("Could not read electionAgents profile; using users profile.", agentReadError);
+        }
         const storedUsername = String(userProfile.username || "").trim().toLowerCase();
         if (storedUsername && storedUsername !== username.toLowerCase()) {
           await auth.signOut();
@@ -305,13 +313,15 @@
         }
 
         if (userProfile.active === false || userProfile.status === "disabled"
-            || (agentSnap.exists() && (agentProfile.active === false || agentProfile.status === "disabled"))) {
+            || (agentExists && (agentProfile.active === false || agentProfile.status === "disabled"))) {
           await auth.signOut();
           throw new Error("Your account is currently disabled. Contact your system administrator.");
         }
 
         // Prefer the authoritative agentRole from electionAgents; fall back to users.
-        const role = String(agentProfile.agentRole || userProfile.agentRole || userProfile.role || "").trim().toLowerCase();
+        const rawRole = agentProfile.agentRole || userProfile.agentRole || userProfile.role || "";
+        // Accept role values containing spaces or hyphens as well as underscores.
+        const role = String(rawRole).trim().toLowerCase().replace(/[\\s-]+/g, "_");
         const dashboard = roleDashboards[role] || userProfile.dashboardUrl || agentProfile.dashboardUrl;
 
         if (!dashboard || typeof dashboard !== "string" || !dashboard.endsWith(".html")) {
@@ -320,7 +330,7 @@
         }
 
         // Role and dashboard permissions must also be enforced by Firestore Security Rules.
-        window.location.href = dashboard;
+        window.location.href = new URL(dashboard, window.location.href).href;
       } catch (error) {
         let message = error?.message || "Unable to sign in. Please try again.";
         if (error?.code === "auth/invalid-credential" || error?.code === "auth/wrong-password" || error?.code === "auth/user-not-found") {
