@@ -236,6 +236,10 @@
       super_admin: "admin-dashboard.html",
       polling_unit_agent: "polling-unit-agent-dashboard.html",
       ward_collation_agent: "ward-collation-dashboard.html",
+      ward_collation: "ward-collation-dashboard.html",
+      local_government_collation_agent: "local-government-collation-dashboard.html",
+      lga_collation_agent: "local-government-collation-dashboard.html",
+      local_government_collation: "local-government-collation-dashboard.html",
       coordinator: "coordinator-dashboard.html",
       observer: "observer-dashboard.html",
       reporter: "observer-dashboard.html",
@@ -287,22 +291,28 @@
           throw new Error("Your account profile is not registered in the system. Contact your system administrator.");
         }
 
-        const profile = profileSnap.data();
-        const storedUsername = String(profile.username || "").trim().toLowerCase();
+        const userProfile = profileSnap.data();
+        // Agent assignment/role is authoritative in electionAgents/{uid}.
+        // Keep users/{uid} for login identity and display information.
+        const agentRef = doc(db, "electionAgents", credential.user.uid);
+        const agentSnap = await getDoc(agentRef);
+        const agentProfile = agentSnap.exists() ? agentSnap.data() : {};
+        const profile = { ...agentProfile, ...userProfile };
+        const storedUsername = String(userProfile.username || "").trim().toLowerCase();
         if (storedUsername && storedUsername !== username.toLowerCase()) {
           await auth.signOut();
           throw new Error("The username does not match this account. Please check your details.");
         }
 
-        if (profile.active === false || profile.status === "disabled") {
+        if (userProfile.active === false || userProfile.status === "disabled"
+            || (agentSnap.exists() && (agentProfile.active === false || agentProfile.status === "disabled"))) {
           await auth.signOut();
           throw new Error("Your account is currently disabled. Contact your system administrator.");
         }
 
-        // Agent accounts are stored with role="agent" and a specific agentRole.
-        // Route by agentRole first so polling_unit_agent accounts reach their dashboard.
-        const role = String(profile.agentRole || profile.role || "").trim().toLowerCase();
-        const dashboard = roleDashboards[role] || profile.dashboardUrl;
+        // Prefer the authoritative agentRole from electionAgents; fall back to users.
+        const role = String(agentProfile.agentRole || userProfile.agentRole || userProfile.role || "").trim().toLowerCase();
+        const dashboard = roleDashboards[role] || userProfile.dashboardUrl || agentProfile.dashboardUrl;
 
         if (!dashboard || typeof dashboard !== "string" || !dashboard.endsWith(".html")) {
           await auth.signOut();
