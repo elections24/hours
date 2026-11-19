@@ -206,7 +206,7 @@ function renderEc8aComparison(){
   const unique=[...new Map(units.map(p=>[p.code,p])).values()].sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true,sensitivity:'base'}));
   const latestByPu=new Map();
   data.ec8a.filter(d=>String(d.reportType||'').toLowerCase()==='successful_election').forEach(d=>{
-    const code=puCodeOf(d);if(!code)return;const prev=latestByPu.get(code);
+    const code=puCodeKey(puCodeOf(d));if(!code)return;const prev=latestByPu.get(code);
     if(!prev||dateMs(d.createdAt)>dateMs(prev.createdAt))latestByPu.set(code,d);
   });
   const partyVotes=new Map();
@@ -220,7 +220,7 @@ function renderEc8aComparison(){
   if(!unique.length){$('ec8aCompareTable').innerHTML='<div class="empty">No assigned polling units were found for this ward.</div>';return}
   const totals=Object.fromEntries(parties.map(p=>[p,0]));
   const body=unique.map(p=>{
-    const vals=partyVotes.get(p.code);const hasResult=latestByPu.has(p.code);
+    const puKey=puCodeKey(p.code);const vals=partyVotes.get(puKey);const hasResult=latestByPu.has(puKey);
     const cells=parties.map(party=>{
       const v=vals?.get(party);
       if(v!==undefined)totals[party]+=v;
@@ -234,8 +234,23 @@ function renderEc8aComparison(){
 }
 function renderCoverage(){}
 function puCodeOf(d){return String(first(d.pollingUnitCode,d.geography?.pollingUnitCode,d.code,d.unitCode,d.id,'')).trim()}
+function puCodeKey(value){
+  const raw=String(value??'').trim().toUpperCase();
+  if(!raw)return '';
+  // Match full hierarchical geography IDs to short displayed PU numbers.
+  const tail=raw.split(/[_/\s-]+/).filter(Boolean).pop()||raw;
+  const digits=tail.match(/(\d+)$/);
+  return digits?digits[1].replace(/^0+(?=\d)/,''):tail.replace(/^PU[-_\s]*/,'');
+}
+function puCodesMatch(a,b){
+  const x=String(a??'').trim(),y=String(b??'').trim();
+  if(!x||!y)return false;
+  if(x===y)return true;
+  const kx=puCodeKey(x),ky=puCodeKey(y);
+  return !!kx&&kx===ky;
+}
 function puNameOf(d){return first(d.pollingUnitName,d.pollingUnit,d.unitName,d.name,d.title,d.label,d.pollingUnitCode,d.code,d.id,'Unnamed polling unit')}
-function recordsForPu(code){return allSubmissions().filter(d=>puCodeOf(d)===String(code))}
+function recordsForPu(code){return allSubmissions().filter(d=>puCodesMatch(puCodeOf(d),code))}
 function evidenceKind(d){
   const t=String(first(d.evidenceType,d.fileType,d.mimeType,'')).toLowerCase();
   if(t.includes('video')||String(d.cloudinaryResourceType||'').toLowerCase()==='video'||String(d.fileType||'').startsWith('video/'))return 'video';
@@ -243,7 +258,7 @@ function evidenceKind(d){
   if(t.includes('ec8a')||t.includes('ec40g')||t.includes('form'))return 'form';
   return 'other';
 }
-function puEvidenceFor(code){return data.evidence.filter(d=>puCodeOf(d)===String(code))}
+function puEvidenceFor(code){return data.evidence.filter(d=>puCodesMatch(puCodeOf(d),code))}
 function puRecordStatus(records,predicate){return records.some(predicate)}
 function resultStatus(records){
   if(!records.length)return {label:'Waiting',cls:'pending'};
