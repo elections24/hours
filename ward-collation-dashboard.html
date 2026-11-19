@@ -397,11 +397,26 @@ function renderSubmissions(){
 async function openPuView(code, mode='successful'){
   const allPuRecords=recordsForPu(code);
   const isViolenceRecord=d=>{const t=[d.reportType,d.category,d.incidentType,d.alertType,d.title,d.details,d.description,d.message].filter(Boolean).join(' ').toLowerCase();return t.includes('violence')||t.includes('violent')};
+  const normalizedReportType=d=>String(first(d.reportType,d.electionReportType,d.formType,d.category,d.evidenceType,'')).toLowerCase().replaceAll('-','_').replaceAll(' ','_');
+  const isOverVotingRecord=d=>{
+    const type=normalizedReportType(d);
+    return type.includes('over_voting')||type.includes('overvoting')||type.includes('over_vote');
+  };
+  const isSuccessfulElectionRecord=d=>{
+    const type=normalizedReportType(d);
+    return type.includes('successful_election')||type.includes('successful');
+  };
   const records=mode==='over_voting'
-    ? allPuRecords.filter(d=>(d._collection==='ec8aResults'&&String(d.reportType||'').toLowerCase()==='over_voting') || (d._collection==='evidenceUploads'&&String(first(d.evidenceType,d.reportType,d.category,'')).toLowerCase().includes('over')))
-    : mode==='violence'
-      ? allPuRecords.filter(d=>(d._collection==='pollingUnitReports'||d._collection==='evidenceUploads')&&isViolenceRecord(d))
-      : allPuRecords;
+    ? allPuRecords.filter(d=>d._collection==='ec8aResults'
+        ? isOverVotingRecord(d)
+        : d._collection==='evidenceUploads' && (isOverVotingRecord(d)||(!isSuccessfulElectionRecord(d)&&String(first(d.evidenceType,d.category,'')).toLowerCase().includes('over'))))
+    : mode==='successful'
+      ? allPuRecords.filter(d=>d._collection==='ec8aResults'
+          ? isSuccessfulElectionRecord(d)
+          : d._collection==='evidenceUploads' && !isOverVotingRecord(d))
+      : mode==='violence'
+        ? allPuRecords.filter(d=>(d._collection==='pollingUnitReports'||d._collection==='evidenceUploads')&&isViolenceRecord(d))
+        : allPuRecords;
   const p=data.pus.map(x=>({...x,_code:String(first(x.pollingUnitCode,x.code,x.unitCode,x.id,''))})).find(x=>x._code===String(code));
   const pu=p||{pollingUnitName:first(records[0]&&nameOf(records[0]),'Polling unit')};
   const title=puNameOf(pu);
@@ -463,7 +478,7 @@ async function openPuView(code, mode='successful'){
     // EC8A photo, video and duplicate copy are separate uploaded files.
     // The E-Form is the structured EC8A result stored in ec8aResults.
     if(kind==='ec8a')return evidence.filter(d=>{const t=[d.evidenceType,d.fileType,d.fileName,d.reportType,d.category].join(' ').toLowerCase();return (t.includes('ec8a')||t.includes('form')) && (String(first(d.fileType,d.evidenceFileType,d.mimeType,'')).startsWith('image/') || String(first(d.cloudinaryResourceType,d.evidenceResourceType,'')).toLowerCase()==='image')});
-    if(kind==='eform')return ec8a;
+    if(kind==='eform')return ec8a.filter(d=>mode==='over_voting'?isOverVotingRecord(d):mode==='successful'?isSuccessfulElectionRecord(d):true);
     if(kind==='media')return [
       ...evidence.filter(d=>{
         const resource=String(first(d.cloudinaryResourceType,d.evidenceResourceType,'')).toLowerCase();
