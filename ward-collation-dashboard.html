@@ -133,6 +133,9 @@
  .top-context strong{font-size:14px}
 }
 
+
+/* Polling-unit dashboard filter */
+.pu-dashboard-filter{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px;padding:10px 12px;background:#f8fbf9;border:1px solid var(--line);border-radius:11px}.pu-dashboard-filter label{font-size:11px;font-weight:800;color:var(--ink)}.pu-dashboard-filter select{flex:1;min-width:190px;max-width:360px;border:1px solid #d8e5dd;border-radius:9px;padding:10px 12px;background:#fff;color:var(--ink);font-size:12px;font-weight:650;outline:none}.pu-dashboard-filter select:focus{border-color:var(--g);box-shadow:0 0 0 3px #08734f18}.pu-filter-count{font-size:10px;color:var(--muted);font-weight:650}@media(max-width:600px){.pu-dashboard-filter{gap:7px}.pu-dashboard-filter select{max-width:none;width:100%;flex-basis:100%}}
 </style>
 </head>
 <body>
@@ -145,6 +148,7 @@
 <section class="view active" id="view-overview">
 <div class="panel ec8a-compare-panel">
   <div class="panelhead"><h2>Ward Collation Dashboard</h2></div>
+  <div class="pu-dashboard-filter"><label for="puDashboardFilter">Filter polling units</label><select id="puDashboardFilter"><option value="all">All polling units</option><option value="over_voting">Over Voting</option><option value="violence">Violence</option><option value="successful">Successful</option><option value="opening_poll">Opening Poll</option><option value="accreditation">Accreditation</option><option value="voting">Voting</option><option value="counting">Counting</option><option value="closing_poll">Closing Poll</option><option value="result_announcement">Result Announcement</option><option value="danger">Danger</option><option value="other_process">Other Election Status</option></select><span id="puFilterCount" class="pu-filter-count">All assigned polling units</span></div>
   <div id="ec8aCompareTable" class="ec8a-compare-scroll"><div class="empty">Loading polling-unit results…</div></div>
 </div>
 <div class="home-cards">
@@ -236,11 +240,33 @@ function puActionFlags(code){
   return {over,violence,view};
 }
 
+function puMatchesDashboardFilter(code,filter){
+  if(!filter||filter==='all')return true;
+  const records=recordsForPu(code);
+  const textOf=d=>[d.reportType,d.category,d.incidentType,d.alertType,d.title,d.status,d.reportStatus,d.details,d.description,d.message].filter(Boolean).join(' ').toLowerCase().replaceAll('_',' ').replaceAll('-',' ');
+  if(filter==='over_voting')return records.some(d=>(d._collection==='ec8aResults'&&String(d.reportType||'').toLowerCase()==='over_voting')||textOf(d).includes('over voting')||textOf(d).includes('overvoting'));
+  if(filter==='violence')return records.some(d=>textOf(d).includes('violence')||textOf(d).includes('violent'));
+  if(filter==='successful')return records.some(d=>d._collection==='ec8aResults'&&String(d.reportType||'').toLowerCase()==='successful_election');
+  const reports=records.filter(d=>d._collection==='pollingUnitReports');
+  const has=(...terms)=>reports.some(d=>{const t=textOf(d);return terms.some(term=>t.includes(term))});
+  if(filter==='opening_poll')return has('opening poll','open poll','poll opening','poll opened');
+  if(filter==='accreditation')return has('accreditation','accredited voter');
+  if(filter==='voting')return has('voting process','voting started','voting commenced','vote casting');
+  if(filter==='counting')return has('counting','count votes','counting votes');
+  if(filter==='closing_poll')return has('closing poll','close poll','poll closing','poll closed');
+  if(filter==='result_announcement')return has('result announcement','announce result','results announced');
+  if(filter==='danger')return has('danger','emergency','threat','security alert');
+  if(filter==='other_process')return reports.some(d=>{const t=textOf(d);return !!t&&!['submitted','pending','received','report'].includes(t.trim())&&!['opening poll','open poll','poll opening','poll opened','accreditation','accredited voter','voting process','voting started','voting commenced','vote casting','counting','count votes','counting votes','closing poll','close poll','poll closing','poll closed','result announcement','announce result','results announced','danger','emergency','threat','security alert'].some(term=>t.includes(term))});
+  return true;
+}
 function renderEc8aComparison(){
   // Keep the party columns identical to the party list used by the Polling Unit Agent EC8A form.
   const parties=['ADC','APC','A','AA','AAC','ADP','APGA','APM','APP','BP','LP','NNPP','NRM','PDP','PRP','SDP','YPP','ZLP'];
   const units=data.pus.map(p=>({code:String(first(p.pollingUnitCode,p.code,p.unitCode,p.id,'')).trim(),name:puNameOf(p)})).filter(p=>p.code);
-  const unique=[...new Map(units.map(p=>[p.code,p])).values()].sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true,sensitivity:'base'}));
+  const allUnique=[...new Map(units.map(p=>[p.code,p])).values()].sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true,sensitivity:'base'}));
+  const selectedFilter=$('puDashboardFilter')?.value||'all';
+  const unique=allUnique.filter(p=>puMatchesDashboardFilter(p.code,selectedFilter));
+  if($('puFilterCount'))$('puFilterCount').textContent=`Showing ${unique.length} of ${allUnique.length} polling units`;
   const latestByPu=new Map();
   data.ec8a.filter(d=>String(d.reportType||'').toLowerCase()==='successful_election').forEach(d=>{
     const code=puCodeKey(puCodeOf(d));if(!code)return;const prev=latestByPu.get(code);
@@ -254,7 +280,7 @@ function renderEc8aComparison(){
   });
   const received=unique.filter(p=>latestByPu.has(p.code)).length;
   if($('ec8aCompareSummary'))$('ec8aCompareSummary').textContent=`${unique.length} assigned polling units · ${received} with successful-election EC8A results · ${unique.length-received} awaiting EC8A results.`;
-  if(!unique.length){$('ec8aCompareTable').innerHTML='<div class="empty">No assigned polling units were found for this ward.</div>';return}
+  if(!unique.length){$('ec8aCompareTable').innerHTML=allUnique.length?'<div class="empty">No polling units match this filter.</div>':'<div class="empty">No assigned polling units were found for this ward.</div>';return}
   const totals=Object.fromEntries(parties.map(p=>[p,0]));
   const body=unique.map(p=>{
     const puKey=puCodeKey(p.code);const vals=partyVotes.get(puKey);const hasResult=latestByPu.has(puKey);
@@ -449,6 +475,7 @@ function renderHistory(){const rows=data.collations.slice().sort((a,b)=>dateMs(b
 function renderAll(){renderSubmissions();renderEc8aComparison();renderCollation();renderHistory()}
 function openDetail(col,id){const map={ec8aResults:data.ec8a,evidenceUploads:data.evidence,pollingUnitReports:data.reports,voteBuyingAlerts:data.alerts,backupRequests:data.backups};const d=(map[col]||[]).find(x=>x.id===id);if(!d)return;$('detailTitle').textContent=typeLabel(d);let fields=[['Polling unit',nameOf(d)],['Polling unit code',unitCode(d)],['Agent',agentName(d)],['Election',d.electionName||d.electionType],['Candidate',d.candidateName],['Status',d.status||d.reportStatus],['Submitted',fmt(d.createdAt)],['Report type',d.reportType],['Details',d.details||d.category||d.incidentType],['Ballot accounting',d.ballotAccounting?JSON.stringify(d.ballotAccounting):'—'],['Party results',d.partyResults?JSON.stringify(d.partyResults):'—']];let html=`<div class="detailgrid">${fields.filter(x=>x[1]!==undefined&&x[1]!==null&&x[1]!=='').map(([k,v])=>`<div><small>${esc(k)}</small><b>${esc(typeof v==='object'?JSON.stringify(v):v)}</b></div>`).join('')}</div>`;const url=first(d.cloudinaryUrl,d.secure_url,d.cloudinary?.secure_url,'');if(url)html+=`<p><a class="evidence-link" href="${esc(url)}" target="_blank" rel="noopener">Open supporting evidence</a></p>`;$('detailContent').innerHTML=html;$('detailModal').classList.add('show')}
 function switchView(v){document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id==='view-'+v));document.querySelectorAll('.nav [data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===v));$('topTitle').textContent=({overview:'Ward operations overview',submissions:'Polling-unit submissions',collation:'Ward collation',history:'Collation history'})[v]||'Ward operations';window.scrollTo({top:0,behavior:'smooth'})}
+$('puDashboardFilter')?.addEventListener('change',renderEc8aComparison);
 document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.filter){activeSubmissionType=b.dataset.filter;activeSubmissionPuCode='';renderSubmissions()}switchView(b.dataset.go)}));$('homeLogoutBtn').addEventListener('click',logout);if($('topLogoutBtn'))$('topLogoutBtn').addEventListener('click',logout);document.addEventListener('click',e=>{const action=e.target.closest('[data-pu-action]');if(action){activeSubmissionType=action.dataset.puAction;activeSubmissionPuCode=action.dataset.puCode;renderSubmissions();switchView('submissions');return}const status=e.target.closest('[data-pu-status]');if(status){openPuStatus(status.dataset.puStatus);return}const pu=e.target.closest('[data-pu-view]');if(pu){openPuView(pu.dataset.puView);return}const b=e.target.closest('[data-detail]');if(b){const [c,id]=b.dataset.detail.split(':');openDetail(c,id)}});$('closeDetail').addEventListener('click',()=>$('detailModal').classList.remove('show'));$('detailModal').addEventListener('click',e=>{if(e.target===$('detailModal'))$('detailModal').classList.remove('show')});
 $('collationForm').addEventListener('submit',async e=>{e.preventDefault();const btn=$('saveCollationBtn');btn.disabled=true;btn.textContent='Saving…';try{if(!user||!assignment.wardCode)throw Error('Your assigned ward is not loaded.');const source=allSubmissions();const sourceIds=source.map(x=>({collection:x._collection,id:x.id}));const payload={recordType:'ward_collation',createdBy:user.uid,createdByName:first(profile.fullName,agent.fullName,user.displayName,user.email),createdAt:serverTimestamp(),collationDate:$('collationDate').value,reviewStatus:$('collationStatus').value,status:'submitted',electionType:assignment.electionType,electionName:assignment.electionName,stateCode:assignment.stateCode,lgaCode:assignment.lgaCode,wardCode:assignment.wardCode,state:assignment.state,lga:assignment.lga,ward:assignment.ward,sourceCounts:{ec8a:data.ec8a.length,evidence:data.evidence.length,reports:data.reports.length,voteBuyingAlerts:data.alerts.length,backupRequests:data.backups.length,total:source.length},sourceSubmissionIds:sourceIds,wardTotals:{validVotes:$('totalValidVotes').value===''?null:Number($('totalValidVotes').value),rejectedBallots:$('totalRejectedVotes').value===''?null:Number($('totalRejectedVotes').value)},summary:$('collationSummary').value.trim(),discrepancies:$('discrepancies').value.trim(),sourceReviewed:$('sourceReviewed').checked,missingDeclared:$('missingDeclared').checked};await addDoc(collection(db,'wardCollations'),payload);notice('collationNotice','Ward collation record saved successfully. Source submissions remain unchanged.');$('collationForm').reset();}catch(err){console.error(err);notice('collationNotice',err.code==='permission-denied'?'Firebase denied this save. Firestore Rules must permit assigned Ward Collation Agents to create wardCollations records scoped to their ward.':`Could not save ward collation: ${err.message||err}`,true)}finally{btn.disabled=false;btn.textContent='Save ward collation'}});
 
