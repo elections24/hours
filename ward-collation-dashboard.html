@@ -552,15 +552,51 @@ async function openPuView(code, mode='successful'){
   }));
   $('detailModal').classList.add('show');syncBackButton();
 }
-function openPuStatus(code){
+async function openPuStatus(code){
   const pu=data.pus.map(x=>({...x,_code:String(first(x.pollingUnitCode,x.code,x.unitCode,x.id,''))})).find(x=>puCodesMatch(x._code,code));
   const records=recordsForPu(code).filter(d=>!['ec8aResults','evidenceUploads'].includes(d._collection));
   const title=pu?puNameOf(pu):first(records[0]&&nameOf(records[0]),'Polling unit');
   $('detailTitle').textContent=`${title} — Other submitted reports`;
-  $('detailContent').innerHTML=records.length
+  $('detailContent').innerHTML='<div class="empty">Loading agent contact and submitted reports…</div>';
+  $('detailModal').classList.add('show');syncBackButton();
+
+  // Resolve the polling-unit agent using the source report UID first, then
+  // the Super Admin assignment in electionAgents for this exact polling unit.
+  const latestRecord=records.slice().sort((a,b)=>dateMs(b.createdAt)-dateMs(a.createdAt))[0]||{};
+  const agentUid=first(latestRecord.agentUid,latestRecord.userId,latestRecord.createdBy,latestRecord.uid,'');
+  let agentDoc={};
+  if(agentUid){
+    try{const snap=await getDoc(doc(db,'electionAgents',String(agentUid)));if(snap.exists())agentDoc={...snap.data(),_docId:snap.id};}catch(err){console.warn('Polling-unit agent profile lookup unavailable',err);}
+  }
+  const phoneFrom=(d={})=>first(d.phone,d.phoneNumber,d.mobile,d.mobileNumber,d.contactPhone,d.telephone,d.contact?.phone,d.contactInfo?.phone,d.personalInfo?.phone,d.profile?.phone,'');
+  let matchedAgentId=first(agentDoc.uid,agentDoc.userId,agentDoc._docId,agentUid,'');
+  if(!matchedAgentId||!phoneFrom(agentDoc)){
+    const lookups=[['geography.pollingUnitCode',String(code)],['assignedScope.pollingUnitCode',String(code)],['pollingUnitCode',String(code)]];
+    for(const [field,value] of lookups){
+      try{
+        const q=query(collection(db,'electionAgents'),where('agentRole','==','polling_unit_agent'),where(field,'==',value));
+        const snap=await getDocs(q);
+        const match=snap.docs.find(d=>{
+          const a=d.data();
+          const aWard=first(a.geography?.wardCode,a.assignedScope?.wardCode,a.wardCode,'');
+          return String(aWard)===String(assignment.wardCode)&&a.active!==false&&String(a.status||'active').toLowerCase()!=='disabled';
+        });
+        if(match){agentDoc={...match.data(),...agentDoc,_docId:match.id};matchedAgentId=first(match.data().uid,match.data().userId,match.id);break;}
+      }catch(err){console.warn('Assigned polling-unit agent query unavailable',field,err);}
+    }
+  }
+  if(matchedAgentId&&!phoneFrom(agentDoc)){
+    try{const snap=await getDoc(doc(db,'users',String(matchedAgentId)));if(snap.exists())agentDoc={...snap.data(),...agentDoc};}catch(err){console.warn('Polling-unit agent account contact lookup unavailable',err);}
+  }
+  const agentFullName=first(agentDoc.fullName,agentDoc.name,agentDoc.displayName,agentDoc.username,latestRecord.agentName,latestRecord.fullName,latestRecord.submittedByName,'Polling Unit Agent');
+  const agentPhone=first(phoneFrom(agentDoc),latestRecord.agentPhone,latestRecord.phone,latestRecord.phoneNumber,latestRecord.mobile,'');
+  const phoneHref=String(agentPhone).replace(/[^+\d]/g,'');
+  const contactHtml=`<section class="agent-contact-card" aria-label="Polling Unit Agent contact"><div class="agent-contact-name"><small>Polling Unit Agent</small><b>${esc(agentFullName)}</b></div>${phoneHref?`<a class="agent-call-button" href="tel:${esc(phoneHref)}" aria-label="Call polling-unit agent" title="Call polling-unit agent"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1.02-.24c1.12.37 2.32.56 3.58.56a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.6 21 3 13.4 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.26.19 2.46.56 3.58a1 1 0 0 1-.25 1.02z"/></svg><span>Call</span></a>`:'<span class="agent-phone-unavailable">Call unavailable</span>'}</section>`;
+  const reportsHtml=records.length
     ? `<section class="pu-detail-section"><h3>Other submitted reports <span class="tag">${records.length}</span></h3>${records.slice().sort((a,b)=>dateMs(b.createdAt)-dateMs(a.createdAt)).map(d=>`<div class="evidence-category-item"><strong>${esc(typeLabel(d))}</strong><div class="muted">${esc(agentName(d))} · ${esc(fmt(d.createdAt))}</div><div>${esc(d.details||d.description||d.message||d.category||'Report submitted')}</div></div>`).join('')}</section>`
     : '<div class="empty">No other submitted reports found for this polling unit.</div>';
-  $('detailModal').classList.add('show');syncBackButton();
+  $('detailContent').innerHTML=contactHtml+reportsHtml;
+  syncBackButton();
 }
 function renderCollation(){const sources=allSubmissions();const units=new Set(data.ec8a.map(unitCode).filter(x=>x!=='—'));$('cEc8a').textContent=data.ec8a.length;$('cUnits').textContent=units.size;$('cIncidents').textContent=data.reports.length+data.alerts.length;$('cEvidence').textContent=data.evidence.length;const groups=[['EC8A results',data.ec8a],['Evidence uploads',data.evidence],['Polling-unit reports',data.reports],['Vote-buying alerts',data.alerts],['Backup requests',data.backups]];$('collationSources').innerHTML=groups.map(([label,items])=>`<div class="source-item"><div><strong>${label}</strong><p>${items.length} record(s) in ${items[0]?esc(items[0]._collection):'existing collection'}${items.length?' · Latest: '+esc(fmt(items.slice().sort((a,b)=>dateMs(b.createdAt)-dateMs(a.createdAt))[0].createdAt)):''}</p></div><span class="tag">${items.length}</span></div>`).join('');}
 function renderHistory(){const rows=data.collations.slice().sort((a,b)=>dateMs(b.createdAt)-dateMs(a.createdAt));$('historyTable').innerHTML=rows.length?`<table><thead><tr><th>Collation date</th><th>Status</th><th>Source records</th><th>Valid votes</th><th>Created by</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${esc(fmt(r.collationDate||r.createdAt))}</td><td>${statusTag(r.reviewStatus||r.status)}</td><td>${esc(r.sourceCounts?.total??r.sourceSubmissionIds?.length??0)}</td><td>${esc(r.wardTotals?.validVotes??'—')}</td><td>${esc(r.createdByName||r.createdBy||'—')}</td></tr>`).join('')}</tbody></table>`:'<div class="empty">No ward collation records have been saved yet.</div>'}
