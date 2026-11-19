@@ -150,6 +150,8 @@
 /* Polling-unit dashboard filter */
 .pu-dashboard-filter{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px;padding:10px 12px;background:#f8fbf9;border:1px solid var(--line);border-radius:11px}.pu-dashboard-filter label{font-size:11px;font-weight:800;color:var(--ink)}.pu-dashboard-filter select{flex:1;min-width:190px;max-width:360px;border:1px solid #d8e5dd;border-radius:9px;padding:10px 12px;background:#fff;color:var(--ink);font-size:12px;font-weight:650;outline:none}.pu-dashboard-filter select:focus{border-color:var(--g);box-shadow:0 0 0 3px #08734f18}.pu-filter-count{font-size:10px;color:var(--muted);font-weight:650}@media(max-width:600px){.pu-dashboard-filter{gap:7px}.pu-dashboard-filter select{max-width:none;width:100%;flex-basis:100%}}
 .ward-back-btn{min-width:82px;padding:9px 16px;border:0;border-radius:10px;background:var(--g);color:#fff;font-size:12px;font-weight:800;transition:background .15s,color .15s}.ward-back-btn:disabled{background:#edf1ee;color:#9aa69f;cursor:not-allowed;opacity:1}.ward-back-btn:not(:disabled):active{background:var(--gd)}
+
+.over-resolution-card{margin:16px 0 4px;padding:16px;border:1px solid var(--line);border-radius:14px;background:#fff;box-shadow:var(--shadow)}.over-resolution-card h3{font-size:16px;margin:0 0 9px}.over-resolution-card>p{margin:0 0 12px}.resolution-confirm{display:flex;align-items:flex-start;gap:10px;padding:13px;background:#f5f8f6;border:1px solid var(--line);border-radius:10px;font-size:13px;line-height:1.5;margin:12px 0}.resolution-confirm input{width:18px;height:18px;flex:0 0 auto;accent-color:var(--g);margin-top:1px}.resolution-party-list{margin:12px 0}.resolution-party-list>strong{display:block;font-size:13px;margin-bottom:8px}.resolution-party-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px}.resolution-party-row input{width:110px;max-width:42%;padding:9px;border:1px solid var(--line);border-radius:8px;text-align:right}.resolution-submit{width:100%;padding:14px;margin-top:10px;font-size:14px}.resolution-done{padding:13px;background:#edf7f1;border:1px solid #cfe8d9;border-radius:10px}.resolution-done>strong{color:var(--g)}.resolution-done p{font-size:12px;line-height:1.5;color:var(--muted)}.resolution-done small{display:block;margin-top:10px;color:var(--muted)}.resolution-done .tablewrap{margin-top:10px}
 </style>
 </head>
 <body>
@@ -526,6 +528,26 @@ async function openPuView(code, mode='successful'){
       return `<div class="evidence-category-item"><strong>${esc(label)}</strong><div class="muted">${details}</div>${preview}${link}</div>`;
     }).join('');
   };
+  const overVotingSource=mode==='over_voting'?ec8a.find(d=>isOverVotingRecord(d)):null;
+  let priorResolution=null;
+  if(overVotingSource){
+    try{
+      const rq=query(collection(db,'overVotingResolutions'),where('pollingUnitCode','==',String(code)),where('wardCode','==',String(assignment.wardCode)));
+      const rs=await getDocs(rq);
+      priorResolution=rs.docs.map(x=>({id:x.id,...x.data()})).find(x=>x.sourceEc8aId===overVotingSource.id&&x.status==='resolved')||null;
+    }catch(err){console.warn('Could not check existing over-voting resolution',err);}
+  }
+  const originalPartyResults=Array.isArray(overVotingSource?.partyResults)?overVotingSource.partyResults:[];
+  const resolutionMarkup=mode==='over_voting'&&overVotingSource?`
+    <section class="over-resolution-card" id="overResolutionCard">
+      <h3>Ward Over-Voting Resolution</h3>
+      ${priorResolution?`<div class="resolution-done"><strong>Resolved by ward collation</strong><p>The original polling-unit EC8A has been preserved. The agreed party figures are recorded separately.</p><div class="tablewrap"><table><thead><tr><th>Party</th><th>Agreed votes</th></tr></thead><tbody>${(priorResolution.finalPartyResults||[]).map(x=>`<tr><td>${esc(x.party||'—')}</td><td>${esc(x.votes??'—')}</td></tr>`).join('')}</tbody></table></div><small>${esc(first(priorResolution.resolvedByName,'Ward Collation Agent'))} · ${esc(fmt(priorResolution.resolvedAt))}</small></div>`:`
+        <p class="muted">After reviewing the originating evidence and reaching consensus, enter the agreed final party figures below. The original EC8A submission will remain unchanged.</p>
+        <label class="resolution-confirm"><input type="checkbox" id="confirmWardDeclaration"> I confirm this Ward declaration after reviewing the originating evidence.</label>
+        ${originalPartyResults.length?`<div class="resolution-party-list"><strong>Agreed final party votes</strong>${originalPartyResults.map((x,i)=>`<label class="resolution-party-row"><span>${esc(x.party||`Party ${i+1}`)}</span><input type="number" min="0" step="1" inputmode="numeric" data-final-party-index="${i}" value="${esc(x.votes??0)}" aria-label="Agreed votes for ${esc(x.party||`Party ${i+1}`)}"></label>`).join('')}</div>`:'<p class="muted">No party vote rows were found in this EC8A. A resolution cannot be submitted until the source party figures are available.</p>'}
+        <button class="btn resolution-submit" type="button" id="declareOverVotingBtn" ${originalPartyResults.length?'disabled':''}>Declare Over-Voting case resolved</button>
+        <div class="notice" id="overResolutionNotice"></div>`}
+    </section>`:'';
   $('detailContent').innerHTML=`
     <div class="detailgrid evidence-context-grid"><div class="wide"><small>Polling unit</small><b>${esc(title)}</b></div><div><small>PU code</small><b>${esc(code)}</b></div><div><small>Assigned ward</small><b>${esc(assignment.ward||'—')}</b></div></div>
     <section class="agent-contact-card" aria-label="Polling Unit Agent contact"><div class="agent-contact-name"><small>Polling Unit Agent</small><b>${esc(agentFullName)}</b></div>${phoneHref?`<a class="agent-call-button" href="tel:${esc(phoneHref)}" aria-label="Call polling-unit agent" title="Call polling-unit agent"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1.02-.24c1.12.37 2.32.56 3.58.56a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.6 21 3 13.4 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.26.19 2.46.56 3.58a1 1 0 0 1-.25 1.02z"/></svg><span>Call</span></a>`:'<span class="agent-phone-unavailable">Call unavailable</span>'}</section>
@@ -536,7 +558,8 @@ async function openPuView(code, mode='successful'){
       <button class="evidence-grid-button" type="button" data-evidence-kind="media"><span>View Video</span></button>
       <button class="evidence-grid-button" type="button" data-evidence-kind="duplicate"><span>View Duplicate Copy</span></button>
     </section>
-    <section id="evidenceCategoryPanel" class="evidence-category-panel" hidden></section>`;
+    <section id="evidenceCategoryPanel" class="evidence-category-panel" hidden></section>
+    ${resolutionMarkup}`;
   document.querySelectorAll('[data-evidence-kind]').forEach(btn=>btn.addEventListener('click',()=>{
     const kind=btn.dataset.evidenceKind;
     const names={ec8a:'Form EC8A',eform:'E-Form',media:'Video',duplicate:'Duplicate Copy'};
@@ -550,6 +573,23 @@ async function openPuView(code, mode='successful'){
     panel.hidden=false;
     panel.scrollIntoView({behavior:'smooth',block:'nearest'});
   }));
+  const confirmBox=$('confirmWardDeclaration'),declareBtn=$('declareOverVotingBtn');
+  if(confirmBox&&declareBtn){
+    confirmBox.addEventListener('change',()=>{declareBtn.disabled=!confirmBox.checked;});
+    declareBtn.addEventListener('click',async()=>{
+      const noticeBox=$('overResolutionNotice');
+      if(!confirmBox.checked){notice('overResolutionNotice','Please confirm that you reviewed the originating evidence.',true);return;}
+      const finalPartyResults=originalPartyResults.map((x,i)=>{const input=document.querySelector(`[data-final-party-index="${i}"]`);return {party:String(x.party||''),votes:Number(input?.value)};});
+      if(finalPartyResults.some(x=>!Number.isInteger(x.votes)||x.votes<0)){notice('overResolutionNotice','Enter a valid non-negative whole number for every party.',true);return;}
+      declareBtn.disabled=true;declareBtn.textContent='Saving resolution…';
+      try{
+        const resolution={recordType:'over_voting_resolution',status:'resolved',resolutionType:'ward_consensus',sourceCollection:'ec8aResults',sourceEc8aId:overVotingSource.id,sourceReportType:overVotingSource.reportType||'over_voting',sourceCreatedAt:overVotingSource.createdAt||null,pollingUnitCode:String(code),pollingUnitName:title,wardCode:String(assignment.wardCode),ward:assignment.ward||'',lgaCode:assignment.lgaCode||'',lga:assignment.lga||'',stateCode:assignment.stateCode||'',state:assignment.state||'',electionType:assignment.electionType||overVotingSource.electionType||'',electionName:assignment.electionName||overVotingSource.electionName||'',candidateId:overVotingSource.candidateId||'',candidateName:overVotingSource.candidateName||'',originalPartyResults:originalPartyResults.map(x=>({party:String(x.party||''),votes:Number(x.votes??0)})),finalPartyResults,confirmedOriginatingEvidence:true,confirmationText:'I confirm this Ward declaration after reviewing the originating evidence.',resolvedBy:user.uid,resolvedByName:first(profile.fullName,agent.fullName,user.displayName,user.email,'Ward Collation Agent'),resolvedAt:serverTimestamp(),createdAt:serverTimestamp()};
+        await addDoc(collection(db,'overVotingResolutions'),resolution);
+        notice('overResolutionNotice','Over-voting resolution saved. The original EC8A remains unchanged; the agreed party figures are stored as a separate ward resolution.',false);
+        const card=$('overResolutionCard');if(card){card.innerHTML=`<h3>Ward Over-Voting Resolution</h3><div class="resolution-done"><strong>Resolved by ward collation</strong><p>The original polling-unit EC8A has been preserved. The agreed party figures are recorded separately.</p><div class="tablewrap"><table><thead><tr><th>Party</th><th>Agreed votes</th></tr></thead><tbody>${finalPartyResults.map(x=>`<tr><td>${esc(x.party||'—')}</td><td>${esc(x.votes)}</td></tr>`).join('')}</tbody></table></div><small>${esc(resolution.resolvedByName)} · just now</small></div>`;}
+      }catch(err){console.error('Over-voting resolution save failed',err);notice('overResolutionNotice',err.code==='permission-denied'?'Firebase denied this resolution. Firestore Rules must allow assigned Ward Collation Agents to create overVotingResolutions scoped to their ward.':`Could not save resolution: ${err.message||err}`,true);declareBtn.disabled=false;declareBtn.textContent='Declare Over-Voting case resolved';}
+    });
+  }
   $('detailModal').classList.add('show');syncBackButton();
 }
 async function openPuStatus(code){
