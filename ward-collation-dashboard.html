@@ -93,12 +93,12 @@
 }
 
 
-.submitted-evidence-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 18px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 18px;box-shadow:var(--shadow)}
+.submitted-evidence-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 18px;box-shadow:var(--shadow)}
 .evidence-grid-title{grid-column:1/-1;font-size:17px;font-weight:850;padding:3px 0 12px;border-bottom:2px solid #aeb8b5;margin-bottom:2px}
-.evidence-grid-button{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:78px;text-align:left;border:0;border-bottom:1px solid #b9c3c0;background:#fff;color:var(--ink);font-size:15px;font-weight:750;padding:15px 2px}
-.evidence-grid-button:nth-last-child(-n+2){border-bottom:0}
-.evidence-grid-button .arrow{font-size:22px;color:#52645a}
-.evidence-grid-button:focus-visible{outline:2px solid var(--g);outline-offset:2px}
+.evidence-grid-button{display:flex;align-items:center;justify-content:center;gap:8px;min-height:62px;text-align:center;border:1px solid var(--g);border-radius:11px;background:var(--g);color:#fff;font-size:14px;font-weight:750;padding:12px 10px;transition:background .15s,color .15s,border-color .15s}
+.evidence-grid-button.active{background:#e5e9e7;border-color:#c8d0cc;color:#33443b;box-shadow:inset 0 0 0 1px #d5dcd8}
+.evidence-grid-button .arrow{display:none}
+.evidence-grid-button:focus-visible{outline:2px solid var(--g);outline-offset:3px}
 .evidence-category-panel{margin-top:14px;border:1px solid var(--line);border-radius:13px;background:#fff;padding:15px}
 .evidence-category-panel h3{margin:0 0 10px;font-size:15px}
 .evidence-category-item{padding:12px 0;border-top:1px solid #edf1ee}
@@ -106,7 +106,7 @@
 .evidence-category-item strong{display:block;font-size:13px}
 .evidence-category-item .muted{font-size:11px;margin:4px 0 8px}
 .evidence-category-item img,.evidence-category-item video{display:block;width:100%;max-height:390px;object-fit:contain;border-radius:9px;background:#f2f5f3;margin:9px 0}
-@media(max-width:520px){.submitted-evidence-grid{gap:0 12px;padding:12px}.evidence-grid-button{font-size:13px;min-height:74px}.evidence-grid-title{font-size:16px}}
+@media(max-width:520px){.submitted-evidence-grid{gap:9px;padding:12px}.evidence-grid-button{font-size:12px;min-height:58px;padding:10px 6px}.evidence-grid-title{font-size:16px}}
 
 
 .results-list-panel .panelhead{display:block}
@@ -334,10 +334,18 @@ function openPuView(code){
     if(kind==='eform')return evidence.filter(d=>{const t=[d.evidenceType,d.fileType,d.fileName,d.reportType].join(' ').toLowerCase();return t.includes('e-form')||t.includes('eform')||t.includes('electronic form')});
     if(kind==='media')return [
       ...evidence.filter(d=>{
-        const k=evidenceKind(d);
-        return k==='video'||String(d.fileType||'').startsWith('image/')||String(d.mimeType||'').startsWith('image/');
+        const resource=String(first(d.cloudinaryResourceType,d.evidenceResourceType,'')).toLowerCase();
+        const mime=String(first(d.fileType,d.evidenceFileType,d.mimeType,'')).toLowerCase();
+        const type=String(first(d.evidenceType,d.fileType,d.mimeType,'')).toLowerCase();
+        return resource==='video'||mime.startsWith('video/')||type.includes('video');
       }),
-      ...records.filter(d=>d._collection==='pollingUnitReports'&&first(d.evidenceUrl,d.cloudinaryUrl,d.secure_url,''))
+      ...records.filter(d=>{
+        if(d._collection!=='pollingUnitReports')return false;
+        const resource=String(first(d.cloudinaryResourceType,d.evidenceResourceType,'')).toLowerCase();
+        const mime=String(first(d.fileType,d.evidenceFileType,d.mimeType,'')).toLowerCase();
+        const type=String(first(d.evidenceType,d.reportType,'')).toLowerCase();
+        return !!first(d.evidenceUrl,d.cloudinaryUrl,d.secure_url,'') && (resource==='video'||mime.startsWith('video/')||type.includes('video'));
+      })
     ];
     if(kind==='duplicate')return evidence.filter(d=>evidenceKind(d)==='duplicate'||[d.evidenceType,d.fileName,d.fileType].join(' ').toLowerCase().includes('duplicate'));
     return [];
@@ -370,16 +378,21 @@ function openPuView(code){
     <div class="detailgrid"><div class="wide"><small>Polling unit</small><b>${esc(title)}</b></div><div><small>PU code</small><b>${esc(code)}</b></div><div><small>Assigned ward</small><b>${esc(assignment.ward||'—')}</b></div></div>
     <section class="submitted-evidence-grid" aria-label="Submitted evidence">
       <div class="evidence-grid-title">Submitted evidence</div>
-      <button class="evidence-grid-button" type="button" data-evidence-kind="ec8a"><span>View Form EC8A</span><span class="arrow">›</span></button>
-      <button class="evidence-grid-button" type="button" data-evidence-kind="eform"><span>View E-Form</span><span class="arrow">›</span></button>
-      <button class="evidence-grid-button" type="button" data-evidence-kind="media"><span>View Video / Picture</span><span class="arrow">›</span></button>
-      <button class="evidence-grid-button" type="button" data-evidence-kind="duplicate"><span>View Duplicate Copy</span><span class="arrow">›</span></button>
+      <button class="evidence-grid-button" type="button" data-evidence-kind="ec8a"><span>View Form EC8A</span></button>
+      <button class="evidence-grid-button" type="button" data-evidence-kind="eform"><span>View E-Form</span></button>
+      <button class="evidence-grid-button" type="button" data-evidence-kind="media"><span>View Video</span></button>
+      <button class="evidence-grid-button" type="button" data-evidence-kind="duplicate"><span>View Duplicate Copy</span></button>
     </section>
     <section id="evidenceCategoryPanel" class="evidence-category-panel" hidden></section>
     ${otherHtml}`;
   document.querySelectorAll('[data-evidence-kind]').forEach(btn=>btn.addEventListener('click',()=>{
     const kind=btn.dataset.evidenceKind;
-    const names={ec8a:'Form EC8A',eform:'E-Form',media:'Video / Picture',duplicate:'Duplicate Copy'};
+    const names={ec8a:'Form EC8A',eform:'E-Form',media:'Video',duplicate:'Duplicate Copy'};
+    document.querySelectorAll('[data-evidence-kind]').forEach(item=>{
+      const active=item===btn;
+      item.classList.toggle('active',active);
+      item.setAttribute('aria-pressed',active?'true':'false');
+    });
     const panel=$('evidenceCategoryPanel');
     panel.innerHTML=`<h3>${names[kind]}</h3>${categoryItems(kind)}`;
     panel.hidden=false;
