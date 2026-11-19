@@ -18,6 +18,9 @@
 .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:16px 0}.stat{background:#fff;padding:16px;box-shadow:var(--shadow)}.stat strong{font-size:25px;display:block;line-height:1.2}.panel{background:#fff;border:1px solid var(--line);border-radius:15px;padding:18px;margin-top:16px;box-shadow:var(--shadow);min-width:0}.panelhead{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}.panel h2{font-size:16px;margin:0}.muted{color:var(--muted);font-size:11px;line-height:1.6}.filters{display:flex;gap:9px;flex-wrap:wrap}.filters input,.filters select{border:1px solid var(--line);border-radius:9px;padding:10px;background:#fbfcfb;color:var(--ink);min-width:150px}.filters input{flex:1;min-width:180px}
 .tablewrap{overflow:auto;width:100%}table{width:100%;border-collapse:collapse;min-width:680px}th,td{text-align:left;padding:11px 10px;border-bottom:1px solid #edf1ee;font-size:11px;vertical-align:top}th{font-size:10px;color:#718178;text-transform:uppercase;letter-spacing:.6px;background:#fafcfb;position:sticky;top:0}td strong{font-size:12px}.tag{display:inline-block;border-radius:30px;padding:5px 8px;background:#eef6f1;color:#17603f;font-size:10px;font-weight:700}.tag.warn{background:#fff5e5;color:#98600a}.tag.bad{background:#fff0ef;color:#a52c25}.lga-status-buttons{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}.lga-status-btn{border:0;border-radius:22px;padding:7px 10px;background:#89928d;color:#fff;font-size:10px;font-weight:750;white-space:nowrap}.lga-status-btn.active.over{background:#08734f}.lga-status-btn.active.violence{background:#b42318}.lga-status-btn.active.success{background:#08734f}.lga-collation-status{display:inline-block;margin-top:8px;border-radius:20px;padding:6px 10px;background:#fff0ef;color:#9b3931;border:1px solid #f3d1ce;font-size:10px;font-weight:800}.lga-party-table{min-width:920px}.lga-party-table th:first-child,.lga-party-table td:first-child{min-width:280px}.lga-party-table td:not(:first-child),.lga-party-table th:not(:first-child){text-align:center;min-width:66px}.lga-party-table tfoot th{background:#eaf5ef;color:#17603f;font-size:12px}.lga-row-name{font-size:12px;font-weight:800;line-height:1.4}.lga-row-agent{font-size:10px;color:var(--muted);margin-top:3px}.empty{padding:28px;text-align:center;color:var(--muted);font-size:12px}.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field.full{grid-column:1/-1}.checkrow{display:flex;align-items:center;gap:9px;font-size:12px;margin:10px 0}.checkrow input{width:auto}.footer{padding:22px 0;color:#9aa69f;font-size:10px}
 .modal{position:fixed;inset:0;background:#0b2018a8;z-index:80;display:none;align-items:center;justify-content:center;padding:18px}.modal.show{display:flex}.modalbox{background:#fff;border-radius:15px;width:min(850px,100%);max-height:88vh;overflow:auto;padding:20px}.modalhead{display:flex;justify-content:space-between;gap:12px;align-items:center}.modalhead h2{font-size:17px;margin:0}.xbtn{border:0;background:#f1f5f2;border-radius:8px;padding:8px 11px}.detailgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:15px 0}.detailgrid div{background:#f8faf9;padding:11px;border-radius:9px}.detailgrid .wide{grid-column:1/-1}.detailgrid small{display:block;color:var(--muted);font-size:10px;margin-bottom:5px}.detailgrid b{font-size:12px;overflow-wrap:anywhere}
+
+.pu-drill-row td{background:#f8fbf9!important;padding:10px!important}.pu-drill-panel{border:1px solid var(--line);border-radius:10px;background:#fff;padding:10px;min-width:0}.pu-drill-head{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:9px}.pu-drill-head strong{font-size:11px}.pu-drill-head span{font-size:10px;color:var(--muted)}.pu-drill-table{width:100%;min-width:650px;border-collapse:collapse}.pu-drill-table th,.pu-drill-table td{padding:9px 7px;border-bottom:1px solid #edf1ee;font-size:10px;text-align:center}.pu-drill-table th:first-child,.pu-drill-table td:first-child{text-align:left;min-width:190px}.pu-drill-table th{background:#edf5f0;color:#315b47}.pu-drill-name{display:block;font-weight:800;font-size:10px}.pu-drill-code{display:block;color:var(--muted);font-size:9px;margin-top:3px}.pu-drill-status{display:inline-block;margin-top:6px;padding:4px 7px;border-radius:20px;background:#fff5e5;color:#98600a;font-size:9px;font-weight:800}.pu-drill-status.received{background:#eaf5ef;color:#17603f}.pu-drill-actions{display:flex;gap:4px;margin-top:7px}.pu-drill-actions .lga-status-btn{font-size:8px;padding:5px 7px;flex:1}
+
 @media(max-width:900px){.sidebar{width:215px;flex-basis:215px}.content{padding:20px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:650px){.app{display:block}.sidebar{display:none;position:fixed;z-index:50;inset:0 auto 0 0;width:280px;box-shadow:15px 0 40px #102b1c22}.sidebar.open{display:flex}.topbar{height:58px;padding:0 13px}.menu{display:block}.topbar strong{font-size:12px}.pill{display:none}.content{padding:17px 13px 28px}h1{font-size:27px}.assigned{padding:15px}.geo{grid-template-columns:1fr 1fr;gap:7px}.stats{gap:8px}.stat{padding:12px}.stat strong{font-size:22px}.panel{padding:14px}.grid2,.detailgrid{grid-template-columns:1fr}.field.full,.detailgrid .wide{grid-column:auto}}
 
@@ -223,10 +226,37 @@ function renderWards(){
   const votes=r?wardPartyMap(r):{};
   const cells=LGA_PARTIES.map(p=>{const n=Number(votes[p]||0);totalsByParty[p]+=n;return `<td class="${r?'':'no-result waiting-cell'}">${r?n.toLocaleString():'00'}</td>`}).join('');
   const status=r?'Collation':'Awaiting';
-  return `<tr><td><span class="lga-row-name">${esc(recordName(w))}</span><span class="lga-row-code">${esc(code)}</span><div class="lga-status-buttons"><button class="lga-status-btn ${flags.over?'active over':''}" type="button" disabled>Expose</button><button class="lga-status-btn ${flags.violence?'active violence':''}" type="button" disabled>Violence</button><button class="lga-status-btn ${flags.success?'active success':''}" type="button" disabled>Successful</button></div><div class="lga-collation-status ${r?'received':'pending'}">Status: ${status}</div></td>${cells}</tr>`;
+  return `<tr><td><span class="lga-row-name">${esc(recordName(w))}</span><span class="lga-row-code">${esc(code)}</span><div class="lga-status-buttons"><button class="lga-status-btn ${flags.over?'active over':''}" type="button" disabled>Expose</button><button class="lga-status-btn ${flags.violence?'active violence':''}" type="button" disabled>Violence</button><button class="lga-status-btn ${flags.success?'active success':''}" type="button" data-expand-pus="${esc(code)}" aria-expanded="false">Successful · View PUs</button></div><div class="lga-collation-status ${r?'received':'pending'}">Status: ${status}</div></td>${cells}</tr><tr class="pu-drill-row" id="pu-drill-${esc(code)}" hidden><td colspan="${LGA_PARTIES.length+1}"><div class="pu-drill-panel" id="pu-panel-${esc(code)}"><div class="empty">Polling units will load when opened.</div></div></td></tr>`;
  }).join('');
  const totalCells=LGA_PARTIES.map(p=>`<td>${totalsByParty[p].toLocaleString()}</td>`).join('');
  $('wardTable').innerHTML=rows.length?`<div class="ec8a-compare-scroll"><table class="lga-party-table"><thead><tr><th>WARD</th>${LGA_PARTIES.map(p=>`<th>${esc(p)}</th>`).join('')}</tr></thead><tbody>${body}</tbody><tfoot><tr><td><span class="lga-row-name">TOTAL VOTES</span><span class="lga-row-code">All registered wards</span></td>${totalCells}</tr></tfoot></table></div>`:'<div class="empty">No wards match this filter.</div>';
+}
+function puCodeOf(r){return String(first(r.pollingUnitCode,r.geography?.pollingUnitCode,r.code,r.unitCode,r.id,'' )).trim()}
+function puNameOf(r){return first(r.name,r.pollingUnitName,r.unitName,r.label,r.title,r.code,r.id,'Unnamed polling unit')}
+function puPartyMap(r){const list=Array.isArray(r.partyResults)?r.partyResults:[];const out={};list.forEach(x=>{const p=String(first(x.party,x.partyName,x.abbreviation,x.partyCode,x.code,'')).trim().toUpperCase();const n=Number(x.votes??x.voteCount??x.totalVotes);if(p&&Number.isFinite(n))out[p]=n});return out}
+function puFlags(records){const over=records.some(x=>x._collection==='ec8aResults'&&String(x.reportType||'').toLowerCase()==='over_voting');const violence=records.some(x=>{const t=[x.reportType,x.category,x.incidentType,x.details,x.description].filter(Boolean).join(' ').toLowerCase();return t.includes('violence')||t.includes('violent')});const success=records.some(x=>x._collection==='ec8aResults'&&String(x.reportType||'').toLowerCase()==='successful_election');return {over,violence,success}}
+async function toggleWardPollingUnits(wardCode,button){
+ const row=$(`pu-drill-${wardCode}`),panel=$(`pu-panel-${wardCode}`);if(!row||!panel)return;
+ const opening=row.hidden;row.hidden=!opening;button.setAttribute('aria-expanded',String(opening));
+ if(!opening)return;
+ if(panel.dataset.loaded==='true')return;
+ panel.innerHTML='<div class="empty">Loading all registered polling units and their submissions…</div>';
+ try{
+  const [puSnap,ecSnap,reportSnap,evidenceSnap]=await Promise.all([
+   getDocs(query(collection(db,'geographyPollingUnits'),where('wardCode','==',String(wardCode)))),
+   getDocs(query(collection(db,'ec8aResults'),where('wardCode','==',String(wardCode)),where('electionType','==',String(assignment.electionType)))),
+   getDocs(query(collection(db,'pollingUnitReports'),where('wardCode','==',String(wardCode)),where('electionType','==',String(assignment.electionType)))),
+   getDocs(query(collection(db,'evidenceUploads'),where('wardCode','==',String(wardCode)),where('electionType','==',String(assignment.electionType))))
+  ]);
+  const units=puSnap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>puNameOf(a).localeCompare(puNameOf(b),undefined,{numeric:true,sensitivity:'base'}));
+  const sources=[...ecSnap.docs.map(d=>({id:d.id,...d.data(),_collection:'ec8aResults'})),...reportSnap.docs.map(d=>({id:d.id,...d.data(),_collection:'pollingUnitReports'})),...evidenceSnap.docs.map(d=>({id:d.id,...d.data(),_collection:'evidenceUploads'}))];
+  const byCode=new Map();sources.forEach(x=>{const k=puCodeOf(x);if(!k)return;if(!byCode.has(k))byCode.set(k,[]);byCode.get(k).push(x)});
+  const totals=Object.fromEntries(LGA_PARTIES.map(p=>[p,0]));let submitted=0;
+  const rows=units.map(u=>{const code=String(first(u.pollingUnitCode,u.code,u.unitCode,u.id,''));const records=byCode.get(code)||[];const flags=puFlags(records);const latest=records.filter(x=>x._collection==='ec8aResults'&&x.reportType==='successful_election').sort((a,b)=>dateMs(b.createdAt)-dateMs(a.createdAt))[0];const votes=latest?wardPartyMap(latest):{};if(latest)submitted++;const cells=LGA_PARTIES.map(p=>{const n=Number(votes[p]||0);totals[p]+=n;return `<td>${latest?n.toLocaleString():'00'}</td>`}).join('');const status=latest?'Submitted':records.length?'Records received':'Awaiting';return `<tr><td><span class="pu-drill-name">${esc(puNameOf(u))}</span><span class="pu-drill-code">${esc(code)}</span><div class="pu-drill-actions"><button class="lga-status-btn ${flags.over?'active over':''}" type="button" disabled>Expose</button><button class="lga-status-btn ${flags.violence?'active violence':''}" type="button" disabled>Violence</button><button class="lga-status-btn ${flags.success?'active success':''}" type="button" disabled>Successful</button></div><span class="pu-drill-status ${latest?'received':''}">Status: ${status}</span></td>${cells}</tr>`}).join('');
+  const totalCells=LGA_PARTIES.map(p=>`<td>${totals[p].toLocaleString()}</td>`).join('');
+  panel.innerHTML=`<div class="pu-drill-head"><strong>${esc(first(units[0]?.wardName,units[0]?.ward, 'Ward'))} · All registered polling units</strong><span>${submitted} of ${units.length} with successful EC8A submissions</span></div>${units.length?`<div class="tablewrap"><table class="pu-drill-table"><thead><tr><th>POLLING UNIT</th>${LGA_PARTIES.map(p=>`<th>${esc(p)}</th>`).join('')}</tr></thead><tbody>${rows}</tbody><tfoot><tr><th>TOTAL VOTES</th>${totalCells}</tr></tfoot></table></div>`:'<div class="empty">No polling units are registered under this ward in geographyPollingUnits.</div>'}`;
+  panel.dataset.loaded='true';
+ }catch(err){console.error('Polling-unit drilldown failed',err);panel.innerHTML=`<div class="empty">Could not load polling units or their submissions. Check Firestore Rules for geographyPollingUnits, ec8aResults, pollingUnitReports and evidenceUploads. (${esc(err.code||err.message)})</div>`}
 }
 function renderTotals(){
  const rows=eligibleWardCollations().sort((a,b)=>String(a.ward||a.wardName||'').localeCompare(String(b.ward||b.wardName||''),undefined,{numeric:true}));
@@ -266,30 +296,14 @@ async function loadData(){
 function renderAll(){renderOverview();renderWards();renderTotals();renderHistory()}
 async function loadProfile(u){
  user=u;
- // The main index page has already authenticated this user. Reuse that same
- // Firebase session; do not require a second username/password entry.
- const userSnap=await getDoc(doc(db,'users',u.uid));
- const userData=userSnap.exists()?userSnap.data():{};
- let agentData={},agentReadError=null;
- try{
-  const agentSnap=await getDoc(doc(db,'electionAgents',u.uid));
-  if(agentSnap.exists())agentData=agentSnap.data();
- }catch(err){
-  agentReadError=err;
-  console.warn('Could not read electionAgents profile; trying users profile.',err);
- }
- // Prefer the dedicated agent assignment when available. Fall back to users/{uid}
- // when the agent document is absent or its read is blocked by Firestore Rules.
- const a=Object.keys(agentData).length?agentData:userData;
- const rawRole=String(a.agentRole||a.role||userData.agentRole||userData.role||'').trim().toLowerCase().replace(/[\s-]+/g,'_');
- const isLgaRole=['local_government_collation_agent','lga_collation_agent','local_government_collation'].includes(rawRole);
- if(!isLgaRole)throw new Error('This signed-in account is not assigned to the Local Government Collation Agent role. Ask the Super Admin to check the role in users/{uid}.');
- if(a.active===false||a.status==='disabled'||userData.active===false||userData.status==='disabled')throw new Error('Your account is disabled. Contact the Super Admin.');
- profile={...userData,...a};
+ const [agentSnap,userSnap]=await Promise.all([getDoc(doc(db,'electionAgents',u.uid)),getDoc(doc(db,'users',u.uid))]);
+ if(!agentSnap.exists())throw new Error('No electionAgents profile exists for this account. Ask the Super Admin to verify the agent registration.');
+ const a=agentSnap.data();if(!roleOK(a))throw new Error('This account is not an active Local Government Collation Agent. Expected agentRole=local_government_collation_agent, active=true and status=active.');
+ profile=userSnap.exists()?userSnap.data():a;
  loadAssignment(a);
- $('sideName').textContent=first(profile.fullName,u.displayName,u.email,'LGA Agent');
+ $('sideName').textContent=first(profile.fullName,a.fullName,u.displayName,u.email,'LGA Agent');
  $('sideScope').textContent=`${assignment.lga} · ${assignment.state}`;
- $('topName').textContent=first(profile.fullName,u.email,'');
+ $('topName').textContent=first(profile.fullName,a.fullName,u.email,'');
  $('welcomeTitle').textContent=`${assignment.lga} Collation Dashboard`;
  $('lgaTitle').textContent=assignment.lga||'Assigned Local Government';
  $('stateTitle').textContent=assignment.state||'Assigned State';
@@ -302,11 +316,12 @@ async function loadProfile(u){
 $('loginForm').addEventListener('submit',async e=>{e.preventDefault();const b=$('loginBtn');b.disabled=true;b.textContent='Signing in…';try{await signInWithEmailAndPassword(auth,$('loginEmail').value.trim(),$('loginPassword').value)}catch(err){notice('loginNotice',err.message||'Sign in failed.',true)}finally{b.disabled=false;b.textContent='Sign in securely'}});
 async function logout(){unsubs.forEach(f=>f());unsubs=[];await signOut(auth);window.location.replace('index.html')}
 $('logoutBtn').addEventListener('click',logout);
-onAuthStateChanged(auth,async u=>{if(!u){$('appView').classList.add('hidden');$('loginView').classList.remove('hidden');return}try{$('loginView').classList.add('hidden');$('appView').classList.remove('hidden');await loadProfile(u)}catch(err){console.error(err);$('appView').classList.add('hidden');$('loginView').classList.remove('hidden');notice('loginNotice',err.message||'Unable to load account. Your sign-in is still active; do not enter your password again until the account assignment is checked.',true);/* Keep the Firebase session alive; do not sign the user out on profile-loading errors. */}});
+onAuthStateChanged(auth,async u=>{if(!u){$('appView').classList.add('hidden');$('loginView').classList.remove('hidden');return}try{$('loginView').classList.add('hidden');$('appView').classList.remove('hidden');await loadProfile(u)}catch(err){console.error(err);$('appView').classList.add('hidden');$('loginView').classList.remove('hidden');notice('loginNotice',err.message||'Unable to load account.',true);await signOut(auth)}});
 document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));
 document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.goto)));
 $('menuBtn').addEventListener('click',()=>$('sidebar').classList.toggle('open'));
 $('wardSearch').addEventListener('input',renderWards);$('wardStatus').addEventListener('change',renderWards);$('refreshBtn').addEventListener('click',()=>loadData());
+$('wardTable').addEventListener('click',e=>{const b=e.target.closest('[data-expand-pus]');if(b)toggleWardPollingUnits(b.dataset.expandPus,b)});
 $('closeDetail').addEventListener('click',()=>$('detailModal').classList.remove('show'));$('detailModal').addEventListener('click',e=>{if(e.target===$('detailModal'))$('detailModal').classList.remove('show')});
 $('lgaForm').addEventListener('submit',async e=>{
  e.preventDefault();const btn=$('saveLgaBtn');btn.disabled=true;btn.textContent='Saving…';
