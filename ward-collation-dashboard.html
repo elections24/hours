@@ -120,31 +120,33 @@
 .result-view:active,.result-view:hover{background:#075b40!important}
 
 /* Ward overview header and polling-unit row status */
-.ward-topbar{position:sticky;top:0;z-index:60;display:grid!important;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;min-height:76px;box-shadow:0 2px 8px #163b2910}
+.ward-topbar{position:sticky;top:0;z-index:60;display:grid!important;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px;min-height:60px;padding:6px 18px!important;box-shadow:0 2px 8px #163b2910}
 .top-context{display:flex;flex-direction:column;gap:5px;min-width:0}
 .top-context-line{display:flex;align-items:center;gap:9px;min-width:0;flex-wrap:nowrap}.top-context-line strong{font-size:16px;line-height:1.25;color:var(--ink);white-space:nowrap}.top-context-line span{font-size:12px;color:var(--muted);line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.top-agent{font-size:13px;font-weight:800;color:var(--ink);line-height:1.2}
 .top-context span{font-size:12px;color:var(--muted);line-height:1.35}
 .top-agent{justify-self:start;text-align:left;white-space:nowrap}
 .top-actions{justify-self:end}
 @media(max-width:620px){
- .ward-topbar{grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:10px 14px;min-height:72px}
+ .ward-topbar{grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:6px 14px!important;min-height:58px}
  .top-context-line{gap:7px}
  .top-context-line strong{font-size:14px}
  .top-context-line span{font-size:11px}
  .top-agent{font-size:12px}
+ .top-context{gap:3px}
  .top-actions{grid-column:2;grid-row:1 / span 2}
 }
 
 
 /* Polling-unit dashboard filter */
 .pu-dashboard-filter{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px;padding:10px 12px;background:#f8fbf9;border:1px solid var(--line);border-radius:11px}.pu-dashboard-filter label{font-size:11px;font-weight:800;color:var(--ink)}.pu-dashboard-filter select{flex:1;min-width:190px;max-width:360px;border:1px solid #d8e5dd;border-radius:9px;padding:10px 12px;background:#fff;color:var(--ink);font-size:12px;font-weight:650;outline:none}.pu-dashboard-filter select:focus{border-color:var(--g);box-shadow:0 0 0 3px #08734f18}.pu-filter-count{font-size:10px;color:var(--muted);font-weight:650}@media(max-width:600px){.pu-dashboard-filter{gap:7px}.pu-dashboard-filter select{max-width:none;width:100%;flex-basis:100%}}
+.ward-back-btn{min-width:82px;padding:9px 16px;border:0;border-radius:10px;background:var(--g);color:#fff;font-size:12px;font-weight:800;transition:background .15s,color .15s}.ward-back-btn:disabled{background:#edf1ee;color:#9aa69f;cursor:not-allowed;opacity:1}.ward-back-btn:not(:disabled):active{background:var(--gd)}
 </style>
 </head>
 <body>
 <div id="loginScreen" class="login-wrap hidden" aria-hidden="true"></div>
 <div id="appScreen" class="app hidden"><main class="main"><header class="topbar ward-topbar"><span id="topTitle" hidden>Ward operations</span>
   <div class="top-context"><div class="top-context-line"><strong id="wardTitle">Loading assigned ward…</strong><span id="wardAddress">Loading LGA · State…</span></div><div class="top-agent"><span id="agentName">Ward Agent</span></div></div>
-  <div class="top-actions"><button class="btn secondary" id="topBackBtn" type="button" disabled aria-label="Go back">← Back</button></div>
+  <div class="top-actions"><button class="ward-back-btn" id="topBackBtn" type="button" disabled aria-label="Go back">Back</button></div>
 </header><div class="content">
 <section class="view active" id="view-overview">
 <div class="panel ec8a-compare-panel">
@@ -153,14 +155,12 @@
   <div id="ec8aCompareTable" class="ec8a-compare-scroll"><div class="empty">Loading polling-unit results…</div></div>
 </div>
 <div class="home-cards">
-  <button class="home-card" type="button" data-go="submissions" data-filter="over_voting">
-    <span class="home-icon">!</span><span class="home-copy"><strong>Over-Voting PU</strong><small>Review polling units with over-voting EC8A reports</small></span><span class="home-arrow">›</span>
+
+  <button class="home-card primary upload-card" type="button" data-go="collation">
+    <span class="home-icon">↑</span><span class="home-copy"><strong>Upload</strong><small>Submit your ward collation evidence after reviewing polling-unit uploads</small></span><span class="home-arrow">›</span>
   </button>
   <button class="home-card" type="button" data-go="submissions" data-filter="backup">
     <span class="home-icon">⚑</span><span class="home-copy"><strong>Backup Request</strong><small>Review support requests submitted by polling-unit agents</small></span><span class="home-arrow">›</span>
-  </button>
-  <button class="home-card primary upload-card" type="button" data-go="collation">
-    <span class="home-icon">↑</span><span class="home-copy"><strong>Upload</strong><small>Submit your ward collation evidence after reviewing polling-unit uploads</small></span><span class="home-arrow">›</span>
   </button>
   <button class="home-card logout-card" type="button" id="homeLogoutBtn">
     <span class="home-icon">↗</span><span class="home-copy"><strong>Log Out</strong><small>End your secure session</small></span><span class="home-arrow">›</span>
@@ -390,6 +390,8 @@ async function openPuView(code){
   const pu=p||{pollingUnitName:first(records[0]&&nameOf(records[0]),'Polling unit')};
   const title=puNameOf(pu);
   $('detailTitle').textContent=`${title} — Submitted evidence`;
+  $('detailContent').innerHTML='<div class="empty">Loading submitted evidence…</div>';
+  $('detailModal').classList.add('show');syncBackButton();
   // Resolve the polling-unit agent from the source submission, then from the
   // Super Admin agent assignment in electionAgents/{uid} for this exact PU.
   const successfulRecord=records.filter(d=>d._collection==='ec8aResults'&&String(d.reportType||'').toLowerCase()==='successful_election').sort((a,b)=>dateMs(b.createdAt)-dateMs(a.createdAt))[0];
