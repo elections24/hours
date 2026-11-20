@@ -289,6 +289,31 @@
     </button>
   </div>
 </div>
+<div id="violenceUploadMenu" class="successful-upload-menu" hidden>
+  <button type="button" class="btn secondary collation-workspace-back" id="backToViolenceStatuses">← Back</button>
+  <div class="successful-upload-options">
+    <button class="successful-upload-card" type="button" data-violence-option="ec40g">
+      <span class="successful-upload-icon">⇧</span>
+      <strong>Upload Form EC40G</strong>
+      <span>Choose a photo or PDF copy of Form EC40G, then submit</span>
+    </button>
+    <button class="successful-upload-card" type="button" data-violence-option="eform">
+      <span class="successful-upload-icon">☰</span>
+      <strong>Fill E-Form</strong>
+      <span>Open ward E-Form</span>
+    </button>
+    <button class="successful-upload-card" type="button" data-violence-option="duplicate">
+      <span class="successful-upload-icon">⇧</span>
+      <strong>Upload Duplicate Copy</strong>
+      <span>Choose a duplicate copy, then submit</span>
+    </button>
+    <button class="successful-upload-card" type="button" data-violence-option="video">
+      <span class="successful-upload-icon video-icon">▶</span>
+      <strong>Upload Video</strong>
+      <span>Choose a video, then submit</span>
+    </button>
+  </div>
+</div>
 
 <div id="wardExposePage" hidden>
   <button type="button" class="btn secondary collation-workspace-back" id="backFromExpose">← Back</button>
@@ -872,33 +897,18 @@ function chooseCollationCategory(category){
   const labels={successful_ward_collation:'Successful Ward Collation',violence:'Violence',exposed:'Exposed'};
   if(!labels[category])return;
   selectedCollationCategory=category;
-  $('collationChooser').hidden=true;
+  ['collationChooser','successfulUploadMenu','violenceUploadMenu','collationWorkspace','wardExposePage','wardEvidenceUploadPage','wardEc8aFormPage'].forEach(id=>$(id).hidden=true);
   if(category==='successful_ward_collation'){
-    $('collationWorkspace').hidden=true;
-    $('wardEvidenceUploadPage').hidden=true;
-    $('wardEc8aFormPage').hidden=true;
-    $('collationChooser').hidden=true;
     $('successfulUploadMenu').hidden=false;
-    window.scrollTo({top:0,behavior:'smooth'});
-    return;
-  }
-  $('successfulUploadMenu').hidden=true;
-  $('wardEvidenceUploadPage').hidden=true;
-  $('wardEc8aFormPage').hidden=true;
-  $('collationWorkspace').hidden=true;
-  if(category==='exposed'){
+  }else if(category==='violence'){
+    $('violenceUploadMenu').hidden=false;
+  }else{
     $('wardExposePage').hidden=false;
     $('exposeOriginalFile').value='';$('exposeAlteredFile').value='';
     $('exposeOriginalMeta').textContent='';$('exposeAlteredMeta').textContent='';
     $('exposeDescription').value='';$('exposeConfirm').checked=false;
     $('exposeStatus').className='notice';$('exposeStatus').textContent='';
-    window.scrollTo({top:0,behavior:'smooth'});return;
   }
-  $('collationWorkspace').hidden=false;
-  const heading=$('collationWorkspace').querySelector('h1');
-  if(heading)heading.textContent=labels[category];
-  const formHeading=$('collationForm').querySelector('h2');
-  if(formHeading)formHeading.textContent=labels[category]+' details';
   window.scrollTo({top:0,behavior:'smooth'});
 }
 document.querySelectorAll('[data-collation-category]').forEach(btn=>btn.addEventListener('click',()=>chooseCollationCategory(btn.dataset.collationCategory)));
@@ -909,7 +919,10 @@ const WARD_CLOUDINARY_UPLOAD_PRESET="Obaestate";
 const wardEvidenceTypes={
   ec8a:{title:"Evidence file",subtitle:"Upload a clear photo of the completed EC8A form.",accept:"image/*",resource:"image",type:"successful_ec8a_photo"},
   duplicate:{title:"Duplicate copy",subtitle:"Upload the duplicate EC8A photo or PDF copy.",accept:"image/*,.pdf",resource:"image",type:"successful_ec8a_duplicate"},
-  video:{title:"Upload Video",subtitle:"Choose a video from your phone gallery and submit it as supporting evidence.",accept:"video/*",resource:"video",type:"successful_election_video"}
+  video:{title:"Upload Video",subtitle:"Choose a video from your phone gallery and submit it as supporting evidence.",accept:"video/*",resource:"video",type:"successful_election_video",reportType:"successful_election",reportStatus:"Successful Election"},
+  violenceEc40g:{title:"Upload Form EC40G",subtitle:"Choose a photo or PDF copy of Form EC40G.",accept:"image/*,.pdf",resource:"auto",type:"violence_ec40g",reportType:"violence",reportStatus:"Violence"},
+  violenceDuplicate:{title:"Upload Duplicate Copy",subtitle:"Choose the duplicate copy for the violence report.",accept:"image/*,.pdf",resource:"auto",type:"violence_duplicate_copy",reportType:"violence",reportStatus:"Violence"},
+  violenceVideo:{title:"Upload Video",subtitle:"Choose a video supporting the violence report.",accept:"video/*",resource:"video",type:"violence_video",reportType:"violence",reportStatus:"Violence"}
 };
 let activeWardEvidenceKey="",wardEvidenceObjectUrl="";
 const wardEvidenceInput=$('wardEvidenceFileInput'),wardEvidenceSubmit=$('wardEvidenceSubmit');
@@ -926,6 +939,8 @@ function openWardEvidenceUpload(key){
   $('wardEvidenceStatus').textContent="";
   wardEvidenceSubmit.disabled=false;wardEvidenceSubmit.textContent="Submit";
   $('successfulUploadMenu').hidden=true;
+  $('violenceUploadMenu').hidden=true;
+  $('wardExposePage').hidden=true;
   $('wardEc8aFormPage').hidden=true;
   $('wardEvidenceUploadPage').hidden=false;
   window.scrollTo({top:0,behavior:'smooth'});
@@ -945,7 +960,7 @@ wardEvidenceInput.addEventListener('change',()=>{
   const file=wardEvidenceInput.files?.[0];if(!file)return;
   const cfg=wardEvidenceTypes[activeWardEvidenceKey];
   const valid=cfg.resource==='video'?file.type.startsWith('video/'):
-    (file.type.startsWith('image/')||(activeWardEvidenceKey==='duplicate'&&(file.type==='application/pdf'||file.name.toLowerCase().endsWith('.pdf'))));
+    (file.type.startsWith('image/')||((cfg.accept||'').includes('.pdf')&&(file.type==='application/pdf'||file.name.toLowerCase().endsWith('.pdf'))));
   if(!valid){wardEvidenceInput.value="";$('wardEvidenceStatus').textContent="This file type is not supported for this upload.";return}
   previewWardEvidence(file);
 });
@@ -972,7 +987,7 @@ async function uploadWardEvidence(){
       electionType:assignment.electionType||"",electionName:assignment.electionName||"",
       geography:{...assignment},stateCode:assignment.stateCode||"",lgaCode:assignment.lgaCode||"",wardCode:assignment.wardCode||"",
       state:assignment.state||"",lga:assignment.lga||"",ward:assignment.ward||"",
-      evidenceType:cfg.type,reportType:"successful_election",reportStatus:"Successful Election",
+      evidenceType:cfg.type,reportType:cfg.reportType||"successful_election",reportStatus:cfg.reportStatus||"Successful Election",
       fileName:file.name,fileType:file.type||"",fileSize:file.size,
       cloudinaryUrl:result.secure_url||"",cloudinaryPublicId:result.public_id||"",
       cloudinaryResourceType:result.resource_type||cfg.resource,cloudinaryFormat:result.format||"",
@@ -993,9 +1008,21 @@ async function uploadWardEvidence(){
 }
 wardEvidenceSubmit.addEventListener('click',uploadWardEvidence);
 $('backFromEvidenceUpload').addEventListener('click',()=>{
-  $('wardEvidenceUploadPage').hidden=true;$('successfulUploadMenu').hidden=false;
+  $('wardEvidenceUploadPage').hidden=true;
+  if(selectedCollationCategory==='violence')$('violenceUploadMenu').hidden=false;
+  else $('successfulUploadMenu').hidden=false;
   wardEvidenceInput.disabled=false;window.scrollTo({top:0,behavior:'smooth'});
 });
+$('backToViolenceStatuses').addEventListener('click',()=>{
+  $('violenceUploadMenu').hidden=true;$('collationChooser').hidden=false;window.scrollTo({top:0,behavior:'smooth'});
+});
+document.querySelectorAll('[data-violence-option]').forEach(btn=>btn.addEventListener('click',()=>{
+  const key=btn.dataset.violenceOption;
+  if(key==='eform'){openWardEc8aForm();return}
+  const map={ec40g:'violenceEc40g',duplicate:'violenceDuplicate',video:'violenceVideo'};
+  openWardEvidenceUpload(map[key]);
+}));
+
 document.querySelectorAll('[data-success-option]').forEach(btn=>btn.addEventListener('click',()=>{
   const key=btn.dataset.successOption;
   if(key==='eform'){openWardEc8aForm();return}
@@ -1076,7 +1103,7 @@ function prepareWardEc8a(){
   $('ec8aCandidate').textContent=first(assignment.candidateName,agent.candidateName,profile.candidateName,agent.candidate,profile.candidate,'Not assigned');
 }
 function openWardEc8aForm(){
-  $('successfulUploadMenu').hidden=true;$('wardEvidenceUploadPage').hidden=true;
+  $('successfulUploadMenu').hidden=true;$('violenceUploadMenu').hidden=true;$('wardEvidenceUploadPage').hidden=true;
   $('wardEc8aFormPage').hidden=false;
   $('wardEc8aForm').reset();
   $('wardSaveEc8aBtn').disabled=false;$('wardSaveEc8aBtn').textContent='Save EC8A';
@@ -1085,7 +1112,10 @@ function openWardEc8aForm(){
   prepareWardEc8a();wardUpdateEc8aTotals();window.scrollTo({top:0,behavior:'smooth'});
 }
 $('backFromWardEc8a').addEventListener('click',()=>{
-  $('wardEc8aFormPage').hidden=true;$('successfulUploadMenu').hidden=false;window.scrollTo({top:0,behavior:'smooth'});
+  $('wardEc8aFormPage').hidden=true;
+  if(selectedCollationCategory==='violence')$('violenceUploadMenu').hidden=false;
+  else $('successfulUploadMenu').hidden=false;
+  window.scrollTo({top:0,behavior:'smooth'});
 });
 wardRenderPartyRows();
 $('wardEc8aForm').addEventListener('submit',async event=>{
