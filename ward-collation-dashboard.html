@@ -974,6 +974,7 @@ async function uploadWardEvidence(){
   }else if(!window.confirm(`Confirm submission of ${cfg.title.toLowerCase()}?`))return;
   wardEvidenceSubmit.disabled=true;wardEvidenceSubmit.textContent="Uploading…";
   $('wardEvidenceStatus').textContent="Preparing upload…";
+  let uploadStage="Cloudinary file upload";
   try{
     const fd=new FormData();fd.append("file",file);fd.append("upload_preset",WARD_CLOUDINARY_UPLOAD_PRESET);
     fd.append("folder","the-eyes/election-evidence");
@@ -985,6 +986,7 @@ async function uploadWardEvidence(){
       agentUid:user.uid,userId:user.uid,fullName:first(profile.fullName,agent.fullName,user.displayName,user.email,""),
       email:first(profile.email,agent.email,user.email,""),role:"ward_collation_agent",agentRole:"ward_collation_agent",
       electionType:assignment.electionType||"",electionName:assignment.electionName||"",
+      candidateId:assignment.candidateId||"",
       geography:{...assignment},stateCode:assignment.stateCode||"",lgaCode:assignment.lgaCode||"",wardCode:assignment.wardCode||"",
       state:assignment.state||"",lga:assignment.lga||"",ward:assignment.ward||"",
       evidenceType:cfg.type,reportType:cfg.reportType||"successful_election",reportStatus:cfg.reportStatus||"Successful Election",
@@ -993,6 +995,7 @@ async function uploadWardEvidence(){
       cloudinaryResourceType:result.resource_type||cfg.resource,cloudinaryFormat:result.format||"",
       status:"uploaded",createdAt:serverTimestamp()
     };
+    uploadStage="Firestore evidence record save";
     await addDoc(collection(db,"evidenceUploads"),record);
     $('wardEvidenceStatus').textContent="Submission successful. Your evidence has been uploaded and its record saved.";
     wardEvidenceSubmit.textContent="Submitted successfully";
@@ -1002,7 +1005,9 @@ async function uploadWardEvidence(){
     try{const q=query(collection(db,"evidenceUploads"),where("wardCode","==",String(assignment.wardCode)));const snap=await getDocs(q);data.evidence=snap.docs.map(d=>({id:d.id,...d.data(),_collection:"evidenceUploads"})).filter(r=>String(r.agentRole||r.role||"").toLowerCase()==="polling_unit_agent"||String(r.agentRole||r.role||"").toLowerCase()==="ward_collation_agent");renderAll()}catch(refreshError){console.warn("Evidence stream refresh skipped",refreshError)}
   }catch(error){
     console.error("Ward evidence upload failed:",error);
-    $('wardEvidenceStatus').textContent=`Upload failed: ${error.message||"Please try again."}`;
+    $('wardEvidenceStatus').textContent=error?.code==="permission-denied"
+      ? "The file reached Cloudinary, but Firestore rejected the evidence record (missing or insufficient permissions). The dashboard now sends candidateId together with the Ward Agent assignment. If this continues, the published Firestore Rules must allow this evidenceUploads document for the assigned Ward Agent."
+      : `${uploadStage} failed: ${error.message||"Please try again."}`;
     wardEvidenceSubmit.disabled=false;wardEvidenceSubmit.textContent="Submit";
   }
 }
@@ -1056,13 +1061,13 @@ $('saveExposeEvidence').addEventListener('click',async()=>{
     }
     for(const {item,result} of uploaded){await addDoc(collection(db,'evidenceUploads'),{
       agentUid:user.uid,userId:user.uid,fullName:first(profile.fullName,agent.fullName,user.displayName,user.email,''),email:first(profile.email,agent.email,user.email,''),role:'ward_collation_agent',agentRole:'ward_collation_agent',
-      electionType:assignment.electionType||'',electionName:assignment.electionName||'',geography:{...assignment},stateCode:assignment.stateCode||'',lgaCode:assignment.lgaCode||'',wardCode:assignment.wardCode||'',state:assignment.state||'',lga:assignment.lga||'',ward:assignment.ward||'',
+      electionType:assignment.electionType||'',electionName:assignment.electionName||'',candidateId:assignment.candidateId||'',geography:{...assignment},stateCode:assignment.stateCode||'',lgaCode:assignment.lgaCode||'',wardCode:assignment.wardCode||'',state:assignment.state||'',lga:assignment.lga||'',ward:assignment.ward||'',
       evidenceType:item.type,reportType:'expose',reportStatus:'Expose',description,caseDescription:description,confirmationText:'I confirm this description belongs to the selected simulated EXPOSE case.',descriptionConfirmed:true,
       fileName:item.file.name,fileType:item.file.type||'',fileSize:item.file.size,cloudinaryUrl:result.secure_url||'',cloudinaryPublicId:result.public_id||'',cloudinaryResourceType:result.resource_type||'raw',cloudinaryFormat:result.format||'',status:'uploaded',createdAt:serverTimestamp()
     })}
     $('exposeStatus').className='notice show';$('exposeStatus').textContent='EXPOSE report submitted successfully. Both supporting copies and the case description have been saved.';btn.textContent='Submitted successfully';
     $('exposeOriginalFile').disabled=true;$('exposeAlteredFile').disabled=true;$('exposeDescription').disabled=true;$('exposeConfirm').disabled=true;
-  }catch(error){console.error('EXPOSE evidence submission failed:',error);$('exposeStatus').className='notice show error';$('exposeStatus').textContent=`Submission failed: ${error.message||'Please try again.'}`;btn.disabled=false;btn.textContent='Save description and continue'}
+  }catch(error){console.error('EXPOSE evidence submission failed:',error);$('exposeStatus').className='notice show error';$('exposeStatus').textContent=error?.code==='permission-denied'?'Cloudinary accepted the evidence files, but Firestore denied saving their records. The Ward Agent record now includes candidateId. If this continues, the published Firestore Rules must allow this assigned Ward Agent EXPOSE evidence.':`Submission failed: ${error.message||'Please try again.'}`;btn.disabled=false;btn.textContent='Save description and continue'}
 });
 
 // Polling Unit Agent EC8A E-Form, reused for the ward agent and bound to a selected PU in this ward.
