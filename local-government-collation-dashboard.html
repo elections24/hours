@@ -259,9 +259,17 @@ async function toggleWardPollingUnits(wardCode){
  if(target.dataset.loaded==='yes')return;
  target.innerHTML='<div class="empty">Loading all registered polling units in this ward…</div>';
  try{
-  const base=[where('stateCode','==',assignment.stateCode),where('lgaCode','==',assignment.lgaCode)];
-  const puSnap=await getDocs(query(collection(db,'geographyPollingUnits'),...base));
-  const units=puSnap.docs.map(d=>({id:d.id,...d.data()})).filter(p=>String(first(p.wardCode,p.geography?.wardCode,''))===String(wardCode));
+  // Geography master records are stored as geographyPollingUnits/{pollingUnitCode}
+  // and use wardCode as their parent reference. Query by that canonical parent
+  // field only; adding stateCode/lgaCode constraints can hide valid records if
+  // older geography rows do not carry those optional scope fields.
+  const puSnap=await getDocs(query(
+   collection(db,'geographyPollingUnits'),
+   where('wardCode','==',String(wardCode))
+  ));
+  const units=puSnap.docs.map(d=>({id:d.id,...d.data()})).filter(p=>
+   String(first(p.wardCode,p.geography?.wardCode,''))===String(wardCode)
+  );
   const sourceNames=['ec8aResults','pollingUnitReports'];
   const sourceSnaps=await Promise.all(sourceNames.map(async name=>{
    try{return await getDocs(query(collection(db,name),where('stateCode','==',assignment.stateCode),where('lgaCode','==',assignment.lgaCode),where('electionType','==',assignment.electionType),where('candidateId','==',assignment.candidateId)));}
