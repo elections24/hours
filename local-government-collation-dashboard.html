@@ -174,12 +174,17 @@ function loadAssignment(a){
 function latestByWard(){
  const map=new Map();
  data.collations.forEach(r=>{
+  if(r.recordType!=='ward_collation')return;
+  if(String(r.lgaCode||'')!==String(assignment.lgaCode)||String(r.stateCode||'')!==String(assignment.stateCode)||String(r.electionType||'')!==String(assignment.electionType))return;
+  // New ward records carry candidateId. Legacy records without it remain
+  // visible within the same LGA/election scope for backward compatibility.
+  if(r.candidateId&&assignment.candidateId&&String(r.candidateId)!==String(assignment.candidateId))return;
   const code=String(r.wardCode||r.geography?.wardCode||'').trim();if(!code)return;
   const prev=map.get(code);if(!prev||dateMs(r.createdAt)>dateMs(prev.createdAt))map.set(code,r);
  });
  return map;
 }
-function eligibleWardCollations(){return [...latestByWard().values()].filter(r=>r.recordType==='ward_collation'&&String(r.lgaCode||'')===assignment.lgaCode&&String(r.stateCode||'')===assignment.stateCode&&String(r.electionType||'')===assignment.electionType);}
+function eligibleWardCollations(){return [...latestByWard().values()];}
 function totals(){
  const rows=eligibleWardCollations();
  return rows.reduce((a,r)=>{a.valid+=Number(r.wardTotals?.validVotes)||0;a.rejected+=Number(r.wardTotals?.rejectedBallots)||0;a.sources+=Number(r.sourceCounts?.total)||0;return a},{valid:0,rejected:0,sources:0});
@@ -271,11 +276,14 @@ async function toggleWardPollingUnits(wardCode){
    String(first(p.wardCode,p.geography?.wardCode,''))===String(wardCode)
   );
   const sourceNames=['ec8aResults','pollingUnitReports'];
-  const sourceSnaps=await Promise.all(sourceNames.map(async name=>{
-   try{return await getDocs(query(collection(db,name),where('stateCode','==',assignment.stateCode),where('lgaCode','==',assignment.lgaCode),where('electionType','==',assignment.electionType),where('candidateId','==',assignment.candidateId)));}
-   catch(e){console.warn('Could not read '+name,e);return null;}
+  const sourceResults=await Promise.all(sourceNames.map(async name=>{
+   try{
+    const snap=await getDocs(query(collection(db,name),where('stateCode','==',assignment.stateCode),where('lgaCode','==',assignment.lgaCode),where('electionType','==',assignment.electionType),where('candidateId','==',assignment.candidateId)));
+    return {name,docs:snap.docs.map(d=>({id:d.id,...d.data(),_collection:name})),error:null};
+   }catch(error){console.warn('Could not read '+name,error);return {name,docs:[],error};}
   }));
-  const submissions=sourceSnaps.filter(Boolean).flatMap(s=>s.docs.map(d=>({id:d.id,...d.data()}))).filter(r=>String(first(r.wardCode,r.geography?.wardCode,''))===String(wardCode));
+  const sourceErrors=sourceResults.filter(x=>x.error);
+  const submissions=sourceResults.flatMap(x=>x.docs).filter(r=>String(first(r.wardCode,r.geography?.wardCode,''))===String(wardCode));
   const byPu=new Map();
   submissions.forEach(r=>{const c=String(first(r.pollingUnitCode,r.geography?.pollingUnitCode,r.puCode,''));if(!c)return;const old=byPu.get(c);if(!old||dateMs(r.createdAt)>dateMs(old.createdAt))byPu.set(c,r);});
   units.sort((a,b)=>puName(a).localeCompare(puName(b),undefined,{numeric:true,sensitivity:'base'}));
@@ -288,7 +296,7 @@ async function toggleWardPollingUnits(wardCode){
    const announcement=first(r?.resultAnnouncement,r?.announcementText,r?.announcement,r?.resultStatusLabel,flags.success?'Result Announcement':'Awaiting election process');
    return `<div class="pu-card"><div class="pu-card-name">${esc(puName(p))} (PU ${esc(code)})</div><div class="lga-status-buttons"><button class="lga-status-btn ${flags.over?'active over':''}" type="button" disabled>Over Voting</button><button class="lga-status-btn ${flags.violence?'active violence':''}" type="button" disabled>Violence</button><button class="lga-status-btn ${flags.success?'active success':''}" type="button" disabled>Successful</button></div><div><span class="lga-collation-status ${r?'received':'pending'}">Status: ${r?'Submitted':'Awaiting'}</span><span class="pu-announcement ${r?'':'pending'}">${esc(announcement)}</span></div>${r?`<div class="pu-votes">Party figures: ${Object.entries(votes).map(([k,v])=>`${esc(k)}: ${Number(v).toLocaleString()}`).join(' · ')||'No party figures found in this submission'}</div>`:''}</div>`;
   }).join('');
-  target.innerHTML=`<div class="pu-list-head"><span>ALL POLLING UNITS IN THIS WARD</span><span>${submitted} of ${units.length} submitted</span></div>${cards||'<div class="empty">No polling units were found for this ward in geographyPollingUnits.</div>'}<div class="pu-votes"><b>Party totals across submitted polling units:</b> ${Object.entries(totalVotes).filter(([,v])=>v).map(([k,v])=>`${esc(k)}: ${v.toLocaleString()}`).join(' · ')||'No submitted party figures yet'}</div>`;
+  target.innerHTML=`<div class="pu-list-head"><span>ALL POLLING UNITS IN THIS WARD</span><span>${submitted} of ${units.length} submitted</span></div>${cards||'<div class="empty">No polling units were found for this ward in geographyPollingUnits.</div>'}<div class="pu-votes"><b>Party totals across submitted polling units:</b> ${Object.entries(totalVotes).filter(([,v])=>v).map(([k,v])=>`${esc(k)}: ${v.toLocaleString()}`).join(' · ')||'No submitted party figures yet'}</div>${sourceErrors.length?`<div class="pu-votes" style="color:#a52c25">Some source collections could not be read: ${sourceErrors.map(x=>esc(x.name)+' ('+esc(x.error.code||x.error.message)+')').join(' · ')}. Check Firestore Rules and any required Firestore index.</div>`:''}`;
   target.dataset.loaded='yes';
  }catch(e){console.error(e);target.innerHTML=`<div class="empty">Could not load polling units or their submissions. Check Firestore Rules for geographyPollingUnits, ec8aResults and pollingUnitReports. (${esc(e.code||e.message)})</div>`;}
 }
