@@ -291,23 +291,15 @@
 </div>
 <div id="wardEc8aFormPage" hidden>
 
-  <div class="role-label">Structured result entry</div><h1 id="ec8aHeading">Presidential Election</h1>
-  <p class="subtitle">Enter the structured polling-unit result directly. This digital record is separate from uploaded physical EC8A evidence.</p>
+  <div class="role-label">Ward-level structured result entry</div><h1 id="ec8aHeading">Presidential Election</h1>
+  <p class="subtitle">Enter the structured ward-level result using your assigned State, LGA, Ward, Election Type and Candidate. No polling-unit selection is required. This digital record is separate from uploaded physical EC8A evidence.</p>
   <div class="panel">
-    <h2>Election information</h2>
-    <div class="field" style="margin:12px 0">
-      <label for="wardEc8aPuSelect">Select polling unit in your assigned ward</label>
-      <select id="wardEc8aPuSelect" required style="width:100%;padding:11px;border:1px solid var(--line);border-radius:9px;background:#fbfcfb">
-        <option value="">Loading assigned polling units…</option>
-      </select>
-    </div>
+    <h2>Assigned election information</h2>
     <div class="context-grid">
-      <div class="context-item"><small>Structured form</small><strong>EC8A - Polling Unit</strong></div>
+      <div class="context-item"><small>Structured form</small><strong>EC8A - Ward Collation</strong></div>
       <div class="context-item"><small>Election</small><strong id="ec8aElection">—</strong></div>
       <div class="context-item"><small>State</small><strong id="ec8aState">—</strong></div>
       <div class="context-item"><small>Local Government Area / Ward</small><strong id="ec8aLgaWard">—</strong></div>
-      <div class="context-item"><small>Polling Unit</small><strong id="ec8aPollingUnit">—</strong></div>
-      <div class="context-item"><small>Polling Unit Code</small><strong id="ec8aPollingCode">—</strong></div>
       <div class="context-item"><small>Candidate</small><strong id="ec8aCandidate">—</strong></div>
     </div>
   </div>
@@ -370,7 +362,7 @@ function notice(id,msg,error=false){const el=$(id);el.textContent=msg;el.classNa
 function getVal(...paths){for(const src of [agent?.geography,agent?.assignedScope,profile?.geography,profile?.assignedScope,agent,profile])for(const p of paths){const v=p.split('.').reduce((o,k)=>o?.[k],src);if(v!==undefined&&v!==null&&v!=='')return v}return ''}
 async function readGeo(col,id){if(!id)return null;try{const s=await getDoc(doc(db,col,String(id)));return s.exists()?{id:s.id,...s.data()}:null}catch(e){console.warn('Geo lookup',col,e);return null}}
 function recName(d){return first(d?.name,d?.stateName,d?.lgaName,d?.wardName,d?.pollingUnitName,d?.unitName,d?.title,d?.label,'')}
-async function loadProfile(u){user=u;const [us,ag]=await Promise.all([getDoc(doc(db,'users',u.uid)),getDoc(doc(db,'electionAgents',u.uid))]);if(!us.exists()&&!ag.exists())throw Error('No BOTAS PHOTO agent profile was found for this account.');profile=us.exists()?us.data():{};agent=ag.exists()?ag.data():profile;const role=String(first(agent.agentRole,profile.agentRole,agent.role,profile.role,'')).toLowerCase();if(!['ward_collation_agent','ward_collation'].includes(role))throw Error('This account is not registered as a Ward Collation Agent.');if(agent.active===false||profile.active===false||agent.status==='disabled'||profile.status==='disabled')throw Error('This account is disabled. Contact the Super Admin.');const stateCode=getVal('stateCode'),lgaCode=getVal('lgaCode'),wardCode=getVal('wardCode');if(!wardCode)throw Error('No wardCode is assigned to this account. Ask the Super Admin to correct the Ward Collation Agent assignment.');const [st,lg,wd]=await Promise.all([readGeo('geographyStates',stateCode),readGeo('geographyLGAs',lgaCode),readGeo('geographyWards',wardCode)]);const geo=agent.geography||profile.geography||{};assignment={stateCode,lgaCode,wardCode,state:first(geo.state,geo.stateName,agent.state,profile.state,recName(st)),lga:first(geo.lga,geo.lgaName,agent.lga,profile.lga,recName(lg)),ward:first(geo.ward,geo.wardName,agent.ward,profile.ward,recName(wd)),electionType:first(agent.electionType,profile.electionType,''),electionName:first(agent.electionName,profile.electionName,electionNames[agent.electionType],electionNames[profile.electionType],'')};$('agentName').textContent=first(profile.fullName,agent.fullName,u.displayName,u.email);if($('welcomeName'))$('welcomeName').textContent=first(profile.fullName,agent.fullName,u.displayName,u.email,'Agent').split(' ')[0];$('wardTitle').textContent=assignment.ward||'Assigned Ward';$('wardAddress').textContent=[assignment.lga,assignment.state].filter(Boolean).join(' · ');$('loginScreen').classList.add('hidden');$('appScreen').classList.remove('hidden');startListeners()}
+async function loadProfile(u){user=u;const [us,ag]=await Promise.all([getDoc(doc(db,'users',u.uid)),getDoc(doc(db,'electionAgents',u.uid))]);if(!us.exists()&&!ag.exists())throw Error('No BOTAS PHOTO agent profile was found for this account.');profile=us.exists()?us.data():{};agent=ag.exists()?ag.data():profile;const role=String(first(agent.agentRole,profile.agentRole,agent.role,profile.role,'')).toLowerCase();if(!['ward_collation_agent','ward_collation'].includes(role))throw Error('This account is not registered as a Ward Collation Agent.');if(agent.active===false||profile.active===false||agent.status==='disabled'||profile.status==='disabled')throw Error('This account is disabled. Contact the Super Admin.');const stateCode=getVal('stateCode'),lgaCode=getVal('lgaCode'),wardCode=getVal('wardCode');if(!wardCode)throw Error('No wardCode is assigned to this account. Ask the Super Admin to correct the Ward Collation Agent assignment.');const [st,lg,wd]=await Promise.all([readGeo('geographyStates',stateCode),readGeo('geographyLGAs',lgaCode),readGeo('geographyWards',wardCode)]);const geo=agent.geography||profile.geography||{};assignment={stateCode,lgaCode,wardCode,state:first(geo.state,geo.stateName,agent.state,profile.state,recName(st)),lga:first(geo.lga,geo.lgaName,agent.lga,profile.lga,recName(lg)),ward:first(geo.ward,geo.wardName,agent.ward,profile.ward,recName(wd)),electionType:first(agent.electionType,profile.electionType,''),electionName:first(agent.electionName,profile.electionName,electionNames[agent.electionType],electionNames[profile.electionType],''),candidateId:first(getVal('candidateId'),agent.candidateId,profile.candidateId,''),candidateName:first(getVal('candidateName','candidate'),agent.candidateName,profile.candidateName,agent.candidate,profile.candidate,'')};$('agentName').textContent=first(profile.fullName,agent.fullName,u.displayName,u.email);if($('welcomeName'))$('welcomeName').textContent=first(profile.fullName,agent.fullName,u.displayName,u.email,'Agent').split(' ')[0];$('wardTitle').textContent=assignment.ward||'Assigned Ward';$('wardAddress').textContent=[assignment.lga,assignment.state].filter(Boolean).join(' · ');$('loginScreen').classList.add('hidden');$('appScreen').classList.remove('hidden');startListeners()}
 function listen(col,key){
   // Live queries are scoped to the Ward Agent's assigned ward.
   const constraints=[where('wardCode','==',String(assignment.wardCode))];
@@ -836,7 +828,7 @@ async function openPuStatus(code){
 function renderCollation(){const sources=allSubmissions();const units=new Set(data.ec8a.map(unitCode).filter(x=>x!=='—'));$('cEc8a').textContent=data.ec8a.length;$('cUnits').textContent=units.size;$('cIncidents').textContent=data.reports.length+data.alerts.length;$('cEvidence').textContent=data.evidence.length;const groups=[['EC8A results',data.ec8a],['Evidence uploads',data.evidence],['Polling-unit reports',data.reports],['Vote-buying alerts',data.alerts],['Backup requests',data.backups]];$('collationSources').innerHTML=groups.map(([label,items])=>`<div class="source-item"><div><strong>${label}</strong><p>${items.length} record(s) in ${items[0]?esc(items[0]._collection):'existing collection'}${items.length?' · Latest: '+esc(fmt(items.slice().sort((a,b)=>dateMs(b.createdAt)-dateMs(a.createdAt))[0].createdAt)):''}</p></div><span class="tag">${items.length}</span></div>`).join('');}
 function renderHistory(){const rows=data.collations.slice().sort((a,b)=>dateMs(b.createdAt)-dateMs(a.createdAt));$('historyTable').innerHTML=rows.length?`<table><thead><tr><th>Collation date</th><th>Status</th><th>Source records</th><th>Valid votes</th><th>Created by</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${esc(fmt(r.collationDate||r.createdAt))}</td><td>${statusTag(r.reviewStatus||r.status)}</td><td>${esc(r.sourceCounts?.total??r.sourceSubmissionIds?.length??0)}</td><td>${esc(r.wardTotals?.validVotes??'—')}</td><td>${esc(r.createdByName||r.createdBy||'—')}</td></tr>`).join('')}</tbody></table>`:'<div class="empty">No ward collation records have been saved yet.</div>'}
 
-function renderAll(){renderSubmissions();renderEc8aComparison();renderCollation();renderHistory();if($('wardEc8aFormPage')&&!$('wardEc8aFormPage').hidden){const current=$('wardEc8aPuSelect').value;populateWardPuSelect();if(current)$('wardEc8aPuSelect').value=current;updateWardEformPuContext()}}
+function renderAll(){renderSubmissions();renderEc8aComparison();renderCollation();renderHistory();}
 function openDetail(col,id){const map={ec8aResults:data.ec8a,evidenceUploads:data.evidence,pollingUnitReports:data.reports,voteBuyingAlerts:data.alerts,backupRequests:data.backups};const d=(map[col]||[]).find(x=>x.id===id);if(!d)return;$('detailTitle').textContent=typeLabel(d);let fields=[['Polling unit',nameOf(d)],['Polling unit code',unitCode(d)],['Agent',agentName(d)],['Election',d.electionName||d.electionType],['Candidate',d.candidateName],['Status',d.status||d.reportStatus],['Submitted',fmt(d.createdAt)],['Report type',d.reportType],['Details',d.details||d.category||d.incidentType],['Ballot accounting',d.ballotAccounting?JSON.stringify(d.ballotAccounting):'—'],['Party results',d.partyResults?JSON.stringify(d.partyResults):'—']];let html=`<div class="detailgrid">${fields.filter(x=>x[1]!==undefined&&x[1]!==null&&x[1]!=='').map(([k,v])=>`<div><small>${esc(k)}</small><b>${esc(typeof v==='object'?JSON.stringify(v):v)}</b></div>`).join('')}</div>`;const url=first(d.cloudinaryUrl,d.secure_url,d.cloudinary?.secure_url,'');if(url)html+=`<p><a class="evidence-link" href="${esc(url)}" target="_blank" rel="noopener">Open supporting evidence</a></p>`;$('detailContent').innerHTML=html;$('detailModal').classList.add('show')}
 let wardViewStack=['overview'];
 function syncBackButton(){const b=$('topBackBtn');if(b)b.disabled=wardViewStack.length<=1&&!document.querySelector('.modal.show')}
@@ -993,27 +985,12 @@ function wardUpdateEc8aTotals(){
   const n=$('wardEc8aAccountingNotice');if(warnings.length){n.textContent=warnings.join(" ");n.className="notice show error"}else{n.textContent="Ballot totals are currently consistent.";n.className="notice show"}
 }
 ['ec8aVoters','ec8aAccredited','ec8aIssued','ec8aUnused','ec8aSpoilt','ec8aRejected'].forEach(id=>$(id).addEventListener('input',wardUpdateEc8aTotals));
-function populateWardPuSelect(){
-  const select=$('wardEc8aPuSelect');
-  const units=data.pus.map(p=>({code:String(first(p.pollingUnitCode,p.code,p.unitCode,p.id,'')).trim(),name:puNameOf(p)})).filter(p=>p.code);
-  const unique=[...new Map(units.map(p=>[p.code,p])).values()].sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true,sensitivity:'base'}));
-  select.innerHTML='<option value="">Choose assigned polling unit</option>'+unique.map(p=>`<option value="${esc(p.code)}">${esc(p.name)} (${esc(p.code)})</option>`).join('');
-  if(!unique.length)select.innerHTML='<option value="">No polling units are currently loaded for this ward</option>';
-  select.disabled=!unique.length;
-}
-function updateWardEformPuContext(){
-  const code=$('wardEc8aPuSelect').value;
-  const pu=data.pus.find(p=>String(first(p.pollingUnitCode,p.code,p.unitCode,p.id,''))===String(code))||{};
-  $('ec8aPollingUnit').textContent=puNameOf(pu||{})==='Unnamed polling unit'?'—':puNameOf(pu);
-  $('ec8aPollingCode').textContent=code||'—';
-}
 function prepareWardEc8a(){
   $('ec8aHeading').textContent=first(assignment.electionName,electionNames[assignment.electionType],'Election');
   $('ec8aElection').textContent=first(assignment.electionName,electionNames[assignment.electionType],'—');
   $('ec8aState').textContent=assignment.state||'—';
   $('ec8aLgaWard').textContent=[assignment.lga,assignment.ward].filter(Boolean).join(' / ')||'—';
-  $('ec8aCandidate').textContent=first(agent.candidateName,profile.candidateName,'Not assigned');
-  populateWardPuSelect();updateWardEformPuContext();
+  $('ec8aCandidate').textContent=first(assignment.candidateName,agent.candidateName,profile.candidateName,agent.candidate,profile.candidate,'Not assigned');
 }
 function openWardEc8aForm(){
   $('successfulUploadMenu').hidden=true;$('wardEvidenceUploadPage').hidden=true;
@@ -1024,7 +1001,6 @@ function openWardEc8aForm(){
   $('wardEc8aAccountingNotice').className='notice';$('wardEc8aAccountingNotice').textContent='';
   prepareWardEc8a();wardUpdateEc8aTotals();window.scrollTo({top:0,behavior:'smooth'});
 }
-$('wardEc8aPuSelect').addEventListener('change',updateWardEformPuContext);
 $('backFromWardEc8a').addEventListener('click',()=>{
   $('wardEc8aFormPage').hidden=true;$('successfulUploadMenu').hidden=false;window.scrollTo({top:0,behavior:'smooth'});
 });
@@ -1032,21 +1008,20 @@ wardRenderPartyRows();
 $('wardEc8aForm').addEventListener('submit',async event=>{
   event.preventDefault();
   if(!user||!assignment.wardCode){notice('wardEc8aNotice','Your assigned ward is not loaded. Please sign in again.',true);return}
-  const puCode=$('wardEc8aPuSelect').value;
-  if(!puCode){notice('wardEc8aNotice','Select the polling unit before saving this E-Form.',true);return}
   wardUpdateEc8aTotals();
   const validVotes=wardReadNum('ec8aValid'),accredited=wardReadNum('ec8aAccredited'),voters=wardReadNum('ec8aVoters');
   const issued=wardReadNum('ec8aIssued'),unused=wardReadNum('ec8aUnused'),spoilt=wardReadNum('ec8aSpoilt'),rejected=wardReadNum('ec8aRejected'),used=wardReadNum('ec8aUsed');
   if(accredited>voters||validVotes>accredited||issued<unused+spoilt+used){notice('wardEc8aNotice','Please correct the ballot-accounting inconsistencies before saving.',true);return}
-  const pu=data.pus.find(p=>String(first(p.pollingUnitCode,p.code,p.unitCode,p.id,''))===String(puCode))||{};
   const parties=wardPartyCodes.map(p=>({party:p,votes:Number(document.querySelector(`[data-ward-party-votes="${p}"]`).value)||0,votesInWords:wardNumberToWords(document.querySelector(`[data-ward-party-votes="${p}"]`).value),pollingAgentName:document.querySelector(`[data-ward-party-agent="${p}"]`).value.trim()}));
   const payload={
-    formType:'EC8A-Polling-Unit',reportType:'successful_election',reportStatus:'Successful Election',
+    formType:'EC8A-Ward',recordLevel:'ward',reportType:'successful_election',reportStatus:'Successful Election',
     agentUid:user.uid,userId:user.uid,fullName:first(profile.fullName,agent.fullName,user.displayName,user.email,''),email:first(profile.email,agent.email,user.email,''),role:'ward_collation_agent',agentRole:'ward_collation_agent',
     electionType:assignment.electionType||'',electionName:first(assignment.electionName,electionNames[assignment.electionType],''),
-    candidateId:first(agent.candidateId,profile.candidateId,''),candidateName:first(agent.candidateName,profile.candidateName,''),
-    geography:{...assignment,pollingUnitCode:puCode,pollingUnit:puNameOf(pu)},stateCode:assignment.stateCode||'',lgaCode:assignment.lgaCode||'',wardCode:assignment.wardCode||'',pollingUnitCode:puCode,
-    state:assignment.state||'',lga:assignment.lga||'',ward:assignment.ward||'',pollingUnit:puNameOf(pu),
+    candidateId:first(assignment.candidateId,agent.candidateId,profile.candidateId,agent.geography?.candidateId,profile.geography?.candidateId,''),
+    candidateName:first(assignment.candidateName,agent.candidateName,profile.candidateName,agent.candidate,profile.candidate,''),
+    geography:{stateCode:assignment.stateCode||'',lgaCode:assignment.lgaCode||'',wardCode:assignment.wardCode||'',state:assignment.state||'',lga:assignment.lga||'',ward:assignment.ward||''},
+    stateCode:assignment.stateCode||'',lgaCode:assignment.lgaCode||'',wardCode:assignment.wardCode||'',
+    state:assignment.state||'',lga:assignment.lga||'',ward:assignment.ward||'',
     ballotAccounting:{voters,accreditedVoters:accredited,ballotPapersIssued:issued,unusedBallotPapers:unused,spoiltBallotPapers:spoilt,rejectedBallots:rejected,totalUsedBallotPapers:used,totalValidVotes:validVotes},
     partyResults:parties,certification:{presidingOfficerName:$('ec8aOfficer').value.trim(),signatureConfirmation:$('ec8aSignature').value.trim(),formDate:$('ec8aDate').value},
     status:'submitted',createdAt:serverTimestamp()
@@ -1058,7 +1033,7 @@ $('wardEc8aForm').addEventListener('submit',async event=>{
     btn.textContent='Submitted successfully';btn.disabled=true;
   }catch(error){
     console.error('Ward EC8A E-Form save failed:',error);
-    notice('wardEc8aNotice',error.code==='permission-denied'?'Firebase denied this save. Firestore Rules must permit the assigned Ward Collation Agent to create an ec8aResults record for a polling unit within the agent’s assigned ward.':`Could not save E-Form: ${error.message||error}`,true);
+    notice('wardEc8aNotice',error.code==='permission-denied'?'Firebase denied this save. Firestore Rules must permit a Ward Collation Agent to create an EC8A-Ward record without pollingUnitCode, restricted to the agent’s assigned State, LGA, Ward, Election Type and Candidate.':`Could not save E-Form: ${error.message||error}`,true);
     btn.disabled=false;btn.textContent='Save EC8A';
   }
 });
