@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#08734f">
+<title>BOTAS PHOTO | Ward Collation Dashboard</title>
+<style>
+:root{--g:#08734f;--gd:#07543b;--mint:#eaf5ef;--bg:#f3f7f5;--ink:#20372d;--muted:#74847b;--line:#e1eae5;--white:#fff;--gold:#dcae43;--red:#b42318;--shadow:0 4px 18px #163b2910}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,"Segoe UI",Arial,sans-serif}button,input,textarea,select{font:inherit}button{cursor:pointer}.hidden{display:none!important}.app{min-height:100vh;display:flex}.sidebar{width:250px;flex:0 0 250px;background:#fff;border-right:1px solid var(--line);padding:22px 16px;display:flex;flex-direction:column}.brand{font-weight:900;letter-spacing:2px;color:var(--g);font-size:19px;display:flex;align-items:center;gap:10px;margin:0 0 25px}.mark{width:34px;height:34px;border-radius:10px;background:var(--mint);display:grid;place-items:center}.rolebox{padding:14px;background:#f8faf9;border:1px solid var(--line);border-radius:13px;margin-bottom:20px}.rolebox small{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:1px;margin-bottom:7px}.rolebox strong{font-size:13px}.rolebox p{font-size:11px;color:var(--muted);line-height:1.5;margin:7px 0 0}.nav{display:grid;gap:6px}.nav button{border:0;background:transparent;text-align:left;padding:12px;border-radius:10px;color:#607168;font-weight:650;font-size:13px}.nav button.active,.nav button:hover{background:var(--mint);color:var(--g)}.sidefoot{margin-top:auto;color:#9aa69f;font-size:10px;line-height:1.6}.main{min-width:0;flex:1}.topbar{height:68px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 28px;gap:12px}.topbar strong{font-size:14px}.topright{display:flex;align-items:center;gap:12px}.pill{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:var(--g);background:var(--mint);padding:8px 11px;border-radius:30px}.content{max-width:1500px;margin:auto;padding:28px}.view{display:none}.view.active{display:block}.eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:#69917b;font-weight:800}h1{font-size:34px;letter-spacing:-1px;margin:8px 0}.sub{font-size:13px;color:var(--muted);line-height:1.6;margin:0 0 22px}.assigned{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow);margin-bottom:18px}.assigned h2{font-size:17px;margin:0 0 6px}.assigned p{font-size:12px;color:var(--muted);margin:0}.geo{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-top:15px}.geo div,.stat{background:#f8faf9;border:1px solid #edf1ee;border-radius:10px;padding:11px;min-width:0}.geo small,.stat small{display:block;font-size:10px;color:var(--muted);margin-bottom:6px}.geo b{font-size:12px;overflow-wrap:anywhere}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:16px 0}.stat{background:#fff;padding:16px;box-shadow:var(--shadow)}.stat strong{font-size:25px;display:block;line-height:1.2}.panel{background:#fff;border:1px solid var(--line);border-radius:15px;padding:18px;margin-top:16px;box-shadow:var(--shadow);min-width:0}.panelhead{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}.panel h2{font-size:16px;margin:0}.muted{color:var(--muted);font-size:11px;line-height:1.6}.btn{border:0;border-radius:9px;background:var(--g);color:white;padding:10px 14px;font-size:12px;font-weight:750}.btn:hover{background:var(--gd)}.btn.secondary{background:#edf5f0;color:var(--g)}.btn:disabled{opacity:.55;cursor:not-allowed}.filters{display:flex;gap:9px;flex-wrap:wrap}.filters input,.filters select,.field input,.field textarea{border:1px solid var(--line);border-radius:9px;padding:10px;background:#fbfcfb;color:var(--ink);min-width:0}.filters input{flex:1;min-width:180px}.tablewrap{overflow:auto;width:100%}table{width:100%;border-collapse:collapse;min-width:700px}th,td{text-align:left;padding:11px 10px;border-bottom:1px solid #edf1ee;font-size:11px;vertical-align:top}th{font-size:10px;color:#718178;text-transform:uppercase;letter-spacing:.6px;background:#fafcfb;position:sticky;top:0}td strong{font-size:12px}.tag{display:inline-block;border-radius:30px;padding:5px 8px;background:#eef6f1;color:#17603f;font-size:10px;font-weight:700}.tag.warn{background:#fff5e5;color:#98600a}.tag.bad{background:#fff0ef;color:#a52c25}.empty{padding:28px;text-align:center;color:var(--muted);font-size:12px}.notice{display:none;padding:12px;border-radius:9px;background:#edf7f0;color:#17603f;font-size:12px;line-height:1.5;margin-top:12px;white-space:pre-wrap}.notice.show{display:block}.notice.error{background:#fff0ef;color:#a52c25}.formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field label{display:block;font-size:11px;font-weight:750;margin-bottom:6px}.field input,.field textarea{width:100%}.field textarea{min-height:95px;resize:vertical}.field.full{grid-column:1/-1}.checkrow{display:flex;align-items:center;gap:9px;font-size:12px;margin:10px 0}.source-list{display:grid;gap:9px}.source-item{border:1px solid var(--line);border-radius:10px;padding:12px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.source-item strong{font-size:12px}.source-item p{font-size:11px;color:var(--muted);margin:5px 0 0;line-height:1.5}.login-wrap{min-height:100vh;display:grid;place-items:center;padding:20px;background:linear-gradient(135deg,#eef6f1,#f7faf8)}.login{width:min(420px,100%);background:#fff;border:1px solid var(--line);border-radius:18px;padding:28px;box-shadow:0 15px 45px #123b2414}.login h1{font-size:25px}.login .field{margin:13px 0}.login .btn{width:100%;padding:13px}.loginbrand{font-weight:900;color:var(--g);letter-spacing:2px}.footer{padding:22px 0;color:#9aa69f;font-size:10px}.modal{position:fixed;inset:0;background:#0b2018a8;z-index:80;display:none;align-items:center;justify-content:center;padding:18px}.modal.show{display:flex}.modalbox{background:#fff;border-radius:15px;width:min(800px,100%);max-height:88vh;overflow:auto;padding:20px}.modalhead{display:flex;justify-content:space-between;gap:12px;align-items:center}.modalhead h2{font-size:17px;margin:0}.xbtn{border:0;background:#f1f5f2;border-radius:8px;padding:8px 11px}.detailgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:15px 0}.detailgrid div{background:#f8faf9;padding:11px;border-radius:9px}.detailgrid .wide{grid-column:1/-1}.detailgrid small{display:block;color:var(--muted);font-size:10px;margin-bottom:5px}.detailgrid b{font-size:12px;overflow-wrap:anywhere}.evidence-context-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.evidence-context-grid>div{display:flex;align-items:center;gap:12px;min-width:0}.evidence-context-grid small{flex:0 0 auto;margin:0;min-width:76px}.evidence-context-grid b{min-width:0}.agent-contact-card{display:flex;align-items:center;justify-content:space-between;gap:14px;background:#f8faf9;border:1px solid #edf1ee;border-radius:12px;padding:16px;margin:14px 0}.agent-contact-name{display:flex;flex-direction:column;align-items:flex-start;gap:5px;min-width:0}.agent-contact-name small{color:var(--muted);font-size:11px}.agent-contact-name b{font-size:14px;overflow-wrap:anywhere}.agent-call-button{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--g);color:#fff;text-decoration:none;border:0;border-radius:30px;min-width:104px;padding:12px 20px;flex:0 0 auto;box-shadow:0 3px 9px #08734f30;font-size:13px;font-weight:800}.agent-call-button svg{width:18px;height:18px;fill:currentColor}.agent-phone-unavailable{font-size:11px;color:var(--muted);font-weight:700}.evidence-link{color:var(--g);font-weight:700;text-decoration:none}
+.pu-register{display:grid;gap:11px}
+.pu-row{border:1px solid var(--line);border-radius:13px;background:#fff;padding:14px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center}
+.pu-main{min-width:0}
+.pu-main strong{display:block;font-size:13px;overflow-wrap:anywhere}
+.pu-meta{font-size:10px;color:var(--muted);margin-top:5px;line-height:1.5}
+.pu-statuses{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+.pu-status{font-size:9px;border-radius:30px;padding:5px 8px;background:#f1f4f2;color:#75847b;font-weight:750}
+.pu-status.done{background:#e9f6ee;color:#17603f}
+.pu-status.warn{background:#fff4df;color:#98600a}
+.pu-view{white-space:nowrap}
+.pu-detail-section{border:1px solid var(--line);border-radius:11px;padding:13px;margin:12px 0}
+.pu-detail-section h3{font-size:13px;margin:0 0 9px}
+.pu-file{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:9px 0;border-top:1px solid #edf1ee;font-size:11px}
+.pu-file:first-of-type{border-top:0}
+.pu-preview{display:block;max-width:100%;max-height:360px;margin:10px auto;border-radius:9px}
+.pu-detail-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+@media(max-width:560px){.pu-row{grid-template-columns:1fr}.pu-view{width:100%}.pu-view button{width:100%}}
+
+.ec8a-compare-scroll{width:100%;max-height:520px;overflow:auto;border:1px solid var(--line);border-radius:11px;margin-top:12px;background:#fff}
+.ec8a-compare-table{border-collapse:separate;border-spacing:0;min-width:max-content;width:100%}
+.ec8a-compare-table th,.ec8a-compare-table td{padding:11px 14px;border-bottom:1px solid #edf1ee;border-right:1px solid #edf1ee;text-align:center;white-space:nowrap;font-size:12px}
+.ec8a-compare-table th{position:sticky;top:0;z-index:3;background:#edf5f0;color:#315b47}
+.ec8a-compare-table th:first-child,.ec8a-compare-table td:first-child{position:sticky;left:0;z-index:2;text-align:left;width:190px;min-width:190px;max-width:190px;white-space:normal;background:#fff}
+.ec8a-compare-table thead th:first-child{z-index:4;background:#edf5f0}
+.ec8a-compare-table tfoot td{position:sticky;bottom:0;z-index:2;background:#eaf5ef;font-weight:850;color:#07543b}
+.ec8a-compare-table tfoot td:first-child{z-index:4;background:#eaf5ef}
+.ec8a-compare-table .pu-view-cell{min-width:48px;width:48px;padding:8px 5px!important;text-align:center}.ec8a-compare-table .pu-view-btn{width:34px;height:24px;min-width:34px;padding:0;border:0;border-radius:7px;background:#087653;color:#fff;font-size:9px;line-height:24px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}.ec8a-compare-table .pu-view-btn:active{transform:scale(.97)}.ec8a-compare-table .pu-name{display:block;font-size:10px;line-height:1.25;font-weight:750;overflow-wrap:anywhere}.ec8a-compare-table .pu-code{display:block;color:var(--muted);font-size:9px;margin-top:3px;line-height:1.2}.ec8a-compare-table .pu-action-row{display:flex;align-items:center;justify-content:stretch;gap:4px;margin-top:8px;flex-wrap:nowrap;width:100%}.ec8a-compare-table .pu-action-btn{box-sizing:border-box;flex:1 1 0;width:auto;height:24px;min-width:0;max-width:none;padding:0 2px;border:0;border-radius:20px;background:#08734f;color:#fff;font-size:8px;line-height:24px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;cursor:pointer}.ec8a-compare-table .pu-action-btn{background:#858d89;color:#fff}.ec8a-compare-table .pu-action-btn.is-active{background:#08734f;color:#fff}.ec8a-compare-table .pu-action-btn:hover{filter:brightness(.96)}.ec8a-compare-table .pu-action-btn:active{transform:scale(.97)}.ec8a-compare-table .pu-election-status{display:flex;gap:7px;align-items:center;justify-content:flex-start;margin-top:7px;font-size:8px;line-height:1.2;color:#68776f;white-space:nowrap;width:100%;min-width:0}.ec8a-compare-table .pu-election-status span{box-sizing:border-box;display:flex;align-items:center;justify-content:center;flex:1 1 0;min-width:0;min-height:27px;margin:0 auto;padding:6px 10px;border-radius:30px;background:#fff0ef;border:1px solid #f3b8b3;color:#b42318;font-size:8px;font-weight:850;line-height:1.15;text-align:center;white-space:nowrap;box-shadow:0 3px 10px rgba(180,35,24,.20);text-shadow:0 1px 0 rgba(255,255,255,.65)}.ec8a-compare-table .pu-status-open{border:0;border-radius:20px;background:#08734f;color:#fff;font-size:8px;font-weight:800;padding:4px 9px;cursor:pointer;flex:0 0 auto}.ec8a-compare-table .pu-status-open:active{transform:scale(.97)}.ec8a-compare-table td{min-width:58px}.ec8a-compare-table .no-result{color:#9aa69f;background:#fbfcfb;font-weight:650}.ec8a-compare-table .waiting-cell{color:#a3ada7;font-style:italic}
+.ec8a-compare-table .no-result{color:#9aa69f}
+@media(max-width:560px){.ec8a-compare-scroll{max-height:460px}.ec8a-compare-table th,.ec8a-compare-table td{padding:10px 12px}}
+.menu{display:none;border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 10px;color:var(--g)}
+/* Home dashboard cards styled to match the Polling Unit Agent workspace */
+.home-welcome{margin:26px 0 20px}
+.home-welcome h1{font-size:38px;margin:8px 0 12px;color:#123d2d}
+.home-welcome .sub{font-size:15px;margin-bottom:22px}
+.home-context{background:#fff;border:1px solid var(--line);border-radius:17px;padding:20px 22px;margin:18px 0 22px;box-shadow:var(--shadow)}
+.home-context small{display:block;color:var(--g);font-size:10px;font-weight:850;letter-spacing:1.1px;text-transform:uppercase;margin-bottom:8px}
+.home-context strong{font-size:18px;display:block;margin-bottom:6px}
+.home-context p{font-size:13px;color:var(--muted);margin:0}
+.home-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:20px 0}
+.home-card{display:flex;align-items:center;gap:15px;text-align:left;width:100%;min-height:94px;padding:17px 19px;border:1px solid var(--line);border-radius:15px;background:#fff;color:var(--ink);box-shadow:var(--shadow);transition:transform .15s,border-color .15s}
+.home-card:hover{transform:translateY(-2px);border-color:#b9d8c7}
+.home-card .home-icon{width:48px;height:48px;flex:0 0 48px;border-radius:13px;background:var(--mint);color:var(--g);display:grid;place-items:center;font-size:22px;font-weight:800}
+.home-card .home-copy{min-width:0;flex:1}
+.home-card strong{display:block;font-size:15px;margin-bottom:5px}
+.home-card small{display:block;color:var(--muted);font-size:12px;line-height:1.45}
+.home-card .home-arrow{color:#69b9c7;font-size:20px;font-weight:800}
+.home-card.primary{background:var(--g);border-color:var(--g);color:#fff}
+.home-card.primary .home-icon{background:#fff;color:var(--g)}
+.home-card.primary small{color:#d5e9df}
+.home-card.upload-card{grid-column:1/-1}
+.home-card.logout-card .home-icon{background:#f1f5f2}
+.home-footer{padding:12px 0 24px;color:#9aa69f;font-size:10px}
+@media(max-width:650px){.home-welcome{margin:20px 0 16px}.home-welcome h1{font-size:30px}.home-context{padding:16px}.home-cards{grid-template-columns:1fr;gap:10px}.home-card{min-height:82px;padding:14px}.home-card.upload-card{grid-column:auto}}
+
+@media(max-width:900px){.sidebar{width:215px;flex-basis:215px}.content{padding:20px}.geo{grid-template-columns:repeat(2,minmax(0,1fr))}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.app{display:block}.sidebar{display:none;position:fixed;z-index:50;inset:0 auto 0 0;width:280px;box-shadow:15px 0 40px #102b1c22}.sidebar.open{display:flex}.topbar{height:58px;padding:0 14px}.menu{display:block}.topbar strong{font-size:12px}.pill{display:none}.content{padding:18px 13px 28px}h1{font-size:28px}.assigned{padding:15px}.geo{gap:7px}.stats{gap:8px}.stat{padding:12px}.stat strong{font-size:22px}.panel{padding:14px}.formgrid,.detailgrid{grid-template-columns:1fr}.field.full{grid-column:auto}}
+
+.results-scroll{width:100%;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:13px;background:#fff}
+.results-table{min-width:0;width:100%;background:#fff}
+.results-head,.result-row{display:grid;grid-template-columns:minmax(0,1fr) auto 54px;gap:10px;align-items:center;padding:12px 14px}
+.results-head{background:#f7faf8;border-bottom:1px solid #dfe9e3;color:#74847b;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.result-row{border-bottom:1px solid #edf1ee;min-height:66px}
+.result-row:last-child{border-bottom:0}
+.result-pu strong{display:block;font-size:12px;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.result-pu small{display:block;color:var(--muted);font-size:10px;margin-top:4px}
+.result-status{display:inline-block;border-radius:30px;padding:6px 9px;font-size:9px;font-weight:800;white-space:nowrap;background:#e9f6ee;color:#17603f}
+.result-status.warn{background:#fff4df;color:#98600a}
+.result-status.bad{background:#fff0ef;color:#a52c25}
+.result-status.pending{background:#f1f4f2;color:#75847b}
+.result-time{font-size:11px;color:#52645a;line-height:1.45}
+.result-view{border:0;border-radius:9px;background:#eaf5ef;color:var(--g);font-weight:850;font-size:12px;padding:10px 12px;min-width:0;width:100%}
+.result-view:active{background:#dceee4}
+.result-time{font-size:11px;color:#52645a;line-height:1.45;white-space:nowrap}
+@media(max-width:600px){
+ .results-scroll{overflow-x:hidden;overflow-y:visible}
+ .results-table{min-width:0;width:100%}
+ .results-head,.result-row{grid-template-columns:minmax(0,1fr) auto 36px;gap:4px;padding:9px 6px}
+ .results-head{font-size:8px;letter-spacing:.2px}
+ .result-row{min-height:56px}
+ .result-pu{min-width:0}
+ .result-pu strong{display:block;font-size:clamp(8px,2.65vw,10px);line-height:1.2;letter-spacing:-.2px;white-space:nowrap;overflow:visible;text-overflow:clip}
+ .result-pu small{font-size:9px;white-space:nowrap}
+ .result-status{white-space:nowrap;text-align:center;line-height:1;padding:6px 7px;font-size:8px;overflow-wrap:normal}
+ .result-view{box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;min-width:0;width:34px;max-width:34px;padding:5px 1px;font-size:8px;line-height:1;border-radius:20px;background:#08734f;color:#fff;font-weight:800;white-space:nowrap;overflow:hidden}
+ .result-view:active{background:#055b3e}
+}
+
+
+.submitted-evidence-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 18px;box-shadow:var(--shadow)}
+.evidence-grid-title{grid-column:1/-1;font-size:17px;font-weight:850;padding:3px 0 12px;border-bottom:2px solid #aeb8b5;margin-bottom:2px}
+.evidence-grid-button{display:flex;align-items:center;justify-content:center;gap:8px;min-height:62px;text-align:center;border:1px solid var(--g);border-radius:11px;background:var(--g);color:#fff;font-size:14px;font-weight:750;padding:12px 10px;transition:background .15s,color .15s,border-color .15s}
+.evidence-grid-button.active{background:#e5e9e7;border-color:#c8d0cc;color:#33443b;box-shadow:inset 0 0 0 1px #d5dcd8}
+.evidence-grid-button .arrow{display:none}
+.evidence-grid-button:focus-visible{outline:2px solid var(--g);outline-offset:3px}
+.evidence-category-panel{margin-top:14px;border:1px solid var(--line);border-radius:13px;background:#fff;padding:15px}
+.evidence-category-panel h3{margin:0 0 10px;font-size:15px}
+.evidence-category-item{padding:12px 0;border-top:1px solid #edf1ee}
+.evidence-category-item:first-of-type{border-top:0}
+.evidence-category-item strong{display:block;font-size:13px}
+.evidence-category-item .muted{font-size:11px;margin:4px 0 8px}
+.evidence-category-item img,.evidence-category-item video{display:block;width:100%;max-height:390px;object-fit:contain;border-radius:9px;background:#f2f5f3;margin:9px 0}
+/* Compact E-Form layout: keep ballot figures and party results visually close. */
+.evidence-category-item .detailgrid{gap:6px;margin:7px 0 8px}
+.evidence-category-item .detailgrid>div{padding:8px 10px}
+.evidence-category-item .detailgrid small{margin-bottom:3px}
+.evidence-category-item .detailgrid .muted{display:block;margin:2px 0 0;font-size:10px;line-height:1.25}
+.evidence-category-item>.tablewrap{margin-top:5px}
+.evidence-category-item>.tablewrap table{min-width:0;width:100%;table-layout:fixed}
+.evidence-category-item>.tablewrap th,.evidence-category-item>.tablewrap td{padding:7px 8px;font-size:10px;overflow-wrap:anywhere}
+.evidence-category-item>.tablewrap th{position:static}
+
+@media(max-width:520px){.evidence-context-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.evidence-context-grid .wide{grid-column:1/-1}.evidence-context-grid>div{gap:7px;align-items:flex-start;flex-direction:column}.evidence-context-grid small{min-width:0}.agent-contact-card{flex-direction:row;align-items:center}.agent-contact-name{flex-direction:column;align-items:flex-start;gap:4px}.submitted-evidence-grid{gap:9px;padding:12px}.evidence-grid-button{font-size:12px;min-height:58px;padding:10px 6px}.evidence-grid-title{font-size:16px}}
+
+
+.results-list-panel .panelhead{display:block}
+.results-list-panel .panelhead h2{margin-bottom:7px}
+.results-list-panel #submissionSummary{margin:0 0 12px!important}
+.result-view{box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;width:34px;height:24px;min-width:34px;max-width:34px;padding:0;border-radius:20px;background:#08734f;color:#fff;font-size:8px;line-height:1;font-weight:800;border:0;white-space:nowrap;cursor:pointer}
+.result-view:hover{background:#075b40}
+
+/* Final compact View control: exact 34px × 24px on every viewport */
+.result-view{box-sizing:border-box!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;width:34px!important;height:24px!important;min-width:34px!important;max-width:34px!important;min-height:24px!important;max-height:24px!important;padding:0!important;margin:0!important;border:0!important;border-radius:20px!important;background:#08734f!important;color:#fff!important;font-size:8px!important;line-height:1!important;font-weight:800!important;white-space:nowrap!important;overflow:hidden!important;flex:0 0 34px!important}
+.result-view:active,.result-view:hover{background:#075b40!important}
+
+/* Ward overview header and polling-unit row status */
+.ward-topbar{position:sticky;top:0;z-index:60;display:grid!important;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px;min-height:60px;padding:6px 18px!important;box-shadow:0 2px 8px #163b2910}
+.top-context{display:flex;flex-direction:column;gap:5px;min-width:0}
+.top-context-line{display:flex;align-items:center;gap:9px;min-width:0;flex-wrap:nowrap}.top-context-line strong{font-size:16px;line-height:1.25;color:var(--ink);white-space:nowrap}.top-context-line span{font-size:12px;color:var(--muted);line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.top-agent{font-size:13px;font-weight:800;color:var(--ink);line-height:1.2}
+.top-context span{font-size:12px;color:var(--muted);line-height:1.35}
+.top-agent{justify-self:start;text-align:left;white-space:nowrap}
+.top-actions{justify-self:end}
+@media(max-width:620px){
+ .ward-topbar{grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:6px 14px!important;min-height:58px}
+ .top-context-line{gap:7px}
+ .top-context-line strong{font-size:14px}
+ .top-context-line span{font-size:11px}
+ .top-agent{font-size:12px}
+ .top-context{gap:3px}
+ .top-actions{grid-column:2;grid-row:1 / span 2}
+}
+
+
+/* Polling-unit dashboard filter */
+.pu-dashboard-filter{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px;padding:10px 12px;background:#f8fbf9;border:1px solid var(--line);border-radius:11px}.pu-dashboard-filter label{font-size:11px;font-weight:800;color:var(--ink)}.pu-dashboard-filter select{flex:1;min-width:190px;max-width:360px;border:1px solid #d8e5dd;border-radius:9px;padding:10px 12px;background:#fff;color:var(--ink);font-size:12px;font-weight:650;outline:none}.pu-dashboard-filter select:focus{border-color:var(--g);box-shadow:0 0 0 3px #08734f18}.pu-filter-count{font-size:10px;color:var(--muted);font-weight:650}@media(max-width:600px){.pu-dashboard-filter{gap:7px}.pu-dashboard-filter select{max-width:none;width:100%;flex-basis:100%}}
+.ward-back-btn{min-width:82px;padding:9px 16px;border:0;border-radius:10px;background:var(--g);color:#fff;font-size:12px;font-weight:800;transition:background .15s,color .15s}.ward-back-btn:disabled{background:#edf1ee;color:#9aa69f;cursor:not-allowed;opacity:1}.ward-back-btn:not(:disabled):active{background:var(--gd)}
+
+.over-resolution-card{margin:16px 0 4px;padding:16px;border:1px solid var(--line);border-radius:14px;background:#fff;box-shadow:var(--shadow)}.over-resolution-card h3{font-size:16px;margin:0 0 9px}.over-resolution-card>p{margin:0 0 12px}.resolution-confirm{display:flex;align-items:flex-start;gap:10px;padding:13px;background:#f5f8f6;border:1px solid var(--line);border-radius:10px;font-size:13px;line-height:1.5;margin:12px 0}.resolution-confirm input{width:18px;height:18px;flex:0 0 auto;accent-color:var(--g);margin-top:1px}.resolution-party-list{margin:12px 0}.resolution-party-list>strong{display:block;font-size:13px;margin-bottom:8px}.resolution-party-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px}.resolution-party-row input{width:110px;max-width:42%;padding:9px;border:1px solid var(--line);border-radius:8px;text-align:right}.resolution-submit{width:100%;padding:14px;margin-top:10px;font-size:14px}.resolution-done{padding:13px;background:#edf7f1;border:1px solid #cfe8d9;border-radius:10px}.resolution-done>strong{color:var(--g)}.resolution-done p{font-size:12px;line-height:1.5;color:var(--muted)}.resolution-done small{display:block;margin-top:10px;color:var(--muted)}.resolution-done .tablewrap{margin-top:10px}
+</style>
+</head>
+<body>
+<div id="loginScreen" class="login-wrap hidden" aria-hidden="true"></div>
+<div id="appScreen" class="app hidden"><main class="main"><header class="topbar ward-topbar"><span id="topTitle" hidden>Ward operations</span>
+  <div class="top-context"><div class="top-context-line"><strong id="wardTitle">Loading assigned ward…</strong><span id="wardAddress">Loading LGA · State…</span></div><div class="top-agent"><span id="agentName">Ward Agent</span></div></div>
+  <div class="top-actions"><button class="ward-back-btn" id="topBackBtn" type="button" disabled aria-label="Go back">Back</button></div>
+</header><div class="content">
+<section class="view active" id="view-overview">
+<div class="panel ec8a-compare-panel">
+  <div class="panelhead"><h2>Ward Collation Dashboard</h2></div>
+  <div class="pu-dashboard-filter"><label for="puDashboardFilter">Filter polling units</label><select id="puDashboardFilter"><option value="all">All polling units</option><option value="over_voting">Over Voting</option><option value="violence">Violence</option><option value="successful">Successful</option><option value="opening_poll">Opening Poll</option><option value="accreditation">Accreditation</option><option value="voting">Voting</option><option value="counting">Counting</option><option value="closing_poll">Closing Poll</option><option value="result_announcement">Result Announcement</option><option value="danger">Danger</option><option value="other_process">Other Election Status</option></select><span id="puFilterCount" class="pu-filter-count">All assigned polling units</span></div>
+  <div id="ec8aCompareTable" class="ec8a-compare-scroll"><div class="empty">Loading polling-unit results…</div></div>
+</div>
+<div class="home-cards">
+
+  <button class="home-card primary upload-card" type="button" data-go="collation">
+    <span class="home-icon">↑</span><span class="home-copy"><strong>Upload</strong><small>Submit your ward collation evidence after reviewing polling-unit uploads</small></span><span class="home-arrow">›</span>
+  </button>
+  <button class="home-card" type="button" data-go="submissions" data-filter="backup">
+    <span class="home-icon">⚑</span><span class="home-copy"><strong>Backup Request</strong><small>Review support requests submitted by polling-unit agents</small></span><span class="home-arrow">›</span>
+  </button>
+  <button class="home-card logout-card" type="button" id="homeLogoutBtn">
+    <span class="home-icon">↗</span><span class="home-copy"><strong>Log Out</strong><small>End your secure session</small></span><span class="home-arrow">›</span>
+  </button>
+</div>
+<div class="home-footer">BOTAS PHOTO · Ward-level review. Original polling-unit submissions remain read-only.</div>
+</section>
+<section class="view" id="view-submissions"><div class="panel results-list-panel"><div class="panelhead"><h2 id="submissionListTitle">Submitted polling-unit results</h2><div id="submissionSummary" class="muted">Loading polling units…</div></div><div id="submissionTable" class="pu-register"><div class="empty">Loading polling units…</div></div></div></section>
+<section class="view" id="view-collation"><div class="eyebrow">Ward collation record</div><h1>Prepare Ward Collation</h1><p class="sub">Create a separate ward-level collation record linked to the source submissions. This does not overwrite EC8A or incident reports.</p><div class="panel"><h2>Source submission summary</h2><div class="stats"><div class="stat"><small>EC8A records</small><strong id="cEc8a">0</strong></div><div class="stat"><small>PU units represented</small><strong id="cUnits">0</strong></div><div class="stat"><small>Incidents</small><strong id="cIncidents">0</strong></div><div class="stat"><small>Evidence files</small><strong id="cEvidence">0</strong></div></div><div id="collationSources" class="source-list"><div class="empty">No source records loaded.</div></div></div><form id="collationForm" class="panel"><h2>Ward collation details</h2><p class="muted">Review the underlying documents before entering any ward-level totals. The system will not automatically declare a winner or resolve disputed results.</p><div class="formgrid" style="margin-top:15px"><div class="field"><label for="collationDate">Collation date and time</label><input id="collationDate" type="datetime-local" required></div><div class="field"><label for="collationStatus">Review status</label><select id="collationStatus"><option value="in_review">In review</option><option value="completed">Completed</option><option value="discrepancy_flagged">Discrepancy flagged</option></select></div><div class="field full"><label for="collationSummary">Collation summary / observations</label><textarea id="collationSummary" placeholder="Record the ward-level collation observations and any unresolved issues…" required></textarea></div><div class="field full"><label for="discrepancies">Discrepancies or missing submissions</label><textarea id="discrepancies" placeholder="List polling units with missing EC8A forms, conflicting entries, over-voting flags, or other issues. Enter none if there are no issues identified."></textarea></div><div class="field full"><label for="totalValidVotes">Ward total valid votes (optional)</label><input id="totalValidVotes" type="number" min="0" step="1" placeholder="Enter only after verification against source forms"></div><div class="field full"><label for="totalRejectedVotes">Ward total rejected ballots (optional)</label><input id="totalRejectedVotes" type="number" min="0" step="1" placeholder="Enter only after verification against source forms"></div></div><label class="checkrow"><input type="checkbox" id="sourceReviewed" required> I have reviewed the available source submissions and supporting evidence.</label><label class="checkrow"><input type="checkbox" id="missingDeclared"> I have documented missing submissions and unresolved discrepancies above, or confirmed none.</label><div class="notice" id="collationNotice"></div><div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:15px"><button class="btn" id="saveCollationBtn">Save ward collation</button><button type="reset" class="btn secondary">Clear form</button></div></form></section>
+<section class="view" id="view-history"><div class="eyebrow">Saved ward records</div><h1>Collation History</h1><p class="sub">Ward collation records previously saved by this ward team.</p><div class="panel"><div id="historyTable" class="tablewrap"><div class="empty">Loading collation history…</div></div></div></section>
+</div></main></div>
+<div class="modal" id="detailModal"><div class="modalbox"><div class="modalhead"><h2 id="detailTitle">Submission details</h2><button class="xbtn" id="closeDetail">Close</button></div><div id="detailContent"></div></div></div>
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {getAuth,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {initializeFirestore,doc,getDoc,collection,query,where,getDocs,onSnapshot,addDoc,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+const firebaseConfig={apiKey:"AIzaSyBEbkeWDLuQOSPz2ojp59UWgqf0OakRrCo",authDomain:"election-8e790.firebaseapp.com",projectId:"election-8e790",storageBucket:"election-8e790.firebasestorage.app",messagingSenderId:"346568561664",appId:"1:346568561664:web:5618be1ebb4057f9c6f4e5"};
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=initializeFirestore(app,{experimentalForceLongPolling:true});
+const $=id=>document.getElementById(id);const first=(...v)=>v.find(x=>x!==undefined&&x!==null&&String(x).trim()!=='');const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const fmt=v=>{if(!v)return '—';let d=v?.toDate?v.toDate():(v instanceof Date?v:new Date(v));return isNaN(d)?String(v):d.toLocaleString()};const nameOf=d=>first(d?.pollingUnit,d?.pollingUnitName,d?.unitName,d?.geography?.pollingUnit,d?.ward,d?.wardName,d?.name,d?.title,'—');
+const electionNames={presidential:'Presidential Election',gubernatorial:'Gubernatorial Election',senatorial:'Senatorial Election',house_of_representatives:'House of Representatives Election'};
+let user=null,profile={},agent={},assignment={},data={ec8a:[],evidence:[],reports:[],alerts:[],backups:[],pus:[],collations:[]},unsubs=[],listenersStarted=false;
+function notice(id,msg,error=false){const el=$(id);el.textContent=msg;el.className='notice show'+(error?' error':'')}
+function getVal(...paths){for(const src of [agent?.geography,agent?.assignedScope,profile?.geography,profile?.assignedScope,agent,profile])for(const p of paths){const v=p.split('.').reduce((o,k)=>o?.[k],src);if(v!==undefined&&v!==null&&v!=='')return v}return ''}
+async function readGeo(col,id){if(!id)return null;try{const s=await getDoc(doc(db,col,String(id)));return s.exists()?{id:s.id,...s.data()}:null}catch(e){console.warn('Geo lookup',col,e);return null}}
+function recName(d){return first(d?.name,d?.stateName,d?.lgaName,d?.wardName,d?.pollingUnitName,d?.unitName,d?.title,d?.label,'')}
+async function loadProfile(u){user=u;const [us,ag]=await Promise.all([getDoc(doc(db,'users',u.uid)),getDoc(doc(db,'electionAgents',u.uid))]);if(!us.exists()&&!ag.exists())throw Error('No BOTAS PHOTO agent profile was found for this account.');profile=us.exists()?us.data():{};agent=ag.exists()?ag.data():profile;const role=String(first(agent.agentRole,profile.agentRole,agent.role,profile.role,'')).toLowerCase();if(!['ward_collation_agent','ward_collation'].includes(role))throw Error('This account is not registered as a Ward Collation Agent.');if(agent.active===false||profile.active===false||agent.status==='disabled'||profile.status==='disabled')throw Error('This account is disabled. Contact the Super Admin.');const stateCode=getVal('stateCode'),lgaCode=getVal('lgaCode'),wardCode=getVal('wardCode');if(!wardCode)throw Error('No wardCode is assigned to this account. Ask the Super Admin to correct the Ward Collation Agent assignment.');const [st,lg,wd]=await Promise.all([readGeo('geographyStates',stateCode),readGeo('geographyLGAs',lgaCode),readGeo('geographyWards',wardCode)]);const geo=agent.geography||profile.geography||{};assignment={stateCode,lgaCode,wardCode,state:first(geo.state,geo.stateName,agent.state,profile.state,recName(st)),lga:first(geo.lga,geo.lgaName,agent.lga,profile.lga,recName(lg)),ward:first(geo.ward,geo.wardName,agent.ward,profile.ward,recName(wd)),electionType:first(agent.electionType,profile.electionType,''),electionName:first(agent.electionName,profile.electionName,electionNames[agent.electionType],electionNames[profile.electionType],'')};$('agentName').textContent=first(profile.fullName,agent.fullName,u.displayName,u.email);if($('welcomeName'))$('welcomeName').textContent=first(profile.fullName,agent.fullName,u.displayName,u.email,'Agent').split(' ')[0];$('wardTitle').textContent=assignment.ward||'Assigned Ward';$('wardAddress').textContent=[assignment.lga,assignment.state].filter(Boolean).join(' · ');$('loginScreen').classList.add('hidden');$('appScreen').classList.remove('hidden');startListeners()}
+function listen(col,key){
+  // Live queries are scoped to the Ward Agent's assigned ward.
+  const constraints=[where('wardCode','==',String(assignment.wardCode))];
+  if(key!=='pus'&&key!=='collations'&&assignment.electionType){
+    constraints.push(where('electionType','==',String(assignment.electionType)));
+  }
+  const q=query(collection(db,col),...constraints);
+  const unsub=onSnapshot(q,s=>{
+    let rows=s.docs.map(d=>({id:d.id,...d.data(),_collection:col}));
+    if(['ec8a','evidence','reports','alerts','backups'].includes(key)){
+      rows=rows.filter(r=>
+        String(r.wardCode||r.geography?.wardCode||'')===String(assignment.wardCode) &&
+        String(r.agentRole||r.role||'').toLowerCase()==='polling_unit_agent' &&
+        (!assignment.electionType || String(r.electionType||'')===String(assignment.electionType))
+      );
+    }
+    if(key==='pus') rows=rows.filter(r=>String(r.wardCode||r.geography?.wardCode||'')===String(assignment.wardCode));
+    if(key==='collations') rows=rows.filter(r=>String(r.wardCode||'')===String(assignment.wardCode));
+    data[key]=rows;
+    renderAll();
+  },e=>{
+    console.error('Listener error',col,e);
+    const target=$('submissionTable');
+    if(target)target.innerHTML=`<div class="empty">Unable to read ${esc(col)}. Check Firestore Rules for Ward Collation Agent access and confirm records contain the assigned wardCode${assignment.electionType?' and electionType':''}. (${esc(e.code||e.message)})</div>`;
+  });
+  unsubs.push(unsub);
+}
+function startListeners(){if(listenersStarted)return;listenersStarted=true;listen('ec8aResults','ec8a');listen('evidenceUploads','evidence');listen('pollingUnitReports','reports');listen('voteBuyingAlerts','alerts');listen('backupRequests','backups');listen('geographyPollingUnits','pus');listen('wardCollations','collations')}
+function allSubmissions(){return [...data.ec8a,...data.evidence,...data.reports,...data.alerts,...data.backups].sort((a,b)=>dateMs(b.createdAt)-dateMs(a.createdAt))}function dateMs(v){const d=v?.toDate?v.toDate():new Date(v||0);return d.getTime()||0}function typeLabel(d){if(d._collection==='ec8aResults')return d.reportType==='over_voting'?'Over-voting EC8A':'Successful-election EC8A';if(d._collection==='evidenceUploads')return `Evidence: ${d.evidenceType||d.reportType||'File'}`;if(d._collection==='voteBuyingAlerts')return 'Vote-buying alert';if(d._collection==='backupRequests')return 'Backup request';return first(d.reportType,d.category,d.incidentType,'Polling-unit report').replaceAll('_',' ')}function unitCode(d){return first(d.pollingUnitCode,d.geography?.pollingUnitCode,'—')}function agentName(d){return first(d.fullName,d.agentName,d.email,d.agentUid,'—')}function statusTag(v){let s=String(v||'submitted').toLowerCase();let cls=s.includes('flag')||s.includes('over')?'warn':s.includes('reject')||s.includes('fail')?'bad':'';return `<span class="tag ${cls}">${esc(s.replaceAll('_',' '))}</span>`}
+
+
+function puReportStatus(records){
+  const processWords=['opening','accreditation','voting','vote','counting','closing','polling unit','polling-unit','ballot','result','violence','danger'];
+  const candidates=records.filter(d=>d._collection==='pollingUnitReports').sort((a,b)=>dateMs(b.createdAt)-dateMs(a.createdAt));
+  const process=candidates.find(d=>{
+    const value=[d.category,d.incidentType,d.reportType,d.title,d.details,d.description].filter(Boolean).join(' ').toLowerCase();
+    return processWords.some(w=>value.includes(w));
+  }) || candidates[0];
+  if(!process)return 'Awaiting election process';
+  const generic=new Set(['submitted','pending','received','report','polling unit report','incident report']);
+  const raw=[process.category,process.incidentType,process.reportType,process.title,process.status].find(v=>v&& !generic.has(String(v).toLowerCase().replaceAll('_',' ').trim())) || 'Report received';
+  return String(raw).replaceAll('_',' ').replaceAll('-',' ').replace(/\s+/g,' ').trim().replace(/\b\w/g,ch=>ch.toUpperCase());
+}
+function puActionFlags(code){
+  const records=recordsForPu(code);
+  const over=records.some(d=>d._collection==='ec8aResults'&&String(d.reportType||'').toLowerCase()==='over_voting');
+  const violence=records.some(d=>{
+    const t=[d.reportType,d.category,d.incidentType,d.details,d.description].filter(Boolean).join(' ').toLowerCase();
+    return (d._collection==='pollingUnitReports'||d._collection==='evidenceUploads')&&(t.includes('violence')||t.includes('violent'));
+  });
+  const view=records.some(d=>d._collection==='ec8aResults'&&String(d.reportType||'').toLowerCase()==='successful_election');
+  return {over,violence,view};
+}
+
+function puMatchesDashboardFilter(code,filter){
+  if(!filter||filter==='all')return true;
+  const records=recordsForPu(code);
+  const textOf=d=>[d.reportType,d.category,d.incidentType,d.alertType,d.title,d.status,d.reportStatus,d.details,d.description,d.message].filter(Boolean).join(' ').toLowerCase().replaceAll('_',' ').replaceAll('-',' ');
+  if(filter==='over_voting')return records.some(d=>(d._collection==='ec8aResults'&&String(d.reportType||'').toLowerCase()==='over_voting')||textOf(d).includes('over voting')||textOf(d).includes('overvoting'));
+  if(filter==='violence')return records.some(d=>textOf(d).includes('violence')||textOf(d).includes('violent'));
+  if(filter==='successful')return records.some(d=>d._collection==='ec8aResults'&&String(d.reportType||'').toLowerCase()==='successful_election');
+  const reports=records.filter(d=>d._collection==='pollingUnitReports');
+  const has=(...terms)=>reports.some(d=>{const t=textOf(d);return terms.some(term=>t.includes(term))});
+  if(filter==='opening_poll')return has('opening poll','open poll','poll opening','poll opened');
+  if(filter==='accreditation')return has('accreditation','accredited voter');
+  if(filter==='voting')return has('voting process','voting started','voting commenced','vote casting');
+  if(filter==='counting')return has('counting','count votes','counting votes');
+  if(filter==='closing_poll')return has('closing poll','close poll','poll closing','poll closed');
+  if(filter==='result_announcement')return has('result announcement','announce result','results announced');
+  if(filter==='danger')return has('danger','emergency','threat','security alert');
+  if(filter==='other_process')return reports.some(d=>{const t=textOf(d);return !!t&&!['submitted','pending','received','report'].includes(t.trim())&&!['opening poll','open poll','poll opening','poll opened','accreditation','accredited voter','voting process','voting started','voting commenced','vote casting','counting','count votes','counting votes','closing poll','close poll','poll closing','poll closed','result announcement','announce result','results announced','danger','emergency','threat','security alert'].some(term=>t.includes(term))});
+  return true;
+}
+function renderEc8aComparison(){
+  // Keep the party columns identical to the party list used by the Polling Unit Agent EC8A form.
+  const parties=['ADC','APC','A','AA','AAC','ADP','APGA','APM','APP','BP','LP','NNPP','NRM','PDP','PRP','SDP','YPP','ZLP'];
+  const units=data.pus.map(p=>({code:String(first(p.pollingUnitCode,p.code,p.unitCode,p.id,'')).trim(),name:puNameOf(p)})).filter(p=>p.code);
+  const allUnique=[...new Map(units.map(p=>[p.code,p])).values()].sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true,sensitivity:'base'}));
+  const selectedFilter=$('puDashboardFilter')?.value||'all';
+  const unique=allUnique.filter(p=>puMatchesDashboardFilter(p.code,selectedFilter));
+  if($('puFilterCount'))$('puFilterCount').textContent=`Showing ${unique.length} of ${allUnique.length} polling units`;
+  const latestByPu=new Map();
+  data.ec8a.filter(d=>String(d.reportType||'').toLowerCase()==='successful_election').forEach(d=>{
+    const code=puCodeKey(puCodeOf(d));if(!code)return;const prev=latestByPu.get(code);
+    if(!prev||dateMs(d.createdAt)>dateMs(prev.createdAt))latestByPu.set(code,d);
+  });
+  const partyVotes=new Map();
+  latestByPu.forEach((record,code)=>{
+    const arr=Array.isArray(record.partyResults)?record.partyResults:[];const values=new Map();
+    arr.forEach(item=>{const party=String(first(item.party,item.partyName,item.abbreviation,item.partyCode,item.code,'')).trim().toUpperCase();if(!party)return;const raw=item.votes??item.voteCount??item.totalVotes;const n=Number(raw);if(Number.isFinite(n))values.set(party,n)});
+    partyVotes.set(code,values);
+  });
+  const received=unique.filter(p=>latestByPu.has(p.code)).length;
+  if($('ec8aCompareSummary'))$('ec8aCompareSummary').textContent=`${unique.length} assigned polling units · ${received} with successful-election EC8A results · ${unique.length-received} awaiting EC8A results.`;
+  if(!unique.length){$('ec8aCompareTable').innerHTML=allUnique.length?'<div class="empty">No polling units match this filter.</div>':'<div class="empty">No assigned polling units were found for this ward.</div>';return}
+  const totals=Object.fromEntries(parties.map(p=>[p,0]));
+  const body=unique.map(p=>{
+    const puKey=puCodeKey(p.code);const vals=partyVotes.get(puKey);const hasResult=latestByPu.has(puKey);
+    const cells=parties.map(party=>{
+      const v=vals?.get(party);
+      if(v!==undefined)totals[party]+=v;
+      const display=v===undefined?'00':v.toLocaleString();
+      return `<td class="${v===undefined?'no-result '+(!hasResult?'waiting-cell':''):''}" title="${v===undefined?(hasResult?'No value recorded for this party':'Awaiting EC8A submission'):esc(party+' votes: '+v)}">${display}</td>`;
+    }).join('');
+    const flags=puActionFlags(p.code);const puStatus=puReportStatus(recordsForPu(p.code));
+    return `<tr><td><span class="pu-name">${esc(p.name)} (PU ${esc(p.code)})</span><div class="pu-action-row"><button class="pu-action-btn ${flags.over?'is-active':''}" type="button" data-pu-action="over_voting" data-pu-code="${esc(p.code)}">Over Voting</button><button class="pu-action-btn ${flags.violence?'is-active':''}" type="button" data-pu-action="violence" data-pu-code="${esc(p.code)}">Violence</button><button class="pu-action-btn ${flags.view?'is-active':''}" type="button" data-pu-view="${esc(p.code)}" aria-label="Successful election submission for ${esc(p.name)}">Successful</button></div><div class="pu-election-status"><button class="pu-status-open" type="button" data-pu-status="${esc(p.code)}">Status</button><span>${esc(puStatus)}</span></div></td>${cells}</tr>`;
+  }).join('');
+  const totalCells=parties.map(p=>`<td>${totals[p].toLocaleString()}</td>`).join('');
+  $('ec8aCompareTable').innerHTML=`<table class="ec8a-compare-table"><thead><tr><th>Polling Unit</th>${parties.map(p=>`<th>${esc(p)}</th>`).join('')}</tr></thead><tbody>${body}</tbody><tfoot><tr><td><span class="pu-name">TOTAL VOTES</span><span class="pu-code">All assigned polling units</span></td>${totalCells}</tr></tfoot></table>`;
+}
+function renderCoverage(){}
+function puCodeOf(d){return String(first(d.pollingUnitCode,d.geography?.pollingUnitCode,d.code,d.unitCode,d.id,'')).trim()}
+function puCodeKey(value){
+  const raw=String(value??'').trim().toUpperCase();
+  if(!raw)return '';
+  // Match full hierarchical geography IDs to short displayed PU numbers.
+  const tail=raw.split(/[_/\s-]+/).filter(Boolean).pop()||raw;
+  const digits=tail.match(/(\d+)$/);
+  return digits?digits[1].replace(/^0+(?=\d)/,''):tail.replace(/^PU[-_\s]*/,'');
+}
+function puCodesMatch(a,b){
+  const x=String(a??'').trim(),y=String(b??'').trim();
+  if(!x||!y)return false;
+  if(x===y)return true;
+  const kx=puCodeKey(x),ky=puCodeKey(y);
+  return !!kx&&kx===ky;
+}
+function puNameOf(d){return first(d.pollingUnitName,d.pollingUnit,d.unitName,d.name,d.title,d.label,d.pollingUnitCode,d.code,d.id,'Unnamed polling unit')}
+function recordsForPu(code){return allSubmissions().filter(d=>puCodesMatch(puCodeOf(d),code))}
+function evidenceKind(d){
+  const t=String(first(d.evidenceType,d.fileType,d.mimeType,'')).toLowerCase();
+  if(t.includes('video')||String(d.cloudinaryResourceType||'').toLowerCase()==='video'||String(d.fileType||'').startsWith('video/'))return 'video';
+  if(t.includes('duplicate'))return 'duplicate';
+  if(t.includes('ec8a')||t.includes('ec40g')||t.includes('form'))return 'form';
+  return 'other';
+}
+function puEvidenceFor(code){return data.evidence.filter(d=>puCodesMatch(puCodeOf(d),code))}
+function puRecordStatus(records,predicate){return records.some(predicate)}
+function resultStatus(records){
+  if(!records.length)return {label:'Waiting',cls:'pending'};
+  const states=records.map(d=>String(first(d.reportStatus,d.status,d.reviewStatus,'submitted')).toLowerCase().replaceAll('_',' '));
+  if(states.some(v=>v==='completed'||v.includes('complete')))return {label:'Completed',cls:'done'};
+  const ec=records.filter(d=>d._collection==='ec8aResults');
+  const reports=records.filter(d=>d._collection==='pollingUnitReports');
+  if(ec.some(d=>d.reportType==='over_voting')||reports.some(d=>String(first(d.reportType,d.category,d.incidentType,'')).toLowerCase().includes('over')))return {label:'Over Voting',cls:'warn'};
+  if(reports.some(d=>String(first(d.reportType,d.category,d.incidentType,'')).toLowerCase().includes('violence')))return {label:'Violence',cls:'bad'};
+  if(ec.some(d=>d.reportType==='successful_election'))return {label:'Received',cls:'done'};
+  if(ec.length)return {label:'Received',cls:'done'};
+  if(records.some(d=>d._collection==='evidenceUploads'))return {label:'Evidence Received',cls:'done'};
+  if(records.some(d=>d._collection==='voteBuyingAlerts'))return {label:'Vote Buying',cls:'warn'};
+  if(records.some(d=>d._collection==='backupRequests'))return {label:'Backup Requested',cls:'warn'};
+  return {label:'Report Received',cls:'done'};
+}
+let activeSubmissionType='all',activeSubmissionPuCode='';
+function renderSubmissions(){
+  const type=activeSubmissionType, selectedCode=String(activeSubmissionPuCode||'');
+  const allUnits=data.pus.map(p=>{
+    const code=String(first(p.pollingUnitCode,p.code,p.unitCode,p.id,'')).trim();
+    return {...p,_puCode:code,_puName:puNameOf(p)};
+  }).filter(p=>p._puCode);
+  const map=new Map();
+  allUnits.forEach(p=>{if(!map.has(p._puCode))map.set(p._puCode,p)});
+  allSubmissions().forEach(d=>{
+    const code=puCodeOf(d);if(code&&!map.has(code))map.set(code,{_puCode:code,_puName:nameOf(d),_fromSubmission:true});
+  });
+  let units=[...map.values()].map(p=>({...p,_records:recordsForPu(p._puCode)}))
+    .filter(p=>{
+      if(selectedCode && p._puCode!==selectedCode)return false;
+      const r=p._records,ec8a=r.filter(d=>d._collection==='ec8aResults');
+      const filterOk=type==='all'
+        ||(type==='votes'&&ec8a.some(d=>d.reportType==='successful_election'))
+        ||(type==='over_voting'&&ec8a.some(d=>d.reportType==='over_voting'))
+        ||(type==='ec8a'&&ec8a.length)
+        ||(type==='evidence'&&r.some(d=>d._collection==='evidenceUploads'))
+        ||(type==='incident'&&r.some(d=>d._collection==='pollingUnitReports'))
+        ||(type==='violence'&&r.some(d=>{const t=[d.reportType,d.category,d.incidentType,d.alertType,d.details,d.description,d.title].filter(Boolean).join(' ').toLowerCase();return t.includes('violence')||t.includes('violent')}))
+        ||(type==='alerts'&&r.some(d=>d._collection==='voteBuyingAlerts'))
+        ||(type==='backup'&&r.some(d=>d._collection==='backupRequests'));
+      return filterOk;
+    })
+    .map(p=>({...p,_latest:p._records.slice().sort((a,b)=>dateMs(b.createdAt)-dateMs(a.createdAt))[0],_status:resultStatus(p._records)}))
+    .sort((a,b)=>a._puName.localeCompare(b._puName,undefined,{numeric:true,sensitivity:'base'}));
+  const labels={all:'Submitted polling-unit results',votes:'Submitted successful-election polling-unit results',over_voting:'Submitted over-voting polling-unit results',violence:'Submitted violence polling-unit reports',backup:'Submitted backup requests',ec8a:'Submitted EC8A results',evidence:'Submitted evidence uploads',incident:'Submitted incident reports',alerts:'Submitted vote-buying alerts'};
+  const heading=labels[type]||labels.all;
+  $('submissionListTitle').textContent=heading;
+  const receivedCount=units.filter(p=>p._records.length>0).length;
+  $('submissionSummary').textContent=`${units.length} polling unit(s) listed · ${receivedCount} with matching submissions${assignment.ward?' in '+assignment.ward:''}${selectedCode?' · PU '+selectedCode:''}.`;
+  $('submissionTable').innerHTML=units.length?`<div class="results-scroll"><div class="results-table">
+    <div class="results-head"><span>Polling unit</span><span>Status</span><span>View</span></div>
+    ${units.map(p=>`<div class="result-row">
+      <div class="result-pu"><strong>${esc(p._puName)}</strong><small>${esc(p._puCode)}</small></div>
+      <div><span class="result-status ${p._status.cls}">${esc(p._status.label)}</span></div>
+      <button class="result-view" type="button" data-pu-view="${esc(p._puCode)}" aria-label="View ${esc(p._puName)} results">View</button>
+    </div>`).join('')}
+  </div></div>`:
+    `<div class="empty">No ${type==='over_voting'?'over-voting EC8A':type==='violence'?'violence': 'matching'} submissions found${selectedCode?' for polling unit '+esc(selectedCode):' in this ward'}.</div>`;
+}
+async function openPuView(code, mode='successful'){
+  const allPuRecords=recordsForPu(code);
+  const isViolenceRecord=d=>{const t=[d.reportType,d.category,d.incidentType,d.alertType,d.title,d.details,d.description,d.message].filter(Boolean).join(' ').toLowerCase();return t.includes('violence')||t.includes('violent')};
+  const normalizedReportType=d=>String(first(d.reportType,d.electionReportType,d.formType,d.category,d.evidenceType,'')).toLowerCase().replaceAll('-','_').replaceAll(' ','_');
+  const isOverVotingRecord=d=>{
+    const type=normalizedReportType(d);
+    return type.includes('over_voting')||type.includes('overvoting')||type.includes('over_vote');
+  };
+  const isSuccessfulElectionRecord=d=>{
+    const type=normalizedReportType(d);
+    return type.includes('successful_election')||type.includes('successful');
+  };
+  const records=mode==='over_voting'
+    ? allPuRecords.filter(d=>d._collection==='ec8aResults'
+        ? isOverVotingRecord(d)
+        : d._collection==='evidenceUploads' && (isOverVotingRecord(d)||(!isSuccessfulElectionRecord(d)&&String(first(d.evidenceType,d.category,'')).toLowerCase().includes('over'))))
+    : mode==='successful'
+      ? allPuRecords.filter(d=>d._collection==='ec8aResults'
+          ? isSuccessfulElectionRecord(d)
+          : d._collection==='evidenceUploads' && !isOverVotingRecord(d))
+      : mode==='violence'
+        ? allPuRecords.filter(d=>(d._collection==='pollingUnitReports'||d._collection==='evidenceUploads')&&isViolenceRecord(d))
+        : allPuRecords;
+  const p=data.pus.map(x=>({...x,_code:String(first(x.pollingUnitCode,x.code,x.unitCode,x.id,''))})).find(x=>x._code===String(code));
+  const pu=p||{pollingUnitName:first(records[0]&&nameOf(records[0]),'Polling unit')};
+  const title=puNameOf(pu);
+  const modalHeading=mode==='over_voting'?'Over Voting':mode==='violence'?'Violence':'Submitted evidence';
+  $('detailTitle').textContent=`${title} — ${modalHeading}`;
+  $('detailContent').innerHTML='<div class="empty">Loading submitted evidence…</div>';
+  $('detailModal').classList.add('show');syncBackButton();
+  // Resolve the polling-unit agent from the source submission, then from the
+  // Super Admin agent assignment in electionAgents/{uid} for this exact PU.
+  const successfulRecord=records.filter(d=>d._collection==='ec8aResults'&&String(d.reportType||'').toLowerCase()===(mode==='over_voting'?'over_voting':'successful_election')).sort((a,b)=>dateMs(b.createdAt)-dateMs(a.createdAt))[0];
+  const agentRecord=successfulRecord||records.slice().sort((a,b)=>dateMs(b.createdAt)-dateMs(a.createdAt))[0]||{};
+  const agentUid=first(agentRecord.agentUid,agentRecord.userId,agentRecord.createdBy,agentRecord.uid,'');
+  let agentDoc={};
+  if(agentUid){
+    try{const snap=await getDoc(doc(db,'electionAgents',String(agentUid)));if(snap.exists())agentDoc={...snap.data()};}catch(err){console.warn('Polling-unit agent profile lookup unavailable',err);}
+    if(!first(agentDoc.phone,agentDoc.phoneNumber,agentDoc.mobile,agentDoc.mobileNumber,agentDoc.contactPhone)){
+      try{const snap=await getDoc(doc(db,'users',String(agentUid)));if(snap.exists())agentDoc={...snap.data(),...agentDoc};}catch(err){console.warn('Agent account contact lookup unavailable',err);}
+    }
+  }
+  // If the source submission does not carry the agent UID, find the agent
+  // assigned to this polling-unit code in the Super Admin's agent registry.
+  const phoneFrom=(d={})=>first(d.phone,d.phoneNumber,d.mobile,d.mobileNumber,d.contactPhone,d.telephone,d.contact?.phone,d.contactInfo?.phone,d.personalInfo?.phone,d.profile?.phone,'');
+  // If the submission has no agent UID, resolve the assigned PU agent from the
+  // Super Admin registry. Then read users/{uid} as well, because the contact
+  // number may be stored on the account profile rather than electionAgents.
+  if(!phoneFrom(agentDoc)){
+    const lookups=[
+      ['geography.pollingUnitCode',String(code)],['assignedScope.pollingUnitCode',String(code)],
+      ['pollingUnitCode',String(code)]
+    ];
+    let matchedAgentId='';
+    for(const [field,value] of lookups){
+      try{
+        const q=query(collection(db,'electionAgents'),where('agentRole','==','polling_unit_agent'),where(field,'==',value));
+        const snap=await getDocs(q);
+        const match=snap.docs.find(d=>{
+          const a=d.data();
+          const aWard=first(a.geography?.wardCode,a.assignedScope?.wardCode,a.wardCode,'');
+          const active=a.active!==false&&String(a.status||'active').toLowerCase()!=='disabled';
+          return String(aWard)===String(assignment.wardCode)&&active;
+        });
+        if(match){agentDoc={...match.data(),_docId:match.id};matchedAgentId=first(match.data().uid,match.data().userId,match.id);break;}
+      }catch(err){console.warn('Assigned polling-unit agent query unavailable',field,err);}
+    }
+    const accountId=first(matchedAgentId,agentDoc.uid,agentDoc.userId,agentUid,'');
+    if(accountId){
+      try{
+        const snap=await getDoc(doc(db,'users',String(accountId)));
+        if(snap.exists())agentDoc={...snap.data(),...agentDoc};
+      }catch(err){console.warn('Polling-unit agent account contact lookup unavailable',err);}
+    }
+  }
+  const agentFullName=first(agentDoc.fullName,agentDoc.name,agentDoc.displayName,agentDoc.username,agentRecord.agentName,agentRecord.fullName,agentRecord.submittedByName,'Polling Unit Agent');
+  const agentPhone=first(phoneFrom(agentDoc),agentRecord.agentPhone,agentRecord.phone,agentRecord.phoneNumber,agentRecord.mobile,'');
+  const phoneHref=String(agentPhone).replace(/[^+\d]/g,'');
+  const evidence=records.filter(d=>d._collection==='evidenceUploads');
+  const ec8a=records.filter(d=>d._collection==='ec8aResults');
+  const evidenceMatches=(kind)=>{
+    // EC8A photo, video and duplicate copy are separate uploaded files.
+    // The E-Form is the structured EC8A result stored in ec8aResults.
+    if(kind==='ec8a')return evidence.filter(d=>{const t=[d.evidenceType,d.fileType,d.fileName,d.reportType,d.category].join(' ').toLowerCase();return (t.includes('ec8a')||t.includes('form')) && (String(first(d.fileType,d.evidenceFileType,d.mimeType,'')).startsWith('image/') || String(first(d.cloudinaryResourceType,d.evidenceResourceType,'')).toLowerCase()==='image')});
+    if(kind==='eform')return ec8a.filter(d=>mode==='over_voting'?isOverVotingRecord(d):mode==='successful'?isSuccessfulElectionRecord(d):true);
+    if(kind==='media')return [
+      ...evidence.filter(d=>{
+        const resource=String(first(d.cloudinaryResourceType,d.evidenceResourceType,'')).toLowerCase();
+        const mime=String(first(d.fileType,d.evidenceFileType,d.mimeType,'')).toLowerCase();
+        const type=String(first(d.evidenceType,d.fileType,d.mimeType,'')).toLowerCase();
+        return resource==='video'||mime.startsWith('video/')||type.includes('video');
+      }),
+      ...records.filter(d=>{
+        if(d._collection!=='pollingUnitReports')return false;
+        const resource=String(first(d.cloudinaryResourceType,d.evidenceResourceType,'')).toLowerCase();
+        const mime=String(first(d.fileType,d.evidenceFileType,d.mimeType,'')).toLowerCase();
+        const type=String(first(d.evidenceType,d.reportType,'')).toLowerCase();
+        return !!first(d.evidenceUrl,d.cloudinaryUrl,d.secure_url,'') && (resource==='video'||mime.startsWith('video/')||type.includes('video'));
+      })
+    ];
+    if(kind==='duplicate')return evidence.filter(d=>evidenceKind(d)==='duplicate'||[d.evidenceType,d.fileName,d.fileType].join(' ').toLowerCase().includes('duplicate'));
+    return [];
+  };
+  const numberWords=(value)=>{
+    const n=Number(value);if(!Number.isFinite(n))return '';
+    if(n===0)return 'zero';
+    const ones=['','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'];
+    const tens=['','','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'];
+    const under1000=x=>{let out='';if(x>=100){out+=ones[Math.floor(x/100)]+' hundred';x%=100;if(x)out+=' ';}if(x>=20){out+=tens[Math.floor(x/10)];if(x%10)out+='-'+ones[x%10];}else if(x>0)out+=ones[x];return out;};
+    let x=Math.floor(Math.abs(n)),parts=[];for(const [v,label] of [[1e9,'billion'],[1e6,'million'],[1e3,'thousand'],[1,'']]){if(x>=v){const q=Math.floor(x/v);parts.push(under1000(q)+(label?' '+label:''));x%=v;}}return (n<0?'minus ':'')+parts.join(' ');
+  };
+  const categoryItems=(kind)=>{
+    const items=evidenceMatches(kind);
+    if(!items.length)return '<p class="muted">No files or records of this type have been submitted for this polling unit.</p>';
+    return items.map(d=>{
+      const url=first(d.cloudinaryUrl,d.secure_url,d.cloudinary?.secure_url,d.evidenceUrl,'');
+      const label=first(d.fileName,d.evidenceFileName,d.evidenceType,d.fileType,d.category,typeLabel(d));
+      const isVideo=evidenceKind(d)==='video'||String(first(d.cloudinaryResourceType,d.evidenceResourceType,'')).toLowerCase()==='video'||String(d.fileType||d.evidenceFileType||'').startsWith('video/')||String(d.mimeType||'').startsWith('video/');
+      const isImage=String(d.fileType||d.evidenceFileType||'').startsWith('image/')||String(d.mimeType||'').startsWith('image/')||String(first(d.cloudinaryResourceType,d.evidenceResourceType,'')).toLowerCase()==='image';
+      let preview='';
+      if(url&&isVideo)preview=`<video controls playsinline preload="metadata" src="${esc(url)}"></video>`;
+      else if(url&&isImage)preview=`<img src="${esc(url)}" alt="${esc(label)}">`;
+      const link=url?`<a class="evidence-link" href="${esc(url)}" target="_blank" rel="noopener">Open submitted file</a>`:'<span class="muted">No file URL is available for this record.</span>';
+      const details=`${esc(agentName(d))} · ${esc(fmt(d.createdAt))} · ${esc(d.status||d.reportStatus||'submitted')}`;
+      if(d._collection==='ec8aResults'){
+        const ba=d.ballotAccounting||{},parties=Array.isArray(d.partyResults)?d.partyResults:[];
+        const nums=[['Registered voters',ba.voters],['Accredited voters',ba.accreditedVoters],['Ballot papers issued',ba.ballotPapersIssued],['Unused ballot papers',ba.unusedBallotPapers],['Spoilt ballot papers',ba.spoiltBallotPapers],['Rejected ballots',ba.rejectedBallots],['Total used ballot papers',ba.totalUsedBallotPapers],['Total valid votes',ba.totalValidVotes],['Excess votes',ba.excessVotes]];
+        return `<div class="evidence-category-item"><strong>${esc(typeLabel(d))}</strong><div class="muted">${details}</div><div class="detailgrid">${nums.filter(x=>x[1]!==undefined&&x[1]!==null).map(([k,v])=>`<div><small>${esc(k)}</small><b>${esc(v)}</b><span class="muted">${esc(numberWords(v))}</span></div>`).join('')}</div>${parties.length?`<div class="tablewrap"><table><thead><tr><th>Party</th><th>Votes</th><th>In words</th></tr></thead><tbody>${parties.map(x=>`<tr><td>${esc(x.party||'—')}</td><td>${esc(x.votes??'—')}</td><td>${esc(first(x.votesInWords,numberWords(x.votes),'—'))}</td></tr>`).join('')}</tbody></table></div>`:''}</div>`;
+      }
+      return `<div class="evidence-category-item"><strong>${esc(label)}</strong><div class="muted">${details}</div>${preview}${link}</div>`;
+    }).join('');
+  };
+  const overVotingSource=mode==='over_voting'?ec8a.find(d=>isOverVotingRecord(d)):null;
+  let priorResolution=null;
+  if(overVotingSource){
+    try{
+      const rq=query(collection(db,'overVotingResolutions'),where('pollingUnitCode','==',String(code)),where('wardCode','==',String(assignment.wardCode)));
+      const rs=await getDocs(rq);
+      priorResolution=rs.docs.map(x=>({id:x.id,...x.data()})).find(x=>x.sourceEc8aId===overVotingSource.id&&x.status==='resolved')||null;
+    }catch(err){console.warn('Could not check existing over-voting resolution',err);}
+  }
+  const originalPartyResults=Array.isArray(overVotingSource?.partyResults)?overVotingSource.partyResults:[];
+  const resolutionMarkup=mode==='over_voting'&&overVotingSource?`
+    <section class="over-resolution-card" id="overResolutionCard">
+      <h3>Ward Over-Voting Resolution</h3>
+      ${priorResolution?`<div class="resolution-done"><strong>Resolved by ward collation</strong><p>The original polling-unit EC8A has been preserved. The agreed party figures are recorded separately.</p><div class="tablewrap"><table><thead><tr><th>Party</th><th>Agreed votes</th></tr></thead><tbody>${(priorResolution.finalPartyResults||[]).map(x=>`<tr><td>${esc(x.party||'—')}</td><td>${esc(x.votes??'—')}</td></tr>`).join('')}</tbody></table></div><small>${esc(first(priorResolution.resolvedByName,'Ward Collation Agent'))} · ${esc(fmt(priorResolution.resolvedAt))}</small></div>`:`
+        <p class="muted">After reviewing the originating evidence and reaching consensus, enter the agreed final party figures below. The original EC8A submission will remain unchanged.</p>
+        <label class="resolution-confirm"><input type="checkbox" id="confirmWardDeclaration"> I confirm this Ward declaration after reviewing the originating evidence.</label>
+        ${originalPartyResults.length?`<div class="resolution-party-list"><strong>Agreed final party votes</strong>${originalPartyResults.map((x,i)=>`<label class="resolution-party-row"><span>${esc(x.party||`Party ${i+1}`)}</span><input type="number" min="0" step="1" inputmode="numeric" data-final-party-index="${i}" value="${esc(x.votes??0)}" aria-label="Agreed votes for ${esc(x.party||`Party ${i+1}`)}"></label>`).join('')}</div>`:'<p class="muted">No party vote rows were found in this EC8A. A resolution cannot be submitted until the source party figures are available.</p>'}
+        <button class="btn resolution-submit" type="button" id="declareOverVotingBtn" ${originalPartyResults.length?'disabled':''}>Declare Over-Voting case resolved</button>
+        <div class="notice" id="overResolutionNotice"></div>`}
+    </section>`:'';
+  $('detailContent').innerHTML=`
+    <div class="detailgrid evidence-context-grid"><div class="wide"><small>Polling unit</small><b>${esc(title)}</b></div><div><small>PU code</small><b>${esc(code)}</b></div><div><small>Assigned ward</small><b>${esc(assignment.ward||'—')}</b></div></div>
+    <section class="agent-contact-card" aria-label="Polling Unit Agent contact"><div class="agent-contact-name"><small>Polling Unit Agent</small><b>${esc(agentFullName)}</b></div>${phoneHref?`<a class="agent-call-button" href="tel:${esc(phoneHref)}" aria-label="Call polling-unit agent" title="Call polling-unit agent"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1.02-.24c1.12.37 2.32.56 3.58.56a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.6 21 3 13.4 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.26.19 2.46.56 3.58a1 1 0 0 1-.25 1.02z"/></svg><span>Call</span></a>`:'<span class="agent-phone-unavailable">Call unavailable</span>'}</section>
+    <section class="submitted-evidence-grid" aria-label="Submitted evidence">
+      <div class="evidence-grid-title">${esc(modalHeading)}</div>
+      <button class="evidence-grid-button" type="button" data-evidence-kind="ec8a"><span>View Form EC8A</span></button>
+      <button class="evidence-grid-button" type="button" data-evidence-kind="eform"><span>View E-Form</span></button>
+      <button class="evidence-grid-button" type="button" data-evidence-kind="media"><span>View Video</span></button>
+      <button class="evidence-grid-button" type="button" data-evidence-kind="duplicate"><span>View Duplicate Copy</span></button>
+    </section>
+    <section id="evidenceCategoryPanel" class="evidence-category-panel" hidden></section>
+    ${resolutionMarkup}`;
+  document.querySelectorAll('[data-evidence-kind]').forEach(btn=>btn.addEventListener('click',()=>{
+    const kind=btn.dataset.evidenceKind;
+    const names={ec8a:'Form EC8A',eform:'E-Form',media:'Video',duplicate:'Duplicate Copy'};
+    document.querySelectorAll('[data-evidence-kind]').forEach(item=>{
+      const active=item===btn;
+      item.classList.toggle('active',active);
+      item.setAttribute('aria-pressed',active?'true':'false');
+    });
+    const panel=$('evidenceCategoryPanel');
+    panel.innerHTML=`<h3>${names[kind]}</h3>${categoryItems(kind)}`;
+    panel.hidden=false;
+    panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+  }));
+  const confirmBox=$('confirmWardDeclaration'),declareBtn=$('declareOverVotingBtn');
+  if(confirmBox&&declareBtn){
+    confirmBox.addEventListener('change',()=>{declareBtn.disabled=!confirmBox.checked;});
+    declareBtn.addEventListener('click',async()=>{
+      const noticeBox=$('overResolutionNotice');
+      if(!confirmBox.checked){notice('overResolutionNotice','Please confirm that you reviewed the originating evidence.',true);return;}
+      const finalPartyResults=originalPartyResults.map((x,i)=>{const input=document.querySelector(`[data-final-party-index="${i}"]`);return {party:String(x.party||''),votes:Number(input?.value)};});
+      if(finalPartyResults.some(x=>!Number.isInteger(x.votes)||x.votes<0)){notice('overResolutionNotice','Enter a valid non-negative whole number for every party.',true);return;}
+      // Match the Firestore rules against the original EC8A document.
+      // The source submission is authoritative for its ward, polling unit and election.
+      const sourceWardCode=overVotingSource?.wardCode;
+      const sourcePollingUnitCode=overVotingSource?.pollingUnitCode;
+      const sourceElectionType=overVotingSource?.electionType;
+      if(overVotingSource?.formType!=='EC8A-Polling-Unit'||overVotingSource?.reportType!=='over_voting'){
+        notice('overResolutionNotice','This source record is not a valid Over-Voting EC8A submission. Refresh the dashboard and open the original Over-Voting report again.',true);return;
+      }
+      if(typeof sourceWardCode!=='string'||!sourceWardCode||sourceWardCode!==String(assignment.wardCode)){
+        notice('overResolutionNotice','The original EC8A ward code does not match this Ward Collation Agent assignment. No resolution was submitted. Please ask the Super Admin to verify the ward assignment.',true);return;
+      }
+      if(typeof sourcePollingUnitCode!=='string'||!sourcePollingUnitCode){
+        notice('overResolutionNotice','The original EC8A is missing a valid pollingUnitCode. No resolution was submitted. Correct the source polling-unit record first.',true);return;
+      }
+      if(typeof sourceElectionType!=='string'||!sourceElectionType||(assignment.electionType&&sourceElectionType!==String(assignment.electionType))){
+        notice('overResolutionNotice','The election type in the original EC8A does not match this Ward Collation Agent assignment. No resolution was submitted.',true);return;
+      }
+      if(!overVotingSource.id||!originalPartyResults.length||finalPartyResults.length!==originalPartyResults.length){
+        notice('overResolutionNotice','The original EC8A reference or party result rows are incomplete. No resolution was submitted.',true);return;
+      }
+      declareBtn.disabled=true;declareBtn.textContent='Saving resolution…';
+      try{
+        const resolution={recordType:'over_voting_resolution',status:'resolved',resolutionType:'ward_consensus',sourceCollection:'ec8aResults',sourceEc8aId:String(overVotingSource.id),sourceReportType:'over_voting',sourceCreatedAt:overVotingSource.createdAt||null,pollingUnitCode:sourcePollingUnitCode,pollingUnitName:title,wardCode:sourceWardCode,ward:overVotingSource.ward||overVotingSource.wardName||assignment.ward||'',lgaCode:overVotingSource.lgaCode||assignment.lgaCode||'',lga:overVotingSource.lga||overVotingSource.lgaName||assignment.lga||'',stateCode:overVotingSource.stateCode||assignment.stateCode||'',state:overVotingSource.state||overVotingSource.stateName||assignment.state||'',electionType:sourceElectionType,electionName:overVotingSource.electionName||assignment.electionName||'',candidateId:overVotingSource.candidateId||'',candidateName:overVotingSource.candidateName||'',originalPartyResults:originalPartyResults.map(x=>({party:String(x.party||''),votes:Number(x.votes??0)})),finalPartyResults,confirmedOriginatingEvidence:true,confirmationText:'I confirm this Ward declaration after reviewing the originating evidence.',resolvedBy:user.uid,resolvedByName:first(profile.fullName,agent.fullName,user.displayName,user.email,'Ward Collation Agent'),resolvedAt:serverTimestamp(),createdAt:serverTimestamp()};
+        await addDoc(collection(db,'overVotingResolutions'),resolution);
+        notice('overResolutionNotice','Over-voting resolution saved. The original EC8A remains unchanged; the agreed party figures are stored as a separate ward resolution.',false);
+        const card=$('overResolutionCard');if(card){card.innerHTML=`<h3>Ward Over-Voting Resolution</h3><div class="resolution-done"><strong>Resolved by ward collation</strong><p>The original polling-unit EC8A has been preserved. The agreed party figures are recorded separately.</p><div class="tablewrap"><table><thead><tr><th>Party</th><th>Agreed votes</th></tr></thead><tbody>${finalPartyResults.map(x=>`<tr><td>${esc(x.party||'—')}</td><td>${esc(x.votes)}</td></tr>`).join('')}</tbody></table></div><small>${esc(resolution.resolvedByName)} · just now</small></div>`;}
+      }catch(err){console.error('Over-voting resolution save failed',err);const code=err?.code||'unknown';const message=err?.message||String(err);notice('overResolutionNotice',`Could not save the ward resolution (${code}): ${message}`,true);declareBtn.disabled=false;declareBtn.textContent='Declare Over-Voting case resolved';}
+    });
+  }
+  $('detailModal').classList.add('show');syncBackButton();
+}
+async function openPuStatus(code){
+  const pu=data.pus.map(x=>({...x,_code:String(first(x.pollingUnitCode,x.code,x.unitCode,x.id,''))})).find(x=>puCodesMatch(x._code,code));
+  const records=recordsForPu(code).filter(d=>!['ec8aResults','evidenceUploads'].includes(d._collection));
+  const title=pu?puNameOf(pu):first(records[0]&&nameOf(records[0]),'Polling unit');
+  $('detailTitle').textContent=`${title} — Other submitted reports`;
+  $('detailContent').innerHTML='<div class="empty">Loading agent contact and submitted reports…</div>';
+  $('detailModal').classList.add('show');syncBackButton();
+
+  // Resolve the polling-unit agent using the source report UID first, then
+  // the Super Admin assignment in electionAgents for this exact polling unit.
+  const latestRecord=records.slice().sort((a,b)=>dateMs(b.createdAt)-dateMs(a.createdAt))[0]||{};
+  const agentUid=first(latestRecord.agentUid,latestRecord.userId,latestRecord.createdBy,latestRecord.uid,'');
+  let agentDoc={};
+  if(agentUid){
+    try{const snap=await getDoc(doc(db,'electionAgents',String(agentUid)));if(snap.exists())agentDoc={...snap.data(),_docId:snap.id};}catch(err){console.warn('Polling-unit agent profile lookup unavailable',err);}
+  }
+  const phoneFrom=(d={})=>first(d.phone,d.phoneNumber,d.mobile,d.mobileNumber,d.contactPhone,d.telephone,d.contact?.phone,d.contactInfo?.phone,d.personalInfo?.phone,d.profile?.phone,'');
+  let matchedAgentId=first(agentDoc.uid,agentDoc.userId,agentDoc._docId,agentUid,'');
+  if(!matchedAgentId||!phoneFrom(agentDoc)){
+    const lookups=[['geography.pollingUnitCode',String(code)],['assignedScope.pollingUnitCode',String(code)],['pollingUnitCode',String(code)]];
+    for(const [field,value] of lookups){
+      try{
+        const q=query(collection(db,'electionAgents'),where('agentRole','==','polling_unit_agent'),where(field,'==',value));
+        const snap=await getDocs(q);
+        const match=snap.docs.find(d=>{
+          const a=d.data();
+          const aWard=first(a.geography?.wardCode,a.assignedScope?.wardCode,a.wardCode,'');
+          return String(aWard)===String(assignment.wardCode)&&a.active!==false&&String(a.status||'active').toLowerCase()!=='disabled';
+        });
+        if(match){agentDoc={...match.data(),...agentDoc,_docId:match.id};matchedAgentId=first(match.data().uid,match.data().userId,match.id);break;}
+      }catch(err){console.warn('Assigned polling-unit agent query unavailable',field,err);}
+    }
+  }
+  if(matchedAgentId&&!phoneFrom(agentDoc)){
+    try{const snap=await getDoc(doc(db,'users',String(matchedAgentId)));if(snap.exists())agentDoc={...snap.data(),...agentDoc};}catch(err){console.warn('Polling-unit agent account contact lookup unavailable',err);}
+  }
+  const agentFullName=first(agentDoc.fullName,agentDoc.name,agentDoc.displayName,agentDoc.username,latestRecord.agentName,latestRecord.fullName,latestRecord.submittedByName,'Polling Unit Agent');
+  const agentPhone=first(phoneFrom(agentDoc),latestRecord.agentPhone,latestRecord.phone,latestRecord.phoneNumber,latestRecord.mobile,'');
+  const phoneHref=String(agentPhone).replace(/[^+\d]/g,'');
+  const contactHtml=`<section class="agent-contact-card" aria-label="Polling Unit Agent contact"><div class="agent-contact-name"><small>Polling Unit Agent</small><b>${esc(agentFullName)}</b></div>${phoneHref?`<a class="agent-call-button" href="tel:${esc(phoneHref)}" aria-label="Call polling-unit agent" title="Call polling-unit agent"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1.02-.24c1.12.37 2.32.56 3.58.56a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.6 21 3 13.4 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.26.19 2.46.56 3.58a1 1 0 0 1-.25 1.02z"/></svg><span>Call</span></a>`:'<span class="agent-phone-unavailable">Call unavailable</span>'}</section>`;
+  const reportsHtml=records.length
+    ? `<section class="pu-detail-section"><h3>Other submitted reports <span class="tag">${records.length}</span></h3>${records.slice().sort((a,b)=>dateMs(b.createdAt)-dateMs(a.createdAt)).map(d=>`<div class="evidence-category-item"><strong>${esc(typeLabel(d))}</strong><div class="muted">${esc(agentName(d))} · ${esc(fmt(d.createdAt))}</div><div>${esc(d.details||d.description||d.message||d.category||'Report submitted')}</div></div>`).join('')}</section>`
+    : '<div class="empty">No other submitted reports found for this polling unit.</div>';
+  $('detailContent').innerHTML=contactHtml+reportsHtml;
+  syncBackButton();
+}
+function renderCollation(){const sources=allSubmissions();const units=new Set(data.ec8a.map(unitCode).filter(x=>x!=='—'));$('cEc8a').textContent=data.ec8a.length;$('cUnits').textContent=units.size;$('cIncidents').textContent=data.reports.length+data.alerts.length;$('cEvidence').textContent=data.evidence.length;const groups=[['EC8A results',data.ec8a],['Evidence uploads',data.evidence],['Polling-unit reports',data.reports],['Vote-buying alerts',data.alerts],['Backup requests',data.backups]];$('collationSources').innerHTML=groups.map(([label,items])=>`<div class="source-item"><div><strong>${label}</strong><p>${items.length} record(s) in ${items[0]?esc(items[0]._collection):'existing collection'}${items.length?' · Latest: '+esc(fmt(items.slice().sort((a,b)=>dateMs(b.createdAt)-dateMs(a.createdAt))[0].createdAt)):''}</p></div><span class="tag">${items.length}</span></div>`).join('');}
+function renderHistory(){const rows=data.collations.slice().sort((a,b)=>dateMs(b.createdAt)-dateMs(a.createdAt));$('historyTable').innerHTML=rows.length?`<table><thead><tr><th>Collation date</th><th>Status</th><th>Source records</th><th>Valid votes</th><th>Created by</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${esc(fmt(r.collationDate||r.createdAt))}</td><td>${statusTag(r.reviewStatus||r.status)}</td><td>${esc(r.sourceCounts?.total??r.sourceSubmissionIds?.length??0)}</td><td>${esc(r.wardTotals?.validVotes??'—')}</td><td>${esc(r.createdByName||r.createdBy||'—')}</td></tr>`).join('')}</tbody></table>`:'<div class="empty">No ward collation records have been saved yet.</div>'}
+
+function renderAll(){renderSubmissions();renderEc8aComparison();renderCollation();renderHistory()}
+function openDetail(col,id){const map={ec8aResults:data.ec8a,evidenceUploads:data.evidence,pollingUnitReports:data.reports,voteBuyingAlerts:data.alerts,backupRequests:data.backups};const d=(map[col]||[]).find(x=>x.id===id);if(!d)return;$('detailTitle').textContent=typeLabel(d);let fields=[['Polling unit',nameOf(d)],['Polling unit code',unitCode(d)],['Agent',agentName(d)],['Election',d.electionName||d.electionType],['Candidate',d.candidateName],['Status',d.status||d.reportStatus],['Submitted',fmt(d.createdAt)],['Report type',d.reportType],['Details',d.details||d.category||d.incidentType],['Ballot accounting',d.ballotAccounting?JSON.stringify(d.ballotAccounting):'—'],['Party results',d.partyResults?JSON.stringify(d.partyResults):'—']];let html=`<div class="detailgrid">${fields.filter(x=>x[1]!==undefined&&x[1]!==null&&x[1]!=='').map(([k,v])=>`<div><small>${esc(k)}</small><b>${esc(typeof v==='object'?JSON.stringify(v):v)}</b></div>`).join('')}</div>`;const url=first(d.cloudinaryUrl,d.secure_url,d.cloudinary?.secure_url,'');if(url)html+=`<p><a class="evidence-link" href="${esc(url)}" target="_blank" rel="noopener">Open supporting evidence</a></p>`;$('detailContent').innerHTML=html;$('detailModal').classList.add('show')}
+let wardViewStack=['overview'];
+function syncBackButton(){const b=$('topBackBtn');if(b)b.disabled=wardViewStack.length<=1&&!document.querySelector('.modal.show')}
+function switchView(v,fromBack=false){const current=wardViewStack[wardViewStack.length-1]||'overview';if(!fromBack&&v!==current)wardViewStack.push(v);document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id==='view-'+v));document.querySelectorAll('.nav [data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===v));$('topTitle').textContent=({overview:'Ward operations overview',submissions:'Polling-unit submissions',collation:'Ward collation',history:'Collation history'})[v]||'Ward operations';syncBackButton();window.scrollTo({top:0,behavior:'smooth'})}
+function wardGoBack(){const modal=document.querySelector('.modal.show');if(modal){modal.classList.remove('show');syncBackButton();return}if(wardViewStack.length<=1){syncBackButton();return}wardViewStack.pop();const previous=wardViewStack[wardViewStack.length-1]||'overview';switchView(previous,true)}
+$('puDashboardFilter')?.addEventListener('change',renderEc8aComparison);
+document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.filter){activeSubmissionType=b.dataset.filter;activeSubmissionPuCode='';renderSubmissions()}switchView(b.dataset.go)}));$('homeLogoutBtn').addEventListener('click',logout);if($('topBackBtn'))$('topBackBtn').addEventListener('click',wardGoBack);document.addEventListener('click',e=>{const action=e.target.closest('[data-pu-action]');if(action){openPuView(action.dataset.puCode,action.dataset.puAction);return}const status=e.target.closest('[data-pu-status]');if(status){openPuStatus(status.dataset.puStatus);return}const pu=e.target.closest('[data-pu-view]');if(pu){openPuView(pu.dataset.puView);return}const b=e.target.closest('[data-detail]');if(b){const [c,id]=b.dataset.detail.split(':');openDetail(c,id)}});$('closeDetail').addEventListener('click',()=>{$('detailModal').classList.remove('show');syncBackButton()});$('detailModal').addEventListener('click',e=>{if(e.target===$('detailModal')){$('detailModal').classList.remove('show');syncBackButton()}});
+$('collationForm').addEventListener('submit',async e=>{e.preventDefault();const btn=$('saveCollationBtn');btn.disabled=true;btn.textContent='Saving…';try{if(!user||!assignment.wardCode)throw Error('Your assigned ward is not loaded.');const source=allSubmissions();const sourceIds=source.map(x=>({collection:x._collection,id:x.id}));const payload={recordType:'ward_collation',createdBy:user.uid,createdByName:first(profile.fullName,agent.fullName,user.displayName,user.email),createdAt:serverTimestamp(),collationDate:$('collationDate').value,reviewStatus:$('collationStatus').value,status:'submitted',electionType:assignment.electionType,electionName:assignment.electionName,stateCode:assignment.stateCode,lgaCode:assignment.lgaCode,wardCode:assignment.wardCode,state:assignment.state,lga:assignment.lga,ward:assignment.ward,sourceCounts:{ec8a:data.ec8a.length,evidence:data.evidence.length,reports:data.reports.length,voteBuyingAlerts:data.alerts.length,backupRequests:data.backups.length,total:source.length},sourceSubmissionIds:sourceIds,wardTotals:{validVotes:$('totalValidVotes').value===''?null:Number($('totalValidVotes').value),rejectedBallots:$('totalRejectedVotes').value===''?null:Number($('totalRejectedVotes').value)},summary:$('collationSummary').value.trim(),discrepancies:$('discrepancies').value.trim(),sourceReviewed:$('sourceReviewed').checked,missingDeclared:$('missingDeclared').checked};await addDoc(collection(db,'wardCollations'),payload);notice('collationNotice','Ward collation record saved successfully. Source submissions remain unchanged.');$('collationForm').reset();}catch(err){console.error(err);notice('collationNotice',err.code==='permission-denied'?'Firebase denied this save. Firestore Rules must permit assigned Ward Collation Agents to create wardCollations records scoped to their ward.':`Could not save ward collation: ${err.message||err}`,true)}finally{btn.disabled=false;btn.textContent='Save ward collation'}});
+
+async function logout(){unsubs.forEach(f=>f());unsubs=[];listenersStarted=false;await signOut(auth);window.location.replace('index.html')} 
+onAuthStateChanged(auth,async u=>{if(!u){$('appScreen').classList.add('hidden');window.location.replace('index.html');return}try{await loadProfile(u)}catch(err){console.error('Ward dashboard startup failed:',err);$('appScreen').classList.remove('hidden');const content=document.querySelector('.content');if(content){content.innerHTML='<div class="panel"><h2>Unable to load Ward Collation Dashboard</h2><p class="sub" id="startupError"></p><button class="btn" id="returnLoginBtn" type="button">Return to login</button></div>';const msg=document.getElementById('startupError');if(msg)msg.textContent=err?.message||'An unexpected startup error occurred.';document.getElementById('returnLoginBtn')?.addEventListener('click',async()=>{await signOut(auth);window.location.replace('index.html')})}}});
+</script></body></html>
