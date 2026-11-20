@@ -156,14 +156,14 @@
 
 /* Successful Ward Collation: four upload actions */
 .successful-upload-menu{padding:4px 0 28px}
-.successful-upload-options{display:grid;gap:18px}
-.successful-upload-card{width:100%;min-height:260px;padding:34px 42px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:0;text-align:left;background:#fff;border:1px solid #dce7e2;border-radius:24px;box-shadow:0 3px 10px #183b3010;color:#183b30}
+.successful-upload-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;max-width:860px;margin:0 auto}
+.successful-upload-card{width:100%;min-height:190px;padding:22px 24px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:0;text-align:left;background:#fff;border:1px solid #dce7e2;border-radius:20px;box-shadow:0 3px 10px #183b3010;color:#183b30}
 .successful-upload-card:focus-visible{outline:3px solid #85c9b4;outline-offset:3px}
-.successful-upload-icon{width:108px;height:108px;border-radius:28px;background:#e7f3ee;color:#087653;display:grid;place-items:center;font-size:52px;font-weight:700;line-height:1;margin-bottom:25px}
+.successful-upload-icon{width:68px;height:68px;border-radius:20px;background:#e7f3ee;color:#087653;display:grid;place-items:center;font-size:36px;font-weight:700;line-height:1;margin-bottom:16px}
 .successful-upload-icon.video-icon{font-size:46px}
-.successful-upload-card strong{font-size:clamp(22px,3.5vw,31px);font-weight:800;line-height:1.25;margin-bottom:24px}
-.successful-upload-card>span:last-child{font-size:clamp(18px,2.7vw,25px);color:#78837e;line-height:1.35}
-@media(max-width:600px){.successful-upload-card{min-height:210px;padding:24px 26px;border-radius:20px}.successful-upload-icon{width:82px;height:82px;border-radius:23px;font-size:42px;margin-bottom:20px}.successful-upload-card strong{font-size:23px;margin-bottom:19px}.successful-upload-card>span:last-child{font-size:19px}}
+.successful-upload-card strong{font-size:clamp(16px,2.2vw,21px);font-weight:800;line-height:1.25;margin-bottom:12px}
+.successful-upload-card>span:last-child{font-size:clamp(13px,1.7vw,16px);color:#78837e;line-height:1.35}
+@media(max-width:600px){.successful-upload-options{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.successful-upload-card{min-height:165px;padding:16px 14px;border-radius:17px}.successful-upload-icon{width:56px;height:56px;border-radius:17px;font-size:30px;margin-bottom:13px}.successful-upload-card strong{font-size:16px;margin-bottom:9px}.successful-upload-card>span:last-child{font-size:13px}}
 
 /* Upload status selection screen */
 .collation-chooser{padding:10px 0 28px}
