@@ -177,6 +177,28 @@ service cloud.firestore {
         && data.electionType == wardElectionType();
     }
 
+    function canWardAgentCreateEvidence(data) {
+      return isActiveWardCollationAgent()
+        && data.recordType == 'ward_evidence'
+        && data.agentUid == request.auth.uid
+        && data.userId == request.auth.uid
+        && data.createdBy == request.auth.uid
+        && data.role == 'ward_collation_agent'
+        && data.agentRole == 'ward_collation_agent'
+        && data.wardCode == wardAgentCode(request.auth.uid)
+        && data.candidateId == wardCandidateId()
+        && data.electionType == wardElectionType()
+        && data.geography.wardCode == wardAgentCode(request.auth.uid)
+        && data.geography.stateCode == data.stateCode
+        && data.geography.lgaCode == data.lgaCode
+        && data.geography.wardCode == data.wardCode
+        && data.status == 'uploaded'
+        && data.reportType == 'ward_evidence'
+        && data.title is string
+        && data.title.size() > 0
+        && data.description is string;
+    }
+
     function canWardAgentCreateCollation(data) {
       return isActiveWardCollationAgent()
         && data.recordType == 'ward_collation'
@@ -411,12 +433,14 @@ service cloud.firestore {
     // ==========================================
 
     match /evidenceUploads/{id} {
-      allow create: if assignmentMatches(request.resource.data)
-        && request.resource.data.status == 'uploaded'
-        && request.resource.data.cloudinaryUrl is string
-        && request.resource.data.cloudinaryUrl.size() > 0
-        && request.resource.data.reportType
-          in ['successful_election', 'over_voting'];
+      allow create: if (
+          assignmentMatches(request.resource.data)
+          && request.resource.data.status == 'uploaded'
+          && request.resource.data.cloudinaryUrl is string
+          && request.resource.data.cloudinaryUrl.size() > 0
+          && request.resource.data.reportType
+            in ['successful_election', 'over_voting']
+        ) || canWardAgentCreateEvidence(request.resource.data);
 
       allow read: if isSuperAdmin()
         || canReadOwnSubmission(resource.data)
