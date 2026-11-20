@@ -865,8 +865,8 @@ function chooseCollationCategory(category){
 document.querySelectorAll('[data-collation-category]').forEach(btn=>btn.addEventListener('click',()=>chooseCollationCategory(btn.dataset.collationCategory)));
 
 // Successful Ward Collation upload workflows.
-const WARD_CLOUDINARY_CLOUD_NAME="obaestate";
-const WARD_CLOUDINARY_UPLOAD_PRESET="hjdnytcb";
+const WARD_CLOUDINARY_CLOUD_NAME="hjdnytcb";
+const WARD_CLOUDINARY_UPLOAD_PRESET="Obaestate";
 const wardEvidenceTypes={
   ec8a:{title:"Evidence file",subtitle:"Upload a clear photo of the completed EC8A form.",accept:"image/*",resource:"image",type:"successful_ec8a_photo"},
   duplicate:{title:"Duplicate copy",subtitle:"Upload the duplicate EC8A photo or PDF copy.",accept:"image/*,.pdf",resource:"image",type:"successful_ec8a_duplicate"},
