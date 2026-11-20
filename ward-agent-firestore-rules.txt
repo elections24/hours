@@ -1,0 +1,669 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ==========================================
+    // 1. GENERAL AUTHENTICATION AND USER HELPERS
+    // ==========================================
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function userPath(uid) {
+      return /databases/$(database)/documents/users/$(uid);
+    }
+
+    function agentPath(uid) {
+      return /databases/$(database)/documents/electionAgents/$(uid);
+    }
+
+    function hasUserDoc(uid) {
+      return exists(userPath(uid));
+    }
+
+    function userData(uid) {
+      return get(userPath(uid)).data;
+    }
+
+    function hasAgentDoc(uid) {
+      return exists(agentPath(uid));
+    }
+
+    function agentData(uid) {
+      return get(agentPath(uid)).data;
+    }
+
+    function isSuperAdmin() {
+      return signedIn()
+        && hasUserDoc(request.auth.uid)
+        && userData(request.auth.uid).role == 'super_admin';
+    }
+
+    // ==========================================
+    // 2. POLLING UNIT AGENT VALIDATION
+    // ORIGINAL RULES — PRESERVED
+    // ==========================================
+
+    function isActivePollingUnitAgent() {
+      return signedIn()
+        && hasAgentDoc(request.auth.uid)
+        && agentData(request.auth.uid).uid == request.auth.uid
+        && agentData(request.auth.uid).agentRole == 'polling_unit_agent'
+        && agentData(request.auth.uid).active == true
+        && agentData(request.auth.uid).status == 'active'
+        && agentData(request.auth.uid).candidateId is string
+        && agentData(request.auth.uid).electionType is string
+        && agentData(request.auth.uid).geography.stateCode is string
+        && agentData(request.auth.uid).geography.lgaCode is string
+        && agentData(request.auth.uid).geography.wardCode is string
+        && agentData(request.auth.uid).geography.pollingUnitCode is string;
+    }
+
+    function assignmentMatches(data) {
+      return isActivePollingUnitAgent()
+        && data.agentUid == request.auth.uid
+        && data.userId == request.auth.uid
+        && data.role == 'polling_unit_agent'
+        && data.agentRole == 'polling_unit_agent'
+        && data.candidateId == agentData(request.auth.uid).candidateId
+        && data.electionType == agentData(request.auth.uid).electionType
+        && data.stateCode == agentData(request.auth.uid).geography.stateCode
+        && data.lgaCode == agentData(request.auth.uid).geography.lgaCode
+        && data.wardCode == agentData(request.auth.uid).geography.wardCode
+        && data.pollingUnitCode == agentData(request.auth.uid).geography.pollingUnitCode
+        && data.geography.stateCode == agentData(request.auth.uid).geography.stateCode
+        && data.geography.lgaCode == agentData(request.auth.uid).geography.lgaCode
+        && data.geography.wardCode == agentData(request.auth.uid).geography.wardCode
+        && data.geography.pollingUnitCode == agentData(request.auth.uid).geography.pollingUnitCode;
+    }
+
+    function canReadOwnSubmission(data) {
+      return signedIn()
+        && data.agentUid == request.auth.uid;
+    }
+
+    // ==========================================
+    // 3. WARD COLLATION AGENT PROFILE
+    // ==========================================
+
+    function wardProfileExists(uid) {
+      return hasAgentDoc(uid) || hasUserDoc(uid);
+    }
+
+    function wardProfile(uid) {
+      return hasAgentDoc(uid)
+        ? agentData(uid)
+        : userData(uid);
+    }
+
+    function wardAgentCode(uid) {
+      return (
+        'geography' in wardProfile(uid)
+        && 'wardCode' in wardProfile(uid).geography
+      )
+        ? wardProfile(uid).geography.wardCode
+        : (
+          'assignedScope' in wardProfile(uid)
+          && 'wardCode' in wardProfile(uid).assignedScope
+        )
+          ? wardProfile(uid).assignedScope.wardCode
+          : (
+            'wardCode' in wardProfile(uid)
+              ? wardProfile(uid).wardCode
+              : ''
+          );
+    }
+
+    // Ward agent uses the same active-profile pattern as PU agent,
+    // but its geographical assignment stops at ward.
+    function isActiveWardCollationAgent() {
+      return signedIn()
+        && hasAgentDoc(request.auth.uid)
+        && agentData(request.auth.uid).uid == request.auth.uid
+        && agentData(request.auth.uid).agentRole == 'ward_collation_agent'
+        && agentData(request.auth.uid).active == true
+        && agentData(request.auth.uid).status == 'active'
+        && agentData(request.auth.uid).candidateId is string
+        && agentData(request.auth.uid).electionType is string
+        && agentData(request.auth.uid).geography.stateCode is string
+        && agentData(request.auth.uid).geography.lgaCode is string
+        && agentData(request.auth.uid).geography.wardCode is string;
+    }
+
+    function wardElectionType() {
+      return (
+        'electionType' in wardProfile(request.auth.uid)
+        ? wardProfile(request.auth.uid).electionType
+        : ''
+      );
+    }
+
+    function canWardAgentReadSubmission(data) {
+      return isActiveWardCollationAgent()
+        && data.wardCode == wardAgentCode(request.auth.uid)
+        && (
+          wardElectionType() == ''
+          || data.electionType == wardElectionType()
+        );
+    }
+
+    function canWardAgentReadWardRecord(data) {
+      return isActiveWardCollationAgent()
+        && data.wardCode == wardAgentCode(request.auth.uid);
+    }
+
+    function canWardAgentCreateCollation(data) {
+      return isActiveWardCollationAgent()
+        && data.recordType == 'ward_collation'
+        && data.createdBy == request.auth.uid
+        && data.wardCode == wardAgentCode(request.auth.uid)
+        && data.status == 'submitted'
+        && (
+          wardElectionType() == ''
+          || data.electionType == wardElectionType()
+        );
+    }
+
+    // ==========================================
+    // 4. OVER-VOTING RESOLUTION VALIDATION
+    // ==========================================
+
+    function overVotingSourceExists(data) {
+      return exists(
+        /databases/$(database)/documents/ec8aResults/$(data.sourceEc8aId)
+      );
+    }
+
+    function overVotingSource(data) {
+      return get(
+        /databases/$(database)/documents/ec8aResults/$(data.sourceEc8aId)
+      ).data;
+    }
+
+    function canWardAgentCreateOverVotingResolution(data) {
+      return isActiveWardCollationAgent()
+        && data.recordType == 'over_voting_resolution'
+        && data.status == 'resolved'
+        && data.resolutionType == 'ward_consensus'
+        && data.sourceCollection == 'ec8aResults'
+        && data.sourceEc8aId is string
+        && data.sourceEc8aId.size() > 0
+        && data.sourceReportType == 'over_voting'
+        && overVotingSourceExists(data)
+        && overVotingSource(data).formType == 'EC8A-Polling-Unit'
+        && overVotingSource(data).reportType == 'over_voting'
+        && data.wardCode == wardAgentCode(request.auth.uid)
+        && data.wardCode == overVotingSource(data).wardCode
+        && data.pollingUnitCode is string
+        && data.pollingUnitCode == overVotingSource(data).pollingUnitCode
+        && (
+          wardElectionType() == ''
+          || data.electionType == wardElectionType()
+        )
+        && data.electionType == overVotingSource(data).electionType
+        && data.confirmedOriginatingEvidence == true
+        && data.confirmationText ==
+          'I confirm this Ward declaration after reviewing the originating evidence.'
+        && data.resolvedBy == request.auth.uid
+        && data.resolvedByName is string
+        && data.originalPartyResults is list
+        && data.finalPartyResults is list
+        && data.originalPartyResults.size() > 0
+        && data.finalPartyResults.size() ==
+          data.originalPartyResults.size();
+    }
+
+    function canWardAgentReadOverVotingResolution(data) {
+      return isActiveWardCollationAgent()
+        && data.wardCode == wardAgentCode(request.auth.uid)
+        && (
+          wardElectionType() == ''
+          || data.electionType == wardElectionType()
+        );
+    }
+
+    // ==========================================
+    // 5. LOCAL GOVERNMENT COLLATION AGENT
+    // ORIGINAL RULES — PRESERVED
+    // ==========================================
+
+    function isActiveLgaCollationAgent() {
+      return signedIn()
+        && hasAgentDoc(request.auth.uid)
+        && agentData(request.auth.uid).agentRole ==
+          'local_government_collation_agent'
+        && agentData(request.auth.uid).active == true
+        && agentData(request.auth.uid).status == 'active'
+        && agentData(request.auth.uid).electionType is string
+        && agentData(request.auth.uid).candidateId is string
+        && (
+          agentData(request.auth.uid).geography.stateCode is string
+          || agentData(request.auth.uid).assignedScope.stateCode is string
+          || agentData(request.auth.uid).stateCode is string
+        )
+        && (
+          agentData(request.auth.uid).geography.lgaCode is string
+          || agentData(request.auth.uid).assignedScope.lgaCode is string
+          || agentData(request.auth.uid).lgaCode is string
+        );
+    }
+
+    function lgaAgentStateCode() {
+      return agentData(request.auth.uid).geography.stateCode is string
+        ? agentData(request.auth.uid).geography.stateCode
+        : (
+          agentData(request.auth.uid).assignedScope.stateCode is string
+            ? agentData(request.auth.uid).assignedScope.stateCode
+            : agentData(request.auth.uid).stateCode
+        );
+    }
+
+    function lgaAgentLgaCode() {
+      return agentData(request.auth.uid).geography.lgaCode is string
+        ? agentData(request.auth.uid).geography.lgaCode
+        : (
+          agentData(request.auth.uid).assignedScope.lgaCode is string
+            ? agentData(request.auth.uid).assignedScope.lgaCode
+            : agentData(request.auth.uid).lgaCode
+        );
+    }
+
+    function canLgaAgentReadWardCollation(data) {
+      return isActiveLgaCollationAgent()
+        && data.recordType == 'ward_collation'
+        && data.lgaCode == lgaAgentLgaCode()
+        && data.stateCode == lgaAgentStateCode()
+        && data.electionType == agentData(request.auth.uid).electionType;
+    }
+
+    function canLgaAgentReadPollingUnitSubmission(data) {
+      return isActiveLgaCollationAgent()
+        && data.stateCode == lgaAgentStateCode()
+        && data.lgaCode == lgaAgentLgaCode()
+        && data.electionType == agentData(request.auth.uid).electionType
+        && data.candidateId == agentData(request.auth.uid).candidateId;
+    }
+
+    function canLgaAgentReadLgaHistory(data) {
+      return isActiveLgaCollationAgent()
+        && data.lgaCode == lgaAgentLgaCode();
+    }
+
+    function canLgaAgentCreateCollation(data) {
+      return isActiveLgaCollationAgent()
+        && data.recordType == 'lga_collation'
+        && data.createdBy == request.auth.uid
+        && data.electionType == agentData(request.auth.uid).electionType
+        && data.candidateId == agentData(request.auth.uid).candidateId
+        && data.stateCode == lgaAgentStateCode()
+        && data.lgaCode == lgaAgentLgaCode()
+        && data.status == 'submitted'
+        && data.sourceCounts is map
+        && data.sourceWardCollationIds is list
+        && data.lgaTotals is map
+        && data.summary is string;
+    }
+
+    function canLgaAgentReadOverVotingResolution(data) {
+      return isActiveLgaCollationAgent()
+        && data.lgaCode == lgaAgentLgaCode()
+        && data.stateCode == lgaAgentStateCode()
+        && data.electionType == agentData(request.auth.uid).electionType;
+    }
+
+    // ==================================================
+    // NEW NEW NEW RULES — WARD COLLATION AGENT
+    // Hierarchy: Election Type > Candidate > State > LGA > Ward
+    // ==================================================
+
+    function newWardAgentStateCode(uid) {
+      return (
+        'geography' in wardProfile(uid)
+        && 'stateCode' in wardProfile(uid).geography
+      )
+        ? wardProfile(uid).geography.stateCode
+        : (
+          'assignedScope' in wardProfile(uid)
+          && 'stateCode' in wardProfile(uid).assignedScope
+        )
+          ? wardProfile(uid).assignedScope.stateCode
+          : (
+            'stateCode' in wardProfile(uid)
+              ? wardProfile(uid).stateCode
+              : ''
+          );
+    }
+
+    function newWardAgentLgaCode(uid) {
+      return (
+        'geography' in wardProfile(uid)
+        && 'lgaCode' in wardProfile(uid).geography
+      )
+        ? wardProfile(uid).geography.lgaCode
+        : (
+          'assignedScope' in wardProfile(uid)
+          && 'lgaCode' in wardProfile(uid).assignedScope
+        )
+          ? wardProfile(uid).assignedScope.lgaCode
+          : (
+            'lgaCode' in wardProfile(uid)
+              ? wardProfile(uid).lgaCode
+              : ''
+          );
+    }
+
+    function newWardAgentCandidateId(uid) {
+      return ('candidateId' in wardProfile(uid))
+        ? wardProfile(uid).candidateId
+        : (
+          'geography' in wardProfile(uid)
+          && 'candidateId' in wardProfile(uid).geography
+        )
+          ? wardProfile(uid).geography.candidateId
+          : (
+            'assignedScope' in wardProfile(uid)
+            && 'candidateId' in wardProfile(uid).assignedScope
+          )
+            ? wardProfile(uid).assignedScope.candidateId
+            : '';
+    }
+
+    function newWardAgentElectionType(uid) {
+      return (
+        'electionType' in wardProfile(uid)
+        && wardProfile(uid).electionType is string
+        && wardProfile(uid).electionType != ''
+      )
+        ? wardProfile(uid).electionType
+        : (
+          'geography' in wardProfile(uid)
+          && 'electionType' in wardProfile(uid).geography
+          && wardProfile(uid).geography.electionType is string
+          && wardProfile(uid).geography.electionType != ''
+        )
+          ? wardProfile(uid).geography.electionType
+          : (
+            'assignedScope' in wardProfile(uid)
+            && 'electionType' in wardProfile(uid).assignedScope
+            && wardProfile(uid).assignedScope.electionType is string
+            && wardProfile(uid).assignedScope.electionType != ''
+          )
+            ? wardProfile(uid).assignedScope.electionType
+            : '';
+    }
+
+    function newWardAgentHasCompleteAssignment() {
+      return isActiveWardCollationAgent()
+        && newWardAgentElectionType(request.auth.uid) is string
+        && newWardAgentElectionType(request.auth.uid) != ''
+        && newWardAgentCandidateId(request.auth.uid) is string
+        && newWardAgentCandidateId(request.auth.uid) != ''
+        && newWardAgentStateCode(request.auth.uid) is string
+        && newWardAgentStateCode(request.auth.uid) != ''
+        && newWardAgentLgaCode(request.auth.uid) is string
+        && newWardAgentLgaCode(request.auth.uid) != ''
+        && wardAgentCode(request.auth.uid) is string
+        && wardAgentCode(request.auth.uid) != '';
+    }
+
+    // Same assignment matching pattern as Polling Unit Agent,
+    // but deliberately stops at ward. No polling unit fields.
+    function wardAssignmentMatches(data) {
+      return newWardAgentHasCompleteAssignment()
+        && data.agentUid == request.auth.uid
+        && data.userId == request.auth.uid
+        && data.role == 'ward_collation_agent'
+        && data.agentRole == 'ward_collation_agent'
+        && data.electionType == newWardAgentElectionType(request.auth.uid)
+        && data.candidateId == newWardAgentCandidateId(request.auth.uid)
+        && data.stateCode == newWardAgentStateCode(request.auth.uid)
+        && data.lgaCode == newWardAgentLgaCode(request.auth.uid)
+        && data.wardCode == wardAgentCode(request.auth.uid)
+        && data.geography.stateCode == newWardAgentStateCode(request.auth.uid)
+        && data.geography.lgaCode == newWardAgentLgaCode(request.auth.uid)
+        && data.geography.wardCode == wardAgentCode(request.auth.uid);
+    }
+
+    function newCanWardAgentCreateEc8a(data) {
+      return wardAssignmentMatches(data)
+        && data.formType == 'EC8A-Ward'
+        && data.recordLevel == 'ward'
+        && data.reportType == 'successful_election'
+        && data.status == 'submitted';
+    }
+
+    function newCanWardAgentCreateEvidence(data) {
+      return wardAssignmentMatches(data)
+        && data.status == 'uploaded'
+        && data.cloudinaryUrl is string
+        && data.cloudinaryUrl.size() > 0
+        && data.reportType in [
+          'successful_election',
+          'over_voting',
+          'violence',
+          'expose'
+        ];
+    }
+
+    // ==========================================
+    // 6. USER AND AGENT ACCOUNTS
+    // ORIGINAL RULES — PRESERVED
+    // ==========================================
+
+    match /users/{uid} {
+      allow read: if isSuperAdmin()
+        || (signedIn() && request.auth.uid == uid);
+
+      allow create, update, delete: if isSuperAdmin();
+    }
+
+    match /electionAgents/{uid} {
+      allow read: if isSuperAdmin()
+        || (signedIn() && request.auth.uid == uid);
+
+      allow create, update, delete: if isSuperAdmin();
+    }
+
+    // ==========================================
+    // 7. ELECTION AND GEOGRAPHICAL REFERENCE DATA
+    // ORIGINAL RULES — PRESERVED
+    // ==========================================
+
+    match /candidates/{id} {
+      allow read: if signedIn();
+      allow create, update, delete: if isSuperAdmin();
+    }
+
+    match /geographyStates/{id} {
+      allow read: if signedIn();
+      allow write: if isSuperAdmin();
+    }
+
+    match /geographyLGAs/{id} {
+      allow read: if signedIn();
+      allow write: if isSuperAdmin();
+    }
+
+    match /geographyWards/{id} {
+      allow read: if signedIn();
+      allow write: if isSuperAdmin();
+    }
+
+    match /geographyPollingUnits/{id} {
+      allow read: if signedIn();
+      allow write: if isSuperAdmin();
+    }
+
+    match /geographySenatorialZones/{id} {
+      allow read: if signedIn();
+      allow write: if isSuperAdmin();
+    }
+
+    match /geographyFederalConstituencies/{id} {
+      allow read: if signedIn();
+      allow write: if isSuperAdmin();
+    }
+
+    // ==========================================
+    // 8. DIGITAL EC8A RESULTS
+    // ORIGINAL PU RULE + NEW WARD RULE
+    // ==========================================
+
+    match /ec8aResults/{id} {
+      allow create: if (
+        assignmentMatches(request.resource.data)
+        && request.resource.data.formType == 'EC8A-Polling-Unit'
+        && request.resource.data.reportType
+          in ['successful_election', 'over_voting']
+        && request.resource.data.status == 'submitted'
+      )
+      || newCanWardAgentCreateEc8a(request.resource.data);
+
+      allow read: if isSuperAdmin()
+        || canReadOwnSubmission(resource.data)
+        || canWardAgentReadSubmission(resource.data)
+        || canLgaAgentReadPollingUnitSubmission(resource.data);
+
+      allow update, delete: if isSuperAdmin();
+    }
+
+    // ==========================================
+    // 9. PHOTO AND VIDEO EVIDENCE
+    // ORIGINAL PU RULE + NEW WARD RULE
+    // ==========================================
+
+    match /evidenceUploads/{id} {
+      allow create: if (
+        assignmentMatches(request.resource.data)
+        && request.resource.data.status == 'uploaded'
+        && request.resource.data.cloudinaryUrl is string
+        && request.resource.data.cloudinaryUrl.size() > 0
+        && request.resource.data.reportType
+          in ['successful_election', 'over_voting']
+      )
+      || newCanWardAgentCreateEvidence(request.resource.data);
+
+      allow read: if isSuperAdmin()
+        || canReadOwnSubmission(resource.data)
+        || canWardAgentReadSubmission(resource.data)
+        || canLgaAgentReadPollingUnitSubmission(resource.data);
+
+      allow update, delete: if isSuperAdmin();
+    }
+
+    // ==========================================
+    // 10. POLLING UNIT INCIDENT REPORTS
+    // ORIGINAL RULES — PRESERVED
+    // ==========================================
+
+    match /pollingUnitReports/{id} {
+      allow create: if assignmentMatches(request.resource.data)
+        && request.resource.data.category is string
+        && request.resource.data.details is string
+        && request.resource.data.status == 'submitted';
+
+      allow read: if isSuperAdmin()
+        || canReadOwnSubmission(resource.data)
+        || canWardAgentReadSubmission(resource.data)
+        || canLgaAgentReadPollingUnitSubmission(resource.data);
+
+      allow update, delete: if isSuperAdmin();
+    }
+
+    // ==========================================
+    // 11. BACKUP REQUESTS
+    // ORIGINAL RULES — PRESERVED
+    // ==========================================
+
+    match /backupRequests/{id} {
+      allow create: if assignmentMatches(request.resource.data)
+        && request.resource.data.incidentType is string
+        && request.resource.data.details is string
+        && request.resource.data.status == 'submitted';
+
+      allow read: if isSuperAdmin()
+        || canReadOwnSubmission(resource.data)
+        || canWardAgentReadSubmission(resource.data)
+        || canLgaAgentReadPollingUnitSubmission(resource.data);
+
+      allow update, delete: if isSuperAdmin();
+    }
+
+    // ==========================================
+    // 12. VOTE BUYING ALERTS
+    // ORIGINAL RULES — PRESERVED
+    // ==========================================
+
+    match /voteBuyingAlerts/{id} {
+      allow create: if assignmentMatches(request.resource.data)
+        && request.resource.data.alertType is string
+        && request.resource.data.details is string
+        && request.resource.data.status == 'submitted';
+
+      allow read: if isSuperAdmin()
+        || canReadOwnSubmission(resource.data)
+        || canWardAgentReadSubmission(resource.data)
+        || canLgaAgentReadPollingUnitSubmission(resource.data);
+
+      allow update, delete: if isSuperAdmin();
+    }
+
+    // ==========================================
+    // 13. WARD COLLATION RECORDS
+    // ORIGINAL RULES — PRESERVED
+    // ==========================================
+
+    match /wardCollations/{id} {
+      allow create: if canWardAgentCreateCollation(
+        request.resource.data
+      );
+
+      allow read: if isSuperAdmin()
+        || canWardAgentReadWardRecord(resource.data)
+        || canLgaAgentReadWardCollation(resource.data);
+
+      allow update, delete: if isSuperAdmin();
+    }
+
+    // ==========================================
+    // 14. OVER-VOTING RESOLUTIONS
+    // ORIGINAL RULES — PRESERVED
+    // ==========================================
+
+    match /overVotingResolutions/{id} {
+      allow create: if canWardAgentCreateOverVotingResolution(
+        request.resource.data
+      );
+
+      allow read: if isSuperAdmin()
+        || canWardAgentReadOverVotingResolution(resource.data)
+        || canLgaAgentReadOverVotingResolution(resource.data);
+
+      allow update, delete: if isSuperAdmin();
+    }
+
+    // ==========================================
+    // 15. LOCAL GOVERNMENT COLLATION RECORDS
+    // ORIGINAL RULES — PRESERVED
+    // ==========================================
+
+    match /lgaCollations/{id} {
+      allow create: if canLgaAgentCreateCollation(request.resource.data);
+
+      allow read: if isSuperAdmin()
+        || canLgaAgentReadLgaHistory(resource.data);
+
+      allow update, delete: if isSuperAdmin();
+    }
+
+    // ==========================================
+    // 16. DEFAULT DENY
+    // ORIGINAL RULES — PRESERVED
+    // ==========================================
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
