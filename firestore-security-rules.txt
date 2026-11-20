@@ -1,3 +1,4 @@
+
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -52,9 +53,7 @@ service cloud.firestore {
         && agentData(request.auth.uid).active == true
         && agentData(request.auth.uid).status == 'active'
         && agentData(request.auth.uid).candidateId is string
-        && agentData(request.auth.uid).candidateId != ''
         && agentData(request.auth.uid).electionType is string
-        && agentData(request.auth.uid).electionType != ''
         && agentData(request.auth.uid).geography.stateCode is string
         && agentData(request.auth.uid).geography.lgaCode is string
         && agentData(request.auth.uid).geography.wardCode is string
@@ -106,97 +105,188 @@ service cloud.firestore {
         );
     }
 
-    function wardAgentCode(uid) {
-      return wardProfileHasGeography(uid)
-        ? (
-            (
-              'geography' in wardProfile(uid)
-              && 'wardCode' in wardProfile(uid).geography
-            )
-            ? wardProfile(uid).geography.wardCode
-            : (
-                (
-                  'assignedScope' in wardProfile(uid)
-                  && 'wardCode' in wardProfile(uid).assignedScope
-                )
-                ? wardProfile(uid).assignedScope.wardCode
-                : (
-                    'wardCode' in wardProfile(uid)
-                    ? wardProfile(uid).wardCode
-                    : ''
-                  )
-              )
+    // Ward Agent role fallback
+
+    function wardAgentRole(uid) {
+      return hasAgentDoc(uid)
+        ? agentData(uid).get(
+            'agentRole',
+            userData(uid).get('agentRole', '')
           )
-        : (
-            'wardCode' in wardProfile(uid)
-            ? wardProfile(uid).wardCode
-            : ''
+        : userData(uid).get('agentRole', '');
+    }
+
+    // Ward assignment field fallback:
+    // electionAgents first, then users.
+
+    function wardAgentCode(uid) {
+      return hasAgentDoc(uid)
+        ? agentData(uid).get(
+            'geography', {}
+          ).get(
+            'wardCode',
+            agentData(uid).get(
+              'assignedScope', {}
+            ).get(
+              'wardCode',
+              agentData(uid).get(
+                'wardCode',
+                hasUserDoc(uid)
+                  ? userData(uid).get(
+                      'geography', {}
+                    ).get(
+                      'wardCode',
+                      userData(uid).get(
+                        'assignedScope', {}
+                      ).get(
+                        'wardCode',
+                        userData(uid).get('wardCode', '')
+                      )
+                    )
+                  : ''
+              )
+            )
+          )
+        : userData(uid).get(
+            'geography', {}
+          ).get(
+            'wardCode',
+            userData(uid).get(
+              'assignedScope', {}
+            ).get(
+              'wardCode',
+              userData(uid).get('wardCode', '')
+            )
           );
     }
 
-    function wardCandidateId() {
-      return 'candidateId' in wardProfile(request.auth.uid)
-        ? wardProfile(request.auth.uid).candidateId
-        : '';
+    function wardStateCode(uid) {
+      return hasAgentDoc(uid)
+        ? agentData(uid).get(
+            'geography', {}
+          ).get(
+            'stateCode',
+            agentData(uid).get(
+              'assignedScope', {}
+            ).get(
+              'stateCode',
+              agentData(uid).get(
+                'stateCode',
+                hasUserDoc(uid)
+                  ? userData(uid).get(
+                      'geography', {}
+                    ).get(
+                      'stateCode',
+                      userData(uid).get(
+                        'assignedScope', {}
+                      ).get(
+                        'stateCode',
+                        userData(uid).get('stateCode', '')
+                      )
+                    )
+                  : ''
+              )
+            )
+          )
+        : userData(uid).get(
+            'geography', {}
+          ).get(
+            'stateCode',
+            userData(uid).get(
+              'assignedScope', {}
+            ).get(
+              'stateCode',
+              userData(uid).get('stateCode', '')
+            )
+          );
+    }
+
+    function wardLgaCode(uid) {
+      return hasAgentDoc(uid)
+        ? agentData(uid).get(
+            'geography', {}
+          ).get(
+            'lgaCode',
+            agentData(uid).get(
+              'assignedScope', {}
+            ).get(
+              'lgaCode',
+              agentData(uid).get(
+                'lgaCode',
+                hasUserDoc(uid)
+                  ? userData(uid).get(
+                      'geography', {}
+                    ).get(
+                      'lgaCode',
+                      userData(uid).get(
+                        'assignedScope', {}
+                      ).get(
+                        'lgaCode',
+                        userData(uid).get('lgaCode', '')
+                      )
+                    )
+                  : ''
+              )
+            )
+          )
+        : userData(uid).get(
+            'geography', {}
+          ).get(
+            'lgaCode',
+            userData(uid).get(
+              'assignedScope', {}
+            ).get(
+              'lgaCode',
+              userData(uid).get('lgaCode', '')
+            )
+          );
+    }
+
+    function wardCandidateId(uid) {
+      return hasAgentDoc(uid)
+        ? agentData(uid).get(
+            'candidateId',
+            hasUserDoc(uid)
+              ? userData(uid).get('candidateId', '')
+              : ''
+          )
+        : userData(uid).get('candidateId', '');
     }
 
     function wardElectionType() {
-      return 'electionType' in wardProfile(request.auth.uid)
-        ? wardProfile(request.auth.uid).electionType
-        : '';
+      return hasAgentDoc(request.auth.uid)
+        ? agentData(request.auth.uid).get(
+            'electionType',
+            hasUserDoc(request.auth.uid)
+              ? userData(request.auth.uid).get('electionType', '')
+              : ''
+          )
+        : userData(request.auth.uid).get('electionType', '');
     }
 
     function isActiveWardCollationAgent() {
       return signedIn()
         && wardProfileExists(request.auth.uid)
-        && wardProfile(request.auth.uid).agentRole
+        && wardAgentRole(request.auth.uid)
           in ['ward_collation_agent', 'ward_collation']
         && wardProfile(request.auth.uid).active != false
         && wardProfile(request.auth.uid).status != 'disabled'
         && wardAgentCode(request.auth.uid) is string
-        && wardAgentCode(request.auth.uid) != ''
-        && wardCandidateId() is string
-        && wardCandidateId() != ''
-        && wardElectionType() is string
-        && wardElectionType() != '';
+        && wardAgentCode(request.auth.uid) != '';
     }
 
-    // Every ward agent can read only records for the exact
-    // ward + election + candidate assignment on their profile.
     function canWardAgentReadSubmission(data) {
       return isActiveWardCollationAgent()
         && data.wardCode == wardAgentCode(request.auth.uid)
-        && data.candidateId == wardCandidateId()
-        && data.electionType == wardElectionType();
+        && (
+          wardElectionType() == ''
+          || data.electionType == wardElectionType()
+        );
     }
 
     function canWardAgentReadWardRecord(data) {
       return isActiveWardCollationAgent()
-        && data.wardCode == wardAgentCode(request.auth.uid)
-        && data.candidateId == wardCandidateId()
-        && data.electionType == wardElectionType();
-    }
-
-    function canWardAgentCreateEvidence(data) {
-      return isActiveWardCollationAgent()
-        && data.recordType == 'ward_evidence'
-        && data.agentUid == request.auth.uid
-        && data.userId == request.auth.uid
-        && data.createdBy == request.auth.uid
-        && data.role == 'ward_collation_agent'
-        && data.agentRole == 'ward_collation_agent'
-        && data.wardCode == wardAgentCode(request.auth.uid)
-        && data.candidateId == wardCandidateId()
-        && data.electionType == wardElectionType()
-        && data.geography.wardCode == wardAgentCode(request.auth.uid)
-        && data.geography.stateCode == data.stateCode
-        && data.geography.lgaCode == data.lgaCode
-        && data.geography.wardCode == data.wardCode
-        && data.status == 'uploaded'
-        && data.reportType == 'ward_evidence'
-        && data.title is string
-        && data.title.size() > 0
-        && data.description is string;
+        && data.wardCode == wardAgentCode(request.auth.uid);
     }
 
     function canWardAgentCreateCollation(data) {
@@ -204,9 +294,29 @@ service cloud.firestore {
         && data.recordType == 'ward_collation'
         && data.createdBy == request.auth.uid
         && data.wardCode == wardAgentCode(request.auth.uid)
-        && data.candidateId == wardCandidateId()
+        && data.status == 'submitted'
+        && (
+          wardElectionType() == ''
+          || data.electionType == wardElectionType()
+        );
+    }
+
+    // WARD AGENT EVIDENCE AUTHORIZATION
+
+    function canWardAgentUploadEvidence(data) {
+      return isActiveWardCollationAgent()
+        && data.agentUid == request.auth.uid
+        && data.userId == request.auth.uid
+        && data.createdBy == request.auth.uid
+        && data.role == 'ward_collation_agent'
+        && data.agentRole == 'ward_collation_agent'
+        && data.wardCode == wardAgentCode(request.auth.uid)
+        && data.stateCode == wardStateCode(request.auth.uid)
+        && data.lgaCode == wardLgaCode(request.auth.uid)
+        && data.candidateId == wardCandidateId(request.auth.uid)
         && data.electionType == wardElectionType()
-        && data.status == 'submitted';
+        && data.cloudinaryUrl is string
+        && data.cloudinaryUrl.size() > 0;
     }
 
     // ==========================================
@@ -241,9 +351,10 @@ service cloud.firestore {
         && data.wardCode == overVotingSource(data).wardCode
         && data.pollingUnitCode is string
         && data.pollingUnitCode == overVotingSource(data).pollingUnitCode
-        && data.candidateId == wardCandidateId()
-        && data.candidateId == overVotingSource(data).candidateId
-        && data.electionType == wardElectionType()
+        && (
+          wardElectionType() == ''
+          || data.electionType == wardElectionType()
+        )
         && data.electionType == overVotingSource(data).electionType
         && data.confirmedOriginatingEvidence == true
         && data.confirmationText ==
@@ -260,14 +371,14 @@ service cloud.firestore {
     function canWardAgentReadOverVotingResolution(data) {
       return isActiveWardCollationAgent()
         && data.wardCode == wardAgentCode(request.auth.uid)
-        && data.candidateId == wardCandidateId()
-        && data.electionType == wardElectionType();
+        && (
+          wardElectionType() == ''
+          || data.electionType == wardElectionType()
+        );
     }
 
     // ==========================================
-    // 5. EXISTING LGA AGENT VALIDATION
-    // Kept unchanged; no LGA dashboard is included
-    // in this update.
+    // 5. LOCAL GOVERNMENT COLLATION AGENT
     // ==========================================
 
     function isActiveLgaCollationAgent() {
@@ -296,8 +407,8 @@ service cloud.firestore {
         ? agentData(request.auth.uid).geography.stateCode
         : (
           agentData(request.auth.uid).assignedScope.stateCode is string
-            ? agentData(request.auth.uid).assignedScope.stateCode
-            : agentData(request.auth.uid).stateCode
+          ? agentData(request.auth.uid).assignedScope.stateCode
+          : agentData(request.auth.uid).stateCode
         );
     }
 
@@ -306,8 +417,8 @@ service cloud.firestore {
         ? agentData(request.auth.uid).geography.lgaCode
         : (
           agentData(request.auth.uid).assignedScope.lgaCode is string
-            ? agentData(request.auth.uid).assignedScope.lgaCode
-            : agentData(request.auth.uid).lgaCode
+          ? agentData(request.auth.uid).assignedScope.lgaCode
+          : agentData(request.auth.uid).lgaCode
         );
     }
 
@@ -354,6 +465,22 @@ service cloud.firestore {
         && data.electionType == agentData(request.auth.uid).electionType;
     }
 
+    // LGA AGENT EVIDENCE AUTHORIZATION
+
+    function canLgaAgentUploadEvidence(data) {
+      return isActiveLgaCollationAgent()
+        && data.agentUid == request.auth.uid
+        && data.userId == request.auth.uid
+        && data.createdBy == request.auth.uid
+        && data.agentRole == 'local_government_collation_agent'
+        && data.stateCode == lgaAgentStateCode()
+        && data.lgaCode == lgaAgentLgaCode()
+        && data.candidateId == agentData(request.auth.uid).candidateId
+        && data.electionType == agentData(request.auth.uid).electionType
+        && data.cloudinaryUrl is string
+        && data.cloudinaryUrl.size() > 0;
+    }
+
     // ==========================================
     // 6. USER AND AGENT ACCOUNTS
     // ==========================================
@@ -361,12 +488,14 @@ service cloud.firestore {
     match /users/{uid} {
       allow read: if isSuperAdmin()
         || (signedIn() && request.auth.uid == uid);
+
       allow create, update, delete: if isSuperAdmin();
     }
 
     match /electionAgents/{uid} {
       allow read: if isSuperAdmin()
         || (signedIn() && request.auth.uid == uid);
+
       allow create, update, delete: if isSuperAdmin();
     }
 
@@ -429,18 +558,22 @@ service cloud.firestore {
     }
 
     // ==========================================
-    // 9. PHOTO AND VIDEO EVIDENCE
+    // 9. PHOTO, VIDEO AND GENERAL EVIDENCE
     // ==========================================
 
     match /evidenceUploads/{id} {
+
+      // Any evidence category or file type.
+      // Agent assignment determines authorization.
+
       allow create: if (
-          assignmentMatches(request.resource.data)
-          && request.resource.data.status == 'uploaded'
-          && request.resource.data.cloudinaryUrl is string
-          && request.resource.data.cloudinaryUrl.size() > 0
-          && request.resource.data.reportType
-            in ['successful_election', 'over_voting']
-        ) || canWardAgentCreateEvidence(request.resource.data);
+        assignmentMatches(request.resource.data)
+        || canWardAgentUploadEvidence(request.resource.data)
+        || canLgaAgentUploadEvidence(request.resource.data)
+      )
+      && request.resource.data.status == 'uploaded'
+      && request.resource.data.cloudinaryUrl is string
+      && request.resource.data.cloudinaryUrl.size() > 0;
 
       allow read: if isSuperAdmin()
         || canReadOwnSubmission(resource.data)
@@ -509,7 +642,9 @@ service cloud.firestore {
     // ==========================================
 
     match /wardCollations/{id} {
-      allow create: if canWardAgentCreateCollation(request.resource.data);
+      allow create: if canWardAgentCreateCollation(
+        request.resource.data
+      );
 
       allow read: if isSuperAdmin()
         || canWardAgentReadWardRecord(resource.data)
@@ -535,14 +670,17 @@ service cloud.firestore {
     }
 
     // ==========================================
-    // 15. EXISTING LGA COLLATION RECORDS
-    // Preserved from the supplied rules.
+    // 15. LOCAL GOVERNMENT COLLATION RECORDS
     // ==========================================
 
     match /lgaCollations/{id} {
-      allow create: if canLgaAgentCreateCollation(request.resource.data);
+      allow create: if canLgaAgentCreateCollation(
+        request.resource.data
+      );
+
       allow read: if isSuperAdmin()
         || canLgaAgentReadLgaHistory(resource.data);
+
       allow update, delete: if isSuperAdmin();
     }
 
@@ -553,5 +691,6 @@ service cloud.firestore {
     match /{document=**} {
       allow read, write: if false;
     }
+
   }
 }
