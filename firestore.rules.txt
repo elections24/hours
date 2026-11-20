@@ -1,122 +1,554 @@
 rules_version = '2';
 service cloud.firestore {
-  match /databases/{database}/documents {
+match /databases/{database}/documents {
 
-    function signedIn() { return request.auth != null; }
-    function userPath(uid) { return /databases/$(database)/documents/users/$(uid); }
-    function agentPath(uid) { return /databases/$(database)/documents/electionAgents/$(uid); }
-    function hasUserDoc(uid) { return exists(userPath(uid)); }
-    function userData(uid) { return get(userPath(uid)).data; }
-    function isSuperAdmin() {
-      return signedIn() && hasUserDoc(request.auth.uid)
-        && userData(request.auth.uid).role == 'super_admin';
-    }
-    function hasAgentDoc(uid) { return exists(agentPath(uid)); }
-    function agentData(uid) { return get(agentPath(uid)).data; }
-    function isActivePollingUnitAgent() {
-      return signedIn() && hasAgentDoc(request.auth.uid)
-        && agentData(request.auth.uid).uid == request.auth.uid
-        && agentData(request.auth.uid).agentRole == 'polling_unit_agent'
-        && agentData(request.auth.uid).active == true
-        && agentData(request.auth.uid).status == 'active'
-        && agentData(request.auth.uid).candidateId is string
-        && agentData(request.auth.uid).electionType is string
-        && agentData(request.auth.uid).geography.stateCode is string
-        && agentData(request.auth.uid).geography.lgaCode is string
-        && agentData(request.auth.uid).geography.wardCode is string
-        && agentData(request.auth.uid).geography.pollingUnitCode is string;
-    }
-    function assignmentMatches(data) {
-      return isActivePollingUnitAgent()
-        && data.agentUid == request.auth.uid
-        && data.userId == request.auth.uid
-        && data.role == 'polling_unit_agent'
-        && data.agentRole == 'polling_unit_agent'
-        && data.candidateId == agentData(request.auth.uid).candidateId
-        && data.electionType == agentData(request.auth.uid).electionType
-        && data.stateCode == agentData(request.auth.uid).geography.stateCode
-        && data.lgaCode == agentData(request.auth.uid).geography.lgaCode
-        && data.wardCode == agentData(request.auth.uid).geography.wardCode
-        && data.pollingUnitCode == agentData(request.auth.uid).geography.pollingUnitCode
-        && data.geography.stateCode == agentData(request.auth.uid).geography.stateCode
-        && data.geography.lgaCode == agentData(request.auth.uid).geography.lgaCode
-        && data.geography.wardCode == agentData(request.auth.uid).geography.wardCode
-        && data.geography.pollingUnitCode == agentData(request.auth.uid).geography.pollingUnitCode;
-    }
-    function canReadOwnSubmission(data) {
-      return signedIn() && data.agentUid == request.auth.uid;
-    }
+// ==========================================
+// 1. GENERAL AUTHENTICATION AND USER HELPERS
+// ==========================================
 
-    // Account records: Super Admin manages profiles; agents can read their own account.
-    match /users/{uid} {
-      allow read: if isSuperAdmin() || (signedIn() && request.auth.uid == uid);
-      allow create, update, delete: if isSuperAdmin();
-    }
-    // Authoritative assignment record. Only Super Admin can create or change assignments.
-    match /electionAgents/{uid} {
-      allow read: if isSuperAdmin() || (signedIn() && request.auth.uid == uid);
-      allow create, update, delete: if isSuperAdmin();
-    }
+function signedIn() {
+return request.auth != null;
+}
 
-    // Election reference data is readable by authenticated dashboards; managed by Super Admin.
-    match /candidates/{id} {
-      allow read: if signedIn();
-      allow create, update, delete: if isSuperAdmin();
-    }
-    match /geographyStates/{id} { allow read: if signedIn(); allow write: if isSuperAdmin(); }
-    match /geographyLGAs/{id} { allow read: if signedIn(); allow write: if isSuperAdmin(); }
-    match /geographyWards/{id} { allow read: if signedIn(); allow write: if isSuperAdmin(); }
-    match /geographyPollingUnits/{id} { allow read: if signedIn(); allow write: if isSuperAdmin(); }
-    match /geographySenatorialZones/{id} { allow read: if signedIn(); allow write: if isSuperAdmin(); }
-    match /geographyFederalConstituencies/{id} { allow read: if signedIn(); allow write: if isSuperAdmin(); }
+function userPath(uid) {
+return /databases/$(database)/documents/users/$(uid);
+}
 
-    // Digital EC8A submissions. Exact agent, candidate, election and polling-unit assignment required.
-    match /ec8aResults/{id} {
-      allow create: if assignmentMatches(request.resource.data)
-        && request.resource.data.formType == 'EC8A-Polling-Unit'
-        && request.resource.data.reportType in ['successful_election', 'over_voting']
-        && request.resource.data.status == 'submitted';
-      allow read: if isSuperAdmin() || canReadOwnSubmission(resource.data);
-      allow update, delete: if isSuperAdmin();
-    }
+function agentPath(uid) {
+return /databases/$(database)/documents/electionAgents/$(uid);
+}
 
-    // Cloudinary stores the media; Firestore stores only metadata and the returned secure URL.
-    match /evidenceUploads/{id} {
-      allow create: if assignmentMatches(request.resource.data)
-        && request.resource.data.status == 'uploaded'
-        && request.resource.data.cloudinaryUrl is string
-        && request.resource.data.cloudinaryUrl.size() > 0
-        && request.resource.data.reportType in ['successful_election', 'over_voting'];
-      allow read: if isSuperAdmin() || canReadOwnSubmission(resource.data);
-      allow update, delete: if isSuperAdmin();
-    }
+function hasUserDoc(uid) {
+return exists(userPath(uid));
+}
 
-    match /pollingUnitReports/{id} {
-      allow create: if assignmentMatches(request.resource.data)
-        && request.resource.data.category is string
-        && request.resource.data.details is string
-        && request.resource.data.status == 'submitted';
-      allow read: if isSuperAdmin() || canReadOwnSubmission(resource.data);
-      allow update, delete: if isSuperAdmin();
-    }
-    match /backupRequests/{id} {
-      allow create: if assignmentMatches(request.resource.data)
-        && request.resource.data.incidentType is string
-        && request.resource.data.details is string
-        && request.resource.data.status == 'submitted';
-      allow read: if isSuperAdmin() || canReadOwnSubmission(resource.data);
-      allow update, delete: if isSuperAdmin();
-    }
-    match /voteBuyingAlerts/{id} {
-      allow create: if assignmentMatches(request.resource.data)
-        && request.resource.data.alertType is string
-        && request.resource.data.details is string
-        && request.resource.data.status == 'submitted';
-      allow read: if isSuperAdmin() || canReadOwnSubmission(resource.data);
-      allow update, delete: if isSuperAdmin();
-    }
+function userData(uid) {
+return get(userPath(uid)).data;
+}
 
-    // Deny all other access unless explicitly added above.
-    match /{document=**} { allow read, write: if false; }
-  }
+function hasAgentDoc(uid) {
+return exists(agentPath(uid));
+}
+
+function agentData(uid) {
+return get(agentPath(uid)).data;
+}
+
+function isSuperAdmin() {
+return signedIn()
+&& hasUserDoc(request.auth.uid)
+&& userData(request.auth.uid).role == 'super_admin';
+}
+
+// ==========================================
+// 2. POLLING UNIT AGENT VALIDATION
+// ==========================================
+
+function isActivePollingUnitAgent() {
+return signedIn()
+&& hasAgentDoc(request.auth.uid)
+&& agentData(request.auth.uid).uid == request.auth.uid
+&& agentData(request.auth.uid).agentRole == 'polling_unit_agent'
+&& agentData(request.auth.uid).active == true
+&& agentData(request.auth.uid).status == 'active'
+&& agentData(request.auth.uid).candidateId is string
+&& agentData(request.auth.uid).electionType is string
+&& agentData(request.auth.uid).geography.stateCode is string
+&& agentData(request.auth.uid).geography.lgaCode is string
+&& agentData(request.auth.uid).geography.wardCode is string
+&& agentData(request.auth.uid).geography.pollingUnitCode is string;
+}
+
+function assignmentMatches(data) {
+return isActivePollingUnitAgent()
+&& data.agentUid == request.auth.uid
+&& data.userId == request.auth.uid
+&& data.role == 'polling_unit_agent'
+&& data.agentRole == 'polling_unit_agent'
+&& data.candidateId == agentData(request.auth.uid).candidateId
+&& data.electionType == agentData(request.auth.uid).electionType
+&& data.stateCode == agentData(request.auth.uid).geography.stateCode
+&& data.lgaCode == agentData(request.auth.uid).geography.lgaCode
+&& data.wardCode == agentData(request.auth.uid).geography.wardCode
+&& data.pollingUnitCode == agentData(request.auth.uid).geography.pollingUnitCode
+&& data.geography.stateCode == agentData(request.auth.uid).geography.stateCode
+&& data.geography.lgaCode == agentData(request.auth.uid).geography.lgaCode
+&& data.geography.wardCode == agentData(request.auth.uid).geography.wardCode
+&& data.geography.pollingUnitCode == agentData(request.auth.uid).geography.pollingUnitCode;
+}
+
+function canReadOwnSubmission(data) {
+return signedIn()
+&& data.agentUid == request.auth.uid;
+}
+
+// ==========================================
+// 3. WARD COLLATION AGENT PROFILE
+// ==========================================
+
+function wardProfileExists(uid) {
+return hasAgentDoc(uid) || hasUserDoc(uid);
+}
+
+function wardProfile(uid) {
+return hasAgentDoc(uid)
+? agentData(uid)
+: userData(uid);
+}
+
+function wardProfileHasGeography(uid) {
+return wardProfileExists(uid)
+&& (
+('geography' in wardProfile(uid))
+|| ('assignedScope' in wardProfile(uid))
+);
+}
+
+function wardAgentCode(uid) {
+return wardProfileHasGeography(uid)
+? (
+(
+'geography' in wardProfile(uid)
+&& 'wardCode' in wardProfile(uid).geography
+)
+? wardProfile(uid).geography.wardCode
+: (
+(
+'assignedScope' in wardProfile(uid)
+&& 'wardCode' in wardProfile(uid).assignedScope
+)
+? wardProfile(uid).assignedScope.wardCode
+: (
+'wardCode' in wardProfile(uid)
+? wardProfile(uid).wardCode
+: ''
+)
+)
+)
+: (
+'wardCode' in wardProfile(uid)
+? wardProfile(uid).wardCode
+: ''
+);
+}
+
+function isActiveWardCollationAgent() {
+return signedIn()
+&& wardProfileExists(request.auth.uid)
+&& wardProfile(request.auth.uid).agentRole
+in ['ward_collation_agent', 'ward_collation']
+&& wardProfile(request.auth.uid).active != false
+&& wardProfile(request.auth.uid).status != 'disabled'
+&& wardAgentCode(request.auth.uid) is string
+&& wardAgentCode(request.auth.uid) != '';
+}
+
+function wardElectionType() {
+return (
+'electionType' in wardProfile(request.auth.uid)
+? wardProfile(request.auth.uid).electionType
+: ''
+);
+}
+
+function canWardAgentReadSubmission(data) {
+return isActiveWardCollationAgent()
+&& data.wardCode == wardAgentCode(request.auth.uid)
+&& (
+wardElectionType() == ''
+|| data.electionType == wardElectionType()
+);
+}
+
+function canWardAgentReadWardRecord(data) {
+return isActiveWardCollationAgent()
+&& data.wardCode == wardAgentCode(request.auth.uid);
+}
+
+function canWardAgentCreateCollation(data) {
+return isActiveWardCollationAgent()
+&& data.recordType == 'ward_collation'
+&& data.createdBy == request.auth.uid
+&& data.wardCode == wardAgentCode(request.auth.uid)
+&& data.status == 'submitted'
+&& (
+wardElectionType() == ''
+|| data.electionType == wardElectionType()
+);
+}
+
+
+function canWardAgentUploadEvidence(data) {
+  return isActiveWardCollationAgent()
+    && data.agentUid == request.auth.uid
+    && data.userId == request.auth.uid
+    && data.createdBy == request.auth.uid
+    && data.role == 'ward_collation_agent'
+    && data.agentRole == 'ward_collation_agent'
+    && data.recordType == 'ward_evidence'
+    && data.wardCode == wardAgentCode()
+    && data.candidateId == wardProfile().candidateId
+    && data.electionType == wardElectionType()
+    && data.cloudinaryUrl is string
+    && data.cloudinaryUrl.size() > 0;
+}
+
+
+// ==========================================
+// 4. OVER-VOTING RESOLUTION VALIDATION
+// ==========================================
+
+function overVotingSourceExists(data) {
+return exists(
+/databases/$(database)/documents/ec8aResults/$(data.sourceEc8aId)
+);
+}
+
+function overVotingSource(data) {
+return get(
+/databases/$(database)/documents/ec8aResults/$(data.sourceEc8aId)
+).data;
+}
+
+function canWardAgentCreateOverVotingResolution(data) {
+return isActiveWardCollationAgent()
+&& data.recordType == 'over_voting_resolution'
+&& data.status == 'resolved'
+&& data.resolutionType == 'ward_consensus'
+&& data.sourceCollection == 'ec8aResults'
+&& data.sourceEc8aId is string
+&& data.sourceEc8aId.size() > 0
+&& data.sourceReportType == 'over_voting'
+&& overVotingSourceExists(data)
+&& overVotingSource(data).formType == 'EC8A-Polling-Unit'
+&& overVotingSource(data).reportType == 'over_voting'
+&& data.wardCode == wardAgentCode(request.auth.uid)
+&& data.wardCode == overVotingSource(data).wardCode
+&& data.pollingUnitCode is string
+&& data.pollingUnitCode == overVotingSource(data).pollingUnitCode
+&& (
+wardElectionType() == ''
+|| data.electionType == wardElectionType()
+)
+&& data.electionType == overVotingSource(data).electionType
+&& data.confirmedOriginatingEvidence == true
+&& data.confirmationText ==
+'I confirm this Ward declaration after reviewing the originating evidence.'
+&& data.resolvedBy == request.auth.uid
+&& data.resolvedByName is string
+&& data.originalPartyResults is list
+&& data.finalPartyResults is list
+&& data.originalPartyResults.size() > 0
+&& data.finalPartyResults.size() ==
+data.originalPartyResults.size();
+}
+
+function canWardAgentReadOverVotingResolution(data) {
+return isActiveWardCollationAgent()
+&& data.wardCode == wardAgentCode(request.auth.uid)
+&& (
+wardElectionType() == ''
+|| data.electionType == wardElectionType()
+);
+}
+
+// ==========================================
+// 5. LOCAL GOVERNMENT COLLATION AGENT
+// ==========================================
+
+function isActiveLgaCollationAgent() {
+return signedIn()
+&& hasAgentDoc(request.auth.uid)
+&& agentData(request.auth.uid).agentRole ==
+'local_government_collation_agent'
+&& agentData(request.auth.uid).active == true
+&& agentData(request.auth.uid).status == 'active'
+&& agentData(request.auth.uid).electionType is string
+&& agentData(request.auth.uid).candidateId is string
+&& (
+agentData(request.auth.uid).geography.stateCode is string
+|| agentData(request.auth.uid).assignedScope.stateCode is string
+|| agentData(request.auth.uid).stateCode is string
+)
+&& (
+agentData(request.auth.uid).geography.lgaCode is string
+|| agentData(request.auth.uid).assignedScope.lgaCode is string
+|| agentData(request.auth.uid).lgaCode is string
+);
+}
+
+function lgaAgentStateCode() {
+return agentData(request.auth.uid).geography.stateCode is string
+? agentData(request.auth.uid).geography.stateCode
+: (
+agentData(request.auth.uid).assignedScope.stateCode is string
+? agentData(request.auth.uid).assignedScope.stateCode
+: agentData(request.auth.uid).stateCode
+);
+}
+
+function lgaAgentLgaCode() {
+return agentData(request.auth.uid).geography.lgaCode is string
+? agentData(request.auth.uid).geography.lgaCode
+: (
+agentData(request.auth.uid).assignedScope.lgaCode is string
+? agentData(request.auth.uid).assignedScope.lgaCode
+: agentData(request.auth.uid).lgaCode
+);
+}
+
+// LGA agent reads ward collation records in assigned area.
+
+function canLgaAgentReadWardCollation(data) {
+return isActiveLgaCollationAgent()
+&& data.recordType == 'ward_collation'
+&& data.lgaCode == lgaAgentLgaCode()
+&& data.stateCode == lgaAgentStateCode()
+&& data.electionType == agentData(request.auth.uid).electionType;
+}
+
+// LGA agent reads polling-unit submissions only
+// within assigned State, LGA, election and candidate.
+
+function canLgaAgentReadPollingUnitSubmission(data) {
+return isActiveLgaCollationAgent()
+&& data.stateCode == lgaAgentStateCode()
+&& data.lgaCode == lgaAgentLgaCode()
+&& data.electionType == agentData(request.auth.uid).electionType
+&& data.candidateId == agentData(request.auth.uid).candidateId;
+}
+
+function canLgaAgentReadLgaHistory(data) {
+return isActiveLgaCollationAgent()
+&& data.lgaCode == lgaAgentLgaCode();
+}
+
+function canLgaAgentCreateCollation(data) {
+return isActiveLgaCollationAgent()
+&& data.recordType == 'lga_collation'
+&& data.createdBy == request.auth.uid
+&& data.electionType == agentData(request.auth.uid).electionType
+&& data.candidateId == agentData(request.auth.uid).candidateId
+&& data.stateCode == lgaAgentStateCode()
+&& data.lgaCode == lgaAgentLgaCode()
+&& data.status == 'submitted'
+&& data.sourceCounts is map
+&& data.sourceWardCollationIds is list
+&& data.lgaTotals is map
+&& data.summary is string;
+}
+
+function canLgaAgentReadOverVotingResolution(data) {
+return isActiveLgaCollationAgent()
+&& data.lgaCode == lgaAgentLgaCode()
+&& data.stateCode == lgaAgentStateCode()
+&& data.electionType == agentData(request.auth.uid).electionType;
+}
+
+// ==========================================
+// 6. USER AND AGENT ACCOUNTS
+// ==========================================
+
+match /users/{uid} {
+allow read: if isSuperAdmin()
+|| (signedIn() && request.auth.uid == uid);
+
+allow create, update, delete: if isSuperAdmin();
+}
+
+match /electionAgents/{uid} {
+allow read: if isSuperAdmin()
+|| (signedIn() && request.auth.uid == uid);
+
+allow create, update, delete: if isSuperAdmin();
+}
+
+// ==========================================
+// 7. ELECTION AND GEOGRAPHICAL REFERENCE DATA
+// ==========================================
+
+match /candidates/{id} {
+allow read: if signedIn();
+allow create, update, delete: if isSuperAdmin();
+}
+
+match /geographyStates/{id} {
+allow read: if signedIn();
+allow write: if isSuperAdmin();
+}
+
+match /geographyLGAs/{id} {
+allow read: if signedIn();
+allow write: if isSuperAdmin();
+}
+
+match /geographyWards/{id} {
+allow read: if signedIn();
+allow write: if isSuperAdmin();
+}
+
+match /geographyPollingUnits/{id} {
+allow read: if signedIn();
+allow write: if isSuperAdmin();
+}
+
+match /geographySenatorialZones/{id} {
+allow read: if signedIn();
+allow write: if isSuperAdmin();
+}
+
+match /geographyFederalConstituencies/{id} {
+allow read: if signedIn();
+allow write: if isSuperAdmin();
+}
+
+// ==========================================
+// 8. DIGITAL EC8A RESULTS
+// ==========================================
+
+match /ec8aResults/{id} {
+allow create: if assignmentMatches(request.resource.data)
+&& request.resource.data.formType == 'EC8A-Polling-Unit'
+&& request.resource.data.reportType
+in ['successful_election', 'over_voting']
+&& request.resource.data.status == 'submitted';
+
+allow read: if isSuperAdmin()
+|| canReadOwnSubmission(resource.data)
+|| canWardAgentReadSubmission(resource.data)
+|| canLgaAgentReadPollingUnitSubmission(resource.data);
+
+allow update, delete: if isSuperAdmin();
+}
+
+// ==========================================
+// 9. PHOTO AND VIDEO EVIDENCE
+// ==========================================
+
+match /evidenceUploads/{id} {
+allow create: if assignmentMatches(request.resource.data)
+&& request.resource.data.status == 'uploaded'
+&& request.resource.data.cloudinaryUrl is string
+&& request.resource.data.cloudinaryUrl.size() > 0
+&& request.resource.data.reportType
+in ['successful_election', 'over_voting'];
+
+allow read: if isSuperAdmin()
+|| canReadOwnSubmission(resource.data)
+|| canWardAgentReadSubmission(resource.data)
+|| canLgaAgentReadPollingUnitSubmission(resource.data);
+
+allow update, delete: if isSuperAdmin();
+}
+
+// ==========================================
+// 10. POLLING UNIT INCIDENT REPORTS
+// ==========================================
+
+match /pollingUnitReports/{id} {
+allow create: if assignmentMatches(request.resource.data)
+&& request.resource.data.category is string
+&& request.resource.data.details is string
+&& request.resource.data.status == 'submitted';
+
+allow read: if isSuperAdmin()
+|| canReadOwnSubmission(resource.data)
+|| canWardAgentReadSubmission(resource.data)
+|| canLgaAgentReadPollingUnitSubmission(resource.data);
+
+allow update, delete: if isSuperAdmin();
+}
+
+// ==========================================
+// 11. BACKUP REQUESTS
+// ==========================================
+
+match /backupRequests/{id} {
+allow create: if assignmentMatches(request.resource.data)
+&& request.resource.data.incidentType is string
+&& request.resource.data.details is string
+&& request.resource.data.status == 'submitted';
+
+allow read: if isSuperAdmin()
+|| canReadOwnSubmission(resource.data)
+|| canWardAgentReadSubmission(resource.data)
+|| canLgaAgentReadPollingUnitSubmission(resource.data);
+
+allow update, delete: if isSuperAdmin();
+}
+
+// ==========================================
+// 12. VOTE BUYING ALERTS
+// ==========================================
+
+match /voteBuyingAlerts/{id} {
+allow create: if assignmentMatches(request.resource.data)
+&& request.resource.data.alertType is string
+&& request.resource.data.details is string
+&& request.resource.data.status == 'submitted';
+
+allow read: if isSuperAdmin()
+|| canReadOwnSubmission(resource.data)
+|| canWardAgentReadSubmission(resource.data)
+|| canLgaAgentReadPollingUnitSubmission(resource.data);
+
+allow update, delete: if isSuperAdmin();
+}
+
+// ==========================================
+// 13. WARD COLLATION RECORDS
+// ==========================================
+
+match /wardCollations/{id} {
+allow create: if canWardAgentCreateCollation(
+request.resource.data
+);
+
+allow read: if isSuperAdmin()
+|| canWardAgentReadWardRecord(resource.data)
+|| canLgaAgentReadWardCollation(resource.data);
+
+allow update, delete: if isSuperAdmin();
+}
+
+// ==========================================
+// 14. OVER-VOTING RESOLUTIONS
+// ==========================================
+
+match /overVotingResolutions/{id} {
+allow create: if canWardAgentCreateOverVotingResolution(
+request.resource.data
+);
+
+allow read: if isSuperAdmin()
+|| canWardAgentReadOverVotingResolution(resource.data)
+|| canLgaAgentReadOverVotingResolution(resource.data);
+
+allow update, delete: if isSuperAdmin();
+}
+
+// ==========================================
+// 15. LOCAL GOVERNMENT COLLATION RECORDS
+// ==========================================
+
+match /lgaCollations/{id} {
+allow create: if canLgaAgentCreateCollation(
+request.resource.data
+);
+
+allow read: if isSuperAdmin()
+|| canLgaAgentReadLgaHistory(resource.data);
+
+allow update, delete: if isSuperAdmin();
+}
+
+// ==========================================
+// 16. DEFAULT DENY
+// ==========================================
+
+match /{document=**} {
+allow read, write: if false;
+}
+
+}
 }
