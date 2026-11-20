@@ -153,6 +153,18 @@
 
 .over-resolution-card{margin:16px 0 4px;padding:16px;border:1px solid var(--line);border-radius:14px;background:#fff;box-shadow:var(--shadow)}.over-resolution-card h3{font-size:16px;margin:0 0 9px}.over-resolution-card>p{margin:0 0 12px}.resolution-confirm{display:flex;align-items:flex-start;gap:10px;padding:13px;background:#f5f8f6;border:1px solid var(--line);border-radius:10px;font-size:13px;line-height:1.5;margin:12px 0}.resolution-confirm input{width:18px;height:18px;flex:0 0 auto;accent-color:var(--g);margin-top:1px}.resolution-party-list{margin:12px 0}.resolution-party-list>strong{display:block;font-size:13px;margin-bottom:8px}.resolution-party-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px}.resolution-party-row input{width:110px;max-width:42%;padding:9px;border:1px solid var(--line);border-radius:8px;text-align:right}.resolution-submit{width:100%;padding:14px;margin-top:10px;font-size:14px}.resolution-done{padding:13px;background:#edf7f1;border:1px solid #cfe8d9;border-radius:10px}.resolution-done>strong{color:var(--g)}.resolution-done p{font-size:12px;line-height:1.5;color:var(--muted)}.resolution-done small{display:block;margin-top:10px;color:var(--muted)}.resolution-done .tablewrap{margin-top:10px}
 
+
+/* Successful Ward Collation: four upload actions */
+.successful-upload-menu{padding:4px 0 28px}
+.successful-upload-options{display:grid;gap:18px}
+.successful-upload-card{width:100%;min-height:260px;padding:34px 42px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:0;text-align:left;background:#fff;border:1px solid #dce7e2;border-radius:24px;box-shadow:0 3px 10px #183b3010;color:#183b30}
+.successful-upload-card:focus-visible{outline:3px solid #85c9b4;outline-offset:3px}
+.successful-upload-icon{width:108px;height:108px;border-radius:28px;background:#e7f3ee;color:#087653;display:grid;place-items:center;font-size:52px;font-weight:700;line-height:1;margin-bottom:25px}
+.successful-upload-icon.video-icon{font-size:46px}
+.successful-upload-card strong{font-size:clamp(22px,3.5vw,31px);font-weight:800;line-height:1.25;margin-bottom:24px}
+.successful-upload-card>span:last-child{font-size:clamp(18px,2.7vw,25px);color:#78837e;line-height:1.35}
+@media(max-width:600px){.successful-upload-card{min-height:210px;padding:24px 26px;border-radius:20px}.successful-upload-icon{width:82px;height:82px;border-radius:23px;font-size:42px;margin-bottom:20px}.successful-upload-card strong{font-size:23px;margin-bottom:19px}.successful-upload-card>span:last-child{font-size:19px}}
+
 /* Upload status selection screen */
 .collation-chooser{padding:10px 0 28px}
 .collation-chooser h1{font-size:clamp(27px,5vw,42px);letter-spacing:-1.2px;color:#123d32;margin:0 0 12px}
@@ -209,6 +221,31 @@
     </button>
     <button class="collation-choice" type="button" data-collation-category="exposed">
       <span class="choice-icon">▣</span><strong>Exposed</strong><span class="choice-arrow">›</span>
+    </button>
+  </div>
+</div>
+<div id="successfulUploadMenu" class="successful-upload-menu" hidden>
+  <button type="button" class="btn secondary collation-workspace-back" id="backToReportStatuses">← Back</button>
+  <div class="successful-upload-options">
+    <button class="successful-upload-card" type="button" data-success-option="ec8b">
+      <span class="successful-upload-icon">⇧</span>
+      <strong>Upload Form EC8B</strong>
+      <span>Choose a simulated file</span>
+    </button>
+    <button class="successful-upload-card" type="button" data-success-option="eform">
+      <span class="successful-upload-icon">☰</span>
+      <strong>Fill E-Form</strong>
+      <span>Open ward E-Form</span>
+    </button>
+    <button class="successful-upload-card" type="button" data-success-option="duplicate">
+      <span class="successful-upload-icon">⇧</span>
+      <strong>Upload Duplicate Copy</strong>
+      <span>Choose a simulated file</span>
+    </button>
+    <button class="successful-upload-card" type="button" data-success-option="video">
+      <span class="successful-upload-icon video-icon">▶</span>
+      <strong>Upload Video</strong>
+      <span>Choose a simulated file</span>
     </button>
   </div>
 </div>
@@ -705,6 +742,13 @@ function chooseCollationCategory(category){
   if(!labels[category])return;
   selectedCollationCategory=category;
   $('collationChooser').hidden=true;
+  if(category==='successful_ward_collation'){
+    $('successfulUploadMenu').hidden=false;
+    $('collationWorkspace').hidden=true;
+    window.scrollTo({top:0,behavior:'smooth'});
+    return;
+  }
+  $('successfulUploadMenu').hidden=true;
   $('collationWorkspace').hidden=false;
   const heading=$('collationWorkspace').querySelector('h1');
   if(heading)heading.textContent=labels[category];
@@ -713,6 +757,13 @@ function chooseCollationCategory(category){
   window.scrollTo({top:0,behavior:'smooth'});
 }
 document.querySelectorAll('[data-collation-category]').forEach(btn=>btn.addEventListener('click',()=>chooseCollationCategory(btn.dataset.collationCategory)));
+
+$('backToReportStatuses')?.addEventListener('click',()=>{
+  $('successfulUploadMenu').hidden=true;
+  $('collationChooser').hidden=false;
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+
 $('changeCollationCategory')?.addEventListener('click',()=>{
   $('collationWorkspace').hidden=true;
   $('collationChooser').hidden=false;
