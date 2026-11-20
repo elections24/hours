@@ -153,43 +153,6 @@
 
 .over-resolution-card{margin:16px 0 4px;padding:16px;border:1px solid var(--line);border-radius:14px;background:#fff;box-shadow:var(--shadow)}.over-resolution-card h3{font-size:16px;margin:0 0 9px}.over-resolution-card>p{margin:0 0 12px}.resolution-confirm{display:flex;align-items:flex-start;gap:10px;padding:13px;background:#f5f8f6;border:1px solid var(--line);border-radius:10px;font-size:13px;line-height:1.5;margin:12px 0}.resolution-confirm input{width:18px;height:18px;flex:0 0 auto;accent-color:var(--g);margin-top:1px}.resolution-party-list{margin:12px 0}.resolution-party-list>strong{display:block;font-size:13px;margin-bottom:8px}.resolution-party-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px}.resolution-party-row input{width:110px;max-width:42%;padding:9px;border:1px solid var(--line);border-radius:8px;text-align:right}.resolution-submit{width:100%;padding:14px;margin-top:10px;font-size:14px}.resolution-done{padding:13px;background:#edf7f1;border:1px solid #cfe8d9;border-radius:10px}.resolution-done>strong{color:var(--g)}.resolution-done p{font-size:12px;line-height:1.5;color:var(--muted)}.resolution-done small{display:block;margin-top:10px;color:var(--muted)}.resolution-done .tablewrap{margin-top:10px}
 
-
-
-/* Evidence upload page styled to match the Polling Unit Agent upload page */
-.evidence-upload-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:clamp(16px,2vw,24px);margin-top:18px;box-shadow:var(--shadow)}
-.evidence-upload-card label{display:block;font-size:13px;font-weight:700;margin-bottom:10px;color:var(--ink)}
-.evidence-upload-card input[type=file]{display:block;width:100%;max-width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;background:#fff;font-size:13px}
-.evidence-upload-card .btn{width:100%;margin-top:18px;min-height:48px}
-.evidence-upload-help{font-size:13px;line-height:1.6;color:var(--muted);margin:8px 0 18px}
-#wardEvidencePreview{display:none;margin-top:14px;padding:12px;border:1px dashed var(--line);border-radius:10px;background:#f8fbf9}
-#wardEvidencePreview.show{display:block}
-#wardEvidencePreview img,#wardEvidencePreview video{width:100%;max-height:360px;object-fit:contain;border-radius:8px;background:#17231d}
-#wardEvidencePreview iframe{width:100%;height:340px;border:0}
-#wardEvidenceStatus{font-size:13px;line-height:1.5;margin-top:12px;overflow-wrap:anywhere}
-#wardEc8aFormPage .context-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:12px}
-#wardEc8aFormPage .context-item{background:#f5f8f6;border:1px solid var(--line);border-radius:9px;padding:10px;min-width:0}
-#wardEc8aFormPage .context-item small{display:block;color:var(--muted);font-size:10px;margin-bottom:5px}
-#wardEc8aFormPage .context-item strong{font-size:12px;overflow-wrap:anywhere}
-#wardEc8aFormPage .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-#wardEc8aFormPage .field{min-width:0}
-#wardEc8aFormPage .field label{display:block;font-size:11px;font-weight:750;margin-bottom:6px}
-#wardEc8aFormPage .field input{width:100%;min-width:0;border:1px solid var(--line);border-radius:9px;padding:10px;background:#fbfcfb;color:var(--ink)}
-#wardEc8aFormPage .desc{font-size:11px;color:var(--muted);line-height:1.5}
-#wardEc8aFormPage .words{font-size:10px;overflow-wrap:anywhere}
-#wardEc8aFormPage .form-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
-@media(max-width:560px){#wardEc8aFormPage .form-grid,#wardEc8aFormPage .context-grid{grid-template-columns:1fr}#wardEc8aFormPage table{min-width:620px}}
-
-/* Successful Ward Collation: four upload actions */
-.successful-upload-menu{padding:4px 0 28px}
-.successful-upload-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;max-width:860px;margin:0 auto}
-.successful-upload-card{width:100%;min-height:190px;padding:22px 24px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:0;text-align:left;background:#fff;border:1px solid #dce7e2;border-radius:20px;box-shadow:0 3px 10px #183b3010;color:#183b30}
-.successful-upload-card:focus-visible{outline:3px solid #85c9b4;outline-offset:3px}
-.successful-upload-icon{width:68px;height:68px;border-radius:20px;background:#e7f3ee;color:#087653;display:grid;place-items:center;font-size:36px;font-weight:700;line-height:1;margin-bottom:16px}
-.successful-upload-icon.video-icon{font-size:46px}
-.successful-upload-card strong{font-size:clamp(16px,2.2vw,21px);font-weight:800;line-height:1.25;margin-bottom:12px}
-.successful-upload-card>span:last-child{font-size:clamp(13px,1.7vw,16px);color:#78837e;line-height:1.35}
-@media(max-width:600px){.successful-upload-options{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.successful-upload-card{min-height:165px;padding:16px 14px;border-radius:17px}.successful-upload-icon{width:56px;height:56px;border-radius:17px;font-size:30px;margin-bottom:13px}.successful-upload-card strong{font-size:16px;margin-bottom:9px}.successful-upload-card>span:last-child{font-size:13px}}
-
 /* Upload status selection screen */
 .collation-chooser{padding:10px 0 28px}
 .collation-chooser h1{font-size:clamp(27px,5vw,42px);letter-spacing:-1.2px;color:#123d32;margin:0 0 12px}
@@ -249,101 +212,6 @@
     </button>
   </div>
 </div>
-<div id="successfulUploadMenu" class="successful-upload-menu" hidden>
-  <button type="button" class="btn secondary collation-workspace-back" id="backToReportStatuses">← Back</button>
-  <div class="successful-upload-options">
-    <button class="successful-upload-card" type="button" data-success-option="ec8a">
-      <span class="successful-upload-icon">⇧</span>
-      <strong>Upload Form EC8A</strong>
-      <span>Choose a simulated file</span>
-    </button>
-    <button class="successful-upload-card" type="button" data-success-option="eform">
-      <span class="successful-upload-icon">☰</span>
-      <strong>Fill E-Form</strong>
-      <span>Open ward E-Form</span>
-    </button>
-    <button class="successful-upload-card" type="button" data-success-option="duplicate">
-      <span class="successful-upload-icon">⇧</span>
-      <strong>Upload Duplicate Copy</strong>
-      <span>Choose a simulated file</span>
-    </button>
-    <button class="successful-upload-card" type="button" data-success-option="video">
-      <span class="successful-upload-icon video-icon">▶</span>
-      <strong>Upload Video</strong>
-      <span>Choose a simulated file</span>
-    </button>
-  </div>
-</div>
-
-<div id="wardEvidenceUploadPage" hidden>
-  <button type="button" class="btn secondary collation-workspace-back" id="backFromEvidenceUpload">← Back</button>
-  <div class="eyebrow">Evidence submission</div>
-  <h1 id="wardEvidenceTitle">Upload evidence</h1>
-  <p class="sub" id="wardEvidenceSubtitle">Select a file from your phone gallery or file picker, then submit.</p>
-  <div class="evidence-upload-card">
-    <label for="wardEvidenceFileInput">Evidence file</label>
-    <input id="wardEvidenceFileInput" type="file" accept="image/*">
-    <p class="evidence-upload-help" id="wardEvidenceHelp">Choose File to open your phone gallery or file picker. Select the file, then press Submit to upload it.</p>
-    <div id="wardEvidencePreview"><div id="wardEvidencePreviewContent"></div><div class="file-meta" id="wardEvidenceFileMeta"></div></div>
-    <div id="wardEvidenceStatus" aria-live="polite"></div>
-    <button class="btn" type="button" id="wardEvidenceSubmit">Submit</button>
-  </div>
-</div>
-<div id="wardEc8aFormPage" hidden>
-
-  <div class="role-label">Ward-level structured result entry</div><h1 id="ec8aHeading">Presidential Election</h1>
-  <p class="subtitle">Enter the structured ward-level result using your assigned State, LGA, Ward, Election Type and Candidate. No polling-unit selection is required. This digital record is separate from uploaded physical EC8A evidence.</p>
-  <div class="panel">
-    <h2>Assigned election information</h2>
-    <div class="context-grid">
-      <div class="context-item"><small>Structured form</small><strong>EC8A - Ward Collation</strong></div>
-      <div class="context-item"><small>Election</small><strong id="ec8aElection">—</strong></div>
-      <div class="context-item"><small>State</small><strong id="ec8aState">—</strong></div>
-      <div class="context-item"><small>Local Government Area / Ward</small><strong id="ec8aLgaWard">—</strong></div>
-      <div class="context-item"><small>Candidate</small><strong id="ec8aCandidate">—</strong></div>
-    </div>
-  </div>
-  <form id="wardEc8aForm">
-    <div class="panel">
-      <h2>Ballot accounting</h2>
-      <div class="form-grid">
-        <div class="field"><label for="ec8aVoters">Number of voters</label><input id="ec8aVoters" type="number" min="0" step="1" value="0" required></div>
-        <div class="field"><label for="ec8aAccredited">Number of accredited voters</label><input id="ec8aAccredited" type="number" min="0" step="1" value="0" required></div>
-        <div class="field"><label for="ec8aIssued">Number of ballot papers issued to the polling unit</label><input id="ec8aIssued" type="number" min="0" step="1" value="0" required></div>
-        <div class="field"><label for="ec8aUnused">Number of unused ballot papers</label><input id="ec8aUnused" type="number" min="0" step="1" value="0" required></div>
-        <div class="field"><label for="ec8aSpoilt">Number of spoilt ballot papers</label><input id="ec8aSpoilt" type="number" min="0" step="1" value="0" required></div>
-        <div class="field"><label for="ec8aRejected">Number of rejected ballots</label><input id="ec8aRejected" type="number" min="0" step="1" value="0" required></div>
-        <div class="field"><label for="ec8aUsed">Total number of used ballot papers</label><input id="ec8aUsed" type="number" readonly value="0"></div>
-        <div class="field"><label for="ec8aValid">Total valid votes</label><input id="ec8aValid" type="number" readonly value="0"></div>
-      </div>
-      <div class="notice" id="wardEc8aAccountingNotice"></div>
-    </div>
-    <div class="panel">
-      <h2>Political-party results</h2>
-      <p class="desc">Enter the votes recorded for each political party and the polling agent's name.</p>
-      <div style="overflow-x:auto">
-        <table style="width:100%;border-collapse:collapse;min-width:680px;font-size:12px">
-          <thead><tr style="background:#f0f7f3;text-align:left"><th style="padding:11px">S/N</th><th style="padding:11px">Political Party</th><th style="padding:11px">Votes in Figures</th><th style="padding:11px">Votes in Words</th><th style="padding:11px">Name of Polling Agent</th></tr></thead>
-          <tbody id="ec8aPartyRows"></tbody>
-          <tfoot><tr style="background:#f0f7f3;font-weight:800"><td colspan="2" style="padding:12px">Total valid votes</td><td id="ec8aPartyTotal" style="padding:12px">0</td><td id="ec8aPartyTotalWords" style="padding:12px;font-weight:600">ZERO</td><td></td></tr></tfoot>
-        </table>
-      </div>
-    </div>
-    <div class="panel">
-      <h2>Certification</h2>
-      <div class="form-grid">
-        <div class="field"><label for="ec8aOfficer">Name of Presiding Officer</label><input id="ec8aOfficer" required placeholder="Enter presiding officer's name"></div>
-        <div class="field"><label for="ec8aSignature">Presiding Officer signature / confirmation</label><input id="ec8aSignature" required placeholder="Type name as confirmation"></div>
-        <div class="field"><label for="ec8aDate">Form date</label><input id="ec8aDate" type="date" required></div>
-        <div class="field"><label>Report status</label><input value="Successful Election" readonly></div>
-      </div>
-      <div class="form-actions"><button class="btn" id="wardSaveEc8aBtn" type="submit">Save EC8A</button><button class="btn secondary" type="button" id="backFromWardEc8a">Back</button></div>
-      <div class="notice" id="wardEc8aNotice"></div>
-    </div>
-  </form>
-
-</div>
-
 <div id="collationWorkspace" hidden><button type="button" class="btn secondary collation-workspace-back" id="changeCollationCategory">← Change report status</button><div class="eyebrow">Ward collation record</div><h1>Prepare Ward Collation</h1><p class="sub">Create a separate ward-level collation record linked to the source submissions. This does not overwrite EC8A or incident reports.</p><div class="panel"><h2>Source submission summary</h2><div class="stats"><div class="stat"><small>EC8A records</small><strong id="cEc8a">0</strong></div><div class="stat"><small>PU units represented</small><strong id="cUnits">0</strong></div><div class="stat"><small>Incidents</small><strong id="cIncidents">0</strong></div><div class="stat"><small>Evidence files</small><strong id="cEvidence">0</strong></div></div><div id="collationSources" class="source-list"><div class="empty">No source records loaded.</div></div></div><form id="collationForm" class="panel"><h2>Ward collation details</h2><p class="muted">Review the underlying documents before entering any ward-level totals. The system will not automatically declare a winner or resolve disputed results.</p><div class="formgrid" style="margin-top:15px"><div class="field"><label for="collationDate">Collation date and time</label><input id="collationDate" type="datetime-local" required></div><div class="field"><label for="collationStatus">Review status</label><select id="collationStatus"><option value="in_review">In review</option><option value="completed">Completed</option><option value="discrepancy_flagged">Discrepancy flagged</option></select></div><div class="field full"><label for="collationSummary">Collation summary / observations</label><textarea id="collationSummary" placeholder="Record the ward-level collation observations and any unresolved issues…" required></textarea></div><div class="field full"><label for="discrepancies">Discrepancies or missing submissions</label><textarea id="discrepancies" placeholder="List polling units with missing EC8A forms, conflicting entries, over-voting flags, or other issues. Enter none if there are no issues identified."></textarea></div><div class="field full"><label for="totalValidVotes">Ward total valid votes (optional)</label><input id="totalValidVotes" type="number" min="0" step="1" placeholder="Enter only after verification against source forms"></div><div class="field full"><label for="totalRejectedVotes">Ward total rejected ballots (optional)</label><input id="totalRejectedVotes" type="number" min="0" step="1" placeholder="Enter only after verification against source forms"></div></div><label class="checkrow"><input type="checkbox" id="sourceReviewed" required> I have reviewed the available source submissions and supporting evidence.</label><label class="checkrow"><input type="checkbox" id="missingDeclared"> I have documented missing submissions and unresolved discrepancies above, or confirmed none.</label><div class="notice" id="collationNotice"></div><div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:15px"><button class="btn" id="saveCollationBtn">Save ward collation</button><button type="reset" class="btn secondary">Clear form</button></div></form></div>
 </section>
 <section class="view" id="view-history"><div class="eyebrow">Saved ward records</div><h1>Collation History</h1><p class="sub">Ward collation records previously saved by this ward team.</p><div class="panel"><div id="historyTable" class="tablewrap"><div class="empty">Loading collation history…</div></div></div></section>
@@ -362,7 +230,7 @@ function notice(id,msg,error=false){const el=$(id);el.textContent=msg;el.classNa
 function getVal(...paths){for(const src of [agent?.geography,agent?.assignedScope,profile?.geography,profile?.assignedScope,agent,profile])for(const p of paths){const v=p.split('.').reduce((o,k)=>o?.[k],src);if(v!==undefined&&v!==null&&v!=='')return v}return ''}
 async function readGeo(col,id){if(!id)return null;try{const s=await getDoc(doc(db,col,String(id)));return s.exists()?{id:s.id,...s.data()}:null}catch(e){console.warn('Geo lookup',col,e);return null}}
 function recName(d){return first(d?.name,d?.stateName,d?.lgaName,d?.wardName,d?.pollingUnitName,d?.unitName,d?.title,d?.label,'')}
-async function loadProfile(u){user=u;const [us,ag]=await Promise.all([getDoc(doc(db,'users',u.uid)),getDoc(doc(db,'electionAgents',u.uid))]);if(!us.exists()&&!ag.exists())throw Error('No BOTAS PHOTO agent profile was found for this account.');profile=us.exists()?us.data():{};agent=ag.exists()?ag.data():profile;const role=String(first(agent.agentRole,profile.agentRole,agent.role,profile.role,'')).toLowerCase();if(!['ward_collation_agent','ward_collation'].includes(role))throw Error('This account is not registered as a Ward Collation Agent.');if(agent.active===false||profile.active===false||agent.status==='disabled'||profile.status==='disabled')throw Error('This account is disabled. Contact the Super Admin.');const stateCode=getVal('stateCode'),lgaCode=getVal('lgaCode'),wardCode=getVal('wardCode');if(!wardCode)throw Error('No wardCode is assigned to this account. Ask the Super Admin to correct the Ward Collation Agent assignment.');const [st,lg,wd]=await Promise.all([readGeo('geographyStates',stateCode),readGeo('geographyLGAs',lgaCode),readGeo('geographyWards',wardCode)]);const geo=agent.geography||profile.geography||{};assignment={stateCode,lgaCode,wardCode,state:first(geo.state,geo.stateName,agent.state,profile.state,recName(st)),lga:first(geo.lga,geo.lgaName,agent.lga,profile.lga,recName(lg)),ward:first(geo.ward,geo.wardName,agent.ward,profile.ward,recName(wd)),electionType:first(agent.electionType,profile.electionType,''),electionName:first(agent.electionName,profile.electionName,electionNames[agent.electionType],electionNames[profile.electionType],''),candidateId:first(getVal('candidateId'),agent.candidateId,profile.candidateId,''),candidateName:first(getVal('candidateName','candidate'),agent.candidateName,profile.candidateName,agent.candidate,profile.candidate,'')};$('agentName').textContent=first(profile.fullName,agent.fullName,u.displayName,u.email);if($('welcomeName'))$('welcomeName').textContent=first(profile.fullName,agent.fullName,u.displayName,u.email,'Agent').split(' ')[0];$('wardTitle').textContent=assignment.ward||'Assigned Ward';$('wardAddress').textContent=[assignment.lga,assignment.state].filter(Boolean).join(' · ');$('loginScreen').classList.add('hidden');$('appScreen').classList.remove('hidden');startListeners()}
+async function loadProfile(u){user=u;const [us,ag]=await Promise.all([getDoc(doc(db,'users',u.uid)),getDoc(doc(db,'electionAgents',u.uid))]);if(!us.exists()&&!ag.exists())throw Error('No BOTAS PHOTO agent profile was found for this account.');profile=us.exists()?us.data():{};agent=ag.exists()?ag.data():profile;const role=String(first(agent.agentRole,profile.agentRole,agent.role,profile.role,'')).toLowerCase();if(!['ward_collation_agent','ward_collation'].includes(role))throw Error('This account is not registered as a Ward Collation Agent.');if(agent.active===false||profile.active===false||agent.status==='disabled'||profile.status==='disabled')throw Error('This account is disabled. Contact the Super Admin.');const stateCode=getVal('stateCode'),lgaCode=getVal('lgaCode'),wardCode=getVal('wardCode');if(!wardCode)throw Error('No wardCode is assigned to this account. Ask the Super Admin to correct the Ward Collation Agent assignment.');const [st,lg,wd]=await Promise.all([readGeo('geographyStates',stateCode),readGeo('geographyLGAs',lgaCode),readGeo('geographyWards',wardCode)]);const geo=agent.geography||profile.geography||{};assignment={stateCode,lgaCode,wardCode,state:first(geo.state,geo.stateName,agent.state,profile.state,recName(st)),lga:first(geo.lga,geo.lgaName,agent.lga,profile.lga,recName(lg)),ward:first(geo.ward,geo.wardName,agent.ward,profile.ward,recName(wd)),electionType:first(agent.electionType,profile.electionType,''),electionName:first(agent.electionName,profile.electionName,electionNames[agent.electionType],electionNames[profile.electionType],'')};$('agentName').textContent=first(profile.fullName,agent.fullName,u.displayName,u.email);if($('welcomeName'))$('welcomeName').textContent=first(profile.fullName,agent.fullName,u.displayName,u.email,'Agent').split(' ')[0];$('wardTitle').textContent=assignment.ward||'Assigned Ward';$('wardAddress').textContent=[assignment.lga,assignment.state].filter(Boolean).join(' · ');$('loginScreen').classList.add('hidden');$('appScreen').classList.remove('hidden');startListeners()}
 function listen(col,key){
   // Live queries are scoped to the Ward Agent's assigned ward.
   const constraints=[where('wardCode','==',String(assignment.wardCode))];
@@ -375,10 +243,7 @@ function listen(col,key){
     if(['ec8a','evidence','reports','alerts','backups'].includes(key)){
       rows=rows.filter(r=>
         String(r.wardCode||r.geography?.wardCode||'')===String(assignment.wardCode) &&
-        (
-          String(r.agentRole||r.role||'').toLowerCase()==='polling_unit_agent' ||
-          (key==='evidence' && String(r.agentRole||r.role||'').toLowerCase()==='ward_collation_agent')
-        ) &&
+        String(r.agentRole||r.role||'').toLowerCase()==='polling_unit_agent' &&
         (!assignment.electionType || String(r.electionType||'')===String(assignment.electionType))
       );
     }
@@ -828,7 +693,7 @@ async function openPuStatus(code){
 function renderCollation(){const sources=allSubmissions();const units=new Set(data.ec8a.map(unitCode).filter(x=>x!=='—'));$('cEc8a').textContent=data.ec8a.length;$('cUnits').textContent=units.size;$('cIncidents').textContent=data.reports.length+data.alerts.length;$('cEvidence').textContent=data.evidence.length;const groups=[['EC8A results',data.ec8a],['Evidence uploads',data.evidence],['Polling-unit reports',data.reports],['Vote-buying alerts',data.alerts],['Backup requests',data.backups]];$('collationSources').innerHTML=groups.map(([label,items])=>`<div class="source-item"><div><strong>${label}</strong><p>${items.length} record(s) in ${items[0]?esc(items[0]._collection):'existing collection'}${items.length?' · Latest: '+esc(fmt(items.slice().sort((a,b)=>dateMs(b.createdAt)-dateMs(a.createdAt))[0].createdAt)):''}</p></div><span class="tag">${items.length}</span></div>`).join('');}
 function renderHistory(){const rows=data.collations.slice().sort((a,b)=>dateMs(b.createdAt)-dateMs(a.createdAt));$('historyTable').innerHTML=rows.length?`<table><thead><tr><th>Collation date</th><th>Status</th><th>Source records</th><th>Valid votes</th><th>Created by</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${esc(fmt(r.collationDate||r.createdAt))}</td><td>${statusTag(r.reviewStatus||r.status)}</td><td>${esc(r.sourceCounts?.total??r.sourceSubmissionIds?.length??0)}</td><td>${esc(r.wardTotals?.validVotes??'—')}</td><td>${esc(r.createdByName||r.createdBy||'—')}</td></tr>`).join('')}</tbody></table>`:'<div class="empty">No ward collation records have been saved yet.</div>'}
 
-function renderAll(){renderSubmissions();renderEc8aComparison();renderCollation();renderHistory();}
+function renderAll(){renderSubmissions();renderEc8aComparison();renderCollation();renderHistory()}
 function openDetail(col,id){const map={ec8aResults:data.ec8a,evidenceUploads:data.evidence,pollingUnitReports:data.reports,voteBuyingAlerts:data.alerts,backupRequests:data.backups};const d=(map[col]||[]).find(x=>x.id===id);if(!d)return;$('detailTitle').textContent=typeLabel(d);let fields=[['Polling unit',nameOf(d)],['Polling unit code',unitCode(d)],['Agent',agentName(d)],['Election',d.electionName||d.electionType],['Candidate',d.candidateName],['Status',d.status||d.reportStatus],['Submitted',fmt(d.createdAt)],['Report type',d.reportType],['Details',d.details||d.category||d.incidentType],['Ballot accounting',d.ballotAccounting?JSON.stringify(d.ballotAccounting):'—'],['Party results',d.partyResults?JSON.stringify(d.partyResults):'—']];let html=`<div class="detailgrid">${fields.filter(x=>x[1]!==undefined&&x[1]!==null&&x[1]!=='').map(([k,v])=>`<div><small>${esc(k)}</small><b>${esc(typeof v==='object'?JSON.stringify(v):v)}</b></div>`).join('')}</div>`;const url=first(d.cloudinaryUrl,d.secure_url,d.cloudinary?.secure_url,'');if(url)html+=`<p><a class="evidence-link" href="${esc(url)}" target="_blank" rel="noopener">Open supporting evidence</a></p>`;$('detailContent').innerHTML=html;$('detailModal').classList.add('show')}
 let wardViewStack=['overview'];
 function syncBackButton(){const b=$('topBackBtn');if(b)b.disabled=wardViewStack.length<=1&&!document.querySelector('.modal.show')}
@@ -840,13 +705,6 @@ function chooseCollationCategory(category){
   if(!labels[category])return;
   selectedCollationCategory=category;
   $('collationChooser').hidden=true;
-  if(category==='successful_ward_collation'){
-    $('successfulUploadMenu').hidden=false;
-    $('collationWorkspace').hidden=true;
-    window.scrollTo({top:0,behavior:'smooth'});
-    return;
-  }
-  $('successfulUploadMenu').hidden=true;
   $('collationWorkspace').hidden=false;
   const heading=$('collationWorkspace').querySelector('h1');
   if(heading)heading.textContent=labels[category];
@@ -855,202 +713,8 @@ function chooseCollationCategory(category){
   window.scrollTo({top:0,behavior:'smooth'});
 }
 document.querySelectorAll('[data-collation-category]').forEach(btn=>btn.addEventListener('click',()=>chooseCollationCategory(btn.dataset.collationCategory)));
-
-// Successful Ward Collation upload workflows.
-const WARD_CLOUDINARY_CLOUD_NAME="hjdnytcb";
-const WARD_CLOUDINARY_UPLOAD_PRESET="Obaestate";
-const wardEvidenceTypes={
-  ec8a:{title:"Evidence file",subtitle:"Upload a clear photo of the completed EC8A form.",accept:"image/*",resource:"image",type:"successful_ec8a_photo"},
-  duplicate:{title:"Duplicate copy",subtitle:"Upload the duplicate EC8A photo or PDF copy.",accept:"image/*,.pdf",resource:"image",type:"successful_ec8a_duplicate"},
-  video:{title:"Upload Video",subtitle:"Choose a video from your phone gallery and submit it as supporting evidence.",accept:"video/*",resource:"video",type:"successful_election_video"}
-};
-let activeWardEvidenceKey="",wardEvidenceObjectUrl="";
-const wardEvidenceInput=$('wardEvidenceFileInput'),wardEvidenceSubmit=$('wardEvidenceSubmit');
-function openWardEvidenceUpload(key){
-  const cfg=wardEvidenceTypes[key];if(!cfg)return;
-  activeWardEvidenceKey=key;
-  if(wardEvidenceObjectUrl){URL.revokeObjectURL(wardEvidenceObjectUrl);wardEvidenceObjectUrl="";}
-  wardEvidenceInput.value="";wardEvidenceInput.disabled=false;wardEvidenceInput.accept=cfg.accept;
-  $('wardEvidenceTitle').textContent=cfg.title;
-  $('wardEvidenceSubtitle').textContent=cfg.subtitle;
-  $('wardEvidencePreview').classList.remove('show');
-  $('wardEvidencePreviewContent').replaceChildren();
-  $('wardEvidenceFileMeta').textContent="";
-  $('wardEvidenceStatus').textContent="";
-  wardEvidenceSubmit.disabled=false;wardEvidenceSubmit.textContent="Submit";
-  $('successfulUploadMenu').hidden=true;
-  $('wardEc8aFormPage').hidden=true;
-  $('wardEvidenceUploadPage').hidden=false;
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-function previewWardEvidence(file){
-  if(wardEvidenceObjectUrl)URL.revokeObjectURL(wardEvidenceObjectUrl);
-  wardEvidenceObjectUrl=URL.createObjectURL(file);
-  const content=$('wardEvidencePreviewContent');content.replaceChildren();
-  if(file.type.startsWith('image/')){const img=document.createElement('img');img.src=wardEvidenceObjectUrl;img.alt=file.name;content.appendChild(img)}
-  else if(file.type.startsWith('video/')){const v=document.createElement('video');v.src=wardEvidenceObjectUrl;v.controls=true;v.playsInline=true;content.appendChild(v)}
-  else if(file.type==='application/pdf'||file.name.toLowerCase().endsWith('.pdf')){const frame=document.createElement('iframe');frame.src=wardEvidenceObjectUrl;frame.title=file.name;content.appendChild(frame)}
-  $('wardEvidenceFileMeta').textContent=`${file.name} · ${(file.size/1024/1024).toFixed(2)} MB · ${file.type||'File'}`;
-  $('wardEvidencePreview').classList.add('show');
-  $('wardEvidenceStatus').textContent="File selected. Press Submit to upload it.";
-}
-wardEvidenceInput.addEventListener('change',()=>{
-  const file=wardEvidenceInput.files?.[0];if(!file)return;
-  const cfg=wardEvidenceTypes[activeWardEvidenceKey];
-  const valid=cfg.resource==='video'?file.type.startsWith('video/'):
-    (file.type.startsWith('image/')||(activeWardEvidenceKey==='duplicate'&&(file.type==='application/pdf'||file.name.toLowerCase().endsWith('.pdf'))));
-  if(!valid){wardEvidenceInput.value="";$('wardEvidenceStatus').textContent="This file type is not supported for this upload.";return}
-  previewWardEvidence(file);
-});
-async function uploadWardEvidence(){
-  const cfg=wardEvidenceTypes[activeWardEvidenceKey],file=wardEvidenceInput.files?.[0];
-  if(!cfg||!file){$('wardEvidenceStatus').textContent="Please choose a file before submitting.";return}
-  if(!user||!assignment.wardCode){$('wardEvidenceStatus').textContent="Your ward assignment or login session is not ready. Sign in again.";return}
-  if(activeWardEvidenceKey==='video'){
-    if(!window.confirm("First confirmation: Are you sure this is the correct video evidence for your assigned ward?"))return;
-    if(!window.confirm("Final confirmation: Submit this video now? Once uploaded, it will be recorded as submitted evidence."))return;
-  }else if(!window.confirm(`Confirm submission of ${cfg.title.toLowerCase()}?`))return;
-  wardEvidenceSubmit.disabled=true;wardEvidenceSubmit.textContent="Uploading…";
-  $('wardEvidenceStatus').textContent="Preparing upload…";
-  try{
-    const fd=new FormData();fd.append("file",file);fd.append("upload_preset",WARD_CLOUDINARY_UPLOAD_PRESET);
-    fd.append("folder","the-eyes/election-evidence");
-    fd.append("context",`evidence_type=${cfg.type}|agent_uid=${user.uid}|ward_code=${assignment.wardCode}`);
-    const response=await fetch(`https://api.cloudinary.com/v1_1/${WARD_CLOUDINARY_CLOUD_NAME}/${cfg.resource}/upload`,{method:"POST",body:fd});
-    const result=await response.json().catch(()=>({}));
-    if(!response.ok)throw new Error(result.error?.message||`Cloudinary upload failed (${response.status}).`);
-    const record={
-      agentUid:user.uid,userId:user.uid,fullName:first(profile.fullName,agent.fullName,user.displayName,user.email,""),
-      email:first(profile.email,agent.email,user.email,""),role:"ward_collation_agent",agentRole:"ward_collation_agent",
-      electionType:assignment.electionType||"",electionName:assignment.electionName||"",
-      geography:{...assignment},stateCode:assignment.stateCode||"",lgaCode:assignment.lgaCode||"",wardCode:assignment.wardCode||"",
-      state:assignment.state||"",lga:assignment.lga||"",ward:assignment.ward||"",
-      evidenceType:cfg.type,reportType:"successful_election",reportStatus:"Successful Election",
-      fileName:file.name,fileType:file.type||"",fileSize:file.size,
-      cloudinaryUrl:result.secure_url||"",cloudinaryPublicId:result.public_id||"",
-      cloudinaryResourceType:result.resource_type||cfg.resource,cloudinaryFormat:result.format||"",
-      status:"uploaded",createdAt:serverTimestamp()
-    };
-    await addDoc(collection(db,"evidenceUploads"),record);
-    $('wardEvidenceStatus').textContent="Submission successful. Your evidence has been uploaded and its record saved.";
-    wardEvidenceSubmit.textContent="Submitted successfully";
-    wardEvidenceSubmit.disabled=true;
-    wardEvidenceInput.disabled=true;
-    // Refresh the evidence stream without replacing or modifying original polling-unit records.
-    try{const q=query(collection(db,"evidenceUploads"),where("wardCode","==",String(assignment.wardCode)));const snap=await getDocs(q);data.evidence=snap.docs.map(d=>({id:d.id,...d.data(),_collection:"evidenceUploads"})).filter(r=>String(r.agentRole||r.role||"").toLowerCase()==="polling_unit_agent"||String(r.agentRole||r.role||"").toLowerCase()==="ward_collation_agent");renderAll()}catch(refreshError){console.warn("Evidence stream refresh skipped",refreshError)}
-  }catch(error){
-    console.error("Ward evidence upload failed:",error);
-    $('wardEvidenceStatus').textContent=`Upload failed: ${error.message||"Please try again."}`;
-    wardEvidenceSubmit.disabled=false;wardEvidenceSubmit.textContent="Submit";
-  }
-}
-wardEvidenceSubmit.addEventListener('click',uploadWardEvidence);
-$('backFromEvidenceUpload').addEventListener('click',()=>{
-  $('wardEvidenceUploadPage').hidden=true;$('successfulUploadMenu').hidden=false;
-  wardEvidenceInput.disabled=false;window.scrollTo({top:0,behavior:'smooth'});
-});
-document.querySelectorAll('[data-success-option]').forEach(btn=>btn.addEventListener('click',()=>{
-  const key=btn.dataset.successOption;
-  if(key==='eform'){openWardEc8aForm();return}
-  openWardEvidenceUpload(key);
-}));
-
-// Polling Unit Agent EC8A E-Form, reused for the ward agent and bound to a selected PU in this ward.
-const wardPartyCodes=["A","AA","AAC","ADC","ADP","APC","APGA","APM","APP","BP","LP","NNPP","NRM","PDP","PRP","SDP","YPP","ZLP"];
-function wardNumberToWords(value){
-  const n=Math.max(0,Math.floor(Number(value)||0));if(n===0)return "ZERO";
-  const ones=["","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten","Eleven","Twelve","Thirteen","Fourteen","Fifteen","Sixteen","Seventeen","Eighteen","Nineteen"];
-  const tens=["","","Twenty","Thirty","Forty","Fifty","Sixty","Seventy","Eighty","Ninety"];
-  function under1000(x){let out="";if(x>=100){out+=ones[Math.floor(x/100)]+" Hundred";x%=100;if(x)out+=" "}if(x>=20){out+=tens[Math.floor(x/10)];x%=10;if(x)out+="-"+ones[x]}else if(x>0)out+=ones[x];return out}
-  const units=["","Thousand","Million","Billion"];const chunks=[];let x=n,i=0;
-  while(x>0&&i<units.length){const part=x%1000;if(part)chunks.unshift(under1000(part)+(units[i]?" "+units[i]:""));x=Math.floor(x/1000);i++}
-  return chunks.join(" ").toUpperCase();
-}
-function wardReadNum(id){return Math.max(0,Number($(id).value)||0)}
-function wardRenderPartyRows(){
-  $('ec8aPartyRows').innerHTML=wardPartyCodes.map((party,i)=>`<tr><td>${i+1}</td><td><strong>${party}</strong></td><td><input type="number" min="0" step="1" value="0" data-ward-party-votes="${party}" aria-label="${party} votes"></td><td class="words" data-ward-party-words="${party}">ZERO</td><td><input type="text" data-ward-party-agent="${party}" aria-label="${party} polling agent name"></td></tr>`).join('');
-  $('ec8aPartyRows').querySelectorAll('[data-ward-party-votes]').forEach(input=>input.addEventListener('input',wardUpdateEc8aTotals));
-  wardUpdateEc8aTotals();
-}
-function wardUpdateEc8aTotals(){
-  let total=0;
-  wardPartyCodes.forEach(p=>{const v=Math.max(0,Number(document.querySelector(`[data-ward-party-votes="${p}"]`)?.value)||0);total+=v;const words=document.querySelector(`[data-ward-party-words="${p}"]`);if(words)words.textContent=wardNumberToWords(v)});
-  $('ec8aPartyTotal').textContent=String(total);$('ec8aPartyTotalWords').textContent=wardNumberToWords(total);
-  const rejected=wardReadNum('ec8aRejected'),used=total+rejected;
-  $('ec8aValid').value=String(total);$('ec8aUsed').value=String(used);
-  const warnings=[];
-  if(wardReadNum('ec8aAccredited')>wardReadNum('ec8aVoters'))warnings.push("Accredited voters cannot exceed the number of voters.");
-  if(wardReadNum('ec8aIssued')<wardReadNum('ec8aUnused')+wardReadNum('ec8aSpoilt')+used)warnings.push("Issued ballot papers are fewer than unused + spoilt + used ballot papers.");
-  if(total>wardReadNum('ec8aAccredited'))warnings.push("Total valid votes exceed accredited voters.");
-  const n=$('wardEc8aAccountingNotice');if(warnings.length){n.textContent=warnings.join(" ");n.className="notice show error"}else{n.textContent="Ballot totals are currently consistent.";n.className="notice show"}
-}
-['ec8aVoters','ec8aAccredited','ec8aIssued','ec8aUnused','ec8aSpoilt','ec8aRejected'].forEach(id=>$(id).addEventListener('input',wardUpdateEc8aTotals));
-function prepareWardEc8a(){
-  $('ec8aHeading').textContent=first(assignment.electionName,electionNames[assignment.electionType],'Election');
-  $('ec8aElection').textContent=first(assignment.electionName,electionNames[assignment.electionType],'—');
-  $('ec8aState').textContent=assignment.state||'—';
-  $('ec8aLgaWard').textContent=[assignment.lga,assignment.ward].filter(Boolean).join(' / ')||'—';
-  $('ec8aCandidate').textContent=first(assignment.candidateName,agent.candidateName,profile.candidateName,agent.candidate,profile.candidate,'Not assigned');
-}
-function openWardEc8aForm(){
-  $('successfulUploadMenu').hidden=true;$('wardEvidenceUploadPage').hidden=true;
-  $('wardEc8aFormPage').hidden=false;
-  $('wardEc8aForm').reset();
-  $('wardSaveEc8aBtn').disabled=false;$('wardSaveEc8aBtn').textContent='Save EC8A';
-  $('wardEc8aNotice').className='notice';$('wardEc8aNotice').textContent='';
-  $('wardEc8aAccountingNotice').className='notice';$('wardEc8aAccountingNotice').textContent='';
-  prepareWardEc8a();wardUpdateEc8aTotals();window.scrollTo({top:0,behavior:'smooth'});
-}
-$('backFromWardEc8a').addEventListener('click',()=>{
-  $('wardEc8aFormPage').hidden=true;$('successfulUploadMenu').hidden=false;window.scrollTo({top:0,behavior:'smooth'});
-});
-wardRenderPartyRows();
-$('wardEc8aForm').addEventListener('submit',async event=>{
-  event.preventDefault();
-  if(!user||!assignment.wardCode){notice('wardEc8aNotice','Your assigned ward is not loaded. Please sign in again.',true);return}
-  wardUpdateEc8aTotals();
-  const validVotes=wardReadNum('ec8aValid'),accredited=wardReadNum('ec8aAccredited'),voters=wardReadNum('ec8aVoters');
-  const issued=wardReadNum('ec8aIssued'),unused=wardReadNum('ec8aUnused'),spoilt=wardReadNum('ec8aSpoilt'),rejected=wardReadNum('ec8aRejected'),used=wardReadNum('ec8aUsed');
-  if(accredited>voters||validVotes>accredited||issued<unused+spoilt+used){notice('wardEc8aNotice','Please correct the ballot-accounting inconsistencies before saving.',true);return}
-  const parties=wardPartyCodes.map(p=>({party:p,votes:Number(document.querySelector(`[data-ward-party-votes="${p}"]`).value)||0,votesInWords:wardNumberToWords(document.querySelector(`[data-ward-party-votes="${p}"]`).value),pollingAgentName:document.querySelector(`[data-ward-party-agent="${p}"]`).value.trim()}));
-  const payload={
-    formType:'EC8A-Ward',recordLevel:'ward',reportType:'successful_election',reportStatus:'Successful Election',
-    agentUid:user.uid,userId:user.uid,fullName:first(profile.fullName,agent.fullName,user.displayName,user.email,''),email:first(profile.email,agent.email,user.email,''),role:'ward_collation_agent',agentRole:'ward_collation_agent',
-    electionType:assignment.electionType||'',electionName:first(assignment.electionName,electionNames[assignment.electionType],''),
-    candidateId:first(assignment.candidateId,agent.candidateId,profile.candidateId,agent.geography?.candidateId,profile.geography?.candidateId,''),
-    candidateName:first(assignment.candidateName,agent.candidateName,profile.candidateName,agent.candidate,profile.candidate,''),
-    geography:{stateCode:assignment.stateCode||'',lgaCode:assignment.lgaCode||'',wardCode:assignment.wardCode||'',state:assignment.state||'',lga:assignment.lga||'',ward:assignment.ward||''},
-    stateCode:assignment.stateCode||'',lgaCode:assignment.lgaCode||'',wardCode:assignment.wardCode||'',
-    state:assignment.state||'',lga:assignment.lga||'',ward:assignment.ward||'',
-    ballotAccounting:{voters,accreditedVoters:accredited,ballotPapersIssued:issued,unusedBallotPapers:unused,spoiltBallotPapers:spoilt,rejectedBallots:rejected,totalUsedBallotPapers:used,totalValidVotes:validVotes},
-    partyResults:parties,certification:{presidingOfficerName:$('ec8aOfficer').value.trim(),signatureConfirmation:$('ec8aSignature').value.trim(),formDate:$('ec8aDate').value},
-    status:'submitted',createdAt:serverTimestamp()
-  };
-  const btn=$('wardSaveEc8aBtn');btn.disabled=true;btn.textContent='Saving…';
-  try{
-    await addDoc(collection(db,'ec8aResults'),payload);
-    notice('wardEc8aNotice','EC8A E-Form submitted successfully.',false);
-    btn.textContent='Submitted successfully';btn.disabled=true;
-  }catch(error){
-    console.error('Ward EC8A E-Form save failed:',error);
-    notice('wardEc8aNotice',error.code==='permission-denied'?'Firebase denied this save. Firestore Rules must permit a Ward Collation Agent to create an EC8A-Ward record without pollingUnitCode, restricted to the agent’s assigned State, LGA, Ward, Election Type and Candidate.':`Could not save E-Form: ${error.message||error}`,true);
-    btn.disabled=false;btn.textContent='Save EC8A';
-  }
-});
-
-
-$('backToReportStatuses')?.addEventListener('click',()=>{
-  $('successfulUploadMenu').hidden=true;
-  $('wardEvidenceUploadPage').hidden=true;
-  $('wardEc8aFormPage').hidden=true;
-  $('collationChooser').hidden=false;
-  window.scrollTo({top:0,behavior:'smooth'});
-});
-
 $('changeCollationCategory')?.addEventListener('click',()=>{
   $('collationWorkspace').hidden=true;
-  $('wardEvidenceUploadPage').hidden=true;
-  $('wardEc8aFormPage').hidden=true;
   $('collationChooser').hidden=false;
   window.scrollTo({top:0,behavior:'smooth'});
 });
