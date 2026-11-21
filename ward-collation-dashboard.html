@@ -150,6 +150,7 @@
 /* Polling-unit dashboard filter */
 .pu-dashboard-filter{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px;padding:10px 12px;background:#f8fbf9;border:1px solid var(--line);border-radius:11px}.pu-dashboard-filter label{font-size:11px;font-weight:800;color:var(--ink)}.pu-dashboard-filter select{flex:1;min-width:190px;max-width:360px;border:1px solid #d8e5dd;border-radius:9px;padding:10px 12px;background:#fff;color:var(--ink);font-size:12px;font-weight:650;outline:none}.pu-dashboard-filter select:focus{border-color:var(--g);box-shadow:0 0 0 3px #08734f18}.pu-filter-count{font-size:10px;color:var(--muted);font-weight:650}@media(max-width:600px){.pu-dashboard-filter{gap:7px}.pu-dashboard-filter select{max-width:none;width:100%;flex-basis:100%}}
 .ward-back-btn{min-width:82px;padding:9px 16px;border:0;border-radius:10px;background:var(--g);color:#fff;font-size:12px;font-weight:800;transition:background .15s,color .15s}.ward-back-btn:disabled{background:#edf1ee;color:#9aa69f;cursor:not-allowed;opacity:1}.ward-back-btn:not(:disabled):active{background:var(--gd)}
+.ward-loss-form .field{margin-bottom:12px}.ward-loss-form .file-preview{display:none;margin-top:12px;padding:12px;border:1px solid var(--line);border-radius:11px;background:#f8fbf9}.ward-loss-form .file-preview.show{display:block}.ward-loss-form .file-preview img,.ward-loss-form .file-preview video{display:block;max-width:100%;max-height:340px;margin:8px auto;border-radius:8px;object-fit:contain}.ward-loss-form .file-meta{font-size:11px;color:var(--muted);overflow-wrap:anywhere}.ward-loss-form .form-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.ward-loss-form .readonly-context{background:#f7faf8;border:1px solid var(--line);border-radius:10px;padding:12px;margin:12px 0}.ward-loss-form .readonly-context strong{display:block;font-size:12px;margin-bottom:5px}.ward-loss-form .readonly-context span{display:block;font-size:11px;color:var(--muted);line-height:1.6}
 
 .over-resolution-card{margin:16px 0 4px;padding:16px;border:1px solid var(--line);border-radius:14px;background:#fff;box-shadow:var(--shadow)}.over-resolution-card h3{font-size:16px;margin:0 0 9px}.over-resolution-card>p{margin:0 0 12px}.resolution-confirm{display:flex;align-items:flex-start;gap:10px;padding:13px;background:#f5f8f6;border:1px solid var(--line);border-radius:10px;font-size:13px;line-height:1.5;margin:12px 0}.resolution-confirm input{width:18px;height:18px;flex:0 0 auto;accent-color:var(--g);margin-top:1px}.resolution-party-list{margin:12px 0}.resolution-party-list>strong{display:block;font-size:13px;margin-bottom:8px}.resolution-party-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px}.resolution-party-row input{width:110px;max-width:42%;padding:9px;border:1px solid var(--line);border-radius:8px;text-align:right}.resolution-submit{width:100%;padding:14px;margin-top:10px;font-size:14px}.resolution-done{padding:13px;background:#edf7f1;border:1px solid #cfe8d9;border-radius:10px}.resolution-done>strong{color:var(--g)}.resolution-done p{font-size:12px;line-height:1.5;color:var(--muted)}.resolution-done small{display:block;margin-top:10px;color:var(--muted)}.resolution-done .tablewrap{margin-top:10px}
 #ec8bReceiptLink[hidden]{display:none}.ward-evidence-form .btn{margin-top:16px}.ward-evidence-form [role="status"]:empty{display:none}
@@ -198,13 +199,61 @@
 </section>
 <section class="view" id="view-ward-loss-ec8b">
 <div class="eyebrow">WARD EVIDENCE OF LOSS</div><h1>WARD EC8B FORM</h1>
-<p class="sub">This independent EC8B evidence form will be configured in Objective 7. Existing EC8B submission functions remain unchanged.</p>
-<div class="panel"><p class="muted">Form template setup is the next implementation milestone.</p></div>
+<p class="sub">Complete the independent Ward EC8B evidence form. This template follows the evidence-upload hierarchy used in the Polling Unit Agent Dashboard. Existing EC8A and EC8B records are not changed.</p>
+<div class="home-cards">
+<button class="home-card" type="button" data-go="ward-loss-ec8b-upload"><strong class="home-copy">UPLOAD FORM EC8B</strong><span class="home-arrow" aria-hidden="true">›</span></button>
+<button class="home-card" type="button" data-go="ward-loss-ec8b-eform"><strong class="home-copy">FILL E-FORM</strong><span class="home-arrow" aria-hidden="true">›</span></button>
+</div>
+</section>
+<section class="view" id="view-ward-loss-ec8b-upload">
+<div class="eyebrow">WARD EVIDENCE OF LOSS · EC8B</div><h1>UPLOAD FORM EC8B</h1>
+<p class="sub">Choose a clear photograph of the completed physical Ward EC8B form. The selected file can be previewed before the upload integration is enabled in Objective 8.</p>
+<form class="panel ward-loss-form" id="wardEc8bEvidenceTemplate" data-document-type="WARD_EC8B" data-evidence-category="ec8b_evidence_of_loss">
+<div class="readonly-context"><strong>Assigned ward details</strong><span id="wardEc8bContext">Loading your assigned state, LGA and ward…</span></div>
+<div class="formgrid">
+<div class="field"><label for="wardEc8bElectionType">Election type</label><input id="wardEc8bElectionType" name="electionType" type="text" readonly placeholder="Loaded from agent assignment"></div>
+<div class="field"><label for="wardEc8bDocumentName">Document name</label><input id="wardEc8bDocumentName" name="documentName" type="text" value="Ward EC8B Form" readonly></div>
+<div class="field full"><label for="wardEc8bFile">EC8B photograph</label><input id="wardEc8bFile" name="evidence" type="file" accept="image/*" required><small class="muted">Select a photograph of the completed EC8B form.</small></div>
+<div class="field full"><label for="wardEc8bDescription">Evidence description</label><textarea id="wardEc8bDescription" name="description" placeholder="Add any relevant information about this EC8B evidence…"></textarea></div>
+</div>
+<div class="file-preview" id="wardEc8bPreview"><div class="file-meta" id="wardEc8bFileMeta"></div><div id="wardEc8bPreviewContent"></div></div>
+<div class="notice show" id="wardEc8bTemplateNotice">Form template ready. Cloudinary upload and Firestore saving will be connected in Objective 8.</div>
+<div class="form-actions"><button class="btn secondary" type="button" data-go="ward-loss-ec8b">Back</button></div>
+</form>
+</section>
+<section class="view" id="view-ward-loss-ec8b-eform">
+<div class="eyebrow">WARD EVIDENCE OF LOSS · DIGITAL FORM</div><h1>FILL EC8B E-FORM</h1>
+<p class="sub">Enter the document identification and evidence details for the Ward EC8B submission. This is a separate ward evidence form and does not create or alter an EC8A polling-unit result.</p>
+<form class="panel ward-loss-form" id="wardEc8bEFormTemplate" data-document-type="WARD_EC8B_EFORM" data-evidence-category="ec8b_eform_evidence">
+<div class="readonly-context"><strong>Assigned ward details</strong><span id="wardEc8bEFormContext">Loading your assigned state, LGA and ward…</span></div>
+<div class="formgrid">
+<div class="field"><label for="wardEc8bEFormElection">Election type</label><input id="wardEc8bEFormElection" name="electionType" type="text" readonly placeholder="Loaded from agent assignment"></div>
+<div class="field"><label for="wardEc8bEFormDocument">Document name</label><input id="wardEc8bEFormDocument" name="documentName" type="text" value="Ward EC8B E-Form" readonly></div>
+<div class="field"><label for="wardEc8bEFormReference">EC8B reference / serial number</label><input id="wardEc8bEFormReference" name="documentReference" type="text" placeholder="Enter the reference printed on the form"></div>
+<div class="field"><label for="wardEc8bEFormDate">Form date</label><input id="wardEc8bEFormDate" name="formDate" type="date"></div>
+<div class="field full"><label for="wardEc8bEFormDescription">Evidence details</label><textarea id="wardEc8bEFormDescription" name="description" required placeholder="Enter the details recorded on or relating to the Ward EC8B document…"></textarea></div>
+<div class="field full"><label for="wardEc8bEFormFile">Supporting EC8B photograph (optional)</label><input id="wardEc8bEFormFile" name="evidence" type="file" accept="image/*"></div>
+</div>
+<div class="file-preview" id="wardEc8bEFormPreview"><div class="file-meta" id="wardEc8bEFormFileMeta"></div><div id="wardEc8bEFormPreviewContent"></div></div>
+<div class="notice show">E-form template ready. Saving and media upload will be connected in Objective 8.</div>
+<div class="form-actions"><button class="btn secondary" type="button" data-go="ward-loss-ec8b">Back</button></div>
+</form>
 </section>
 <section class="view" id="view-ward-loss-duplicate">
 <div class="eyebrow">WARD EVIDENCE OF LOSS</div><h1>DUPLICATE EC8B COPY</h1>
-<p class="sub">This independent duplicate-copy evidence form will be configured in Objective 7. Existing upload forms remain unchanged.</p>
-<div class="panel"><p class="muted">Form template setup is the next implementation milestone.</p></div>
+<p class="sub">Submit the duplicate physical copy separately from the main Ward EC8B form. This template accepts an image or PDF copy.</p>
+<form class="panel ward-loss-form" id="wardEc8bDuplicateTemplate" data-document-type="WARD_EC8B_DUPLICATE" data-evidence-category="ec8b_duplicate_evidence">
+<div class="readonly-context"><strong>Assigned ward details</strong><span id="wardEc8bDuplicateContext">Loading your assigned state, LGA and ward…</span></div>
+<div class="formgrid">
+<div class="field"><label for="wardEc8bDuplicateElection">Election type</label><input id="wardEc8bDuplicateElection" name="electionType" type="text" readonly placeholder="Loaded from agent assignment"></div>
+<div class="field"><label for="wardEc8bDuplicateDocument">Document name</label><input id="wardEc8bDuplicateDocument" name="documentName" type="text" value="Ward EC8B Duplicate Copy" readonly></div>
+<div class="field full"><label for="wardEc8bDuplicateFile">Duplicate EC8B copy</label><input id="wardEc8bDuplicateFile" name="evidence" type="file" accept="image/*,.pdf,application/pdf" required><small class="muted">Select a photograph or PDF of the duplicate EC8B copy.</small></div>
+<div class="field full"><label for="wardEc8bDuplicateDescription">Evidence description</label><textarea id="wardEc8bDuplicateDescription" name="description" placeholder="Add any relevant information about this duplicate copy…"></textarea></div>
+</div>
+<div class="file-preview" id="wardEc8bDuplicatePreview"><div class="file-meta" id="wardEc8bDuplicateFileMeta"></div><div id="wardEc8bDuplicatePreviewContent"></div></div>
+<div class="notice show">Duplicate EC8B template ready. Cloudinary upload and Firestore saving will be connected in Objective 8.</div>
+<div class="form-actions"><button class="btn secondary" type="button" data-go="ward-evidence-loss">Back</button></div>
+</form>
 </section>
 <section class="view" id="view-successful"><h1>SUCCESSFUL WARD COLLATION</h1><div class="home-cards">
 <button class="home-card" type="button" data-go="successful-ec8b"><strong class="home-copy">UPLOAD FORM EC8B</strong><span class="home-arrow" aria-hidden="true">›</span></button>
@@ -347,7 +396,7 @@ function listen(col,key){
   });
   unsubs.push(unsub);
 }
-function startListeners(){if(listenersStarted)return;listenersStarted=true;listen('ec8aResults','ec8a');listen('evidenceUploads','evidence');listen('pollingUnitReports','reports');listen('voteBuyingAlerts','alerts');listen('backupRequests','backups');listen('geographyPollingUnits','pus');listen('wardCollations','collations')}
+function startListeners(){if(listenersStarted)return;listenersStarted=true;renderWardLossTemplateContext();listen('ec8aResults','ec8a');listen('evidenceUploads','evidence');listen('pollingUnitReports','reports');listen('voteBuyingAlerts','alerts');listen('backupRequests','backups');listen('geographyPollingUnits','pus');listen('wardCollations','collations')}
 function allSubmissions(){return [...data.ec8a,...data.evidence,...data.reports,...data.alerts,...data.backups].sort((a,b)=>dateMs(b.createdAt)-dateMs(a.createdAt))}function dateMs(v){const d=v?.toDate?v.toDate():new Date(v||0);return d.getTime()||0}function typeLabel(d){if(d._collection==='ec8aResults')return d.reportType==='over_voting'?'Over-voting EC8A':'Successful-election EC8A';if(d._collection==='evidenceUploads')return `Evidence: ${d.evidenceType||d.reportType||'File'}`;if(d._collection==='voteBuyingAlerts')return 'Vote-buying alert';if(d._collection==='backupRequests')return 'Backup request';return first(d.reportType,d.category,d.incidentType,'Polling-unit report').replaceAll('_',' ')}function unitCode(d){return first(d.pollingUnitCode,d.geography?.pollingUnitCode,'—')}function agentName(d){return first(d.fullName,d.agentName,d.email,d.agentUid,'—')}function statusTag(v){let s=String(v||'submitted').toLowerCase();let cls=s.includes('flag')||s.includes('over')?'warn':s.includes('reject')||s.includes('fail')?'bad':'';return `<span class="tag ${cls}">${esc(s.replaceAll('_',' '))}</span>`}
 
 
@@ -786,8 +835,41 @@ function renderAll(){renderSubmissions();renderEc8aComparison();renderCollation(
 function openDetail(col,id){const map={ec8aResults:data.ec8a,evidenceUploads:data.evidence,pollingUnitReports:data.reports,voteBuyingAlerts:data.alerts,backupRequests:data.backups};const d=(map[col]||[]).find(x=>x.id===id);if(!d)return;$('detailTitle').textContent=typeLabel(d);let fields=[['Polling unit',nameOf(d)],['Polling unit code',unitCode(d)],['Agent',agentName(d)],['Election',d.electionName||d.electionType],['Candidate',d.candidateName],['Status',d.status||d.reportStatus],['Submitted',fmt(d.createdAt)],['Report type',d.reportType],['Details',d.details||d.category||d.incidentType],['Ballot accounting',d.ballotAccounting?JSON.stringify(d.ballotAccounting):'—'],['Party results',d.partyResults?JSON.stringify(d.partyResults):'—']];let html=`<div class="detailgrid">${fields.filter(x=>x[1]!==undefined&&x[1]!==null&&x[1]!=='').map(([k,v])=>`<div><small>${esc(k)}</small><b>${esc(typeof v==='object'?JSON.stringify(v):v)}</b></div>`).join('')}</div>`;const url=first(d.cloudinaryUrl,d.secure_url,d.cloudinary?.secure_url,'');if(url)html+=`<p><a class="evidence-link" href="${esc(url)}" target="_blank" rel="noopener">Open supporting evidence</a></p>`;$('detailContent').innerHTML=html;$('detailModal').classList.add('show')}
 let wardViewStack=['overview'];
 function syncBackButton(){const b=$('topBackBtn');if(b)b.disabled=wardViewStack.length<=1&&!document.querySelector('.modal.show')}
-function switchView(v,fromBack=false){if(v==='successful-ec8b')renderPendingEc8b();const current=wardViewStack[wardViewStack.length-1]||'overview';if(!fromBack&&v!==current)wardViewStack.push(v);document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id==='view-'+v));document.querySelectorAll('.nav [data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===v));$('topTitle').textContent=({overview:'Ward operations overview',submissions:'Polling-unit submissions',collation:'Ward collation',history:'Collation history'})[v]||'Ward operations';syncBackButton();window.scrollTo({top:0,behavior:'smooth'})}
+function switchView(v,fromBack=false){if(v==='successful-ec8b')renderPendingEc8b();const current=wardViewStack[wardViewStack.length-1]||'overview';if(!fromBack&&v!==current)wardViewStack.push(v);document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id==='view-'+v));document.querySelectorAll('.nav [data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===v));$('topTitle').textContent=({overview:'Ward operations overview',submissions:'Polling-unit submissions',collation:'Ward collation',history:'Collation history','ward-evidence-loss':'Ward Evidence of Loss','ward-loss-ec8b':'Ward EC8B Form','ward-loss-ec8b-upload':'Upload Ward EC8B','ward-loss-ec8b-eform':'Ward EC8B E-Form','ward-loss-duplicate':'Duplicate EC8B Copy'})[v]||'Ward operations';syncBackButton();window.scrollTo({top:0,behavior:'smooth'})}
 function wardGoBack(){const modal=document.querySelector('.modal.show');if(modal){modal.classList.remove('show');syncBackButton();return}if(wardViewStack.length<=1){syncBackButton();return}wardViewStack.pop();const previous=wardViewStack[wardViewStack.length-1]||'overview';switchView(previous,true)}
+// Objective 7: independent Ward EC8B form templates and local file previews only.
+// No Cloudinary request or Firestore write is performed in this stage.
+function wardLossAssignedText(){
+  const state=first(assignment.state,profile.state,agent.state,assignment.stateCode,agent.geography?.stateCode,profile.geography?.stateCode,'—');
+  const lga=first(assignment.lga,profile.lga,agent.lga,assignment.lgaCode,agent.geography?.lgaCode,profile.geography?.lgaCode,'—');
+  const ward=first(assignment.ward,profile.ward,agent.ward,assignment.wardCode,agent.geography?.wardCode,profile.geography?.wardCode,'—');
+  const election=first(agent.electionName,profile.electionName,agent.electionType,profile.electionType,'—');
+  return {context:`State: ${state} · LGA: ${lga} · Ward: ${ward}`,election};
+}
+function renderWardLossTemplateContext(){
+  const info=wardLossAssignedText();
+  ['wardEc8bContext','wardEc8bEFormContext','wardEc8bDuplicateContext'].forEach(id=>{const el=$(id);if(el)el.textContent=info.context;});
+  ['wardEc8bElectionType','wardEc8bEFormElection','wardEc8bDuplicateElection'].forEach(id=>{const el=$(id);if(el)el.value=info.election;});
+}
+function attachWardLossPreview(inputId,previewId,metaId,contentId,allowPdf=false){
+  const input=$(inputId),preview=$(previewId),meta=$(metaId),content=$(contentId);if(!input||!preview||!meta||!content)return;
+  let objectUrl='';
+  input.addEventListener('change',()=>{
+    if(objectUrl)URL.revokeObjectURL(objectUrl);objectUrl='';content.replaceChildren();
+    const file=input.files?.[0];if(!file){preview.classList.remove('show');meta.textContent='';return;}
+    const isImage=file.type.startsWith('image/');const isPdf=file.type==='application/pdf'||/\.pdf$/i.test(file.name);
+    if(!isImage&&!(allowPdf&&isPdf)){input.value='';preview.classList.remove('show');meta.textContent='';alert(allowPdf?'Choose an image or PDF file.':'Choose an image file.');return;}
+    objectUrl=URL.createObjectURL(file);meta.textContent=`${file.name} · ${(file.size/1024).toFixed(1)} KB · ${file.type||'File'}`;
+    if(isImage){const img=document.createElement('img');img.src=objectUrl;img.alt='Selected evidence preview';content.append(img);}
+    else if(isPdf){const frame=document.createElement('iframe');frame.src=objectUrl;frame.title='Selected duplicate EC8B PDF';frame.style.cssText='width:100%;height:360px;border:0;border-radius:8px';content.append(frame);}
+    preview.classList.add('show');
+  });
+}
+renderWardLossTemplateContext();
+attachWardLossPreview('wardEc8bFile','wardEc8bPreview','wardEc8bFileMeta','wardEc8bPreviewContent');
+attachWardLossPreview('wardEc8bEFormFile','wardEc8bEFormPreview','wardEc8bEFormFileMeta','wardEc8bEFormPreviewContent');
+attachWardLossPreview('wardEc8bDuplicateFile','wardEc8bDuplicatePreview','wardEc8bDuplicateFileMeta','wardEc8bDuplicatePreviewContent',true);
+
 // Ward EC8B uses the same Cloudinary account and preset as the polling-unit EC8A.
 const ec8bForm = $('wardEc8bForm');
 const ec8bInput = ec8bForm.elements.evidence;
