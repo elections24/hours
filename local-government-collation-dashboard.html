@@ -18,6 +18,25 @@
 .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:16px 0}.stat{background:#fff;padding:16px;box-shadow:var(--shadow)}.stat strong{font-size:25px;display:block;line-height:1.2}.panel{background:#fff;border:1px solid var(--line);border-radius:15px;padding:18px;margin-top:16px;box-shadow:var(--shadow);min-width:0}.panelhead{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}.panel h2{font-size:16px;margin:0}.muted{color:var(--muted);font-size:11px;line-height:1.6}.filters{display:flex;gap:9px;flex-wrap:wrap}.filters input,.filters select{border:1px solid var(--line);border-radius:9px;padding:10px;background:#fbfcfb;color:var(--ink);min-width:150px}.filters input{flex:1;min-width:180px}
 .tablewrap{overflow:auto;width:100%}table{width:100%;border-collapse:collapse;min-width:680px}th,td{text-align:left;padding:11px 10px;border-bottom:1px solid #edf1ee;font-size:11px;vertical-align:top}th{font-size:10px;color:#718178;text-transform:uppercase;letter-spacing:.6px;background:#fafcfb;position:sticky;top:0}td strong{font-size:12px}.tag{display:inline-block;border-radius:30px;padding:5px 8px;background:#eef6f1;color:#17603f;font-size:10px;font-weight:700}.tag.warn{background:#fff5e5;color:#98600a}.tag.bad{background:#fff0ef;color:#a52c25}.lga-status-buttons{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}.lga-status-btn{border:0;border-radius:22px;padding:7px 10px;background:#89928d;color:#fff;font-size:10px;font-weight:750;white-space:nowrap}.lga-status-btn.active.over{background:#08734f}.lga-status-btn.active.violence{background:#b42318}.lga-status-btn.active.success{background:#08734f}.lga-collation-status{display:inline-block;margin-top:8px;border-radius:20px;padding:6px 10px;background:#fff0ef;color:#9b3931;border:1px solid #f3d1ce;font-size:10px;font-weight:800}.lga-party-table{min-width:920px}.lga-party-table th:first-child,.lga-party-table td:first-child{min-width:280px}.lga-party-table td:not(:first-child),.lga-party-table th:not(:first-child){text-align:center;min-width:66px}.lga-party-table tfoot th{background:#eaf5ef;color:#17603f;font-size:12px}.lga-row-name{font-size:12px;font-weight:800;line-height:1.4}.lga-row-agent{font-size:10px;color:var(--muted);margin-top:3px}.empty{padding:28px;text-align:center;color:var(--muted);font-size:12px}.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field.full{grid-column:1/-1}.checkrow{display:flex;align-items:center;gap:9px;font-size:12px;margin:10px 0}.checkrow input{width:auto}.footer{padding:22px 0;color:#9aa69f;font-size:10px}
 .modal{position:fixed;inset:0;background:#0b2018a8;z-index:80;display:none;align-items:center;justify-content:center;padding:18px}.modal.show{display:flex}.modalbox{background:#fff;border-radius:15px;width:min(850px,100%);max-height:88vh;overflow:auto;padding:20px}.modalhead{display:flex;justify-content:space-between;gap:12px;align-items:center}.modalhead h2{font-size:17px;margin:0}.xbtn{border:0;background:#f1f5f2;border-radius:8px;padding:8px 11px}.detailgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:15px 0}.detailgrid div{background:#f8faf9;padding:11px;border-radius:9px}.detailgrid .wide{grid-column:1/-1}.detailgrid small{display:block;color:var(--muted);font-size:10px;margin-bottom:5px}.detailgrid b{font-size:12px;overflow-wrap:anywhere}
+/* Ward status evidence review modal */
+.evidence-modal{position:fixed;inset:0;z-index:100;background:#0b2018b8;display:none;align-items:center;justify-content:center;padding:14px}
+.evidence-modal.show{display:flex}
+.evidence-box{width:min(760px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:22px;padding:20px;box-shadow:0 20px 70px #06170f55}
+.evidence-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:16px}
+.evidence-head h2{font-size:19px;line-height:1.35;margin:0;color:#20372d}
+.evidence-status{display:inline-flex;align-items:center;border-radius:22px;padding:8px 13px;font-size:11px;font-weight:850;background:#eaf5ef;color:#08734f;margin-bottom:9px}
+.evidence-status.violence{background:#fff0ef;color:#b42318}.evidence-status.expose{background:#fff5e5;color:#98600a}
+.evidence-ward{font-size:17px;font-weight:850;margin:0 0 4px}.evidence-sub{font-size:11px;color:var(--muted);margin:0}
+.evidence-pu{border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0;background:#fff}
+.evidence-pu h3{font-size:13px;margin:0 0 10px;line-height:1.4}
+.evidence-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.evidence-actions button{min-height:54px;border:0;border-radius:12px;background:var(--g);color:#fff;font-size:12px;font-weight:800;padding:10px}
+.evidence-actions button:disabled{opacity:.55;cursor:wait}
+.evidence-result{margin-top:12px;padding:12px;border-radius:10px;background:#f7faf8;border:1px solid #edf1ee;font-size:12px;line-height:1.55;overflow-wrap:anywhere}
+.evidence-result img,.evidence-result video{display:block;max-width:100%;max-height:65vh;margin:10px auto;border-radius:9px}
+.evidence-result a{color:#08734f;font-weight:800;overflow-wrap:anywhere}
+@media(max-width:560px){.evidence-box{padding:16px;border-radius:18px}.evidence-head h2{font-size:16px}.evidence-actions{grid-template-columns:1fr 1fr}.evidence-actions button{font-size:10px;padding:9px 6px;min-height:58px}}
+
 @media(max-width:900px){.sidebar{width:215px;flex-basis:215px}.content{padding:20px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:650px){.app{display:block}.sidebar{display:none;position:fixed;z-index:50;inset:0 auto 0 0;width:280px;box-shadow:15px 0 40px #102b1c22}.sidebar.open{display:flex}.topbar{height:58px;padding:0 13px}.menu{display:block}.topbar strong{font-size:12px}.pill{display:none}.content{padding:17px 13px 28px}h1{font-size:27px}.assigned{padding:15px}.geo{grid-template-columns:1fr 1fr;gap:7px}.stats{gap:8px}.stat{padding:12px}.stat strong{font-size:22px}.panel{padding:14px}.grid2,.detailgrid{grid-template-columns:1fr}.field.full,.detailgrid .wide{grid-column:auto}}
 
@@ -177,6 +196,12 @@
   </div>
  </main>
 </div>
+<div class="evidence-modal" id="wardEvidenceModal" role="dialog" aria-modal="true" aria-labelledby="evidenceWardTitle">
+ <div class="evidence-box">
+  <div class="evidence-head"><div><span class="evidence-status" id="evidenceStatusLabel">Successful</span><h2 id="evidenceWardTitle">Ward evidence</h2><p class="evidence-sub" id="evidenceWardMeta">Polling-unit evidence for this ward</p></div><button class="xbtn" id="closeWardEvidence">Close</button></div>
+  <div id="wardEvidenceContent"><div class="empty">Loading polling-unit evidence…</div></div>
+ </div>
+</div>
 <div class="modal" id="detailModal"><div class="modalbox"><div class="modalhead"><h2 id="detailTitle">Ward collation details</h2><button class="xbtn" id="closeDetail">Close</button></div><div id="detailContent"></div></div></div>
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -272,7 +297,7 @@ function renderWards(){
   const votes=r?wardPartyMap(r):{};
   const cells=LGA_PARTIES.map(p=>{const n=Number(votes[p]||0);totalsByParty[p]+=n;return `<td class="${r?'':'no-result waiting-cell'}">${r?n.toLocaleString():'00'}</td>`}).join('');
   const status=r?'Collation':'Awaiting';
-  return `<tr><td><span class="lga-row-name">${esc(recordName(w))}</span><span class="lga-row-code">${esc(code)}</span><div class="lga-status-buttons"><button class="lga-status-btn ${flags.over?'active over':''}" type="button" disabled>Expose</button><button class="lga-status-btn ${flags.violence?'active violence':''}" type="button" disabled>Violence</button><button class="lga-status-btn ${flags.success?'active success':''}" type="button" data-expand-ward="${esc(code)}" aria-label="Show all polling units in ${esc(recordName(w))}">Successful</button></div><div class="lga-collation-status ${r?'received':'pending'}">Status: ${status}</div></td>${cells}</tr><tr class="ward-detail-row hidden" id="ward-detail-${esc(code)}"><td colspan="${LGA_PARTIES.length+1}"><div class="ward-pu-detail" id="ward-pu-${esc(code)}"></div></td></tr>`;
+  return `<tr><td><span class="lga-row-name">${esc(recordName(w))}</span><span class="lga-row-code">${esc(code)}</span><div class="lga-status-buttons"><button class="lga-status-btn ${flags.over?'active over':''}" type="button" data-ward-status="expose" data-ward-code="${esc(code)}" data-ward-name="${esc(recordName(w))}">Expose</button><button class="lga-status-btn ${flags.violence?'active violence':''}" type="button" data-ward-status="violence" data-ward-code="${esc(code)}" data-ward-name="${esc(recordName(w))}">Violence</button><button class="lga-status-btn ${flags.success?'active success':''}" type="button" data-ward-status="successful" data-ward-code="${esc(code)}" data-ward-name="${esc(recordName(w))}">Successful</button></div><div class="lga-collation-status ${r?'received':'pending'}">Status: ${status}</div></td>${cells}</tr><tr class="ward-detail-row hidden" id="ward-detail-${esc(code)}"><td colspan="${LGA_PARTIES.length+1}"><div class="ward-pu-detail" id="ward-pu-${esc(code)}"></div></td></tr>`;
  }).join('');
  const totalCells=LGA_PARTIES.map(p=>`<td>${totalsByParty[p].toLocaleString()}</td>`).join('');
  $('wardTable').innerHTML=rows.length?`<div class="ec8a-compare-scroll"><table class="lga-party-table"><thead><tr><th>WARD</th>${LGA_PARTIES.map(p=>`<th>${esc(p)}</th>`).join('')}</tr></thead><tbody>${body}</tbody><tfoot><tr><td><span class="lga-row-name">TOTAL VOTES</span><span class="lga-row-code">All registered wards</span></td>${totalCells}</tr></tfoot></table></div>`:'<div class="empty">No wards match this filter.</div>';
@@ -291,6 +316,87 @@ function puPartyMap(r){
  const list=Array.isArray(r?.partyResults)?r.partyResults:(Array.isArray(r?.results)?r.results:(Array.isArray(r?.votes)?r.votes:[]));
  const out={};list.forEach(x=>{const n=String(first(x.party,x.partyName,x.abbreviation,x.partyCode,x.code,'')).trim().toUpperCase();const v=Number(x.votes??x.voteCount??x.totalVotes);if(n&&Number.isFinite(v))out[n]=v;});return out;
 }
+const evidenceCollections=['ec8aResults','pollingUnitReports','wardEvidenceOfLoss'];
+const evidenceButtonTypes={ec8b:'View Form EC8B',eform:'View E-Form',video:'View Video',duplicate:'View Duplicate Copy'};
+function evidenceUrls(value,kind,out=[],seen=new Set(),depth=0){
+ if(value==null||depth>5)return out;
+ if(typeof value==='string'){
+  const v=value.trim();
+  if(/^https?:\/\//i.test(v)&&!seen.has(v)){seen.add(v);out.push(v)}
+  return out;
+ }
+ if(Array.isArray(value)){value.forEach(x=>evidenceUrls(x,kind,out,seen,depth+1));return out;}
+ if(typeof value==='object'){
+  for(const [key,val] of Object.entries(value)){
+   const k=key.toLowerCase().replace(/[^a-z0-9]/g,'');
+   const matches=kind==='video'?/(video|recording|clip)/.test(k):kind==='duplicate'?/(duplicate|copy|backup)/.test(k):kind==='ec8b'?/(ec8a|ec8b|formec8a|formec8b|resultform|resultimage|formimage|paperform|documenturl)/.test(k):/(eform|electronicform|wardevidence|evidenceform)/.test(k);
+   if(matches)evidenceUrls(val,kind,out,seen,depth+1);
+   else if(typeof val==='object')evidenceUrls(val,kind,out,seen,depth+1);
+  }
+ }
+ return out;
+}
+function mediaMarkup(url,kind){
+ const safe=esc(url);
+ if(/\.(mp4|webm|mov|m4v)(\?|#|$)/i.test(url)||kind==='video')return `<video controls playsinline preload="metadata" src="${safe}"></video><p><a href="${safe}" target="_blank" rel="noopener">Open video in a new tab</a></p>`;
+ if(/\.(png|jpe?g|gif|webp|bmp)(\?|#|$)/i.test(url)||kind==='ec8b'||kind==='eform'||kind==='duplicate')return `<a href="${safe}" target="_blank" rel="noopener">Open evidence file</a><img src="${safe}" alt="Uploaded election evidence" loading="lazy" onerror="this.style.display='none'">`;
+ return `<a href="${safe}" target="_blank" rel="noopener">Open uploaded evidence</a>`;
+}
+async function loadWardEvidence(wardCode,wardName,status){
+ const modal=$('wardEvidenceModal'),content=$('wardEvidenceContent');
+ const statusText=status==='expose'?'Expose':status==='violence'?'Violence':'Successful';
+ $('evidenceStatusLabel').textContent=statusText;$('evidenceStatusLabel').className='evidence-status '+status;
+ $('evidenceWardTitle').textContent=wardName+' Ward';
+ $('evidenceWardMeta').textContent=`${assignment.lga||'Local Government'} · ${assignment.state||''} · Evidence linked to polling units in this ward`;
+ content.innerHTML='<div class="empty">Loading registered polling units and their submitted evidence…</div>';
+ modal.classList.add('show');
+ try{
+  const puSnap=await getDocs(query(collection(db,'geographyPollingUnits'),where('wardCode','==',String(wardCode))));
+  const units=puSnap.docs.map(d=>({id:d.id,...d.data()})).filter(p=>String(first(p.wardCode,p.geography?.wardCode,''))===String(wardCode));
+  const snaps=await Promise.all(evidenceCollections.map(async name=>{
+   try{return {name,snap:await getDocs(query(collection(db,name),where('stateCode','==',assignment.stateCode),where('lgaCode','==',assignment.lgaCode),where('electionType','==',assignment.electionType),where('candidateId','==',assignment.candidateId)))}}
+   catch(error){console.warn('Evidence collection read failed:',name,error);return {name,snap:null,error}}
+  }));
+  const records=snaps.flatMap(({name,snap})=>snap?snap.docs.map(d=>({id:d.id,source:name,...d.data()})):[])
+   .filter(r=>String(first(r.wardCode,r.geography?.wardCode,''))===String(wardCode));
+  const latestByPu=new Map();
+  records.forEach(r=>{
+   const code=String(first(r.pollingUnitCode,r.geography?.pollingUnitCode,r.puCode,r.pollingUnit?.code,''));
+   if(!code)return;const list=latestByPu.get(code)||[];list.push(r);latestByPu.set(code,list);
+  });
+  units.sort((a,b)=>puName(a).localeCompare(puName(b),undefined,{numeric:true,sensitivity:'base'}));
+  content.innerHTML=units.length?units.map(p=>{
+   const code=puCode(p),puRecords=(latestByPu.get(code)||[]).sort((a,b)=>dateMs(b.createdAt)-dateMs(a.createdAt));
+   return `<article class="evidence-pu"><h3>${esc(puName(p))} <span class="muted">(PU ${esc(code)})</span></h3><div class="evidence-actions">${Object.entries(evidenceButtonTypes).map(([kind,label])=>`<button type="button" data-evidence-kind="${kind}" data-evidence-pu="${esc(code)}">${label}</button>`).join('')}</div><div class="evidence-result" id="evidence-result-${esc(code)}">Select an evidence button to retrieve the submitted file for this polling unit.</div></article>`;
+  }).join(''):'<div class="empty">No registered polling units were found for this ward in geographyPollingUnits.</div>';
+  content.dataset.records=JSON.stringify(records);
+ }catch(error){console.error('Ward evidence load failed',error);content.innerHTML=`<div class="empty">Could not load this ward’s polling units or evidence. Check Firestore read permissions. (${esc(error.code||error.message)})</div>`;}
+}
+function showEvidenceForPu(kind,code){
+ const content=$('wardEvidenceContent'),target=$(`evidence-result-${code}`);if(!target)return;
+ let records=[];try{records=JSON.parse(content.dataset.records||'[]')}catch{}
+ const puRecords=records.filter(r=>String(first(r.pollingUnitCode,r.geography?.pollingUnitCode,r.puCode,r.pollingUnit?.code,''))===String(code));
+ const sources=kind==='ec8b'?['wardEvidenceOfLoss']:kind==='eform'?['ec8aResults','pollingUnitReports']:['ec8aResults','pollingUnitReports','wardEvidenceOfLoss'];
+ const matching=puRecords.filter(r=>sources.includes(r.source));
+ const wardForms=kind==='eform'?records.filter(r=>r.source==='wardEvidenceOfLoss'&&(r.documentType==='WARD_EC8B_EFORM'||r.schemaVersion===2||Array.isArray(r.pollingUnits))):[];
+ const formMatches=kind==='eform'?wardForms:matching;
+ const urls=[];formMatches.forEach(r=>evidenceUrls(r,kind,urls));
+ if(kind==='ec8b'){
+  const form=matching.find(r=>r.documentType==='WARD_EC8B_EFORM'||r.schemaVersion===2)||matching[0];
+  if(form){
+   target.innerHTML=`<p><b>EC8B form received</b> · ${esc(fmt(form.createdAt))}</p>${readEc8bSheet(form)}<p class="muted">Reference: ${esc(form.id)}</p>`;
+   return;
+  }
+ }
+ if(kind==='eform'){
+  const form=formMatches[0];
+  if(form){target.innerHTML=`<p><b>Polling-unit E-Form evidence</b> · ${esc(fmt(form.createdAt))}</p>${urls.map(u=>mediaMarkup(u,kind)).join('')||'No separate E-Form file URL was attached to this polling-unit submission.'}<p class="muted">Reference: ${esc(form.id)}</p>`;return;}
+ }
+ if(urls.length){target.innerHTML=urls.map(u=>mediaMarkup(u,kind)).join('');return;}
+ const label=evidenceButtonTypes[kind];
+ target.textContent=matching.length?`${label} record exists for this polling unit, but no matching uploaded file URL was found in the record.`:`No ${label.toLowerCase()} was found for this polling unit in the available Firebase submission records.`;
+}
+
 async function toggleWardPollingUnits(wardCode){
  const row=$(`ward-detail-${wardCode}`),target=$(`ward-pu-${wardCode}`);if(!row||!target)return;
  if(!row.classList.contains('hidden')){row.classList.add('hidden');return;}
@@ -494,7 +600,10 @@ document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',(
 document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.goto)));
 $('menuBtn').addEventListener('click',()=>$('sidebar').classList.toggle('open'));
 $('wardSearch').addEventListener('input',renderWards);$('wardStatus').addEventListener('change',renderWards);$('refreshBtn').addEventListener('click',()=>loadData());
-$('wardTable').addEventListener('click',e=>{const b=e.target.closest('button[data-expand-ward]');if(!b)return;e.preventDefault();const code=b.getAttribute('data-expand-ward');if(code)toggleWardPollingUnits(code);});
+$('wardTable').addEventListener('click',e=>{const statusBtn=e.target.closest('button[data-ward-status]');if(statusBtn){e.preventDefault();loadWardEvidence(statusBtn.dataset.wardCode,statusBtn.dataset.wardName,statusBtn.dataset.wardStatus);return;}const b=e.target.closest('button[data-expand-ward]');if(!b)return;e.preventDefault();const code=b.getAttribute('data-expand-ward');if(code)toggleWardPollingUnits(code);});
+ $('wardEvidenceContent').addEventListener('click',e=>{const b=e.target.closest('button[data-evidence-kind]');if(!b)return;showEvidenceForPu(b.dataset.evidenceKind,b.dataset.evidencePu);});
+ $('closeWardEvidence').addEventListener('click',()=>$('wardEvidenceModal').classList.remove('show'));
+ $('wardEvidenceModal').addEventListener('click',e=>{if(e.target===$('wardEvidenceModal'))$('wardEvidenceModal').classList.remove('show')});
 $('closeDetail').addEventListener('click',()=>$('detailModal').classList.remove('show'));$('detailModal').addEventListener('click',e=>{if(e.target===$('detailModal'))$('detailModal').classList.remove('show')});
 $('lgaForm').addEventListener('submit',async e=>{
  e.preventDefault();const btn=$('saveLgaBtn');btn.disabled=true;btn.textContent='Saving…';
