@@ -30,7 +30,7 @@
 .evidence-pu{border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0;background:#fff}
 .evidence-pu h3{font-size:13px;margin:0 0 10px;line-height:1.4}
 .evidence-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
-.evidence-actions button{min-height:54px;border:0;border-radius:12px;background:var(--g);color:#fff;font-size:12px;font-weight:800;padding:10px}
+.ward-evidence-actions{margin:12px 0 4px}.evidence-actions button{min-height:54px;border:0;border-radius:12px;background:var(--g);color:#fff;font-size:12px;font-weight:800;padding:10px}
 .evidence-actions button:disabled{opacity:.55;cursor:wait}
 .evidence-result{margin-top:12px;padding:12px;border-radius:10px;background:#f7faf8;border:1px solid #edf1ee;font-size:12px;line-height:1.55;overflow-wrap:anywhere}
 .evidence-result img,.evidence-result video{display:block;max-width:100%;max-height:65vh;margin:10px auto;border-radius:9px}
@@ -345,56 +345,79 @@ function mediaMarkup(url,kind){
 async function loadWardEvidence(wardCode,wardName,status){
  const modal=$('wardEvidenceModal'),content=$('wardEvidenceContent');
  const statusText=status==='expose'?'Expose':status==='violence'?'Violence':'Successful';
- $('evidenceStatusLabel').textContent=statusText;$('evidenceStatusLabel').className='evidence-status '+status;
+ $('evidenceStatusLabel').textContent=statusText;
+ $('evidenceStatusLabel').className='evidence-status '+status;
  $('evidenceWardTitle').textContent=wardName+' Ward';
  $('evidenceWardMeta').textContent=`${assignment.lga||'Local Government'} · ${assignment.state||''} · Evidence linked to polling units in this ward`;
- content.innerHTML='<div class="empty">Loading registered polling units and their submitted evidence…</div>';
+ content.innerHTML='<div class="empty">Loading evidence records for this ward…</div>';
+ content.dataset.records='[]';
+ content.dataset.wardCode=String(wardCode);
+ content.dataset.wardName=String(wardName);
  modal.classList.add('show');
  try{
-  const puSnap=await getDocs(query(collection(db,'geographyPollingUnits'),where('wardCode','==',String(wardCode))));
-  const units=puSnap.docs.map(d=>({id:d.id,...d.data()})).filter(p=>String(first(p.wardCode,p.geography?.wardCode,''))===String(wardCode));
+  // Load submitted evidence for this assigned LGA/election. The ward evidence
+  // dialog must not depend on geographyPollingUnits being populated: the four
+  // review buttons belong to the ward itself and must always be visible.
   const snaps=await Promise.all(evidenceCollections.map(async name=>{
-   try{return {name,snap:await getDocs(query(collection(db,name),where('stateCode','==',assignment.stateCode),where('lgaCode','==',assignment.lgaCode),where('electionType','==',assignment.electionType),where('candidateId','==',assignment.candidateId)))}}
-   catch(error){console.warn('Evidence collection read failed:',name,error);return {name,snap:null,error}}
+   try{
+    return {name,snap:await getDocs(query(
+     collection(db,name),
+     where('stateCode','==',assignment.stateCode),
+     where('lgaCode','==',assignment.lgaCode),
+     where('electionType','==',assignment.electionType),
+     where('candidateId','==',assignment.candidateId)
+    ))};
+   }catch(error){
+    console.warn('Evidence collection read failed:',name,error);
+    return {name,snap:null,error};
+   }
   }));
   const records=snaps.flatMap(({name,snap})=>snap?snap.docs.map(d=>({id:d.id,source:name,...d.data()})):[])
-   .filter(r=>String(first(r.wardCode,r.geography?.wardCode,''))===String(wardCode));
-  const latestByPu=new Map();
-  records.forEach(r=>{
-   const code=String(first(r.pollingUnitCode,r.geography?.pollingUnitCode,r.puCode,r.pollingUnit?.code,''));
-   if(!code)return;const list=latestByPu.get(code)||[];list.push(r);latestByPu.set(code,list);
-  });
-  units.sort((a,b)=>puName(a).localeCompare(puName(b),undefined,{numeric:true,sensitivity:'base'}));
-  content.innerHTML=units.length?units.map(p=>{
-   const code=puCode(p),puRecords=(latestByPu.get(code)||[]).sort((a,b)=>dateMs(b.createdAt)-dateMs(a.createdAt));
-   return `<article class="evidence-pu"><h3>${esc(puName(p))} <span class="muted">(PU ${esc(code)})</span></h3><div class="evidence-actions">${Object.entries(evidenceButtonTypes).map(([kind,label])=>`<button type="button" data-evidence-kind="${kind}" data-evidence-pu="${esc(code)}">${label}</button>`).join('')}</div><div class="evidence-result" id="evidence-result-${esc(code)}">Select an evidence button to retrieve the submitted file for this polling unit.</div></article>`;
-  }).join(''):'<div class="empty">No registered polling units were found for this ward in geographyPollingUnits.</div>';
+   .filter(r=>String(first(r.wardCode,r.geography?.wardCode,r.assignedWardCode,''))===String(wardCode));
   content.dataset.records=JSON.stringify(records);
- }catch(error){console.error('Ward evidence load failed',error);content.innerHTML=`<div class="empty">Could not load this ward’s polling units or evidence. Check Firestore read permissions. (${esc(error.code||error.message)})</div>`;}
+  content.innerHTML=`
+   <div class="evidence-actions ward-evidence-actions">
+    ${Object.entries(evidenceButtonTypes).map(([kind,label])=>`<button type="button" data-evidence-kind="${kind}">${label}</button>`).join('')}
+   </div>
+   <div class="evidence-result" id="ward-evidence-result">Choose one of the four buttons above to view the evidence submitted for ${esc(wardName)} Ward.</div>`;
+ }catch(error){
+  console.error('Ward evidence load failed',error);
+  // Keep the four controls visible even if Firebase returns a read error.
+  content.innerHTML=`
+   <div class="evidence-actions ward-evidence-actions">
+    ${Object.entries(evidenceButtonTypes).map(([kind,label])=>`<button type="button" data-evidence-kind="${kind}">${label}</button>`).join('')}
+   </div>
+   <div class="evidence-result" id="ward-evidence-result">Evidence records could not be loaded. Check Firestore read permissions. (${esc(error.code||error.message)})</div>`;
+ }
 }
-function showEvidenceForPu(kind,code){
- const content=$('wardEvidenceContent'),target=$(`evidence-result-${code}`);if(!target)return;
+function showEvidenceForWard(kind){
+ const content=$('wardEvidenceContent'),target=$('ward-evidence-result');
+ if(!target)return;
  let records=[];try{records=JSON.parse(content.dataset.records||'[]')}catch{}
- const puRecords=records.filter(r=>String(first(r.pollingUnitCode,r.geography?.pollingUnitCode,r.puCode,r.pollingUnit?.code,''))===String(code));
- const sources=kind==='ec8b'?['wardEvidenceOfLoss']:kind==='eform'?['ec8aResults','pollingUnitReports']:['ec8aResults','pollingUnitReports','wardEvidenceOfLoss'];
- const matching=puRecords.filter(r=>sources.includes(r.source));
- const wardForms=kind==='eform'?records.filter(r=>r.source==='wardEvidenceOfLoss'&&(r.documentType==='WARD_EC8B_EFORM'||r.schemaVersion===2||Array.isArray(r.pollingUnits))):[];
- const formMatches=kind==='eform'?wardForms:matching;
- const urls=[];formMatches.forEach(r=>evidenceUrls(r,kind,urls));
+ const label=evidenceButtonTypes[kind]||'Evidence';
+ const wardName=content.dataset.wardName||'Selected ward';
+ const relevant=records.filter(r=>{
+  if(kind==='ec8b')return r.source==='wardEvidenceOfLoss';
+  if(kind==='eform')return ['wardEvidenceOfLoss','ec8aResults','pollingUnitReports'].includes(r.source);
+  return ['ec8aResults','pollingUnitReports','wardEvidenceOfLoss'].includes(r.source);
+ });
  if(kind==='ec8b'){
-  const form=matching.find(r=>r.documentType==='WARD_EC8B_EFORM'||r.schemaVersion===2)||matching[0];
-  if(form){
-   target.innerHTML=`<p><b>EC8B form received</b> · ${esc(fmt(form.createdAt))}</p>${readEc8bSheet(form)}<p class="muted">Reference: ${esc(form.id)}</p>`;
+  const forms=relevant.filter(r=>r.documentType==='WARD_EC8B_EFORM'||r.schemaVersion===2||Array.isArray(r.pollingUnits));
+  if(forms.length){
+   target.innerHTML=forms.map(form=>`<section><p><b>EC8B form received</b> · ${esc(fmt(form.createdAt))}</p>${readEc8bSheet(form)}<p class="muted">Reference: ${esc(form.id)}</p></section>`).join('<hr>');
    return;
   }
  }
- if(kind==='eform'){
-  const form=formMatches[0];
-  if(form){target.innerHTML=`<p><b>Polling-unit E-Form evidence</b> · ${esc(fmt(form.createdAt))}</p>${urls.map(u=>mediaMarkup(u,kind)).join('')||'No separate E-Form file URL was attached to this polling-unit submission.'}<p class="muted">Reference: ${esc(form.id)}</p>`;return;}
+ const urls=[];
+ relevant.forEach(r=>evidenceUrls(r,kind,urls));
+ if(urls.length){
+  target.innerHTML=`<p><b>${esc(label)} · ${esc(wardName)} Ward</b></p>${urls.map(url=>mediaMarkup(url,kind)).join('')}`;
+  return;
  }
- if(urls.length){target.innerHTML=urls.map(u=>mediaMarkup(u,kind)).join('');return;}
- const label=evidenceButtonTypes[kind];
- target.textContent=matching.length?`${label} record exists for this polling unit, but no matching uploaded file URL was found in the record.`:`No ${label.toLowerCase()} was found for this polling unit in the available Firebase submission records.`;
+ const matchingRecords=relevant.length;
+ target.textContent=matchingRecords
+  ? `${label} records were found for ${wardName} Ward, but no matching uploaded file or displayable evidence was found in those records.`
+  : `No ${label.toLowerCase()} submission was found for ${wardName} Ward in the available Firebase records.`;
 }
 
 async function toggleWardPollingUnits(wardCode){
@@ -601,7 +624,7 @@ document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click',(
 $('menuBtn').addEventListener('click',()=>$('sidebar').classList.toggle('open'));
 $('wardSearch').addEventListener('input',renderWards);$('wardStatus').addEventListener('change',renderWards);$('refreshBtn').addEventListener('click',()=>loadData());
 $('wardTable').addEventListener('click',e=>{const statusBtn=e.target.closest('button[data-ward-status]');if(statusBtn){e.preventDefault();loadWardEvidence(statusBtn.dataset.wardCode,statusBtn.dataset.wardName,statusBtn.dataset.wardStatus);return;}const b=e.target.closest('button[data-expand-ward]');if(!b)return;e.preventDefault();const code=b.getAttribute('data-expand-ward');if(code)toggleWardPollingUnits(code);});
- $('wardEvidenceContent').addEventListener('click',e=>{const b=e.target.closest('button[data-evidence-kind]');if(!b)return;showEvidenceForPu(b.dataset.evidenceKind,b.dataset.evidencePu);});
+ $('wardEvidenceContent').addEventListener('click',e=>{const b=e.target.closest('button[data-evidence-kind]');if(!b)return;showEvidenceForWard(b.dataset.evidenceKind);});
  $('closeWardEvidence').addEventListener('click',()=>$('wardEvidenceModal').classList.remove('show'));
  $('wardEvidenceModal').addEventListener('click',e=>{if(e.target===$('wardEvidenceModal'))$('wardEvidenceModal').classList.remove('show')});
 $('closeDetail').addEventListener('click',()=>$('detailModal').classList.remove('show'));$('detailModal').addEventListener('click',e=>{if(e.target===$('detailModal'))$('detailModal').classList.remove('show')});
