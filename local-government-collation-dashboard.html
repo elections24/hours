@@ -32,6 +32,7 @@
 .evidence-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
 .ward-evidence-actions{margin:12px 0 4px}.evidence-actions button{min-height:54px;border:0;border-radius:12px;background:var(--g);color:#fff;font-size:12px;font-weight:800;padding:10px}
 .evidence-actions button:disabled{opacity:.55;cursor:wait}
+.evidence-actions button.evidence-choice.active{background:var(--g);color:#fff}.evidence-actions button.evidence-choice.inactive{background:#9ca3af;color:#fff}
 .evidence-result{margin-top:12px;padding:12px;border-radius:10px;background:#f7faf8;border:1px solid #edf1ee;font-size:12px;line-height:1.55;overflow-wrap:anywhere}
 .evidence-result img,.evidence-result video{display:block;max-width:100%;max-height:65vh;margin:10px auto;border-radius:9px}
 .evidence-result a{color:#08734f;font-weight:800;overflow-wrap:anywhere}
@@ -332,6 +333,8 @@ function evidenceUrls(value,kind,out=[],seen=new Set(),depth=0){
    const k=key.toLowerCase().replace(/[^a-z0-9]/g,'');
    const matches=kind==='video'?/(video|recording|clip)/.test(k)
     :kind==='duplicate'?/(duplicate|copy|backup)/.test(k)
+    :kind==='original'?/(original|originalcopy|originalform|originalec8b)/.test(k)
+    :kind==='pick'?/(pick|pickcopy|pickedcopy|pickform|pickec8b)/.test(k)
     :kind==='ec8b'?/(ec8b|formec8b|ec8bphoto|ec8bimage|formphoto|formimage|paperform|documenturl|uploadedform)/.test(k)
     :/(eform|electronicform|wardeform|eformfile)/.test(k);
    if(matches)evidenceUrls(val,kind,out,seen,depth+1);
@@ -379,17 +382,23 @@ async function loadWardEvidence(wardCode,wardName,status){
    .filter(r=>String(first(r.wardCode,r.geography?.wardCode,r.assignedWardCode,''))===String(wardCode)
     && (r.documentType==='WARD_EC8B_EFORM'||r.schemaVersion===2||r.wardCode!=null));
   content.dataset.records=JSON.stringify(records);
+  const exposeButtons=status==='expose'
+   ? {original:'View Original Copy',pick:'View Pick Copy'}
+   : evidenceButtonTypes;
+  content.dataset.exposeMode=status==='expose'?'yes':'no';
   content.innerHTML=`
    <div class="evidence-actions ward-evidence-actions">
-    ${Object.entries(evidenceButtonTypes).map(([kind,label])=>`<button type="button" data-evidence-kind="${kind}">${label}</button>`).join('')}
+    ${Object.entries(exposeButtons).map(([kind,label],index)=>`<button type="button" class="evidence-choice ${index===0?'active':''}" data-evidence-kind="${kind}" aria-pressed="${index===0?'true':'false'}">${label}</button>`).join('')}
    </div>
    <div class="evidence-result" id="ward-evidence-result">Choose an evidence type to view files uploaded by ${esc(wardName)} Ward.</div>`;
  }catch(error){
   console.error('Ward evidence load failed',error);
   // Keep the four controls visible even if Firebase returns a read error.
+  const exposeButtons=status==='expose'?{original:'View Original Copy',pick:'View Pick Copy'}:evidenceButtonTypes;
+  content.dataset.exposeMode=status==='expose'?'yes':'no';
   content.innerHTML=`
    <div class="evidence-actions ward-evidence-actions">
-    ${Object.entries(evidenceButtonTypes).map(([kind,label])=>`<button type="button" data-evidence-kind="${kind}">${label}</button>`).join('')}
+    ${Object.entries(exposeButtons).map(([kind,label],index)=>`<button type="button" class="evidence-choice ${index===0?'active':''}" data-evidence-kind="${kind}" aria-pressed="${index===0?'true':'false'}">${label}</button>`).join('')}
    </div>
    <div class="evidence-result" id="ward-evidence-result">Evidence records could not be loaded. Check Firestore read permissions. (${esc(error.code||error.message)})</div>`;
  }
@@ -629,7 +638,16 @@ document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click',(
 $('menuBtn').addEventListener('click',()=>$('sidebar').classList.toggle('open'));
 $('wardSearch').addEventListener('input',renderWards);$('wardStatus').addEventListener('change',renderWards);$('refreshBtn').addEventListener('click',()=>loadData());
 $('wardTable').addEventListener('click',e=>{const statusBtn=e.target.closest('button[data-ward-status]');if(statusBtn){e.preventDefault();loadWardEvidence(statusBtn.dataset.wardCode,statusBtn.dataset.wardName,statusBtn.dataset.wardStatus);return;}const b=e.target.closest('button[data-expand-ward]');if(!b)return;e.preventDefault();const code=b.getAttribute('data-expand-ward');if(code)toggleWardPollingUnits(code);});
- $('wardEvidenceContent').addEventListener('click',e=>{const b=e.target.closest('button[data-evidence-kind]');if(!b)return;showEvidenceForWard(b.dataset.evidenceKind);});
+ $('wardEvidenceContent').addEventListener('click',e=>{
+  const b=e.target.closest('button[data-evidence-kind]');if(!b)return;
+  if($('wardEvidenceContent').dataset.exposeMode==='yes'){
+   $('wardEvidenceContent').querySelectorAll('.evidence-choice').forEach(btn=>{
+    const active=btn===b;btn.classList.toggle('active',active);btn.classList.toggle('inactive',!active);
+    btn.setAttribute('aria-pressed',active?'true':'false');
+   });
+  }
+  showEvidenceForWard(b.dataset.evidenceKind);
+ });
  $('closeWardEvidence').addEventListener('click',()=>$('wardEvidenceModal').classList.remove('show'));
  $('wardEvidenceModal').addEventListener('click',e=>{if(e.target===$('wardEvidenceModal'))$('wardEvidenceModal').classList.remove('show')});
 $('closeDetail').addEventListener('click',()=>$('detailModal').classList.remove('show'));$('detailModal').addEventListener('click',e=>{if(e.target===$('detailModal'))$('detailModal').classList.remove('show')});
