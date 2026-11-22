@@ -39,17 +39,30 @@
 .feed-notice:empty{display:none}.feed-notice{color:#614b25}.evidence-item{padding:.85rem 0;border-bottom:1px solid #d8e1dc;overflow-wrap:anywhere}.evidence-item summary{cursor:pointer;font-weight:650}.entry-scroll{overflow-x:auto;max-width:100%}.entry-scroll table{width:max-content;min-width:100%}.entry-scroll th,.entry-scroll td{white-space:nowrap}.modalbox{max-width:100%;min-width:0}.lga-status-btn:enabled{cursor:pointer}
 .lga-all{display:block;margin:6px 0 2px;padding:5px 0;border:0;background:transparent;color:#086b4d;font:inherit;font-weight:700;text-align:left;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
 .lga-all:focus-visible{outline:2px solid #08734f;outline-offset:2px}
+
+#view-lgas .panelhead{display:block}#view-lgas .filters{display:grid;gap:10px}#view-lgas .filters input{width:100%}#view-lgas .filters select{width:min(76%,320px)}
+.lga-identity{background:none;border:0;color:inherit;font:inherit;font-weight:750;text-align:left;padding:0;cursor:pointer}
+.lga-party-table .lga-status-btn,.lga-party-table .lga-collation-status{font-size:clamp(9px,1.9vw,12px)}
+.lga-party-table .lga-collation-status.received{background:#e7f4ed;color:#135d44;border-color:#bddbca;box-shadow:none;cursor:pointer}
+.lga-party-table tfoot td{background:#e6f3ec}.category-badge{border-radius:30px;background:#e9f4ed;color:#116144;font-weight:750;font-size:12px;padding:7px 12px}
+.category-badge[data-category=violence]{background:#fae8e5;color:#982920}
+#detailTitle{margin:12px 0 2px;font-size:20px}.detail-scope{margin:0 0 16px;color:#617069;font-size:13px}
+.review-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}
+.review-tiles button{border:0;border-radius:11px;min-height:58px;padding:10px;background:#08734f;color:#fff;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.review-tiles button[aria-pressed=true]{box-shadow:inset 0 0 0 2px #064c36}.review-tiles button:disabled{background:#697482;cursor:default}
+.evidence-item{border:1px solid #dbe5df;border-radius:12px;background:#f8faf9;padding:12px;margin-top:10px}.evidence-item p{font-size:13px}.evidence-item a{color:#075c42;font-weight:700}
+.upload-preview{display:block;max-width:100%;max-height:55vh;object-fit:contain;margin:12px auto}.lga-party-table td:not(:first-child){font-variant-numeric:tabular-nums}
 </style></head><body>
 <section id="loginView" class="login-wrap"><form id="loginForm" class="login"><div class="brand">◉ BOTAS PHOTO <small>Election Monitoring &amp; Reporting System</small></div><h1>State Collation</h1><p class="sub">This dashboard uses the account already signed in through the main BOTAS PHOTO index page.</p><div id="loginNotice" class="notice"></div><button class="btn" type="button" onclick="location.replace('index.html')" style="width:100%;margin-top:12px">Return to main sign-in</button></form></section>
 <div id="appView" class="app hidden"><aside class="sidebar" id="sidebar"><div class="brand">◉ BOTAS PHOTO <small>Election Monitoring System</small></div><div class="rolebox"><small>Signed in as</small><strong id="sideName">Loading…</strong><p id="sideScope">Loading assigned State…</p></div><nav class="nav"><button data-view="overview">▦ Overview</button><button class="active" data-view="lgas">▤ LGA Collations</button><button data-view="results">▥ Consolidated Results</button><button data-view="submit">＋ Submit State Collation</button><button data-view="history">◷ Collation History</button><button data-view="profile">♙ My Profile</button></nav><div class="sidefoot">BOTAS PHOTO · Restricted State access<br>Data is limited to your assigned State and election.</div></aside>
 <main class="main"><header class="topbar"><div style="display:flex;align-items:center;gap:10px"><button class="menu" id="menuBtn">☰</button><strong id="topTitle">State overview</strong></div><div class="topright"><span class="pill">State Collation Agent Portal</span><span id="topName" class="muted"></span><button class="btn secondary" id="logoutBtn">Log out</button></div></header><div class="content">
 <section class="view" id="view-overview"><div class="eyebrow">Assigned collation area</div><h1 id="welcomeTitle">State Dashboard</h1><p class="sub">Review submitted Local Government collations and prepare the State collation record.</p><div class="assigned"><h2 id="stateTitle">Loading assigned State…</h2><p>State-level election collation</p><div class="geo"><div><small>Election</small><b id="electionTitle">—</b></div><div><small>Candidate</small><b id="candidateTitle">—</b></div><div><small>Assigned State code</small><b id="stateCodeTitle">—</b></div></div></div><div class="stats"><div class="stat"><small>Registered LGAs</small><strong id="statLgas">—</strong></div><div class="stat"><small>LGA collations received</small><strong id="statReceived">—</strong></div><div class="stat"><small>LGAs awaiting collation</small><strong id="statPending">—</strong></div><div class="stat"><small>Reported valid votes</small><strong id="statVotes">—</strong></div></div><div class="panel"><div class="panelhead"><h2>Local Government collation progress</h2><span class="tag">Live</span></div><div id="progressSummary" class="muted">Loading progress…</div><div id="progressTable" class="tablewrap" style="margin-top:12px"></div></div></section>
-<section class="view active" id="view-lgas"><div class="eyebrow">Source records</div><h1>Local Government Collations</h1><p class="sub">Review records submitted by Local Government Collation Agents assigned to this State.</p><div class="panel"><div class="panelhead"><h2>State Collation Dashboard</h2><div class="filters"><input id="lgaSearch" placeholder="Search Local Government…"><select id="lgaStatus"><option value="">All LGAs</option><option value="expose">Expose</option><option value="violence">Violence</option><option value="successful">Successful</option><option value="collation">Status: Collation</option></select></div></div><div id="lgaCount" class="muted" style="margin:0 0 12px">Loading assigned LGAs…</div><p class="feed-notice" id="feedNotice" role="status"></p><div id="lgaTable" class="tablewrap"><div class="empty">Loading Local Government collation records…</div></div></div></section>
+<section class="view active" id="view-lgas"><div class="panel"><div class="panelhead"><h2>State Collation Dashboard</h2><div class="filters"><input id="lgaSearch" placeholder="Search Local Government…"><select id="lgaStatus"><option value="">All LGAs</option><option value="expose">Expose</option><option value="violence">Violence</option><option value="successful">Successful</option><option value="ec8c">EC8C received</option><option value="collation">Completed collation</option></select></div></div><div id="lgaCount" class="muted" style="margin:0 0 12px">Loading assigned LGAs…</div><p class="feed-notice" id="feedNotice" role="status"></p><div id="lgaTable" class="tablewrap"><div class="empty">Loading Local Government collation records…</div></div></div></section>
 <section class="view" id="view-results"><div class="eyebrow">Election aggregation</div><h1>Consolidated Results</h1><p class="sub">Totals calculated from the latest submitted LGA collation for each Local Government. Original LGA and ward records remain unchanged.</p><div class="stats"><div class="stat"><small>Total valid votes</small><strong id="totalValid">0</strong></div><div class="stat"><small>Total rejected ballots</small><strong id="totalRejected">0</strong></div><div class="stat"><small>LGA records included</small><strong id="totalIncluded">0</strong></div><div class="stat"><small>Ward records represented</small><strong id="totalSources">0</strong></div></div><div class="panel"><div class="panelhead"><h2>LGA-by-LGA totals</h2><button class="btn secondary" id="refreshBtn">Refresh data</button></div><div id="totalsTable" class="tablewrap"></div></div></section>
 <section class="view" id="view-submit"><div class="eyebrow">Final State collation</div><h1>Submit State Collation</h1><p class="sub">Create a separate State record referencing the latest LGA collations for this election. Original Local Government and ward records remain unchanged.</p><form id="stateForm" class="panel"><div class="grid2"><div class="field"><label for="collationDate">Collation date *</label><input id="collationDate" type="date" required></div><div class="field"><label for="reviewStatus">Review status *</label><select id="reviewStatus" required><option value="reviewed">Reviewed</option><option value="provisional">Provisional</option><option value="final">Final</option></select></div><div class="field"><label for="validVotes">Total valid votes (from LGA collations)</label><input id="validVotes" type="number" min="0" step="1" readonly></div><div class="field"><label for="rejectedVotes">Total rejected ballots (from LGA collations)</label><input id="rejectedVotes" type="number" min="0" step="1" readonly></div><div class="field full"><label for="stateSummary">State collation summary *</label><textarea id="stateSummary" required placeholder="Enter the State collation summary…"></textarea></div><div class="field full"><label for="stateDiscrepancies">Discrepancies / remarks</label><textarea id="stateDiscrepancies" placeholder="Record discrepancies, missing LGA returns, or remarks…"></textarea></div></div><label class="checkrow"><input id="confirmLgaReview" type="checkbox" required> I confirm that I have reviewed the Local Government collation records selected for this State.</label><div class="muted" id="sourceCountText">Loading eligible LGA collation sources…</div><div class="notice" id="stateNotice"></div><div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:15px"><button class="btn" id="saveStateBtn" type="submit">Save State Collation</button><button class="btn secondary" type="button" data-goto="results">Back to results</button></div></form></section>
 <section class="view" id="view-history"><div class="eyebrow">Saved State records</div><h1>Collation History</h1><p class="sub">Previously submitted State collation records.</p><div class="panel"><div id="historyTable" class="tablewrap"><div class="empty">Loading history…</div></div></div></section>
 <section class="view" id="view-profile"><div class="eyebrow">Account information</div><h1>My Profile</h1><div class="panel"><div class="detailgrid" id="profileGrid"></div></div></section><div class="footer">BOTAS PHOTO · Election Monitoring &amp; Reporting System</div></div></main></div>
-<div class="modal" id="detailModal"><div class="modalbox"><div class="modalhead"><h2 id="detailTitle">LGA collation details</h2><button class="xbtn" id="closeDetail">Close</button></div><div id="detailContent"></div></div></div>
+<div class="modal" id="detailModal" role="dialog" aria-modal="true" aria-labelledby="detailTitle"><div class="modalbox"><div class="modalhead"><span class="category-badge" id="detailCategory">Collation</span><button class="xbtn" id="closeDetail">Close</button></div><h2 id="detailTitle">LGA collation details</h2><p class="detail-scope" id="detailScope"></p><div id="detailContent"></div></div></div>
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -152,37 +165,51 @@ function loadData() {
   listen('stateCollations','stateHistory',scope);
   renderAll();
 }
+const partyColumns = 'ADC APC A AA AAC ADP APGA APM APP BP LP NNPP NRM PDP PRP SDP YPP ZLP'.split(' ');
+const evidenceTiles = {
+  successful:[['ec8c','View Form EC8C'],['eform','View E-Form'],['duplicate','View Duplicate Copy'],['video','View Video']],
+  violence:[['ec40g','View Form EC40G'],['eform','View E-Form'],['duplicate','View Duplicate Copy'],['video','View Video']],
+  expose:[['original','View Original Copy'],['altered','View Altered/Fake Copy']]
+};
+function partyFigures(entries) {
+  const figures = {};
+  if (!Array.isArray(entries) || !entries.length) return figures;
+  for (const party of partyColumns) {
+    const values = entries.map(entry => entry?.[party]);
+    if (values.every(v => Number.isSafeInteger(v) && v >= 0)) figures[party] = values.reduce((a,b) => a+b,0);
+  }
+  return figures;
+}
 function renderLgas() {
   const search = $('lgaSearch').value.trim().toLowerCase(), filter = $('lgaStatus').value;
-  const ready = feedStatus.collations === 'ready', hasEvidence = feedStatus.evidence === 'ready';
-  const submitted = new Map(eligibleLgaCollations().map(r => [locationKey(r.lgaCode),r]));
+  const ready = feedStatus.evidence === 'ready', totalsByParty = {};
   let received = 0;
-  const rows = data.lgas.slice().sort((a,b) => lgaName(a).localeCompare(lgaName(b))).map(l => {
-    const code = String(first(l.lgaCode,l.code,l.id)), record = submitted.get(l.id);
-    if (record) received++;
-    const name = lgaName(l);
-    if (![name,code,record?.createdByName,record?.summary].join(' ').toLowerCase().includes(search)) return '';
-    if (filter === 'collation' && ready && !record) return '';
-    const items = submissions.get(l.id) || [];
-    const counts = {successful:0, violence:0, expose:0};
-    for (const {source,record} of items) {
-      if (source === 'evidence' && Object.hasOwn(counts,record.category)) counts[record.category]++;
-    }
-    const allLabel = 'View all submissions' + (hasEvidence && ready ? ' ('+items.length+')' : '');
-    const allButton = '<button class="lga-all" type="button" data-category="all" data-code="'+esc(l.id)+'" aria-label="'+esc(name+' · '+allLabel)+'">'+allLabel+'</button>';
-    if (filter in categories && hasEvidence && !counts[filter]) return '';
-    const buttons = Object.entries(categories).map(([k,label]) => {
-      const count = counts[k], style = {expose:'over',successful:'success',violence:'violence'}[k];
-      return '<button type="button" class="lga-status-btn '+(count?'active '+style:'')+'" data-category="'+k+'" data-code="'+esc(l.id)+'" '+(count?'':'disabled')+'>'+label+(count?' ('+count+')':'')+'</button>';
+  const rows = [];
+  for (const lga of data.lgas.slice().sort((a,b)=>lgaName(a).localeCompare(lgaName(b)))) {
+    const id = esc(lga.id), name = lgaName(lga), code = first(lga.code,lga.lgaCode,lga.id);
+    const items = submissions.get(lga.id) || [];
+    const evidence = items.filter(item=>item.source==='evidence').map(item=>item.record);
+    const ec8c = evidence.find(r=>r.category==='successful' && r.action==='eform' && r.form);
+    const figures = partyFigures(ec8c?.form.entries);
+    for (const [p,v] of Object.entries(figures)) totalsByParty[p]=(totalsByParty[p]??0)+v;
+    if (ec8c) received++;
+    const groups = new Set(evidence.map(r=>r.category));
+    if (![name,code,...items.map(i=>i.record.createdByName||'')].join(' ').toLowerCase().includes(search)) continue;
+    if (ready && filter==='ec8c' && !ec8c) continue;
+    if (ready && Object.hasOwn(categories,filter) && !groups.has(filter)) continue;
+    if (filter==='collation' && feedStatus.collations==='ready' && !items.some(i=>i.source==='collations')) continue;
+    const buttons = Object.entries(categories).map(([k,label])=>{
+      const style = k==='expose'?'over':k==='successful'?'success':'violence';
+      return '<button type="button" class="lga-status-btn '+(groups.has(k)?'active '+style:'')+'" data-code="'+id+'" data-category="'+k+'" '+(groups.has(k)?'':'disabled')+'>'+label+'</button>';
     }).join('');
-    const status = record ? 'Collation received' : ready ? 'Awaiting collation' : 'Unconfirmed';
-    const detail = record ? '<button class="btn secondary" data-record="'+esc(record.id)+'">View collation</button>' : '—';
-    return '<tr><td><span class="lga-row-name">'+esc(name)+'</span><span class="lga-row-code">'+esc(code)+'</span>'+allButton+'<div class="lga-status-buttons">'+buttons+'</div><div class="lga-collation-status '+(record?'received':'pending')+'">'+status+'</div></td><td>'+ (record?Number(record.lgaTotals?.validVotes||0).toLocaleString():'—')+'</td><td>'+(record?Number(record.lgaTotals?.rejectedBallots||0).toLocaleString():'—')+'</td><td>'+(record?Number(record.sourceCounts?.wards??record.sourceWardCollationIds?.length??0):'—')+'</td><td>'+detail+'</td></tr>';
-  }).filter(Boolean);
+    const state = ec8c?'EC8C received':ready?'Awaiting EC8C':'EC8C unconfirmed';
+    const identity = '<button class="lga-identity" data-code="'+id+'" data-category="all" aria-label="'+esc(name+' · View all submissions')+'">'+esc(name)+'</button><span class="lga-row-code">'+esc(code)+'</span>';
+    const status = '<button type="button" class="lga-collation-status '+(ec8c?'received':'pending')+'" data-code="'+id+'" data-category="successful" data-start="eform" '+(ec8c?'':'disabled')+'>'+state+'</button>';
+    rows.push('<tr><td>'+identity+'<div class="lga-status-buttons">'+buttons+'</div>'+status+'</td>'+partyColumns.map(p=>'<td>'+ (figures[p]?.toLocaleString()??'—')+'</td>').join('')+'</tr>');
+  }
   $('feedNotice').textContent = ['lgas','collations','evidence'].map(feedMessage).filter(Boolean).join(' ');
-  $('lgaCount').textContent = feedStatus.lgas === 'ready' ? 'Showing '+rows.length+' of '+data.lgas.length+' registered LGAs in '+(assignment.state||assignment.stateCode)+(ready?' · '+received+' with completed collations':'') : '';
-  const t = totals();
-  $('lgaTable').innerHTML = rows.length ? '<div class="ec8a-compare-scroll"><table class="lga-party-table"><thead><tr><th>LOCAL GOVERNMENT</th><th>VALID VOTES</th><th>REJECTED</th><th>WARDS</th><th>RECORD</th></tr></thead><tbody>'+rows.join('')+'</tbody><tfoot><tr><th>TOTAL STATE VOTES</th><td>'+(ready?t.valid.toLocaleString():'—')+'</td><td>'+(ready?t.rejected.toLocaleString():'—')+'</td><td>'+(ready?t.wards:'—')+'</td><td></td></tr></tfoot></table></div>' : (feedStatus.lgas === 'ready'?'<div class="empty">No LGAs match this view.</div>':'');
+  $('lgaCount').textContent = feedStatus.lgas==='ready'?'Showing '+rows.length+' of '+data.lgas.length+' LGAs'+(ready?' · '+received+' of '+data.lgas.length+' LGAs have an EC8C E-Form':''):'';
+  $('lgaTable').innerHTML = rows.length?'<div class="ec8a-compare-scroll" tabindex="0" aria-label="EC8C party results by LGA"><table class="lga-party-table"><thead><tr><th scope="col">LOCAL GOVERNMENT</th>'+partyColumns.map(p=>'<th scope="col">'+p+'</th>').join('')+'</tr></thead><tbody>'+rows.join('')+'</tbody><tfoot><tr><td>Reported EC8C totals</td>'+partyColumns.map(p=>'<td>'+(totalsByParty[p]?.toLocaleString()??'—')+'</td>').join('')+'</tr></tfoot></table></div>':feedStatus.lgas==='ready'?'<p>No LGAs match this view.</p>':'';
 }
 function evidenceBody(record) {
   const labels = {ec8c:'Form EC8C',ec40g:'Form EC40G',duplicate:'Duplicate copy',original:'Original copy',altered:'Altered/fake copy',video:'Video'};
@@ -197,7 +224,13 @@ function evidenceBody(record) {
     if (rows.length) body += '<div class="entry-scroll" tabindex="0" aria-label="Ward entries"><table><thead><tr>'+keys.map(k=>'<th>'+esc(Object.hasOwn(names,k)?names[k]:k)+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+keys.map(k=>'<td>'+esc(Object.hasOwn(row,k)?row[k]:'—')+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
   } else {
     const media=record.media, url=String(media?.cloudinaryUrl||'');
-    if (/^https:\/\/res\.cloudinary\.com\/hjdnytcb\/(image|video)\/upload\//.test(url)) body += '<p><a href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">Open '+esc(media.fileName||title)+'</a></p>';
+    if (/^https:\/\/res\.cloudinary\.com\/hjdnytcb\/(image|video)\/upload\//.test(url)) {
+      const link = esc(url);
+      const image = ['image/jpeg','image/png','image/webp','image/gif','image/avif'].includes(media.fileType);
+      const preview = record.action==='video' ? '<video class="upload-preview" controls playsinline preload="none" src="'+link+'"></video>'
+        : image ? '<img class="upload-preview" loading="lazy" alt="'+esc(media.fileName||title)+'" src="'+link+'">' : '';
+      body += '<p><a href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">Open uploaded file</a></p>'+preview;
+    }
     else body += '<p>File link unavailable.</p>';
   }
   return body;
@@ -209,9 +242,22 @@ function renderOpenFeed() {
   const content = $('detailContent');
   const expanded = new Set(Array.from(content.querySelectorAll('details[open]'), el => el.dataset.key));
   const firstDisplay = !content.querySelector('details');
-  const items = (submissions.get(id) || []).filter(item => category === 'all' ||
+  let items = (submissions.get(id) || []).filter(item => category === 'all' ||
     (item.source === 'evidence' && item.record.category === category));
-  $('detailTitle').textContent = (lga ? lgaName(lga) : id)+' · '+(categories[category] || 'All submissions');
+  $('detailTitle').textContent = (lga ? lgaName(lga) : id)+' LGA';
+  $('detailCategory').textContent = categories[category] || 'All submissions';
+  $('detailCategory').dataset.category = category;
+  $('detailScope').textContent = [assignment.state,assignment.electionName].filter(Boolean).join(' · ');
+  let tiles = '';
+  if (category !== 'all') {
+    const actions = evidenceTiles[category];
+    const available = new Set(items.map(item=>item.record.action));
+    if (!available.has(openFeed.action)) openFeed.action = actions.find(([key])=>available.has(key))?.[0];
+    tiles = '<div class="review-tiles">'+actions.map(([key,label])=>
+      '<button type="button" data-action="'+key+'" aria-pressed="'+(openFeed.action===key)+'" '+(available.has(key)?'':'disabled')+'>'+label+'</button>'
+    ).join('')+'</div>';
+    items = items.filter(item=>item.record.action===openFeed.action);
+  }
   const sources = category === 'all' ? ['evidence','collations'] : ['evidence'];
   const status = ['lgas',...sources].map(feedMessage).filter(Boolean).join(' ');
   const html = items.map(({source,record},i) => {
@@ -221,17 +267,38 @@ function renderOpenFeed() {
       : evidenceBody(record).replace('<summary>','<summary>'+esc(categories[record.category] || 'Evidence')+' · ');
     return '<details class="evidence-item" data-key="'+esc(key)+'" '+(expanded.has(key)||(firstDisplay && i===0)?'open':'')+'>'+body+'</details>';
   }).join('');
-  content.innerHTML = (status?'<p role="status">'+esc(status)+'</p>':'') + html +
+  const next = tiles + (status?'<p role="status">'+esc(status)+'</p>':'') + html +
     (!status && !items.length ? '<p>No submissions received for this selection.</p>':'');
+  if (openFeed.markup !== next) {
+    const focused = document.activeElement?.dataset?.action;
+    content.innerHTML = next;
+    if (focused) Array.from(content.querySelectorAll('[data-action]')).find(b=>b.dataset.action===focused && !b.disabled)?.focus();
+    openFeed.markup = next;
+  }
 }
-function openEvidence(id,category) {
-  openFeed = {id,category};
+function openEvidence(id,category,action) {
+  openFeed = {id,category,action};
   $('detailContent').replaceChildren();
   $('detailModal').classList.add('show');
   renderOpenFeed();
   $('closeDetail').focus();
 }
 
+$('detailContent').addEventListener('click', event=>{
+  const tile = event.target.closest('button[data-action]');
+  if (!openFeed || !tile || tile.disabled || openFeed.action === tile.dataset.action) return;
+  openFeed.action = tile.dataset.action;
+  $('detailContent').querySelectorAll('details').forEach(node=>node.remove());
+  renderOpenFeed();
+});
+$('detailModal').addEventListener('keydown', event=>{
+  if (event.key==='Escape') $('closeDetail').click();
+  if (event.key!=='Tab') return;
+  const focusable = Array.from($('detailModal').querySelectorAll('button:enabled,summary,a[href],video[controls],[tabindex="0"]')).filter(el=>el.getClientRects().length);
+  const first = focusable[0], last = focusable[focusable.length-1];
+  if (event.shiftKey && document.activeElement===first) {event.preventDefault();last?.focus();}
+  if (!event.shiftKey && document.activeElement===last) {event.preventDefault();first?.focus();}
+});
 function totals(){return eligibleLgaCollations().reduce((a,r)=>{a.valid+=Number(r.lgaTotals?.validVotes)||0;a.rejected+=Number(r.lgaTotals?.rejectedBallots)||0;a.lgas++;a.wards+=Number(r.sourceCounts?.wards||r.sourceWardCollationIds?.length||0);return a},{valid:0,rejected:0,lgas:0,wards:0})}
 function lgaName(r){return first(r.name,r.lgaName,r.localGovernment,r.label,r.title,r.code,r.lgaCode,r.id,'Unnamed LGA')}
 function renderOverview(){const rows=eligibleLgaCollations(),t=totals(),received=rows.length;$('statLgas').textContent=data.lgas.length;$('statReceived').textContent=received;$('statPending').textContent=Math.max(0,data.lgas.length-received);$('statVotes').textContent=t.valid.toLocaleString();$('progressSummary').textContent=`${received} of ${data.lgas.length} registered LGAs have submitted a matching collation for ${assignment.electionName}.`;const body=data.lgas.slice().sort((a,b)=>lgaName(a).localeCompare(lgaName(b),undefined,{numeric:true})).map(l=>{const code=String(first(l.lgaCode,l.code,l.id,'')),r=rows.find(x=>locationKey(x.lgaCode)===l.id);return `<tr><td><strong>${esc(lgaName(l))}</strong></td><td>${esc(code)}</td><td>${r?'<span class="tag">Received</span>':'<span class="tag warn">'+(feedStatus.collations==='ready'?'Awaiting':'Unconfirmed')+'</span>'}</td><td>${r?Number(r.lgaTotals?.validVotes||0).toLocaleString():'—'}</td><td>${r?esc(fmt(r.createdAt)):'—'}</td></tr>`}).join('');$('progressTable').innerHTML=body?`<table><thead><tr><th>Local Government</th><th>LGA code</th><th>Submission</th><th>Valid votes</th><th>Submitted</th></tr></thead><tbody>${body}</tbody></table>`:'<div class="empty">No registered LGAs found for this State. Check geographyLGAs and the assigned state code.</div>'}
@@ -242,6 +309,7 @@ function openLga(id) {
   const r = data.collations.find(row => row.id === id && scopeMatches(row));
   if (!r) return;
   openFeed = null;
+  $('detailCategory').textContent='Collation'; $('detailScope').textContent=assignment.electionName;
   $('detailTitle').textContent = first(r.lga,r.lgaName,'Local Government')+' · Collation record';
   $('detailContent').innerHTML = collationBody(r);
   $('detailModal').classList.add('show');
@@ -292,6 +360,6 @@ onAuthStateChanged(auth,async u=>{
     notice('loginNotice',err.message||'Unable to load your State Collation assignment.',true);
   }
 });
-document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.goto)));$('menuBtn').addEventListener('click',()=>$('sidebar').classList.toggle('open'));$('lgaSearch').addEventListener('input',renderLgas);$('lgaStatus').addEventListener('change',renderLgas);$('refreshBtn').addEventListener('click',loadData);$('closeDetail').addEventListener('click',()=>$('detailModal').classList.remove('show'));$('detailModal').addEventListener('click',e=>{if(e.target===$('detailModal'))$('detailModal').classList.remove('show')});$('lgaTable').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.disabled)return;if(b.dataset.category)openEvidence(b.dataset.code,b.dataset.category);else if(b.dataset.record)openLga(b.dataset.record)});
+document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.goto)));$('menuBtn').addEventListener('click',()=>$('sidebar').classList.toggle('open'));$('lgaSearch').addEventListener('input',renderLgas);$('lgaStatus').addEventListener('change',renderLgas);$('refreshBtn').addEventListener('click',loadData);$('closeDetail').addEventListener('click',()=>$('detailModal').classList.remove('show'));$('detailModal').addEventListener('click',e=>{if(e.target===$('detailModal'))$('detailModal').classList.remove('show')});$('lgaTable').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.disabled)return;if(b.dataset.category)openEvidence(b.dataset.code,b.dataset.category,b.dataset.start);else if(b.dataset.record)openLga(b.dataset.record)});
 $('stateForm').addEventListener('submit',async e=>{e.preventDefault();const btn=$('saveStateBtn');btn.disabled=true;btn.textContent='Saving…';try{if(!user||!assignment.stateCode)throw new Error('Your assigned State is not loaded.');const rows=eligibleLgaCollations();if(!rows.length)throw new Error('No eligible LGA collation records are available. Nothing can be submitted yet.');if(!$('confirmLgaReview').checked)throw new Error('Confirm that you have reviewed the Local Government records.');const t=totals();const sourceLgaCollationIds=rows.map(r=>({id:r.id,lgaCode:r.lgaCode,lga:r.lga||r.lgaName||''}));const payload={recordType:'state_collation',createdBy:user.uid,createdByName:first(profile.fullName,user.displayName,user.email),createdAt:serverTimestamp(),collationDate:$('collationDate').value,reviewStatus:$('reviewStatus').value,status:'submitted',electionType:assignment.electionType,electionName:assignment.electionName,candidateId:assignment.candidateId,candidateName:assignment.candidateName,stateCode:assignment.stateCode,state:assignment.state,sourceCounts:{lgas:rows.length,wards:t.wards},sourceLgaCollationIds,stateTotals:{validVotes:t.valid,rejectedBallots:t.rejected},summary:$('stateSummary').value.trim(),discrepancies:$('stateDiscrepancies').value.trim()};await addDoc(collection(db,'stateCollations'),payload);notice('stateNotice','State collation saved successfully. Original LGA and ward records remain unchanged.');$('stateForm').reset();$('collationDate').value=new Date().toISOString().slice(0,10);$('validVotes').value=t.valid;$('rejectedVotes').value=t.rejected}catch(err){console.error(err);notice('stateNotice',err.code==='permission-denied'?'Firebase denied this save. Firestore Rules must permit this State Agent to create a stateCollations record for the assigned State.':`Could not save State collation: ${err.message||err}`,true)}finally{btn.disabled=false;btn.textContent='Save State Collation'}});
 </script></body></html>
