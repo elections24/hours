@@ -239,6 +239,17 @@
 @media (max-width: 299px) {
   .ward-tile-grid { grid-template-columns: 1fr; }
 }
+
+.backup-compose {max-width:680px; padding:clamp(18px,4vw,32px);}
+.backup-recipient {display:grid;gap:3px;margin-bottom:24px;padding:12px 16px;border-left:3px solid #08734f;background:#edf6f1;border-radius:0 10px 10px 0;}
+.backup-recipient small,.backup-hint {color:#52695e;}
+.backup-compose label {display:block;font-weight:700;margin:0 0 9px;}
+.backup-compose textarea {box-sizing:border-box;width:100%;min-height:155px;resize:vertical;padding:14px;border:1px solid #aabfb2;border-radius:10px;color:#193c2c;font:inherit;font-size:16px;line-height:1.55;}
+.backup-compose textarea:focus-visible {outline:2px solid #08734f;outline-offset:2px;}
+.backup-hint {display:flex;justify-content:space-between;gap:12px;margin:6px 0 20px;}
+#backupLength {white-space:nowrap;font-variant-numeric:tabular-nums;}
+#backupFeedback {overflow-wrap:anywhere;margin:12px 0 0;}
+#backupFeedback:empty {display:none;}
 </style></head>
 <body>
 <div id="loginScreen" class="login-wrap hidden" aria-hidden="true"></div>
@@ -257,14 +268,28 @@
   <button class="home-card primary upload-card" type="button" data-go="upload-menu">
     <span class="home-icon">↑</span><span class="home-copy"><strong>Upload</strong><small>Submit your ward collation evidence after reviewing polling-unit uploads</small></span><span class="home-arrow">›</span>
   </button>
-  <button class="home-card" type="button" data-go="submissions" data-filter="backup">
-    <span class="home-icon">⚑</span><span class="home-copy"><strong>Backup Request</strong><small>Review support requests submitted by polling-unit agents</small></span><span class="home-arrow">›</span>
+  <button class="home-card" type="button" data-go="backup-request">
+    <span class="home-icon">⚑</span><span class="home-copy"><strong>Backup Request</strong><small>Request support from your local government collation agent</small></span><span class="home-arrow">›</span>
   </button>
   <button class="home-card logout-card" type="button" id="homeLogoutBtn">
     <span class="home-icon">↗</span><span class="home-copy"><strong>Log Out</strong><small>End your secure session</small></span><span class="home-arrow">›</span>
   </button>
 </div>
 <div class="home-footer">BOTAS PHOTO · Ward-level review. Original polling-unit submissions remain read-only.</div>
+</section>
+<section class="view" id="view-backup-request">
+  <h1>Backup Request</h1>
+  <form id="wardBackupForm" class="panel backup-compose">
+    <div class="backup-recipient"><small>Send to</small><strong id="backupRecipient">Assigned local government collation agent</strong></div>
+    <label for="backupMessage">What support does your ward need?</label>
+    <textarea id="backupMessage" rows="6" maxlength="2000" required aria-describedby="backupHelp backupLength"
+      placeholder="Describe the situation, where you need support and what would help."></textarea>
+    <div class="backup-hint"><small id="backupHelp">Include the location so the agent knows where to respond.</small>
+      <small id="backupLength">0 / 2,000</small></div>
+    <button class="btn" id="sendWardBackup" type="submit">Submit request</button>
+    <p id="backupFeedback" role="status" aria-live="polite"></p>
+  </form>
+  <button class="btn secondary" type="button" data-go="submissions" data-filter="backup">View polling-unit backup requests</button>
 </section>
 <section class="view" id="view-upload-menu">
   <h1>Upload</h1>
@@ -962,7 +987,7 @@ function renderAll(){renderSubmissions();renderEc8aComparison();renderCollation(
 function openDetail(col,id){const map={ec8aResults:data.ec8a,evidenceUploads:data.evidence,pollingUnitReports:data.reports,voteBuyingAlerts:data.alerts,backupRequests:data.backups};const d=(map[col]||[]).find(x=>x.id===id);if(!d)return;$('detailTitle').textContent=typeLabel(d);let fields=[['Polling unit',nameOf(d)],['Polling unit code',unitCode(d)],['Agent',agentName(d)],['Election',d.electionName||d.electionType],['Candidate',d.candidateName],['Status',d.status||d.reportStatus],['Submitted',fmt(d.createdAt)],['Report type',d.reportType],['Details',d.details||d.category||d.incidentType],['Ballot accounting',d.ballotAccounting?JSON.stringify(d.ballotAccounting):'—'],['Party results',d.partyResults?JSON.stringify(d.partyResults):'—']];let html=`<div class="detailgrid">${fields.filter(x=>x[1]!==undefined&&x[1]!==null&&x[1]!=='').map(([k,v])=>`<div><small>${esc(k)}</small><b>${esc(typeof v==='object'?JSON.stringify(v):v)}</b></div>`).join('')}</div>`;const url=first(d.cloudinaryUrl,d.secure_url,d.cloudinary?.secure_url,'');if(url)html+=`<p><a class="evidence-link" href="${esc(url)}" target="_blank" rel="noopener">Open supporting evidence</a></p>`;$('detailContent').innerHTML=html;$('detailModal').classList.add('show')}
 let wardViewStack=['overview'];
 function syncBackButton(){const b=$('topBackBtn');if(b)b.disabled=wardViewStack.length<=1&&!document.querySelector('.modal.show')}
-function switchView(v,fromBack=false){if(v==='ward-loss-ec8b-eform')renderWardLossTemplateContext();if(v==='successful-ec8b')renderPendingEc8b();const current=wardViewStack[wardViewStack.length-1]||'overview';if(!fromBack&&v!==current)wardViewStack.push(v);document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id==='view-'+v));document.querySelectorAll('.nav [data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===v));$('topTitle').textContent=({overview:'Ward operations overview',submissions:'Polling-unit submissions',collation:'Ward collation',history:'Collation history','upload-menu':'Upload','ward-evidence-loss':'Successful Ward Collation',violence:'Violence',expose:'Expose','ward-loss-ec8b-upload':'Upload Ward EC8B','ward-loss-ec8b-eform':'Ward EC8B E-Form','ward-loss-duplicate':'Duplicate EC8B Copy'})[v]||'Ward operations';syncBackButton();window.scrollTo({top:0,behavior:'smooth'})}
+function switchView(v,fromBack=false){if(v==='backup-request')openWardBackup();if(v==='ward-loss-ec8b-eform')renderWardLossTemplateContext();if(v==='successful-ec8b')renderPendingEc8b();const current=wardViewStack[wardViewStack.length-1]||'overview';if(!fromBack&&v!==current)wardViewStack.push(v);document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id==='view-'+v));document.querySelectorAll('.nav [data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===v));$('topTitle').textContent=({overview:'Ward operations overview','backup-request':'Backup Request',submissions:'Polling-unit submissions',collation:'Ward collation',history:'Collation history','upload-menu':'Upload','ward-evidence-loss':'Successful Ward Collation',violence:'Violence',expose:'Expose','ward-loss-ec8b-upload':'Upload Ward EC8B','ward-loss-ec8b-eform':'Ward EC8B E-Form','ward-loss-duplicate':'Duplicate EC8B Copy'})[v]||'Ward operations';syncBackButton();window.scrollTo({top:0,behavior:'smooth'})}
 function wardGoBack(){const modal=document.querySelector('.modal.show');if(modal){modal.classList.remove('show');syncBackButton();return}if(wardViewStack.length<=1){syncBackButton();return}wardViewStack.pop();const previous=wardViewStack[wardViewStack.length-1]||'overview';switchView(previous,true)}
 // Objective 7: independent Ward EC8B form templates and local file previews only.
 // No Cloudinary request or Firestore write is performed in this stage.
@@ -1635,6 +1660,84 @@ for (const form of document.querySelectorAll('.ward-evidence-form:not(#wardEc8bF
   });
 }
 $('puDashboardFilter')?.addEventListener('change',renderEc8aComparison);
+// Keep the text and receipt ID together when the agent needs to retry a send.
+const backupText = $('backupMessage');
+const backupSend = $('sendWardBackup');
+let backupDraftKey = '', backupDraft = {}, backupBusy = false;
+function storeBackupDraft() {
+  if (!backupDraftKey) return;
+  try { sessionStorage.setItem(backupDraftKey, JSON.stringify(backupDraft)); } catch {}
+}
+function openWardBackup() {
+  const scope = ec8bAssignment();
+  const key = 'botas:backup:' + JSON.stringify(scope);
+  if (key !== backupDraftKey) {
+    backupDraftKey = key;
+    try { backupDraft = JSON.parse(sessionStorage.getItem(key)) || {}; } catch { backupDraft = {}; }
+    backupText.value = backupDraft.text || '';
+    $('backupFeedback').textContent = '';
+  }
+  $('backupLength').textContent = backupText.value.length + ' / 2,000';
+  $('backupRecipient').textContent = (assignment.lga || scope.lgaCode) + ' · Local Government Collation Agent';
+}
+backupText.addEventListener('input', () => {
+  backupText.setCustomValidity('');
+  backupDraft = {text:backupText.value};
+  storeBackupDraft();
+  $('backupFeedback').textContent = '';
+  $('backupLength').textContent = backupText.value.length + ' / 2,000';
+});
+$('wardBackupForm').addEventListener('submit', async event => {
+  event.preventDefault();
+  if (backupBusy) return;
+  const message = backupText.value.trim();
+  if (!message || message.length > 2000) {
+    backupText.setCustomValidity('Write a request of up to 2,000 characters.');
+    backupText.reportValidity();
+    return;
+  }
+  const feedback = $('backupFeedback');
+  let timer;
+  try {
+    const scope = ec8bAssignment();
+    if (backupDraftKey !== 'botas:backup:' + JSON.stringify(scope) ||
+        !Object.values(scope).every(v => typeof v === 'string' && v.trim())) {
+      throw Error('Please reopen Backup Request with your complete ward assignment.');
+    }
+    backupBusy = true;
+    backupText.readOnly = backupSend.disabled = true;
+    if (!backupDraft.id || backupDraft.text !== backupText.value) {
+      backupDraft = {id:doc(collection(db,'wardBackupRequests')).id, text:backupText.value};
+      storeBackupDraft();
+    }
+    const ref = doc(db,'wardBackupRequests',backupDraft.id);
+    const record = {...scope, wardName:assignment.ward || scope.wardCode,
+      agentName:first(profile.fullName,agent.fullName,user.displayName,'Ward agent'),
+      message,createdAt:serverTimestamp()};
+    feedback.textContent = 'Sending your request…';
+    timer = setTimeout(() => { feedback.textContent = 'Waiting for Firestore confirmation. Keep this page open or reopen this tab and retry with the same text.'; }, 15000);
+    try { await setDoc(ref,record); }
+    catch (error) {
+      if (error.code !== 'permission-denied') throw error;
+      let existing;
+      try { existing = (await getDocFromServer(ref)).data(); } catch { throw error; }
+      if (!existing || existing.message !== message ||
+          !Object.entries(scope).every(([key,value]) => existing[key] === value)) throw error;
+    }
+    backupDraft = {};
+    storeBackupDraft();
+    backupText.value = '';
+    $('backupLength').textContent = '0 / 2,000';
+    feedback.textContent = 'Request sent to ' + (assignment.lga || scope.lgaCode) + '. Reference: ' + ref.id;
+  } catch (error) {
+    feedback.textContent = 'Request could not be confirmed. Your text is here to retry. ' + (error.code || error.message);
+  } finally {
+    clearTimeout(timer);
+    backupBusy = false;
+    backupText.readOnly = backupSend.disabled = false;
+  }
+});
+
 document.querySelectorAll('[data-ward-back]').forEach(button => button.addEventListener('click', wardGoBack));
 document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.filter){activeSubmissionType=b.dataset.filter;activeSubmissionPuCode='';renderSubmissions()}switchView(b.dataset.go)}));$('homeLogoutBtn').addEventListener('click',logout);if($('topBackBtn'))$('topBackBtn').addEventListener('click',wardGoBack);document.addEventListener('click',e=>{const action=e.target.closest('[data-pu-action]');if(action){openPuView(action.dataset.puCode,action.dataset.puAction);return}const status=e.target.closest('[data-pu-status]');if(status){openPuStatus(status.dataset.puStatus);return}const pu=e.target.closest('[data-pu-view]');if(pu){openPuView(pu.dataset.puView);return}const b=e.target.closest('[data-detail]');if(b){const [c,id]=b.dataset.detail.split(':');openDetail(c,id)}});$('closeDetail').addEventListener('click',()=>{$('detailModal').classList.remove('show');syncBackButton()});$('detailModal').addEventListener('click',e=>{if(e.target===$('detailModal')){$('detailModal').classList.remove('show');syncBackButton()}});
 $('collationForm').addEventListener('submit',async e=>{e.preventDefault();const btn=$('saveCollationBtn');btn.disabled=true;btn.textContent='Saving…';try{if(!user||!assignment.wardCode)throw Error('Your assigned ward is not loaded.');const source=allSubmissions();const sourceIds=source.map(x=>({collection:x._collection,id:x.id}));const payload={recordType:'ward_collation',createdBy:user.uid,createdByName:first(profile.fullName,agent.fullName,user.displayName,user.email),createdAt:serverTimestamp(),collationDate:$('collationDate').value,reviewStatus:$('collationStatus').value,status:'submitted',electionType:assignment.electionType,electionName:assignment.electionName,stateCode:assignment.stateCode,lgaCode:assignment.lgaCode,wardCode:assignment.wardCode,state:assignment.state,lga:assignment.lga,ward:assignment.ward,sourceCounts:{ec8a:data.ec8a.length,evidence:data.evidence.length,reports:data.reports.length,voteBuyingAlerts:data.alerts.length,backupRequests:data.backups.length,total:source.length},sourceSubmissionIds:sourceIds,wardTotals:{validVotes:$('totalValidVotes').value===''?null:Number($('totalValidVotes').value),rejectedBallots:$('totalRejectedVotes').value===''?null:Number($('totalRejectedVotes').value)},summary:$('collationSummary').value.trim(),discrepancies:$('discrepancies').value.trim(),sourceReviewed:$('sourceReviewed').checked,missingDeclared:$('missingDeclared').checked};await addDoc(collection(db,'wardCollations'),payload);notice('collationNotice','Ward collation record saved successfully. Source submissions remain unchanged.');$('collationForm').reset();}catch(err){console.error(err);notice('collationNotice',err.code==='permission-denied'?'Firebase denied this save. Firestore Rules must permit assigned Ward Collation Agents to create wardCollations records scoped to their ward.':`Could not save ward collation: ${err.message||err}`,true)}finally{btn.disabled=false;btn.textContent='Save ward collation'}});
