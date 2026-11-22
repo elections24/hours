@@ -52,12 +52,48 @@
 .review-tiles button[aria-pressed=true]{box-shadow:inset 0 0 0 2px #064c36}.review-tiles button:disabled{background:#697482;cursor:default}
 .evidence-item{border:1px solid #dbe5df;border-radius:12px;background:#f8faf9;padding:12px;margin-top:10px}.evidence-item p{font-size:13px}.evidence-item a{color:#075c42;font-weight:700}
 .upload-preview{display:block;max-width:100%;max-height:55vh;object-fit:contain;margin:12px auto}.lga-party-table td:not(:first-child){font-variant-numeric:tabular-nums}
+#stateUploadButton{margin-top:16px;min-height:44px}
+#uploadBack{min-height:44px}
+#uploadScope{margin:16px 0 4px}
+#uploadHeading{margin:0 0 16px;overflow-wrap:break-word}
+.upload-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));gap:12px;max-width:840px}
+.upload-tile{display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left;min-height:94px;padding:16px;border:1px solid #cadbd1;border-top:4px solid #167351;border-radius:14px;background:white;color:#193e30;font-size:14px;line-height:1.4;font-family:inherit;font-weight:750;cursor:pointer;box-shadow:0 3px 12px #153c2909}
+.upload-tile span:last-child{font-size:24px;color:#548270}
+.upload-tile:hover,.upload-tile:focus-visible{background:#eff8f3;outline:2px solid #187652;outline-offset:1px}
+.upload-entry{max-width:840px}
+.upload-controls{border:0;margin:0;padding:0;min-width:0}
+.upload-entry label{display:grid;align-content:start;gap:4px;font-size:13px;font-weight:650}
+.upload-entry input,.upload-entry select,.upload-entry textarea{box-sizing:border-box;width:100%;min-width:0;border:1px solid #bdcdc4;border-radius:8px;background:white;color:#20372d;font:inherit;font-size:16px;padding:9px}
+.upload-fields,.upload-parties{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:12px;margin:12px 0}
+.upload-parties{grid-template-columns:repeat(auto-fit,minmax(88px,1fr))}
+.upload-line{min-width:0;border:1px solid #cdded4;border-radius:10px;padding:12px;margin:12px 0}
+.upload-line legend{padding:0 6px;font-weight:700}
+.upload-remove{background:none;border:none;color:#714236;text-decoration:underline;cursor:pointer;min-height:40px}
+.upload-entry button[type=submit]{margin-top:14px;min-height:44px}
+.upload-feedback{overflow-wrap:anywhere;color:#304d40}
+@media(max-width:520px){.upload-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.upload-tile{font-size:12px;min-height:88px;padding:12px}}
+
+#stateUploadButton{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:52px;padding:14px 18px;border-radius:11px;background:#08734f;color:white;font:700 16px/1.3 system-ui,sans-serif;text-align:left;cursor:pointer}
+#stateUploadButton:hover,#stateUploadButton:focus-visible{background:#075b40}
+#stateUploadButton:focus-visible{outline:3px solid #82bba0;outline-offset:3px}
+.upload-grid button[data-group=violence]{border-top-color:#aa392d}
+.upload-grid button[data-group=expose]{border-top-color:#966822}
+.upload-tile:active{background:#eaf4ee}.upload-entry .upload-feedback:empty{display:none}
 </style></head><body>
 <section id="loginView" class="login-wrap"><form id="loginForm" class="login"><div class="brand">◉ BOTAS PHOTO <small>Election Monitoring &amp; Reporting System</small></div><h1>State Collation</h1><p class="sub">This dashboard uses the account already signed in through the main BOTAS PHOTO index page.</p><div id="loginNotice" class="notice"></div><button class="btn" type="button" onclick="location.replace('index.html')" style="width:100%;margin-top:12px">Return to main sign-in</button></form></section>
-<div id="appView" class="app hidden"><aside class="sidebar" id="sidebar"><div class="brand">◉ BOTAS PHOTO <small>Election Monitoring System</small></div><div class="rolebox"><small>Signed in as</small><strong id="sideName">Loading…</strong><p id="sideScope">Loading assigned State…</p></div><nav class="nav"><button data-view="overview">▦ Overview</button><button class="active" data-view="lgas">▤ LGA Collations</button><button data-view="results">▥ Consolidated Results</button><button data-view="submit">＋ Submit State Collation</button><button data-view="history">◷ Collation History</button><button data-view="profile">♙ My Profile</button></nav><div class="sidefoot">BOTAS PHOTO · Restricted State access<br>Data is limited to your assigned State and election.</div></aside>
+<div id="appView" class="app hidden"><aside class="sidebar" id="sidebar"><div class="brand">◉ BOTAS PHOTO <small>Election Monitoring System</small></div><div class="rolebox"><small>Signed in as</small><strong id="sideName">Loading…</strong><p id="sideScope">Loading assigned State…</p></div><nav class="nav"><button data-view="overview">▦ Overview</button><button class="active" data-view="lgas">▤ LGA Collations</button><button type="button" id="stateUploadMenu" aria-controls="view-uploads">↑ Upload</button><button data-view="results">▥ Consolidated Results</button><button data-view="submit">＋ Submit State Collation</button><button data-view="history">◷ Collation History</button><button data-view="profile">♙ My Profile</button></nav><div class="sidefoot">BOTAS PHOTO · Restricted State access<br>Data is limited to your assigned State and election.</div></aside>
 <main class="main"><header class="topbar"><div style="display:flex;align-items:center;gap:10px"><button class="menu" id="menuBtn">☰</button><strong id="topTitle">State overview</strong></div><div class="topright"><span class="pill">State Collation Agent Portal</span><span id="topName" class="muted"></span><button class="btn secondary" id="logoutBtn">Log out</button></div></header><div class="content">
 <section class="view" id="view-overview"><div class="eyebrow">Assigned collation area</div><h1 id="welcomeTitle">State Dashboard</h1><p class="sub">Review submitted Local Government collations and prepare the State collation record.</p><div class="assigned"><h2 id="stateTitle">Loading assigned State…</h2><p>State-level election collation</p><div class="geo"><div><small>Election</small><b id="electionTitle">—</b></div><div><small>Candidate</small><b id="candidateTitle">—</b></div><div><small>Assigned State code</small><b id="stateCodeTitle">—</b></div></div></div><div class="stats"><div class="stat"><small>Registered LGAs</small><strong id="statLgas">—</strong></div><div class="stat"><small>LGA collations received</small><strong id="statReceived">—</strong></div><div class="stat"><small>LGAs awaiting collation</small><strong id="statPending">—</strong></div><div class="stat"><small>Reported valid votes</small><strong id="statVotes">—</strong></div></div><div class="panel"><div class="panelhead"><h2>Local Government collation progress</h2><span class="tag">Live</span></div><div id="progressSummary" class="muted">Loading progress…</div><div id="progressTable" class="tablewrap" style="margin-top:12px"></div></div></section>
-<section class="view active" id="view-lgas"><div class="panel"><div class="panelhead"><h2>State Collation Dashboard</h2><div class="filters"><input id="lgaSearch" placeholder="Search Local Government…"><select id="lgaStatus"><option value="">All LGAs</option><option value="expose">Expose</option><option value="violence">Violence</option><option value="successful">Successful</option><option value="ec8c">EC8C received</option><option value="collation">Completed collation</option></select></div></div><div id="lgaCount" class="muted" style="margin:0 0 12px">Loading assigned LGAs…</div><p class="feed-notice" id="feedNotice" role="status"></p><div id="lgaTable" class="tablewrap"><div class="empty">Loading Local Government collation records…</div></div></div></section>
+<section class="view active" id="view-lgas"><div class="panel"><div class="panelhead"><h2>State Collation Dashboard</h2><div class="filters"><input id="lgaSearch" placeholder="Search Local Government…"><select id="lgaStatus"><option value="">All LGAs</option><option value="expose">Expose</option><option value="violence">Violence</option><option value="successful">Successful</option><option value="ec8c">EC8C received</option><option value="collation">Completed collation</option></select></div></div><div id="lgaCount" class="muted" style="margin:0 0 12px">Loading assigned LGAs…</div><p class="feed-notice" id="feedNotice" role="status"></p><div id="lgaTable" class="tablewrap"><div class="empty">Loading Local Government collation records…</div></div>
+<button type="button" class="btn" id="stateUploadButton" aria-controls="view-uploads" disabled><span>Upload</span><span aria-hidden="true">→</span></button>
+</div></section>
+<section class="view" id="view-uploads">
+     <button id="uploadBack" type="button" class="btn secondary">Back</button>
+     <p id="uploadScope" class="muted"></p>
+     <h1 id="uploadHeading" tabindex="-1">Upload</h1>
+     <div id="stateUploadView"></div>
+   </section>
+   
 <section class="view" id="view-results"><div class="eyebrow">Election aggregation</div><h1>Consolidated Results</h1><p class="sub">Totals calculated from the latest submitted LGA collation for each Local Government. Original LGA and ward records remain unchanged.</p><div class="stats"><div class="stat"><small>Total valid votes</small><strong id="totalValid">0</strong></div><div class="stat"><small>Total rejected ballots</small><strong id="totalRejected">0</strong></div><div class="stat"><small>LGA records included</small><strong id="totalIncluded">0</strong></div><div class="stat"><small>Ward records represented</small><strong id="totalSources">0</strong></div></div><div class="panel"><div class="panelhead"><h2>LGA-by-LGA totals</h2><button class="btn secondary" id="refreshBtn">Refresh data</button></div><div id="totalsTable" class="tablewrap"></div></div></section>
 <section class="view" id="view-submit"><div class="eyebrow">Final State collation</div><h1>Submit State Collation</h1><p class="sub">Create a separate State record referencing the latest LGA collations for this election. Original Local Government and ward records remain unchanged.</p><form id="stateForm" class="panel"><div class="grid2"><div class="field"><label for="collationDate">Collation date *</label><input id="collationDate" type="date" required></div><div class="field"><label for="reviewStatus">Review status *</label><select id="reviewStatus" required><option value="reviewed">Reviewed</option><option value="provisional">Provisional</option><option value="final">Final</option></select></div><div class="field"><label for="validVotes">Total valid votes (from LGA collations)</label><input id="validVotes" type="number" min="0" step="1" readonly></div><div class="field"><label for="rejectedVotes">Total rejected ballots (from LGA collations)</label><input id="rejectedVotes" type="number" min="0" step="1" readonly></div><div class="field full"><label for="stateSummary">State collation summary *</label><textarea id="stateSummary" required placeholder="Enter the State collation summary…"></textarea></div><div class="field full"><label for="stateDiscrepancies">Discrepancies / remarks</label><textarea id="stateDiscrepancies" placeholder="Record discrepancies, missing LGA returns, or remarks…"></textarea></div></div><label class="checkrow"><input id="confirmLgaReview" type="checkbox" required> I confirm that I have reviewed the Local Government collation records selected for this State.</label><div class="muted" id="sourceCountText">Loading eligible LGA collation sources…</div><div class="notice" id="stateNotice"></div><div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:15px"><button class="btn" id="saveStateBtn" type="submit">Save State Collation</button><button class="btn secondary" type="button" data-goto="results">Back to results</button></div></form></section>
 <section class="view" id="view-history"><div class="eyebrow">Saved State records</div><h1>Collation History</h1><p class="sub">Previously submitted State collation records.</p><div class="panel"><div id="historyTable" class="tablewrap"><div class="empty">Loading history…</div></div></div></section>
@@ -66,7 +102,7 @@
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import {initializeFirestore,doc,getDoc,collection,query,where,onSnapshot,addDoc,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {initializeFirestore,doc,getDoc,getDocFromServer,setDoc,collection,query,where,onSnapshot,addDoc,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 const firebaseConfig={apiKey:"AIzaSyBEbkeWDLuQOSPz2ojp59UWgqf0OakRrCo",authDomain:"election-8e790.firebaseapp.com",projectId:"election-8e790",storageBucket:"election-8e790.firebasestorage.app",messagingSenderId:"346568561664",appId:"1:346568561664:web:5618be1ebb4057f9c6f4e5"};
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=initializeFirestore(app,{experimentalForceLongPolling:true});
 const $=id=>document.getElementById(id),first=(...v)=>v.find(x=>x!==undefined&&x!==null&&String(x).trim()!==''),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -150,6 +186,7 @@ function loadData() {
       const cached = snapshot.metadata.fromCache;
       data[key] = cached ? [] : snapshot.docs.map(doc => ({...doc.data(), id:doc.id}));
       feedStatus[key] = cached ? 'cache' : 'ready';
+      if(key==='lgas')syncUploadLgas();
       renderAll();
     },error => {
       if (!current()) return;
@@ -315,8 +352,196 @@ function openLga(id) {
   $('detailModal').classList.add('show');
   $('closeDetail').focus();
 }
-function switchView(v){document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id==='view-'+v));document.querySelectorAll('.nav [data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===v));$('topTitle').textContent=({overview:'State overview',lgas:'State Collation Dashboard',results:'Consolidated results',submit:'Submit State collation',history:'Collation history',profile:'My profile'})[v]||'State operations';$('sidebar').classList.remove('open');window.scrollTo({top:0,behavior:'smooth'})}
+function switchView(v){$('stateUploadMenu').classList.toggle('active',v==='uploads');document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id==='view-'+v));document.querySelectorAll('.nav [data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===v));$('topTitle').textContent=({overview:'State overview',uploads:'State uploads',lgas:'State Collation Dashboard',results:'Consolidated results',submit:'Submit State collation',history:'Collation history',profile:'My profile'})[v]||'State operations';$('sidebar').classList.remove('open');window.scrollTo({top:0,behavior:'smooth'})}
 function renderProfile(){const rows=[['Full name',profile.fullName],['Username',profile.username],['Email',profile.email||user.email],['Phone',profile.phone],['Role',profile.agentRoleLabel||profile.agentRole||profile.role],['Election',assignment.electionName],['Candidate',assignment.candidateName],['State',assignment.state],['State code',assignment.stateCode],['Account status',profile.status]];$('profileGrid').innerHTML=rows.filter(x=>x[1]!==undefined&&x[1]!==null&&x[1]!=='').map(([k,v])=>`<div><small>${esc(k)}</small><b>${esc(v)}</b></div>`).join('')}
+const uploadGroups = {
+  successful:{label:'SUCCESSFUL STATE COLLATION',actions:{ec8d:'UPLOAD FORM EC8D',duplicate:'UPLOAD DUPLICATE COPY',eform:'FILL E FORM',video:'UPLOAD VIDEO'}},
+  violence:{label:'VIOLENCE',actions:{ec40g:'UPLOAD FORM EC40G',duplicate:'UPLOAD DUPLICATE COPY',eform:'FILL E FORM',video:'UPLOAD VIDEO'}},
+  expose:{label:'EXPOSE',actions:{original:'UPLOAD ORIGINAL COPY',altered:'UPLOAD FAKE/ALTERED COPY'}}
+};
+const uploadPanel=$('stateUploadView');
+let uploadGroup='', uploadAction='', uploadBusy=false, pendingMedia=null;
+function uploadTile(key,label,group=false){
+  return '<button type="button" class="upload-tile" data-'+(group?'group':'action')+'="'+key+'"><span>'+label+'</span><span aria-hidden="true">›</span></button>';
+}
+function showUploadMenu(group=''){
+  uploadGroup=group; uploadAction=''; pendingMedia=null;
+  switchView('uploads');
+  $('uploadHeading').textContent=group?uploadGroups[group].label:'Upload';
+  $('uploadScope').textContent=[assignment.state,assignment.electionName].filter(Boolean).join(' · ');
+  uploadPanel.innerHTML='<div class="upload-grid">'+(group
+    ?Object.entries(uploadGroups[group].actions).map(([k,v])=>uploadTile(k,v)).join('')
+    :Object.entries(uploadGroups).map(([k,v])=>uploadTile(k,v.label,true)).join(''))+'</div>';
+  $('uploadHeading').focus();
+}
+function lineInputs(success){
+  const txt=(key,label)=>'<label>'+label+'<input data-cell="'+key+'" maxlength="160"></label>';
+  const count=(key,label)=>'<label>'+label+'<input data-cell="'+key+'" type="number" min="0" step="1" max="999999999" inputmode="numeric"></label>';
+  const parties=success?'<div class="upload-parties">'+partyColumns.map(p=>count(p,p+' votes')).join('')+'</div>':'';
+  return '<fieldset class="upload-line"><legend>LGA entry</legend><div class="upload-fields">'+
+    '<label>Local government<select required data-cell="lgaCode"><option value="">Choose an LGA</option>'+
+    data.lgas.slice().sort((a,b)=>lgaName(a).localeCompare(lgaName(b))).map(lga=>'<option value="'+esc(first(lga.lgaCode,lga.code,lga.id))+'">'+esc(lgaName(lga))+'</option>').join('')+'</select></label>'+
+    (success?count('registered','Registered voters')+count('accredited','Accredited voters')+count('valid','Valid votes')+count('rejected','Rejected votes')+count('cast','Votes cast'):
+    txt('units','Affected polling units or codes')+count('registered','Registered voters affected')+count('pvcs','PVCs collected')+'<label>Reason recorded on the form<textarea data-cell="reason" rows="2" maxlength="1500" required></textarea></label>')+
+    '</div>'+parties+'<button class="upload-remove" type="button" data-remove>Remove entry</button></fieldset>';
+}
+function updateLines(){
+  const lines=uploadPanel.querySelectorAll('.upload-line');
+  lines.forEach((line,i)=>{
+    line.querySelector('legend').textContent='LGA entry '+(i+1);
+    line.querySelector('[data-remove]').hidden=lines.length===1;
+  });
+}
+function showUploadAction(action){
+  uploadAction=action; pendingMedia=null;
+  const eform=action==='eform', successful=uploadGroup==='successful';
+  const label=uploadGroups[uploadGroup].actions[action], formName=successful?'EC8D':'EC40G';
+  $('uploadHeading').textContent=eform?'Fill '+formName+' E-Form':label;
+  $('uploadScope').textContent=[uploadGroups[uploadGroup].label,assignment.state,assignment.electionName].filter(Boolean).join(' · ');
+  const content=eform?
+    '<div class="upload-fields"><label>Form reference or serial number<input name="serial" maxlength="120"></label><label>Form date<input name="date" type="date" required></label></div>'+
+    '<p class="muted">Enter the figures and details recorded on the paper form.</p>'+
+    '<div id="uploadLines">'+lineInputs(successful)+'</div><button class="btn secondary" type="button" data-add>Add LGA entry</button>'+
+    '<div class="upload-fields"><label>Collation officer’s name<input name="officer" maxlength="160"></label><label>Remarks<textarea name="remarks" rows="2" maxlength="2000"></textarea></label></div>':
+    '<label>Choose '+(action==='video'?'a video':'a photo or PDF')+'<input type="file" name="file" accept="'+(action==='video'?'video/*':'image/*,application/pdf,.pdf')+'" required></label>';
+  uploadPanel.innerHTML='<form class="panel upload-entry"><fieldset class="upload-controls">'+content+
+    '<button class="btn" type="submit">'+(eform?'Save '+formName+' E-Form':'Upload file')+'</button></fieldset><p role="status" class="upload-feedback"></p></form>';
+  if(eform) {
+    updateLines();
+    if (!data.lgas.length) uploadPanel.querySelector('[role=status]').textContent='Waiting for the assigned LGA list. If it stays empty, return to the results table and refresh.';
+  }
+  $('uploadHeading').focus();
+}
+function openStateUploads(){
+  if($('stateUploadButton').disabled)return;
+  if(uploadBusy || uploadAction){switchView('uploads');return;}
+  showUploadMenu();
+}
+$('stateUploadButton').addEventListener('click',openStateUploads);
+$('stateUploadMenu').addEventListener('click',openStateUploads);
+$('uploadBack').addEventListener('click',()=>{
+  if(uploadBusy)return;
+  if(uploadAction)showUploadMenu(uploadGroup);
+  else if(uploadGroup)showUploadMenu();
+  else {switchView('lgas');$('stateUploadButton').focus();}
+});
+uploadPanel.addEventListener('click',event=>{
+  const b=event.target.closest('button');
+  if(!b||uploadBusy)return;
+  if(b.dataset.group)showUploadMenu(b.dataset.group);
+  else if(b.dataset.action)showUploadAction(b.dataset.action);
+  else if(b.hasAttribute('data-add')){
+    $('uploadLines').insertAdjacentHTML('beforeend',lineInputs(uploadGroup==='successful'));
+    updateLines();$('uploadLines').lastElementChild.querySelector('input').focus();
+  }else if(b.hasAttribute('data-remove') && uploadPanel.querySelectorAll('.upload-line').length>1){
+    b.closest('.upload-line').remove();updateLines();
+  }
+});
+function stateEntryData(form){
+  const entries=Array.from(form.querySelectorAll('.upload-line'),line=>{
+    const entry={};
+    for(const input of line.querySelectorAll('[data-cell]')){
+      const value=input.value.trim();
+      if(value)entry[input.dataset.cell]=input.type==='number'?Number(value):value;
+    }
+    if(!entry.lgaCode || (uploadGroup==='violence' && !entry.reason))throw Error('Enter the LGA and the required details for each row.');
+    if(uploadGroup==='successful' && !partyColumns.some(p=>p in entry))throw Error('Enter at least one party figure for each LGA. Enter 0 for a recorded zero.');
+    const lga = data.lgas.find(l=>String(first(l.lgaCode,l.code,l.id))===entry.lgaCode);
+    if (!lga) throw Error('Choose an LGA registered in your assigned state.');
+    entry.lgaName=lgaName(lga);
+    return entry;
+  });
+  if(uploadGroup==='successful' && new Set(entries.map(entry=>entry.lgaCode)).size!==entries.length)throw Error('Use one EC8D results row per LGA.');
+  return {formDate:form.elements.date.value,reference:form.elements.serial.value.trim(),officer:form.elements.officer.value.trim(),remarks:form.elements.remarks.value.trim(),entries};
+}
+async function uploadStateFile(file,video){
+  const type=video?'video':'image';
+  const body=new FormData();body.append('file',file);body.append('upload_preset','Obaestate');body.append('folder','botas-photo/state-evidence');
+  const response=await fetch('https://api.cloudinary.com/v1_1/hjdnytcb/'+type+'/upload',{method:'POST',body,signal:AbortSignal.timeout(300000)});
+  const result=await response.json();
+  if(!response.ok || !result.public_id || result.resource_type!==type || !result.secure_url?.startsWith('https://res.cloudinary.com/hjdnytcb/'+type+'/upload/')){
+    throw Error(result.error?.message || 'The file service could not confirm the upload.');
+  }
+  return {cloudinaryUrl:result.secure_url,cloudinaryPublicId:result.public_id,cloudinaryResourceType:type,fileName:file.name,fileSize:file.size,fileType:file.type||'application/pdf'};
+}
+async function entryHash(bytes){
+  return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),v=>v.toString(16).padStart(2,'0')).join('');
+}
+uploadPanel.addEventListener('submit',async event=>{
+  event.preventDefault();
+  const form=event.target;
+  if(uploadBusy || !form.reportValidity())return;
+  const uid=auth.currentUser?.uid, session=stateSession, feedback=form.querySelector('[role=status]');
+  const sameSession=()=>uid && uid===auth.currentUser?.uid && session===stateSession;
+  const group=uploadGroup,action=uploadAction,eform=action==='eform';
+  uploadBusy=true;form.querySelector('fieldset').disabled=true;$('uploadBack').disabled=true;
+  let saved=false;
+  try{
+    if(!sameSession() || uid!==user?.uid || !assignment.stateCode)throw Error('Sign in with the assigned state account.');
+    const {stateCode,electionType,candidateId}=assignment;
+    const common={stateCode,electionType,candidateId,createdBy:uid,category:group,action};
+    const file=eform?null:form.elements.file.files[0],video=action==='video';
+    if(!eform && (!file?.size || file.size>100*1024*1024))throw Error('Choose a non-empty file up to 100 MB.');
+    if(file && (video?!file.type.startsWith('video/'):!(file.type.startsWith('image/') || file.type==='application/pdf' || (!file.type && /\.pdf$/i.test(file.name)))))throw Error(video?'Choose a video file.':'Choose a photo or PDF.');
+    feedback.textContent=eform?'Saving E-Form…':'Preparing file…';
+    const manual=eform?stateEntryData(form):null;
+    const encoder=new TextEncoder();
+    const fingerprint=file?await entryHash(await file.arrayBuffer()):manual;
+    const id=await entryHash(encoder.encode(JSON.stringify([common,fingerprint])));
+    if(!sameSession())return;
+    const ref=doc(db,'stateEvidenceUploads',id);
+    let payload={form:manual};
+    if(file){
+      // Reopening a completed upload should reuse its receipt before another media transfer.
+      let previous;
+      try { previous=(await getDocFromServer(ref)).data(); }
+      catch(error){ if(error.code!=='permission-denied') throw error; }
+      if(!sameSession())return;
+      if(previous && Object.entries(common).every(([key,value])=>previous[key]===value)){
+        feedback.textContent='Already saved in Firestore. Reference: '+id;
+        saved=true;return;
+      }
+      feedback.textContent='Uploading file…';
+      if(pendingMedia?.id!==id){
+        const media=await uploadStateFile(file,video);
+        if(!sameSession())return;
+        pendingMedia={id,media};
+      }
+      payload={media:pendingMedia.media};
+    }
+    feedback.textContent='Saving the Firestore reference…';
+    try{await setDoc(ref,{...common,...payload,createdAt:serverTimestamp()});}
+    catch(error){
+      // A repeat of the same submission may already have a create-only receipt.
+      if(error.code!=='permission-denied')throw error;
+      const prior=(await getDocFromServer(ref)).data();
+      if(!prior || !Object.entries(common).every(([k,v])=>prior[k]===v))throw error;
+    }
+    if(!sameSession())return;
+    feedback.textContent='Saved in Firestore. Reference: '+id;
+    pendingMedia=null;saved=true;
+  }catch(error){
+    if(sameSession())feedback.textContent=(pendingMedia?'File uploaded. Firestore registration is pending. ':'')+(error.code==='permission-denied'?'Firestore denied this submission. Check the state upload rule and account assignment.':error.message||'Submission failed. Please retry.');
+  }finally{
+    if(session===stateSession){
+      uploadBusy=false;$('uploadBack').disabled=false;form.querySelector('fieldset').disabled=saved;
+    }
+  }
+});
+
+
+function syncUploadLgas() {
+  if(uploadAction!=='eform' || uploadBusy)return;
+  const choices=data.lgas.slice().sort((a,b)=>lgaName(a).localeCompare(lgaName(b)));
+  for(const select of uploadPanel.querySelectorAll('select[data-cell="lgaCode"]')){
+    const selected=select.value;
+    select.replaceChildren(new Option('Choose an LGA',''),...choices.map(l=>new Option(lgaName(l),String(first(l.lgaCode,l.code,l.id)))));
+    select.value=selected;
+  }
+  const status=uploadPanel.querySelector('[role=status]');
+  if(choices.length && status?.textContent.startsWith('Waiting for the assigned LGA list'))status.textContent='';
+}
+
 function renderAll(){
   indexSubmissions(); renderOpenFeed();
   renderOverview(); renderLgas(); renderTotals(); renderHistory();
@@ -336,6 +561,9 @@ async function loadProfile(u,session){const userSnap=await getDoc(doc(db,'users'
 $('loginForm').addEventListener('submit',e=>e.preventDefault());$('logoutBtn').addEventListener('click',async()=>{unsubs.forEach(f=>f());await signOut(auth);window.location.replace('index.html')});let stateSession=0;
 onAuthStateChanged(auth,async u=>{
   const session=++stateSession;
+  uploadGroup=''; uploadAction=''; uploadBusy=false; pendingMedia=null;
+  uploadPanel.replaceChildren(); $('uploadBack').disabled=false; $('stateUploadButton').disabled=true;
+  if($('view-uploads').classList.contains('active'))switchView('lgas');
   unsubs.forEach(stop=>stop());
   unsubs=[];
   user=null; profile={}; assignment={};
@@ -353,7 +581,7 @@ onAuthStateChanged(auth,async u=>{
     if(session!==stateSession || auth.currentUser?.uid!==u.uid)return;
     renderAll();
     $('loginView').classList.add('hidden');
-    $('appView').classList.remove('hidden');
+    $('appView').classList.remove('hidden'); $('stateUploadButton').disabled=false;
   }catch(err){
     if(session!==stateSession)return;
     console.error(err);
