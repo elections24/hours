@@ -241,6 +241,8 @@
       local_government_collation_agent: "local-government-collation-dashboard.html",
       lga_collation_agent: "local-government-collation-dashboard.html",
       local_government_collation: "local-government-collation-dashboard.html",
+      state_collation_agent: "state-collation-dashboard.html",
+      state_collation: "state-collation-dashboard.html",
       coordinator: "coordinator-dashboard.html",
       observer: "observer-dashboard.html",
       reporter: "observer-dashboard.html",
@@ -319,10 +321,11 @@
           throw new Error("Your account is currently disabled. Contact your system administrator.");
         }
 
-        // Prefer the authoritative agentRole from electionAgents; fall back to users.
-        const rawRole = agentProfile.agentRole || userProfile.agentRole || userProfile.role || "";
-        // Accept role values containing spaces or hyphens as well as underscores.
-        const role = String(rawRole).trim().toLowerCase().replace(/[\\s-]+/g, "_");
+        const normalizeRole = value => String(value || "").trim().toLowerCase().replace(/[\s-]+/g, "_");
+        const assignedRole = normalizeRole(agentProfile.agentRole);
+        const alternateRole = normalizeRole(agentProfile.role);
+        const stateRole = ["state_collation_agent", "state_collation"].includes(alternateRole) ? alternateRole : "";
+        const role = assignedRole || stateRole || normalizeRole(userProfile.agentRole || userProfile.role);
         const dashboard = roleDashboards[role] || userProfile.dashboardUrl || agentProfile.dashboardUrl;
 
         if (!dashboard || typeof dashboard !== "string" || !dashboard.endsWith(".html")) {
