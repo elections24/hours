@@ -193,6 +193,52 @@
 .ec-results .ec-matrix thead tr:nth-child(2) th{position:sticky;top:38px;z-index:2}
 .ec-results .ec-matrix tbody th{top:auto}
 .ec-results .ec-matrix tfoot th{position:static}
+
+.ward-tile-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(10px, 2vw, 18px);
+  max-width: 840px;
+  margin-top: 20px;
+}
+.ward-tile {
+  --ink: #126449;
+  --wash: #e7f3ed;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-content: space-between;
+  gap: 18px 8px;
+  min-height: 128px;
+  padding: clamp(14px, 2.3vw, 22px);
+  border: 1px solid #d4e1db;
+  border-radius: 16px;
+  background: #fff;
+  color: #20392e;
+  box-shadow: 0 3px 10px rgba(25, 61, 45, .05);
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+.ward-tile-grid.violence .ward-tile, .ward-tile.violence { --ink: #8b461a; --wash: #fbefe5; }
+.ward-tile-grid.expose .ward-tile, .ward-tile.expose { --ink: #475788; --wash: #edf0f9; }
+.ward-tile:hover { border-color: var(--ink); }
+.ward-tile:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+.ward-tile strong { grid-column: 1 / -1; font-size: clamp(.85rem, 1.8vw, 1rem); line-height: 1.35; }
+.ward-tile .tile-arrow { align-self: center; color: var(--ink); font-size: 1.4rem; line-height: 1; }
+.ward-tile .tile-mark {
+  display: grid; place-items: center; width: 36px; height: 36px;
+  border-radius: 10px; background: var(--wash); color: var(--ink);
+  font: 700 20px/1 system-ui, sans-serif;
+}
+@media (min-width: 620px) {
+  .ward-tile-grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 619px) {
+  .ward-tile-grid.three .ward-tile:first-child { grid-column: 1 / -1; }
+}
+@media (max-width: 299px) {
+  .ward-tile-grid { grid-template-columns: 1fr; }
+}
 </style></head>
 <body>
 <div id="loginScreen" class="login-wrap hidden" aria-hidden="true"></div>
@@ -220,29 +266,54 @@
 </div>
 <div class="home-footer">BOTAS PHOTO · Ward-level review. Original polling-unit submissions remain read-only.</div>
 </section>
-<section class="view" id="view-upload-menu"><h1>Upload</h1><div class="home-cards">
-<button class="home-card" type="button" data-go="ward-evidence-loss"><strong class="home-copy">WARD EVIDENCE OF LOSS</strong><span class="home-arrow" aria-hidden="true">›</span></button>
-</div></section>
-<section class="view" id="view-ward-evidence-loss">
-<div class="eyebrow">INDEPENDENT WARD EVIDENCE</div>
-<h1>WARD EVIDENCE OF LOSS</h1>
-<p class="sub">Submit the Ward EC8B form and its duplicate copy independently. These new evidence submissions will be kept separate from existing EC8A polling-unit records and existing ward collation records.</p>
-<div class="home-cards">
-<button class="home-card" type="button" data-go="ward-loss-ec8b"><strong class="home-copy">UPLOAD WARD EC8B FORM</strong><span class="home-arrow" aria-hidden="true">›</span></button>
-<button class="home-card" type="button" data-go="ward-loss-duplicate"><strong class="home-copy">UPLOAD DUPLICATE EC8B COPY</strong><span class="home-arrow" aria-hidden="true">›</span></button>
-</div>
+<section class="view" id="view-upload-menu">
+  <h1>Upload</h1>
+  <div class="ward-tile-grid three">
+    <button class="ward-tile" type="button" data-go="ward-evidence-loss">
+      <span class="tile-mark" aria-hidden="true">✓</span>
+      <span class="tile-arrow" aria-hidden="true">›</span>
+      <strong>SUCCESSFUL WARD COLLATION</strong>
+    </button>
+    <button class="ward-tile violence" type="button" data-go="violence">
+      <span class="tile-mark" aria-hidden="true">!</span>
+      <span class="tile-arrow" aria-hidden="true">›</span>
+      <strong>VIOLENCE</strong>
+    </button>
+    <button class="ward-tile expose" type="button" data-go="expose">
+      <span class="tile-mark" aria-hidden="true">◎</span>
+      <span class="tile-arrow" aria-hidden="true">›</span>
+      <strong>EXPOSE</strong>
+    </button>
+  </div>
 </section>
-<section class="view" id="view-ward-loss-ec8b">
-<div class="eyebrow">WARD EVIDENCE OF LOSS</div><h1>WARD EC8B FORM</h1>
-<p class="sub">Complete the independent Ward EC8B evidence form. This template follows the evidence-upload hierarchy used in the Polling Unit Agent Dashboard. Existing EC8A and EC8B records are not changed.</p>
-<div class="home-cards">
-<button class="home-card" type="button" data-go="ward-loss-ec8b-upload"><strong class="home-copy">UPLOAD FORM EC8B</strong><span class="home-arrow" aria-hidden="true">›</span></button>
-<button class="home-card" type="button" data-go="ward-loss-ec8b-eform"><strong class="home-copy">FILL E-FORM</strong><span class="home-arrow" aria-hidden="true">›</span></button>
-</div>
+<section class="view" id="view-ward-evidence-loss">
+  <h1>Successful Ward Collation</h1>
+  <div class="ward-tile-grid successful">
+    <button class="ward-tile" type="button" data-go="ward-loss-ec8b-upload">
+      <span class="tile-mark" aria-hidden="true">↑</span>
+      <span class="tile-arrow" aria-hidden="true">›</span>
+      <strong>UPLOAD FORM EC8B</strong>
+    </button>
+    <button class="ward-tile" type="button" data-go="ward-loss-ec8b-eform">
+      <span class="tile-mark" aria-hidden="true">✎</span>
+      <span class="tile-arrow" aria-hidden="true">›</span>
+      <strong>FILL E FORM</strong>
+    </button>
+    <button class="ward-tile" type="button" data-go="ward-loss-duplicate">
+      <span class="tile-mark" aria-hidden="true">⧉</span>
+      <span class="tile-arrow" aria-hidden="true">›</span>
+      <strong>UPLOAD DUPLICATE COPY</strong>
+    </button>
+    <button class="ward-tile" type="button" data-go="successful-video">
+      <span class="tile-mark" aria-hidden="true">▷</span>
+      <span class="tile-arrow" aria-hidden="true">›</span>
+      <strong>UPLOAD VIDEO</strong>
+    </button>
+  </div>
 </section>
 <section class="view" id="view-ward-loss-ec8b-upload">
-<div class="eyebrow">WARD EVIDENCE OF LOSS · EC8B</div><h1>UPLOAD FORM EC8B</h1>
-<p class="sub">Choose a clear photograph of the completed physical Ward EC8B form. The selected file can be previewed before the upload integration is enabled in Objective 8.</p>
+<div class="eyebrow">SUCCESSFUL WARD COLLATION · EC8B</div><h1>UPLOAD FORM EC8B</h1>
+<p class="sub">Choose a clear photograph of the completed ward EC8B. You can preview it before uploading.</p>
 <form class="panel ward-loss-form" id="wardEc8bEvidenceTemplate" data-document-type="WARD_EC8B" data-evidence-category="ec8b_evidence_of_loss">
 <div class="readonly-context"><strong>Assigned ward details</strong><span id="wardEc8bContext">Loading your assigned state, LGA and ward…</span></div>
 <div class="formgrid">
@@ -253,11 +324,11 @@
 </div>
 <div class="file-preview" id="wardEc8bPreview"><div class="file-meta" id="wardEc8bFileMeta"></div><div id="wardEc8bPreviewContent"></div></div>
 <div class="notice" id="wardEc8bTemplateNotice" role="status" aria-live="polite"></div><div class="form-actions"><button class="btn" type="submit">Upload EC8B evidence</button><button class="btn secondary" type="reset">Clear form</button></div>
-<div class="form-actions"><button class="btn secondary" type="button" data-go="ward-loss-ec8b">Back</button></div>
+<div class="form-actions"><button class="btn secondary" type="button" data-ward-back>Back</button></div>
 </form>
 </section>
 <section class="view" id="view-ward-loss-ec8b-eform">
-<div class="eyebrow">Ward Evidence of Loss</div><h1>Fill EC8B E-Form</h1>
+<div class="eyebrow">Successful Ward Collation</div><h1>Fill EC8B E-Form</h1>
 <p class="sub">Use the 2023 presidential EC8B layout below. Copy each polling unit onto its numbered line. Swipe across the table for the party columns and vote totals. Leave unused lines blank.</p>
 <form id="manualEc8b" class="panel ec-paper">
 <fieldset id="ec8bEntry" aria-label="Ward EC8B">
@@ -267,14 +338,14 @@
 <p class="muted" id="ec8bCount"></p><p id="ec8bChecks" aria-live="polite"></p>
 <button type="button" class="btn secondary" id="ec8bAdd">Add a continuation row</button>
 <div id="ec8bCertification"></div>
-<div class="form-actions"><button class="btn" type="submit">Save EC8B</button><button type="button" class="btn secondary" data-go="ward-loss-ec8b">Back</button></div>
+<div class="form-actions"><button class="btn" type="submit">Save EC8B</button><button type="button" class="btn secondary" data-ward-back>Back</button></div>
 </fieldset>
 <p class="notice" id="ec8bStatus" role="status" aria-live="polite"></p>
 <button class="btn secondary" id="ec8bNew" type="button" hidden>Start another EC8B</button>
 </form></section>
 
 <section class="view" id="view-ward-loss-duplicate">
-<div class="eyebrow">WARD EVIDENCE OF LOSS</div><h1>DUPLICATE EC8B COPY</h1>
+<div class="eyebrow">SUCCESSFUL WARD COLLATION</div><h1>DUPLICATE EC8B COPY</h1>
 <p class="sub">Submit the duplicate physical copy separately from the main Ward EC8B form. This template accepts an image or PDF copy.</p>
 <form class="panel ward-loss-form" id="wardEc8bDuplicateTemplate" data-document-type="WARD_EC8B_DUPLICATE" data-evidence-category="ec8b_duplicate_evidence">
 <div class="readonly-context"><strong>Assigned ward details</strong><span id="wardEc8bDuplicateContext">Loading your assigned state, LGA and ward…</span></div>
@@ -286,15 +357,9 @@
 </div>
 <div class="file-preview" id="wardEc8bDuplicatePreview"><div class="file-meta" id="wardEc8bDuplicateFileMeta"></div><div id="wardEc8bDuplicatePreviewContent"></div></div>
 <div class="notice" id="wardEc8bDuplicateNotice" role="status" aria-live="polite"></div><div class="form-actions"><button class="btn" type="submit">Upload Duplicate EC8B</button><button class="btn secondary" type="reset">Clear form</button></div>
-<div class="form-actions"><button class="btn secondary" type="button" data-go="ward-evidence-loss">Back</button></div>
+<div class="form-actions"><button class="btn secondary" type="button" data-ward-back>Back</button></div>
 </form>
 </section>
-<section class="view" id="view-successful"><h1>SUCCESSFUL WARD COLLATION</h1><div class="home-cards">
-<button class="home-card" type="button" data-go="successful-ec8b"><strong class="home-copy">UPLOAD FORM EC8B</strong><span class="home-arrow" aria-hidden="true">›</span></button>
-<button class="home-card" type="button" data-go="collation"><strong class="home-copy">FILL E FORM</strong><span class="home-arrow" aria-hidden="true">›</span></button>
-<button class="home-card" type="button" data-go="successful-duplicate"><strong class="home-copy">UPLOAD DUPLICATE COPY</strong><span class="home-arrow" aria-hidden="true">›</span></button>
-<button class="home-card" type="button" data-go="successful-video"><strong class="home-copy">UPLOAD VIDEO</strong><span class="home-arrow" aria-hidden="true">›</span></button>
-</div></section>
 <section class="view" id="view-successful-ec8b">
 <div class="eyebrow">SUCCESSFUL WARD COLLATION</div><h1>UPLOAD FORM EC8B</h1>
 <form id="wardEc8bForm" class="panel ward-evidence-form" data-outcome="successful" data-kind="ec8b">
@@ -321,12 +386,26 @@
 <button class="btn" type="submit">Upload file</button>
 <p class="muted" role="status" aria-live="polite"></p>
 </form></section>
-<section class="view" id="view-violence"><h1>VIOLENCE</h1><div class="home-cards">
-<button class="home-card" type="button" data-go="violence-ec40g"><strong class="home-copy">UPLOAD FORM EC40G</strong><span class="home-arrow" aria-hidden="true">›</span></button>
-<button class="home-card" type="button" data-go="violence-eform"><strong class="home-copy">UPLOAD E FORM</strong><span class="home-arrow" aria-hidden="true">›</span></button>
-<button class="home-card" type="button" data-go="violence-duplicate"><strong class="home-copy">UPLOAD DUPLICATE COPY</strong><span class="home-arrow" aria-hidden="true">›</span></button>
-<button class="home-card" type="button" data-go="violence-video"><strong class="home-copy">UPLOAD VIDEO</strong><span class="home-arrow" aria-hidden="true">›</span></button>
-</div></section>
+<section class="view" id="view-violence">
+  <h1>Violence</h1>
+  <div class="ward-tile-grid violence three">
+    <button class="ward-tile" type="button" data-go="violence-ec40g">
+      <span class="tile-mark" aria-hidden="true">↑</span>
+      <span class="tile-arrow" aria-hidden="true">›</span>
+      <strong>UPLOAD FORM EC40G</strong>
+    </button>
+    <button class="ward-tile" type="button" data-go="violence-duplicate">
+      <span class="tile-mark" aria-hidden="true">⧉</span>
+      <span class="tile-arrow" aria-hidden="true">›</span>
+      <strong>UPLOAD DUPLICATE COPY</strong>
+    </button>
+    <button class="ward-tile" type="button" data-go="violence-video">
+      <span class="tile-mark" aria-hidden="true">▷</span>
+      <span class="tile-arrow" aria-hidden="true">›</span>
+      <strong>UPLOAD VIDEO</strong>
+    </button>
+  </div>
+</section>
 <section class="view" id="view-violence-ec40g">
 <div class="eyebrow">VIOLENCE</div><h1>UPLOAD FORM EC40G</h1>
 <form class="panel ward-evidence-form" data-outcome="violence" data-kind="ec40g">
@@ -359,12 +438,23 @@
 <button class="btn" type="submit">Upload file</button>
 <p class="muted" role="status" aria-live="polite"></p>
 </form></section>
-<section class="view" id="view-expose"><h1>EXPOSE</h1><div class="home-cards">
-<button class="home-card" type="button" data-go="expose-fake"><strong class="home-copy">UPLOAD FAKE COPY</strong><span class="home-arrow" aria-hidden="true">›</span></button>
-<button class="home-card" type="button" data-go="expose-original"><strong class="home-copy">UPLOAD ORIGINAL COPY</strong><span class="home-arrow" aria-hidden="true">›</span></button>
-</div></section>
+<section class="view" id="view-expose">
+  <h1>Expose</h1>
+  <div class="ward-tile-grid expose">
+    <button class="ward-tile" type="button" data-go="expose-original">
+      <span class="tile-mark" aria-hidden="true">↑</span>
+      <span class="tile-arrow" aria-hidden="true">›</span>
+      <strong>UPLOAD ORIGINAL COPY</strong>
+    </button>
+    <button class="ward-tile" type="button" data-go="expose-fake">
+      <span class="tile-mark" aria-hidden="true">⧉</span>
+      <span class="tile-arrow" aria-hidden="true">›</span>
+      <strong>UPLOAD ALTERED/FAKE COPY</strong>
+    </button>
+  </div>
+</section>
 <section class="view" id="view-expose-fake">
-<div class="eyebrow">EXPOSE</div><h1>UPLOAD FAKE COPY</h1>
+<div class="eyebrow">EXPOSE</div><h1>UPLOAD ALTERED/FAKE COPY</h1>
 <form class="panel ward-evidence-form" data-outcome="expose" data-kind="fake">
 <div class="field"><label for="file-expose-fake">Choose a file</label>
 <input id="file-expose-fake" name="evidence" type="file" accept="image/*,.pdf" required></div>
@@ -872,7 +962,7 @@ function renderAll(){renderSubmissions();renderEc8aComparison();renderCollation(
 function openDetail(col,id){const map={ec8aResults:data.ec8a,evidenceUploads:data.evidence,pollingUnitReports:data.reports,voteBuyingAlerts:data.alerts,backupRequests:data.backups};const d=(map[col]||[]).find(x=>x.id===id);if(!d)return;$('detailTitle').textContent=typeLabel(d);let fields=[['Polling unit',nameOf(d)],['Polling unit code',unitCode(d)],['Agent',agentName(d)],['Election',d.electionName||d.electionType],['Candidate',d.candidateName],['Status',d.status||d.reportStatus],['Submitted',fmt(d.createdAt)],['Report type',d.reportType],['Details',d.details||d.category||d.incidentType],['Ballot accounting',d.ballotAccounting?JSON.stringify(d.ballotAccounting):'—'],['Party results',d.partyResults?JSON.stringify(d.partyResults):'—']];let html=`<div class="detailgrid">${fields.filter(x=>x[1]!==undefined&&x[1]!==null&&x[1]!=='').map(([k,v])=>`<div><small>${esc(k)}</small><b>${esc(typeof v==='object'?JSON.stringify(v):v)}</b></div>`).join('')}</div>`;const url=first(d.cloudinaryUrl,d.secure_url,d.cloudinary?.secure_url,'');if(url)html+=`<p><a class="evidence-link" href="${esc(url)}" target="_blank" rel="noopener">Open supporting evidence</a></p>`;$('detailContent').innerHTML=html;$('detailModal').classList.add('show')}
 let wardViewStack=['overview'];
 function syncBackButton(){const b=$('topBackBtn');if(b)b.disabled=wardViewStack.length<=1&&!document.querySelector('.modal.show')}
-function switchView(v,fromBack=false){if(v==='ward-loss-ec8b-eform')renderWardLossTemplateContext();if(v==='successful-ec8b')renderPendingEc8b();const current=wardViewStack[wardViewStack.length-1]||'overview';if(!fromBack&&v!==current)wardViewStack.push(v);document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id==='view-'+v));document.querySelectorAll('.nav [data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===v));$('topTitle').textContent=({overview:'Ward operations overview',submissions:'Polling-unit submissions',collation:'Ward collation',history:'Collation history','ward-evidence-loss':'Ward Evidence of Loss','ward-loss-ec8b':'Ward EC8B Form','ward-loss-ec8b-upload':'Upload Ward EC8B','ward-loss-ec8b-eform':'Ward EC8B E-Form','ward-loss-duplicate':'Duplicate EC8B Copy'})[v]||'Ward operations';syncBackButton();window.scrollTo({top:0,behavior:'smooth'})}
+function switchView(v,fromBack=false){if(v==='ward-loss-ec8b-eform')renderWardLossTemplateContext();if(v==='successful-ec8b')renderPendingEc8b();const current=wardViewStack[wardViewStack.length-1]||'overview';if(!fromBack&&v!==current)wardViewStack.push(v);document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id==='view-'+v));document.querySelectorAll('.nav [data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===v));$('topTitle').textContent=({overview:'Ward operations overview',submissions:'Polling-unit submissions',collation:'Ward collation',history:'Collation history','upload-menu':'Upload','ward-evidence-loss':'Successful Ward Collation',violence:'Violence',expose:'Expose','ward-loss-ec8b-upload':'Upload Ward EC8B','ward-loss-ec8b-eform':'Ward EC8B E-Form','ward-loss-duplicate':'Duplicate EC8B Copy'})[v]||'Ward operations';syncBackButton();window.scrollTo({top:0,behavior:'smooth'})}
 function wardGoBack(){const modal=document.querySelector('.modal.show');if(modal){modal.classList.remove('show');syncBackButton();return}if(wardViewStack.length<=1){syncBackButton();return}wardViewStack.pop();const previous=wardViewStack[wardViewStack.length-1]||'overview';switchView(previous,true)}
 // Objective 7: independent Ward EC8B form templates and local file previews only.
 // No Cloudinary request or Firestore write is performed in this stage.
@@ -1402,6 +1492,7 @@ for (const form of document.querySelectorAll('.ward-evidence-form:not(#wardEc8bF
   });
 }
 $('puDashboardFilter')?.addEventListener('change',renderEc8aComparison);
+document.querySelectorAll('[data-ward-back]').forEach(button => button.addEventListener('click', wardGoBack));
 document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.filter){activeSubmissionType=b.dataset.filter;activeSubmissionPuCode='';renderSubmissions()}switchView(b.dataset.go)}));$('homeLogoutBtn').addEventListener('click',logout);if($('topBackBtn'))$('topBackBtn').addEventListener('click',wardGoBack);document.addEventListener('click',e=>{const action=e.target.closest('[data-pu-action]');if(action){openPuView(action.dataset.puCode,action.dataset.puAction);return}const status=e.target.closest('[data-pu-status]');if(status){openPuStatus(status.dataset.puStatus);return}const pu=e.target.closest('[data-pu-view]');if(pu){openPuView(pu.dataset.puView);return}const b=e.target.closest('[data-detail]');if(b){const [c,id]=b.dataset.detail.split(':');openDetail(c,id)}});$('closeDetail').addEventListener('click',()=>{$('detailModal').classList.remove('show');syncBackButton()});$('detailModal').addEventListener('click',e=>{if(e.target===$('detailModal')){$('detailModal').classList.remove('show');syncBackButton()}});
 $('collationForm').addEventListener('submit',async e=>{e.preventDefault();const btn=$('saveCollationBtn');btn.disabled=true;btn.textContent='Saving…';try{if(!user||!assignment.wardCode)throw Error('Your assigned ward is not loaded.');const source=allSubmissions();const sourceIds=source.map(x=>({collection:x._collection,id:x.id}));const payload={recordType:'ward_collation',createdBy:user.uid,createdByName:first(profile.fullName,agent.fullName,user.displayName,user.email),createdAt:serverTimestamp(),collationDate:$('collationDate').value,reviewStatus:$('collationStatus').value,status:'submitted',electionType:assignment.electionType,electionName:assignment.electionName,stateCode:assignment.stateCode,lgaCode:assignment.lgaCode,wardCode:assignment.wardCode,state:assignment.state,lga:assignment.lga,ward:assignment.ward,sourceCounts:{ec8a:data.ec8a.length,evidence:data.evidence.length,reports:data.reports.length,voteBuyingAlerts:data.alerts.length,backupRequests:data.backups.length,total:source.length},sourceSubmissionIds:sourceIds,wardTotals:{validVotes:$('totalValidVotes').value===''?null:Number($('totalValidVotes').value),rejectedBallots:$('totalRejectedVotes').value===''?null:Number($('totalRejectedVotes').value)},summary:$('collationSummary').value.trim(),discrepancies:$('discrepancies').value.trim(),sourceReviewed:$('sourceReviewed').checked,missingDeclared:$('missingDeclared').checked};await addDoc(collection(db,'wardCollations'),payload);notice('collationNotice','Ward collation record saved successfully. Source submissions remain unchanged.');$('collationForm').reset();}catch(err){console.error(err);notice('collationNotice',err.code==='permission-denied'?'Firebase denied this save. Firestore Rules must permit assigned Ward Collation Agents to create wardCollations records scoped to their ward.':`Could not save ward collation: ${err.message||err}`,true)}finally{btn.disabled=false;btn.textContent='Save ward collation'}});
 
