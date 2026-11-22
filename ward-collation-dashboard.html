@@ -1307,10 +1307,14 @@ function ec8bPrefix(scope) {
   return 'botas:ward-ec8b:' + JSON.stringify(scope) + ':';
 }
 
-async function ec8bId(scope, file) {
+function ec8bId(scope, file) {
+  return wardFileId(ec8bPrefix(scope), 'ec8b-', file);
+}
+
+async function wardFileId(namespace, prefix, file) {
   const hex = bytes => Array.from(new Uint8Array(bytes), b => b.toString(16).padStart(2,'0')).join('');
   const digest = hex(await crypto.subtle.digest('SHA-256', await file.arrayBuffer()));
-  return 'ec8b-' + hex(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(ec8bPrefix(scope) + digest)));
+  return prefix + hex(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(namespace + digest)));
 }
 
 function acceptedEc8bUrl(value) {
@@ -1443,7 +1447,146 @@ ec8bInput.addEventListener('change', () => {
 });
 
 // Each evidence action keeps its own selected file, status and retry destination.
+const wardMediaTypes = {
+  'successful-video': 'WARD_SUCCESSFUL_VIDEO',
+  'violence-ec40g': 'WARD_VIOLENCE_EC40G',
+  'violence-duplicate': 'WARD_VIOLENCE_DUPLICATE',
+  'violence-video': 'WARD_VIOLENCE_VIDEO',
+  'expose-original': 'WARD_EXPOSE_ORIGINAL',
+  'expose-fake': 'WARD_EXPOSE_ALTERED_COPY'
+};
+
+function transferWardMedia(file, resourceType, report) {
+  const body = new FormData();
+  body.append('file', file);
+  body.append('upload_preset', CLOUDINARY_PRESET);
+  body.append('folder', 'botas-photo/ward-evidence');
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    let timer;
+    const watch = () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => xhr.abort(), 120000);
+    };
+    xhr.open('POST', 'https://api.cloudinary.com/v1_1/' + CLOUDINARY_CLOUD + '/' + resourceType + '/upload');
+    xhr.responseType = 'json';
+    xhr.upload.onprogress = event => {
+      watch();
+      if (event.lengthComputable) report('Sending file · ' + Math.round(100 * event.loaded / event.total) + '%');
+    };
+    xhr.upload.onload = () => { watch(); report('File sent. Waiting for the upload service to confirm receipt…'); };
+    xhr.onloadend = () => clearTimeout(timer);
+    xhr.onabort = () => reject(Error('The file service stopped responding. Check your connection and try again.'));
+    xhr.onerror = () => reject(Error('Could not reach the file service. Check your connection and try again.'));
+    xhr.onload = () => {
+      const media = xhr.response || {};
+      if (xhr.status < 200 || xhr.status >= 300) {
+        reject(Error(media.error?.message || 'The file service returned HTTP ' + xhr.status + '.'));
+        return;
+      }
+      const prefix = 'https://res.cloudinary.com/' + CLOUDINARY_CLOUD + '/' + resourceType + '/upload/';
+      if (media.resource_type !== resourceType || !media.public_id || !media.secure_url?.startsWith(prefix)) {
+        reject(Error('The file service did not return a usable reference for this file.'));
+        return;
+      }
+      resolve({cloudinaryUrl:media.secure_url, cloudinaryPublicId:media.public_id,
+        cloudinaryResourceType:resourceType, cloudinaryFormat:media.format || ''});
+    };
+    xhr.send(body);
+    watch();
+  });
+}
+
+async function registerWardMedia(target, record, identity) {
+  const documentType = record.documentType;
+  try {
+    await setDoc(target, record);
+  } catch (err) {
+    // A repeat creation can be denied because an earlier attempt already committed.
+    if (err.code !== 'permission-denied') throw err;
+    let prior;
+    try { prior = (await getDocFromServer(target)).data(); } catch { throw err; }
+    if (!prior || prior.submissionId !== target.id || prior.documentType !== documentType ||
+        prior.status !== 'submitted' || !prior.cloudinaryUrl ||
+        !Object.entries(identity).every(([field, value]) => prior[field] === value)) throw err;
+  }
+}
+
+function bindWardMediaUpload(form, documentType) {
+  const input = form.elements.evidence;
+  const button = form.querySelector('[type="submit"]');
+  const status = form.querySelector('[role="status"]');
+  const report = message => { status.textContent = message; };
+  const {outcome, kind} = form.dataset;
+  const video = kind === 'video';
+  let lastTransfer;
+  input.addEventListener('change', () => report(''));
+  form.addEventListener('submit', async event => {
+    event.preventDefault();
+    const file = input.files[0];
+    if (!file || button.disabled) return;
+    input.disabled = button.disabled = true;
+    let received = false;
+    let timer;
+    try {
+      const scope = wardEvidenceScope();
+      if (!scope.electionType || !scope.candidateId) throw Error('Your election or candidate assignment is missing.');
+      if (!file.size || file.size > WARD_EVIDENCE_MAX_BYTES) throw Error('Choose a non-empty file up to 100 MB.');
+      const isPdf = file.type === 'application/pdf' || (!file.type && /\.pdf$/i.test(file.name));
+      if (video ? !file.type.startsWith('video/') : !(file.type.startsWith('image/') || isPdf)) {
+        throw Error(video ? 'Choose a video for this upload.' : 'Choose a photograph or PDF for this copy.');
+      }
+      const identity = ec8bAssignment();
+      report('Preparing your file…');
+      const id = await wardFileId(JSON.stringify([identity, documentType]), 'media-', file);
+      const target = doc(db, WARD_EVIDENCE_COLLECTION, id);
+      const key = 'botas:ward-media:' + target.id;
+      let media = lastTransfer?.key === key ? lastTransfer.media : null;
+      if (!media) {
+        try { media = JSON.parse(sessionStorage.getItem(key)); } catch {}
+      }
+      if (!media) {
+        report('Connecting to the file service…');
+        media = await transferWardMedia(file, video ? 'video' : 'image', report);
+        lastTransfer = {key, media};
+        try { sessionStorage.setItem(key, JSON.stringify(media)); } catch {}
+      }
+      received = true;
+      if (JSON.stringify(ec8bAssignment()) !== JSON.stringify(identity)) throw Error('Sign in with the original ward assignment.');
+      const record = {...scope, ...identity, ...media, submissionId:target.id,
+        recordType:'ward_media_evidence', documentType, outcome, evidenceCategory:kind,
+        documentName:form.closest('section').querySelector('h1').textContent.trim(),
+        fileName:file.name, fileType:file.type || 'application/pdf', fileSize:file.size,
+        uploadProvider:'cloudinary', status:'submitted', createdAt:serverTimestamp()};
+      report('File received. Saving the reference in Firestore…');
+      timer = setTimeout(() => report('File received. Waiting for Firestore. Keep this page open while your connection recovers.'), 15000);
+      let deadline;
+      try {
+        await Promise.race([
+          registerWardMedia(target, record, identity),
+          new Promise((_, reject) => {
+            deadline = setTimeout(() => reject(Error('Firestore has not confirmed the save yet.')), 60000);
+          })
+        ]);
+      } finally { clearTimeout(deadline); }
+      report('Saved in Firestore. Reference: ' + target.id);
+      form.reset();
+    } catch (err) {
+      const detail = err.code || err.message || 'Please try again.';
+      report(received ? 'File received. Firestore registration is unconfirmed. Retry with the same file. ' + detail : 'Upload could not finish. ' + detail);
+    } finally {
+      clearTimeout(timer);
+      input.disabled = button.disabled = false;
+    }
+  });
+}
+
 for (const form of document.querySelectorAll('.ward-evidence-form:not(#wardEc8bForm)')) {
+  const mediaType = wardMediaTypes[form.dataset.outcome + '-' + form.dataset.kind];
+  if (mediaType) {
+    bindWardMediaUpload(form, mediaType);
+    continue;
+  }
   const input = form.elements.evidence;
   const button = form.querySelector('button[type="submit"]');
   const status = form.querySelector('[role="status"]');
