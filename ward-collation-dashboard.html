@@ -155,7 +155,24 @@
 .over-resolution-card{margin:16px 0 4px;padding:16px;border:1px solid var(--line);border-radius:14px;background:#fff;box-shadow:var(--shadow)}.over-resolution-card h3{font-size:16px;margin:0 0 9px}.over-resolution-card>p{margin:0 0 12px}.resolution-confirm{display:flex;align-items:flex-start;gap:10px;padding:13px;background:#f5f8f6;border:1px solid var(--line);border-radius:10px;font-size:13px;line-height:1.5;margin:12px 0}.resolution-confirm input{width:18px;height:18px;flex:0 0 auto;accent-color:var(--g);margin-top:1px}.resolution-party-list{margin:12px 0}.resolution-party-list>strong{display:block;font-size:13px;margin-bottom:8px}.resolution-party-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px}.resolution-party-row input{width:110px;max-width:42%;padding:9px;border:1px solid var(--line);border-radius:8px;text-align:right}.resolution-submit{width:100%;padding:14px;margin-top:10px;font-size:14px}.resolution-done{padding:13px;background:#edf7f1;border:1px solid #cfe8d9;border-radius:10px}.resolution-done>strong{color:var(--g)}.resolution-done p{font-size:12px;line-height:1.5;color:var(--muted)}.resolution-done small{display:block;margin-top:10px;color:var(--muted)}.resolution-done .tablewrap{margin-top:10px}
 #ec8bReceiptLink[hidden]{display:none}.ward-evidence-form .btn{margin-top:16px}.ward-evidence-form [role="status"]:empty{display:none}
 </style>
-</head>
+<style>
+#manualEc8b fieldset{min-width:0;margin:0;border:0;padding:0}
+#manualEc8b .ec8b-row{margin:18px 0;padding:14px;border:1px solid var(--line);border-radius:12px}
+#manualEc8b legend{font-size:1.05rem;font-weight:750;padding:0 5px}
+#manualEc8b .ec8b-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(85px,1fr));gap:8px}
+#manualEc8b .field{margin:7px 0}
+#manualEc8b .field label{font-size:.82rem}
+#manualEc8b input,#manualEc8b select{font-size:1rem;width:100%;max-width:100%}
+#manualEc8b select{padding:9px;border:1px solid var(--line);border-radius:8px;background:white}
+#manualEc8b details{margin:16px 0}
+#manualEc8b summary{cursor:pointer;padding:8px 0;font-weight:bold}
+#manualEc8b h2{margin-top:24px}
+#manualEc8b .ec8b-stat{padding:8px;background:#edf5f1;border-radius:8px}
+#manualEc8b .ec8b-stat strong{display:block}
+#manualEc8b .ec8b-check{color:#875400}
+#manualEc8b [hidden]{display:none!important}
+#manualEc8b .ec8b-line{font-weight:700}
+</style></head>
 <body>
 <div id="loginScreen" class="login-wrap hidden" aria-hidden="true"></div>
 <div id="appScreen" class="app hidden"><main class="main"><header class="topbar ward-topbar"><span id="topTitle" hidden>Ward operations</span>
@@ -222,23 +239,32 @@
 </form>
 </section>
 <section class="view" id="view-ward-loss-ec8b-eform">
-<div class="eyebrow">WARD EVIDENCE OF LOSS · DIGITAL FORM</div><h1>FILL EC8B E-FORM</h1>
-<p class="sub">Enter the document identification and evidence details for the Ward EC8B submission. This is a separate ward evidence form and does not create or alter an EC8A polling-unit result.</p>
-<form class="panel ward-loss-form" id="wardEc8bEFormTemplate" data-document-type="WARD_EC8B_EFORM" data-evidence-category="ec8b_eform_evidence">
-<div class="readonly-context"><strong>Assigned ward details</strong><span id="wardEc8bEFormContext">Loading your assigned state, LGA and ward…</span></div>
+<div class="eyebrow">Ward Evidence of Loss · Form EC8B</div><h1>Fill EC8B E-Form</h1>
+<p class="sub">Copy the figures from your paper EC8B, one polling unit at a time. Enter 0 where the paper records zero.</p>
+<form class="panel" id="manualEc8b">
+<fieldset id="ec8bEntry"><legend>Registration area / ward</legend>
+<p class="readonly-context" id="wardEc8bEFormContext"></p>
 <div class="formgrid">
-<div class="field"><label for="wardEc8bEFormElection">Election type</label><input id="wardEc8bEFormElection" name="electionType" type="text" readonly placeholder="Loaded from agent assignment"></div>
-<div class="field"><label for="wardEc8bEFormDocument">Document name</label><input id="wardEc8bEFormDocument" name="documentName" type="text" value="Ward EC8B E-Form" readonly></div>
-<div class="field"><label for="wardEc8bEFormReference">EC8B reference / serial number</label><input id="wardEc8bEFormReference" name="documentReference" type="text" placeholder="Enter the reference printed on the form"></div>
-<div class="field"><label for="wardEc8bEFormDate">Form date</label><input id="wardEc8bEFormDate" name="formDate" type="date"></div>
-<div class="field full"><label for="wardEc8bEFormDescription">Evidence details</label><textarea id="wardEc8bEFormDescription" name="description" required placeholder="Enter the details recorded on or relating to the Ward EC8B document…"></textarea></div>
-<div class="field full"><label for="wardEc8bEFormFile">Supporting EC8B photograph (optional)</label><input id="wardEc8bEFormFile" name="evidence" type="file" accept="image/*,video/*"></div>
+<div class="field"><label for="wardEc8bEFormElection">Assigned election</label><input id="wardEc8bEFormElection" readonly></div>
+<div class="field"><label for="ec8bSerial">Form serial number (if shown)</label><input id="ec8bSerial" maxlength="100"></div>
 </div>
-<div class="file-preview" id="wardEc8bEFormPreview"><div class="file-meta" id="wardEc8bEFormFileMeta"></div><div id="wardEc8bEFormPreviewContent"></div></div>
-<div class="notice" id="wardEc8bEFormNotice" role="status" aria-live="polite"></div><div class="form-actions"><button class="btn" type="submit">Submit EC8B E-Form</button><button class="btn secondary" type="reset">Clear form</button></div>
-<div class="form-actions"><button class="btn secondary" type="button" data-go="ward-loss-ec8b">Back</button></div>
-</form>
-</section>
+<div id="ec8bRows"></div>
+<button class="btn secondary" type="button" id="ec8bAdd">Add polling unit</button>
+<h2>Ward totals</h2><p class="muted" id="ec8bCount"></p>
+<div id="ec8bTotals" class="ec8b-grid"></div>
+<details><summary>Ward votes by party</summary><div id="ec8bPartyTotals" class="ec8b-grid"></div></details>
+<h2>Collation officer</h2><div class="formgrid">
+<div class="field"><label for="ec8bOfficer">Officer name as written</label><input id="ec8bOfficer" maxlength="160"></div>
+<div class="field"><label for="ec8bDate">Date on the paper form</label><input id="ec8bDate" type="date"></div>
+<div class="field"><label for="ec8bSigned">Officer signature on paper</label><select id="ec8bSigned"><option value="">Unrecorded</option><option>Present</option><option>Absent</option><option>Illegible</option></select></div>
+<div class="field"><label for="ec8bStamp">Stamp on paper</label><select id="ec8bStamp"><option value="">Unrecorded</option><option>Present</option><option>Absent</option><option>Illegible</option></select></div>
+</div>
+<details><summary>Party agents’ names and signatures</summary><p class="muted">Copy each name shown and record whether the paper carries a signature.</p><div id="ec8bAgents" class="formgrid"></div></details>
+<button class="btn" type="submit">Save EC8B E-Form</button>
+</fieldset>
+<p class="notice" id="ec8bStatus" role="status" aria-live="polite"></p>
+<button class="btn secondary" id="ec8bNew" type="button" hidden>Start another EC8B</button>
+</form></section>
 <section class="view" id="view-ward-loss-duplicate">
 <div class="eyebrow">WARD EVIDENCE OF LOSS</div><h1>DUPLICATE EC8B COPY</h1>
 <p class="sub">Submit the duplicate physical copy separately from the main Ward EC8B form. This template accepts an image or PDF copy.</p>
@@ -838,7 +864,7 @@ function renderAll(){renderSubmissions();renderEc8aComparison();renderCollation(
 function openDetail(col,id){const map={ec8aResults:data.ec8a,evidenceUploads:data.evidence,pollingUnitReports:data.reports,voteBuyingAlerts:data.alerts,backupRequests:data.backups};const d=(map[col]||[]).find(x=>x.id===id);if(!d)return;$('detailTitle').textContent=typeLabel(d);let fields=[['Polling unit',nameOf(d)],['Polling unit code',unitCode(d)],['Agent',agentName(d)],['Election',d.electionName||d.electionType],['Candidate',d.candidateName],['Status',d.status||d.reportStatus],['Submitted',fmt(d.createdAt)],['Report type',d.reportType],['Details',d.details||d.category||d.incidentType],['Ballot accounting',d.ballotAccounting?JSON.stringify(d.ballotAccounting):'—'],['Party results',d.partyResults?JSON.stringify(d.partyResults):'—']];let html=`<div class="detailgrid">${fields.filter(x=>x[1]!==undefined&&x[1]!==null&&x[1]!=='').map(([k,v])=>`<div><small>${esc(k)}</small><b>${esc(typeof v==='object'?JSON.stringify(v):v)}</b></div>`).join('')}</div>`;const url=first(d.cloudinaryUrl,d.secure_url,d.cloudinary?.secure_url,'');if(url)html+=`<p><a class="evidence-link" href="${esc(url)}" target="_blank" rel="noopener">Open supporting evidence</a></p>`;$('detailContent').innerHTML=html;$('detailModal').classList.add('show')}
 let wardViewStack=['overview'];
 function syncBackButton(){const b=$('topBackBtn');if(b)b.disabled=wardViewStack.length<=1&&!document.querySelector('.modal.show')}
-function switchView(v,fromBack=false){if(v==='successful-ec8b')renderPendingEc8b();const current=wardViewStack[wardViewStack.length-1]||'overview';if(!fromBack&&v!==current)wardViewStack.push(v);document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id==='view-'+v));document.querySelectorAll('.nav [data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===v));$('topTitle').textContent=({overview:'Ward operations overview',submissions:'Polling-unit submissions',collation:'Ward collation',history:'Collation history','ward-evidence-loss':'Ward Evidence of Loss','ward-loss-ec8b':'Ward EC8B Form','ward-loss-ec8b-upload':'Upload Ward EC8B','ward-loss-ec8b-eform':'Ward EC8B E-Form','ward-loss-duplicate':'Duplicate EC8B Copy'})[v]||'Ward operations';syncBackButton();window.scrollTo({top:0,behavior:'smooth'})}
+function switchView(v,fromBack=false){if(v==='ward-loss-ec8b-eform')renderWardLossTemplateContext();if(v==='successful-ec8b')renderPendingEc8b();const current=wardViewStack[wardViewStack.length-1]||'overview';if(!fromBack&&v!==current)wardViewStack.push(v);document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id==='view-'+v));document.querySelectorAll('.nav [data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===v));$('topTitle').textContent=({overview:'Ward operations overview',submissions:'Polling-unit submissions',collation:'Ward collation',history:'Collation history','ward-evidence-loss':'Ward Evidence of Loss','ward-loss-ec8b':'Ward EC8B Form','ward-loss-ec8b-upload':'Upload Ward EC8B','ward-loss-ec8b-eform':'Ward EC8B E-Form','ward-loss-duplicate':'Duplicate EC8B Copy'})[v]||'Ward operations';syncBackButton();window.scrollTo({top:0,behavior:'smooth'})}
 function wardGoBack(){const modal=document.querySelector('.modal.show');if(modal){modal.classList.remove('show');syncBackButton();return}if(wardViewStack.length<=1){syncBackButton();return}wardViewStack.pop();const previous=wardViewStack[wardViewStack.length-1]||'overview';switchView(previous,true)}
 // Objective 7: independent Ward EC8B form templates and local file previews only.
 // No Cloudinary request or Firestore write is performed in this stage.
@@ -846,12 +872,13 @@ function wardLossAssignedText(){
   const state=first(assignment.state,profile.state,agent.state,assignment.stateCode,agent.geography?.stateCode,profile.geography?.stateCode,'—');
   const lga=first(assignment.lga,profile.lga,agent.lga,assignment.lgaCode,agent.geography?.lgaCode,profile.geography?.lgaCode,'—');
   const ward=first(assignment.ward,profile.ward,agent.ward,assignment.wardCode,agent.geography?.wardCode,profile.geography?.wardCode,'—');
-  const election=first(agent.electionName,profile.electionName,agent.electionType,profile.electionType,'—');
+  const election=first(assignment.electionName,assignment.electionType,agent.electionName,profile.electionName,'—');
   return {context:`State: ${state} · LGA: ${lga} · Ward: ${ward}`,election};
 }
 function renderWardLossTemplateContext(){
   const info=wardLossAssignedText();
   ['wardEc8bContext','wardEc8bEFormContext','wardEc8bDuplicateContext'].forEach(id=>{const el=$(id);if(el)el.textContent=info.context;});
+  if($('wardEc8bEFormContext')) $('wardEc8bEFormContext').textContent=[['State',assignment.state,assignment.stateCode],['LGA',assignment.lga,assignment.lgaCode],['Ward',assignment.ward,assignment.wardCode]].map(([label,name,code])=>label+': '+[name,code].filter(Boolean).join(' · ')).join(' | ');
   ['wardEc8bElectionType','wardEc8bEFormElection','wardEc8bDuplicateElection'].forEach(id=>{const el=$(id);if(el)el.value=info.election;});
 }
 function attachWardLossPreview(inputId,previewId,metaId,contentId,allowPdf=false){
@@ -870,7 +897,6 @@ function attachWardLossPreview(inputId,previewId,metaId,contentId,allowPdf=false
 }
 renderWardLossTemplateContext();
 attachWardLossPreview('wardEc8bFile','wardEc8bPreview','wardEc8bFileMeta','wardEc8bPreviewContent');
-attachWardLossPreview('wardEc8bEFormFile','wardEc8bEFormPreview','wardEc8bEFormFileMeta','wardEc8bEFormPreviewContent');
 attachWardLossPreview('wardEc8bDuplicateFile','wardEc8bDuplicatePreview','wardEc8bDuplicateFileMeta','wardEc8bDuplicatePreviewContent',true);
 
 // OBJECTIVE 8: independent Ward Evidence of Loss upload pipeline.
@@ -1009,9 +1035,112 @@ bindWardEvidenceForm('wardEc8bEvidenceTemplate', {
   documentType: 'WARD_EC8B', evidenceCategory: 'ec8b_evidence_of_loss',
   documentName: 'Ward EC8B Form', fileRequired: true
 });
-bindWardEvidenceForm('wardEc8bEFormTemplate', {
-  documentType: 'WARD_EC8B_EFORM', evidenceCategory: 'ec8b_eform_evidence',
-  documentName: 'Ward EC8B E-Form', fileRequired: false, descriptionRequired: true
+const ec8bParties = 'A AA AAC ADC ADP APC APGA APM APP BP LP NNPP NRM PDP PRP SDP YPP ZLP'.split(' ');
+const ec8bMeasures = {registeredVoters:'Registered voters', accreditedVoters:'Accredited voters', validVotes:'Total valid votes', rejectedVotes:'Rejected votes', votesCast:'Total votes cast'};
+const manualForm = $('manualEc8b');
+let ec8bRef = null;
+let rowKey = 0;
+let savingEc8b = false;
+function manualEc8bInput(id, key, label, numeric = false, required = true) {
+  const attrs = numeric ? 'type="number" min="0" step="1" max="99999999" inputmode="numeric"' : 'type="text" maxlength="180"';
+  return `<div class="field"><label for="${id}">${label}</label><input id="${id}" data-key="${key}" ${attrs} ${required ? 'required' : ''}></div>`;
+}
+function addEc8bRow() {
+  const row = document.createElement('fieldset');
+  row.className = 'ec8b-row';
+  const prefix = 'ec8bRow' + (++rowKey);
+  const field = (key,label,numeric,required) => manualEc8bInput(prefix+key,key,label,numeric,required);
+  row.innerHTML = `<legend></legend><div class="formgrid">${field('name','Polling unit name')}${field('code','Polling unit code')}${field('registeredVoters','Registered voters',true)}${field('accreditedVoters','Accredited voters',true)}</div>
+    <h3>Votes by party</h3><div class="ec8b-grid">${ec8bParties.map(p=>field(p,p,true)).join('')}</div>
+    <button class="btn secondary" type="button" data-zeros>Enter 0 for remaining blank parties</button>
+    <div class="formgrid">${field('rejectedVotes','Rejected votes',true)}${field('paperValid','Valid votes on paper (optional check)',true,false)}${field('paperCast','Votes cast on paper (optional check)',true,false)}</div>
+    <p class="ec8b-line"></p><p class="ec8b-check"></p><button type="button" class="btn secondary" data-remove>Remove polling unit</button>`;
+  $('ec8bRows').append(row);
+  updateEc8bTotals();
+  return row;
+}
+function numberOrNull(input) { return Number.isFinite(input.valueAsNumber) ? input.valueAsNumber : null; }
+function collectEc8b() {
+  const wardTotals = Object.fromEntries(Object.keys(ec8bMeasures).map(k=>[k,0]));
+  const partyTotals = Object.fromEntries(ec8bParties.map(p=>[p,0]));
+  const pollingUnits = Array.from($('ec8bRows').children, (row, i) => {
+    const inputs = Object.fromEntries([...row.querySelectorAll('input')].map(el=>[el.dataset.key,el]));
+    const votes = Object.fromEntries(ec8bParties.map(p=>[p,numberOrNull(inputs[p])]));
+    const validVotes = Object.values(votes).reduce((sum,n)=>sum+(n??0),0);
+    const rejectedVotes = numberOrNull(inputs.rejectedVotes);
+    const unit = {rowNumber:i+1, name:inputs.name.value.trim(), code:inputs.code.value.trim(), registeredVoters:numberOrNull(inputs.registeredVoters), accreditedVoters:numberOrNull(inputs.accreditedVoters), partyVotes:votes, validVotes, rejectedVotes, votesCast:validVotes+(rejectedVotes??0), paperValidVotes:numberOrNull(inputs.paperValid), paperVotesCast:numberOrNull(inputs.paperCast)};
+    for (const key of Object.keys(wardTotals)) wardTotals[key]+=unit[key]??0;
+    for (const p of ec8bParties) partyTotals[p]+=votes[p]??0;
+    return unit;
+  });
+  return {pollingUnits, wardTotals, partyTotals};
+}
+function ec8bChips(values, labels) {
+  return Object.entries(values).map(([key,n])=>`<div class="ec8b-stat"><small>${labels[key]||key}</small><strong>${n.toLocaleString()}</strong></div>`).join('');
+}
+function updateEc8bTotals() {
+  const {pollingUnits,wardTotals,partyTotals} = collectEc8b();
+  const codes = new Set();
+  for (const [i,unit] of pollingUnits.entries()) {
+    const row = $('ec8bRows').children[i];
+    row.querySelector('legend').textContent = 'Polling unit '+(i+1);
+    const codeInput=row.querySelector('[data-key="code"]');
+    const code=unit.code.toUpperCase();
+    codeInput.setCustomValidity(codeInput.value && !code ? 'Enter the printed polling unit code.' : code && codes.has(code) ? 'This polling unit code already appears on the form.' : '');
+    if(code) codes.add(code);
+    row.querySelector('[data-remove]').hidden = pollingUnits.length === 1;
+    row.querySelector('.ec8b-line').textContent = 'Calculated valid votes: '+unit.validVotes+' · Votes cast: '+unit.votesCast;
+    const checks=[];
+    if(unit.paperValidVotes!==null && unit.paperValidVotes!==unit.validVotes) checks.push('Valid votes on paper differ from the party sum.');
+    if(unit.paperVotesCast!==null && unit.paperVotesCast!==unit.votesCast) checks.push('Votes cast on paper differ from valid plus rejected votes.');
+    if(unit.accreditedVoters!==null && unit.registeredVoters!==null && unit.accreditedVoters>unit.registeredVoters) checks.push('Accredited voters exceed registered voters.');
+    if(unit.accreditedVoters!==null && unit.votesCast>unit.accreditedVoters) checks.push('Votes cast exceed accredited voters.');
+    row.querySelector('.ec8b-check').textContent=checks.join(' ');
+  }
+  $('ec8bCount').textContent=pollingUnits.length+' polling unit'+(pollingUnits.length===1?'':'s')+' entered · Totals update as you type.';
+  $('ec8bTotals').innerHTML=ec8bChips(wardTotals,ec8bMeasures);
+  $('ec8bPartyTotals').innerHTML=ec8bChips(partyTotals,{});
+}
+$('ec8bAgents').innerHTML=ec8bParties.map(p=>`<div class="field"><label for="agentName${p}">${p} agent name</label><input id="agentName${p}" maxlength="160"><label for="sig${p}">${p} signature on paper</label><select id="sig${p}"><option value="">Unrecorded</option><option>Present</option><option>Absent</option><option>Illegible</option></select></div>`).join('');
+$('ec8bAdd').onclick=()=>addEc8bRow().querySelector('input').focus();
+$('ec8bRows').addEventListener('click', event=>{
+  const row=event.target.closest('.ec8b-row');
+  if(!row) return;
+  if(event.target.matches('[data-zeros]')){
+    for(const p of ec8bParties){const input=row.querySelector('[data-key="'+p+'"]'); if(input.value==='' && !input.validity.badInput) input.value='0';}
+  } else if(event.target.matches('[data-remove]') && $('ec8bRows').children.length>1){
+    if([...row.querySelectorAll('input')].some(el=>el.value!=='') && !window.confirm('Remove this polling unit and its entries?')) return;
+    row.remove();
+  } else return;
+  updateEc8bTotals();
+});
+$('ec8bRows').addEventListener('input',()=>{for(const el of $('ec8bRows').querySelectorAll('input[type=text]'))el.setCustomValidity(el.value && !el.value.trim()?'Enter the printed name or code.':'');updateEc8bTotals();});
+addEc8bRow();
+$('ec8bNew').onclick=()=>{
+  manualForm.reset(); $('ec8bRows').replaceChildren(); ec8bRef=null;
+  $('ec8bEntry').disabled=false; $('ec8bNew').hidden=true; $('ec8bStatus').className='notice';
+  renderWardLossTemplateContext(); addEc8bRow();
+};
+manualForm.addEventListener('submit',async event=>{
+  event.preventDefault();
+  if(savingEc8b || $('ec8bEntry').disabled || !manualForm.reportValidity()) return;
+  try{
+    const scope=wardEvidenceScope();
+    if(!scope.electionType || !scope.candidateId) throw Error('Your election or candidate assignment is missing.');
+    const figures=collectEc8b();
+    if(figures.pollingUnits.some(u=>!u.name || !u.code)) throw Error('Enter a name and code for each polling unit.');
+    const partyAgents=ec8bParties.map(p=>({party:p,name:$('agentName'+p).value.trim(),signature:$('sig'+p).value})).filter(a=>a.name||a.signature);
+    const record={...scope, ...figures, partyAgents, partyOrder:ec8bParties, schemaVersion:2, recordType:'ward_evidence_of_loss', documentType:'WARD_EC8B_EFORM', evidenceCategory:'ec8b_eform_evidence', documentName:'Ward EC8B E-Form', documentReference:$('ec8bSerial').value.trim(), formDate:$('ec8bDate').value, collationOfficer:{name:$('ec8bOfficer').value.trim(),signature:$('ec8bSigned').value,stamp:$('ec8bStamp').value}, description:'Manual EC8B entry', cloudinaryUrl:'', cloudinaryPublicId:'', cloudinaryResourceType:'', uploadProvider:'none', status:'submitted', createdAt:serverTimestamp(), updatedAt:serverTimestamp()};
+    if(!ec8bRef) ec8bRef=doc(collection(db,WARD_EVIDENCE_COLLECTION));
+    savingEc8b=true; $('ec8bEntry').disabled=true;
+    notice('ec8bStatus','Saving your EC8B. Please keep this page open.');
+    await setDoc(ec8bRef,record);
+    notice('ec8bStatus','EC8B saved. Reference: '+ec8bRef.id);
+    $('ec8bNew').hidden=false;
+  }catch(error){
+    $('ec8bEntry').disabled=false;
+    notice('ec8bStatus','EC8B could not be saved. Your entries are still here. '+(error.message||error.code),true);
+  }finally{savingEc8b=false;}
 });
 bindWardEvidenceForm('wardEc8bDuplicateTemplate', {
   documentType: 'WARD_EC8B_DUPLICATE', evidenceCategory: 'ec8b_duplicate_evidence',

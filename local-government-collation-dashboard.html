@@ -55,7 +55,7 @@
 
 
 </style>
-</head>
+<style>#manualWardForms{min-width:0}#manualWardForms details{padding:14px 0;border-bottom:1px solid var(--line)}#manualWardForms summary{cursor:pointer}#manualWardForms .tablewrap{overflow:auto;max-width:100%}#manualWardForms th,#manualWardForms td{white-space:nowrap}#manualWardForms p{overflow-wrap:anywhere}</style></head>
 <body>
 <section id="loginView" class="login-wrap">
  <form id="loginForm" class="login">
@@ -74,6 +74,7 @@
   <nav class="nav">
    <button data-view="overview">▦ Overview</button>
    <button class="active" data-view="wards">▤ Ward Collations</button>
+   <button data-view="ward-forms">Ward EC8B E-Forms</button>
    <button data-view="results">▥ Consolidated Results</button>
    <button data-view="submit">＋ Submit LGA Collation</button>
    <button data-view="history">◷ Collation History</button>
@@ -98,6 +99,7 @@
    <section class="view active" id="view-wards">
 <div class="panel"><div class="panelhead"><h2>Local Government Collation Dashboard</h2><div class="filters"><input id="wardSearch" placeholder="Search ward…"><select id="wardStatus"><option value="">All wards</option><option value="expose">Expose</option><option value="violence">Violence</option><option value="successful">Successful</option><option value="collation">Status: Collation</option></select></div></div><div id="wardCount" class="muted" style="margin:0 0 12px">Loading assigned wards…</div><div id="wardTable" class="tablewrap"><div class="empty">Loading ward collation records…</div></div></div>
    </section>
+   <section class="view" id="view-ward-forms"><div class="eyebrow">Ward Evidence of Loss</div><h1>Ward EC8B E-Forms</h1><p class="sub">Open a ward submission to review polling-unit figures, party votes and the paper sign-off details.</p><div class="panel" id="manualWardForms" aria-live="polite">Loading ward E-Forms…</div></section>
    <section class="view" id="view-results">
     <div class="eyebrow">Election aggregation</div><h1>Consolidated Results</h1><p class="sub">Totals calculated from the latest submitted ward collation for each ward. This view does not modify ward source records.</p>
     <div class="stats">
@@ -312,19 +314,50 @@ function openWard(id){
 function switchView(v){
  document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id==='view-'+v));
  document.querySelectorAll('.nav [data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===v));
- $('topTitle').textContent=({overview:'Local Government overview',wards:'Local Government Collation Dashboard',results:'Consolidated results',submit:'Submit LGA collation',history:'Collation history',profile:'My profile'})[v]||'Local Government operations';
+ $('topTitle').textContent=({overview:'Local Government overview','ward-forms':'Ward EC8B E-Forms',wards:'Local Government Collation Dashboard',results:'Consolidated results',submit:'Submit LGA collation',history:'Collation history',profile:'My profile'})[v]||'Local Government operations';
  $('sidebar').classList.remove('open');window.scrollTo({top:0,behavior:'smooth'});
 }
 function renderProfile(){
  const rows=[['Full name',profile.fullName],['Username',profile.username],['Email',profile.email||user.email],['Phone',profile.phone],['Role',profile.agentRoleLabel||profile.agentRole],['Election',assignment.electionName],['Candidate',assignment.candidateName],['State',assignment.state],['Local Government',assignment.lga],['LGA code',assignment.lgaCode],['Account status',profile.status]];
  $('profileGrid').innerHTML=rows.filter(x=>x[1]!==undefined&&x[1]!==null&&x[1]!=='').map(([k,v])=>`<div><small>${esc(k)}</small><b>${esc(v)}</b></div>`).join('');
 }
+function listenForManualEc8b() {
+  const panel=$('manualWardForms');
+  panel.textContent='Loading ward E-Forms…';
+  const formsQuery=query(collection(db,'wardEvidenceOfLoss'),
+    where('documentType','==','WARD_EC8B_EFORM'), where('schemaVersion','==',2),
+    where('stateCode','==',assignment.stateCode), where('lgaCode','==',assignment.lgaCode),
+    where('candidateId','==',assignment.candidateId), where('electionType','==',assignment.electionType));
+  return onSnapshot(formsQuery, snapshot=>{
+    const forms=snapshot.docs.map(d=>({...d.data(),id:d.id})).sort((a,b)=>dateMs(b.createdAt)-dateMs(a.createdAt));
+    if(!forms.length){panel.textContent='No manual EC8B forms have been received for your assignment.';return;}
+    const opened=new Set([...panel.querySelectorAll('details[open]')].map(el=>el.dataset.id));
+    panel.innerHTML=forms.map(f=>{
+      const parties=Array.isArray(f.partyOrder)?f.partyOrder:[];
+      const units=Array.isArray(f.pollingUnits)?f.pollingUnits:[];
+      const agents=Array.isArray(f.partyAgents)?f.partyAgents:[];
+      const cell=value=>'<td>'+esc(value??'—')+'</td>';
+      const totals=f.wardTotals||{}, officer=f.collationOfficer||{};
+      const row=u=>[u.rowNumber,u.name,u.code,u.registeredVoters,u.accreditedVoters,...parties.map(p=>u.partyVotes?.[p]),u.validVotes,u.rejectedVotes,u.votesCast,u.paperValidVotes,u.paperVotesCast].map(cell).join('');
+      const footer=['','Ward total','',totals.registeredVoters,totals.accreditedVoters,...parties.map(p=>f.partyTotals?.[p]),totals.validVotes,totals.rejectedVotes,totals.votesCast,'',''].map(cell).join('');
+      return `<details data-id="${esc(f.id)}" ${opened.has(f.id)?'open':''}><summary><strong>${esc(f.ward||f.wardCode)}</strong> · ${units.length} polling unit(s) · ${esc(totals.validVotes)} valid votes</summary>
+        <p>${esc(f.state||f.stateCode)} · ${esc(f.lga||f.lgaCode)} · Ward ${esc(f.wardCode)} · ${esc(f.electionName||f.electionType)}</p>
+        <p>Paper serial: ${esc(f.documentReference||'—')} · Form date: ${esc(f.formDate||'—')} · Submitted by ${esc(f.createdByName||f.createdBy)} · ${esc(fmt(f.createdAt))}</p>
+        <div class="tablewrap" role="region" tabindex="0" aria-label="Polling unit figures"><table><thead><tr>${['Row','Polling unit','Code','Registered','Accredited',...parties,'Valid','Rejected','Cast','Valid on paper','Cast on paper'].map(h=>'<th>'+esc(h)+'</th>').join('')}</tr></thead><tbody>${units.map(u=>'<tr>'+row(u)+'</tr>').join('')}</tbody><tfoot><tr>${footer}</tr></tfoot></table></div>
+        <p>Collation officer: ${esc(officer.name||'—')} · Signature: ${esc(officer.signature||'Unrecorded')} · Stamp: ${esc(officer.stamp||'Unrecorded')}</p>
+        ${agents.length?'<p>Party agents: '+agents.map(a=>esc(a.party)+' — '+esc(a.name||'Name unrecorded')+' (signature: '+esc(a.signature||'Unrecorded')+')').join(', ')+'</p>':''}
+        <small>Saved reference: ${esc(f.id)}</small></details>`;
+    }).join('');
+  },error=>{panel.textContent='Ward E-Forms could not be loaded. '+(error.code==='permission-denied'?'Check the published Firestore read permission for this LGA assignment.':error.message||error.code);});
+}
+
 async function loadData(){
  unsubs.forEach(f=>f());unsubs=[];
  const wardsQ=query(collection(db,'geographyWards'),where('lgaCode','==',assignment.lgaCode));
  const collsQ=query(collection(db,'wardCollations'),where('lgaCode','==',assignment.lgaCode),where('stateCode','==',assignment.stateCode),where('electionType','==',assignment.electionType));
  const histQ=query(collection(db,'lgaCollations'),where('lgaCode','==',assignment.lgaCode));
  const listen=(q,key)=>unsubs.push(onSnapshot(q,s=>{data[key]=s.docs.map(d=>({id:d.id,...d.data()}));renderAll()},e=>{console.error(key,e);const target=key==='wards'?'progressTable':key==='collations'?'wardTable':'historyTable';$(target).innerHTML=`<div class="empty">Unable to read ${key}. Check Firestore Rules and confirm records contain the assigned lgaCode. (${esc(e.code||e.message)})</div>`}));
+ unsubs.push(listenForManualEc8b());
  listen(wardsQ,'wards');listen(collsQ,'collations');listen(histQ,'lgaHistory');
 }
 function renderAll(){renderOverview();renderWards();renderTotals();renderHistory()}
@@ -366,7 +399,7 @@ async function loadProfile(u){
 $('loginForm').addEventListener('submit',async e=>{e.preventDefault();const b=$('loginBtn');b.disabled=true;b.textContent='Signing in…';try{await signInWithEmailAndPassword(auth,$('loginEmail').value.trim(),$('loginPassword').value)}catch(err){notice('loginNotice',err.message||'Sign in failed.',true)}finally{b.disabled=false;b.textContent='Sign in securely'}});
 async function logout(){unsubs.forEach(f=>f());unsubs=[];await signOut(auth);window.location.replace('index.html')}
 $('logoutBtn').addEventListener('click',logout);
-onAuthStateChanged(auth,async u=>{if(!u){$('appView').classList.add('hidden');$('loginView').classList.remove('hidden');return}try{$('loginView').classList.add('hidden');$('appView').classList.remove('hidden');await loadProfile(u)}catch(err){console.error(err);$('appView').classList.add('hidden');$('loginView').classList.remove('hidden');notice('loginNotice',err.message||'Unable to load account. Your sign-in is still active; do not enter your password again until the account assignment is checked.',true);/* Keep the Firebase session alive; do not sign the user out on profile-loading errors. */}});
+onAuthStateChanged(auth,async u=>{$('manualWardForms').textContent='Loading ward E-Forms…';if(!u){$('appView').classList.add('hidden');$('loginView').classList.remove('hidden');return}try{$('loginView').classList.add('hidden');$('appView').classList.remove('hidden');await loadProfile(u)}catch(err){console.error(err);$('appView').classList.add('hidden');$('loginView').classList.remove('hidden');notice('loginNotice',err.message||'Unable to load account. Your sign-in is still active; do not enter your password again until the account assignment is checked.',true);/* Keep the Firebase session alive; do not sign the user out on profile-loading errors. */}});
 document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));
 document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.goto)));
 $('menuBtn').addEventListener('click',()=>$('sidebar').classList.toggle('open'));
