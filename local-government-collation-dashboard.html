@@ -227,8 +227,8 @@
 </div>
 <div class="evidence-modal" id="wardEvidenceModal" role="dialog" aria-modal="true" aria-labelledby="evidenceWardTitle">
  <div class="evidence-box">
-  <div class="evidence-head"><div><span class="evidence-status" id="evidenceStatusLabel">Successful</span><h2 id="evidenceWardTitle">Ward evidence</h2><p class="evidence-sub" id="evidenceWardMeta">Polling-unit evidence for this ward</p></div><button class="xbtn" id="closeWardEvidence">Close</button></div>
-  <div id="wardEvidenceContent"><div class="empty">Loading polling-unit evidence…</div></div>
+  <div class="evidence-head"><div><span class="evidence-status" id="evidenceStatusLabel">Successful</span><h2 id="evidenceWardTitle">Ward evidence</h2><p class="evidence-sub" id="evidenceWardMeta">Evidence uploaded by this ward</p></div><button class="xbtn" id="closeWardEvidence">Close</button></div>
+  <div id="wardEvidenceContent"><div class="empty">Loading ward evidence…</div></div>
  </div>
 </div>
 <div class="modal" id="detailModal"><div class="modalbox"><div class="modalhead"><h2 id="detailTitle">Ward collation details</h2><button class="xbtn" id="closeDetail">Close</button></div><div id="detailContent"></div></div></div>
@@ -285,13 +285,6 @@ function renderOverview(){
  const rows=data.wards.map(w=>{const code=String(first(w.wardCode,w.code,w.id,''));const r=eligible.find(x=>String(x.wardCode)===code);return {w,code,r}}).sort((a,b)=>recordName(a.w).localeCompare(recordName(b.w),undefined,{numeric:true}));
  $('progressTable').innerHTML=rows.length?`<table><thead><tr><th>Ward</th><th>Ward code</th><th>Submission</th><th>Valid votes</th><th>Submitted</th></tr></thead><tbody>${rows.map(x=>`<tr><td><strong>${esc(recordName(x.w))}</strong></td><td>${esc(x.code)}</td><td>${x.r?'<span class="tag">Received</span>':'<span class="tag warn">Awaiting</span>'}</td><td>${x.r?Number(x.r.wardTotals?.validVotes||0).toLocaleString():'—'}</td><td>${x.r?esc(fmt(x.r.createdAt)):'—'}</td></tr>`).join('')}</tbody></table>`:'<div class="empty">No registered wards found for this LGA. Check the geographyWards collection and the assigned LGA code.</div>';
 }
-function wardStatusFlags(r){
- const text=[r.summary,r.discrepancies,r.status,r.reviewStatus,r.electionStatus,r.electionStatusLabel].filter(Boolean).join(' ').toLowerCase().replaceAll('_',' ').replaceAll('-',' ');
- const over=Boolean(r.overVoting||r.hasOverVoting||Number(r.overVotingCount||0)>0||text.includes('over voting')||text.includes('overvoting'));
- const violence=Boolean(r.violence||r.hasViolence||Number(r.violenceCount||0)>0||text.includes('violence')||text.includes('violent'));
- const success=Boolean(r.successful||r.isSuccessful||r.successfulElection===true||(!over&&!violence&&String(r.status||'').toLowerCase()==='submitted'));
- return {over,violence,success};
-}
 const LGA_PARTIES=['ADC','APC','A','AA','AAC','ADP','APGA','APM','APP','BP','LP','NNPP','NRM','PDP','PRP','SDP','YPP','ZLP'];
 function wardPartyMap(r){
  const list=Array.isArray(r.partyResults)?r.partyResults:(Array.isArray(r.wardTotals?.partyResults)?r.wardTotals.partyResults:(Array.isArray(r.partyTotals)?r.partyTotals:[]));
@@ -304,10 +297,12 @@ function renderWards(){
  let rows=data.wards.map(w=>{
   const code=String(first(w.wardCode,w.code,w.id,''));
   const submitted=eligibleWardCollations().find(r=>String(first(r.wardCode,r.geography?.wardCode,''))===code)||null;
-  return {w,code,r:submitted};
+  return {w,code,r:submitted,flags:{
+    over:categoryReceived(w,'expose'), violence:categoryReceived(w,'violence'), success:categoryReceived(w,'successful')
+  }};
  }).filter(x=>[recordName(x.w),x.code,x.r?.createdByName||'',x.r?.summary||''].join(' ').toLowerCase().includes(term));
  rows=rows.filter(x=>{
-  const flags=x.r?wardStatusFlags(x.r):{over:false,violence:false,success:false};
+  const flags=x.flags;
   if(filter==='expose')return flags.over;
   if(filter==='violence')return flags.violence;
   if(filter==='successful')return flags.success;
@@ -321,12 +316,11 @@ function renderWards(){
  }).length;
  $('wardCount').textContent=`Showing ${rows.length} of ${allCount} registered wards · ${receivedCount} with matching ward collations in ${assignment.lga||'your assigned LGA'}`;
  const totalsByParty=Object.fromEntries(LGA_PARTIES.map(p=>[p,0]));
- const body=rows.map(({w,code,r})=>{
-  const flags=r?wardStatusFlags(r):{over:false,violence:false,success:false};
+ const body=rows.map(({w,code,r,flags})=>{
   const votes=r?wardPartyMap(r):{};
   const cells=LGA_PARTIES.map(p=>{const n=Number(votes[p]||0);totalsByParty[p]+=n;return `<td class="${r?'':'no-result waiting-cell'}">${r?n.toLocaleString():'00'}</td>`}).join('');
   const status=r?'Collation':'Awaiting';
-  return `<tr><td><span class="lga-row-name">${esc(recordName(w))}</span><span class="lga-row-code">${esc(code)}</span><div class="lga-status-buttons"><button class="lga-status-btn ${flags.over?'active over':''}" type="button" data-ward-status="expose" data-ward-code="${esc(code)}" data-ward-name="${esc(recordName(w))}">Expose</button><button class="lga-status-btn ${flags.violence?'active violence':''}" type="button" data-ward-status="violence" data-ward-code="${esc(code)}" data-ward-name="${esc(recordName(w))}">Violence</button><button class="lga-status-btn ${flags.success?'active success':''}" type="button" data-ward-status="successful" data-ward-code="${esc(code)}" data-ward-name="${esc(recordName(w))}">Successful</button></div><div class="lga-collation-status ${r?'received':'pending'}">Status: ${status}</div></td>${cells}</tr><tr class="ward-detail-row hidden" id="ward-detail-${esc(code)}"><td colspan="${LGA_PARTIES.length+1}"><div class="ward-pu-detail" id="ward-pu-${esc(code)}"></div></td></tr>`;
+  return `<tr><td><span class="lga-row-name">${esc(recordName(w))}</span><span class="lga-row-code">${esc(code)}</span><div class="lga-status-buttons"><button class="lga-status-btn ${flags.over?'active over':''}" type="button" data-ward-status="expose" data-ward-id="${esc(w.id)}" data-ward-code="${esc(code)}" data-ward-name="${esc(recordName(w))}">Expose</button><button class="lga-status-btn ${flags.violence?'active violence':''}" type="button" data-ward-status="violence" data-ward-id="${esc(w.id)}" data-ward-code="${esc(code)}" data-ward-name="${esc(recordName(w))}">Violence</button><button class="lga-status-btn ${flags.success?'active success':''}" type="button" data-ward-status="successful" data-ward-id="${esc(w.id)}" data-ward-code="${esc(code)}" data-ward-name="${esc(recordName(w))}">Successful</button></div><div class="lga-collation-status ${r?'received':'pending'}">Status: ${status}</div></td>${cells}</tr><tr class="ward-detail-row hidden" id="ward-detail-${esc(code)}"><td colspan="${LGA_PARTIES.length+1}"><div class="ward-pu-detail" id="ward-pu-${esc(code)}"></div></td></tr>`;
  }).join('');
  const totalCells=LGA_PARTIES.map(p=>`<td>${totalsByParty[p].toLocaleString()}</td>`).join('');
  $('wardTable').innerHTML=rows.length?`<div class="ec8a-compare-scroll"><table class="lga-party-table"><thead><tr><th>WARD</th>${LGA_PARTIES.map(p=>`<th>${esc(p)}</th>`).join('')}</tr></thead><tbody>${body}</tbody><tfoot><tr><td><span class="lga-row-name">TOTAL VOTES</span><span class="lga-row-code">All registered wards</span></td>${totalCells}</tr></tfoot></table></div>`:'<div class="empty">No wards match this filter.</div>';
@@ -345,120 +339,144 @@ function puPartyMap(r){
  const list=Array.isArray(r?.partyResults)?r.partyResults:(Array.isArray(r?.results)?r.results:(Array.isArray(r?.votes)?r.votes:[]));
  const out={};list.forEach(x=>{const n=String(first(x.party,x.partyName,x.abbreviation,x.partyCode,x.code,'')).trim().toUpperCase();const v=Number(x.votes??x.voteCount??x.totalVotes);if(n&&Number.isFinite(v))out[n]=v;});return out;
 }
-const evidenceCollections=['wardEvidenceOfLoss'];
-const evidenceButtonTypes={ec8b:'View Form EC8B',eform:'View E-Form',video:'View Video',duplicate:'View Duplicate Copy'};
-function evidenceUrls(value,kind,out=[],seen=new Set(),depth=0){
- if(value==null||depth>5)return out;
- if(typeof value==='string'){
-  const v=value.trim();
-  if(/^https?:\/\//i.test(v)&&!seen.has(v)){seen.add(v);out.push(v)}
-  return out;
- }
- if(Array.isArray(value)){value.forEach(x=>evidenceUrls(x,kind,out,seen,depth+1));return out;}
- if(typeof value==='object'){
-  for(const [key,val] of Object.entries(value)){
-   const k=key.toLowerCase().replace(/[^a-z0-9]/g,'');
-   const matches=kind==='video'?/(video|recording|clip)/.test(k)
-    :kind==='duplicate'?/(duplicate|copy|backup)/.test(k)
-    :kind==='original'?/(original|originalcopy|originalform|originalec8b)/.test(k)
-    :kind==='pick'?/(pick|pickcopy|pickedcopy|pickform|pickec8b)/.test(k)
-    :kind==='ec8b'?/(ec8b|formec8b|ec8bphoto|ec8bimage|formphoto|formimage|paperform|documenturl|uploadedform)/.test(k)
-    :/(eform|electronicform|wardeform|eformfile)/.test(k);
-   if(matches)evidenceUrls(val,kind,out,seen,depth+1);
-   else if(typeof val==='object')evidenceUrls(val,kind,out,seen,depth+1);
-  }
- }
- return out;
-}
-function mediaMarkup(url,kind){
- const safe=esc(url);
- if(/\.(mp4|webm|mov|m4v)(\?|#|$)/i.test(url)||kind==='video')return `<video controls playsinline preload="metadata" src="${safe}"></video><p><a href="${safe}" target="_blank" rel="noopener">Open video in a new tab</a></p>`;
- if(/\.(png|jpe?g|gif|webp|bmp)(\?|#|$)/i.test(url)||kind==='ec8b'||kind==='eform'||kind==='duplicate')return `<a href="${safe}" target="_blank" rel="noopener">Open evidence file</a><img src="${safe}" alt="Uploaded election evidence" loading="lazy" onerror="this.style.display='none'">`;
- return `<a href="${safe}" target="_blank" rel="noopener">Open uploaded evidence</a>`;
-}
-async function loadWardEvidence(wardCode,wardName,status){
- const modal=$('wardEvidenceModal'),content=$('wardEvidenceContent');
- const statusText=status==='expose'?'Expose':status==='violence'?'Violence':'Successful';
- $('evidenceStatusLabel').textContent=statusText;
- $('evidenceStatusLabel').className='evidence-status '+status;
- $('evidenceWardTitle').textContent=wardName+' Ward';
- $('evidenceWardMeta').textContent=`${assignment.lga||'Local Government'} · ${assignment.state||''} · Evidence uploaded by this ward`;
- content.innerHTML='<div class="empty">Loading evidence records for this ward…</div>';
- content.dataset.records='[]';
- content.dataset.wardCode=String(wardCode);
- content.dataset.wardName=String(wardName);
- modal.classList.add('show');
- try{
-  // Load evidence uploaded by the ward itself. These four controls are ward-level:
-  // do not mix in EC8A results or pollingUnitReports from individual PUs.
-  const snaps=await Promise.all(evidenceCollections.map(async name=>{
-   try{
-    return {name,snap:await getDocs(query(
-     collection(db,name),
-     where('stateCode','==',assignment.stateCode),
-     where('lgaCode','==',assignment.lgaCode),
-     where('electionType','==',assignment.electionType),
-     where('candidateId','==',assignment.candidateId)
-    ))};
-   }catch(error){
-    console.warn('Evidence collection read failed:',name,error);
-    return {name,snap:null,error};
-   }
-  }));
-  const records=snaps.flatMap(({name,snap})=>snap?snap.docs.map(d=>({id:d.id,source:name,...d.data()})):[])
-   .filter(r=>String(first(r.wardCode,r.geography?.wardCode,r.assignedWardCode,''))===String(wardCode)
-    && (r.documentType==='WARD_EC8B_EFORM'||r.schemaVersion===2||r.wardCode!=null));
-  content.dataset.records=JSON.stringify(records);
-  const exposeButtons=status==='expose'
-   ? {original:'View Original Copy',pick:'View Pick Copy'}
-   : evidenceButtonTypes;
-  content.dataset.exposeMode=status==='expose'?'yes':'no';
-  content.innerHTML=`
-   <div class="evidence-actions ward-evidence-actions">
-    ${Object.entries(exposeButtons).map(([kind,label],index)=>`<button type="button" class="evidence-choice ${index===0?'active':''}" data-evidence-kind="${kind}" aria-pressed="${index===0?'true':'false'}">${label}</button>`).join('')}
-   </div>
-   <div class="evidence-result" id="ward-evidence-result">Choose an evidence type to view files uploaded by ${esc(wardName)} Ward.</div>`;
- }catch(error){
-  console.error('Ward evidence load failed',error);
-  // Keep the four controls visible even if Firebase returns a read error.
-  const exposeButtons=status==='expose'?{original:'View Original Copy',pick:'View Pick Copy'}:evidenceButtonTypes;
-  content.dataset.exposeMode=status==='expose'?'yes':'no';
-  content.innerHTML=`
-   <div class="evidence-actions ward-evidence-actions">
-    ${Object.entries(exposeButtons).map(([kind,label],index)=>`<button type="button" class="evidence-choice ${index===0?'active':''}" data-evidence-kind="${kind}" aria-pressed="${index===0?'true':'false'}">${label}</button>`).join('')}
-   </div>
-   <div class="evidence-result" id="ward-evidence-result">Evidence records could not be loaded. Check Firestore read permissions. (${esc(error.code||error.message)})</div>`;
- }
-}
-function showEvidenceForWard(kind){
- const content=$('wardEvidenceContent'),target=$('ward-evidence-result');
- if(!target)return;
- let records=[];try{records=JSON.parse(content.dataset.records||'[]')}catch{}
- const label=evidenceButtonTypes[kind]||'Evidence';
- const wardName=content.dataset.wardName||'Selected ward';
+const wardEvidenceMenu = {
+  successful: {
+    WARD_EC8B: 'View Form EC8B', WARD_EC8B_EFORM: 'View E-Form',
+    WARD_EC8B_DUPLICATE: 'View Duplicate Copy', WARD_SUCCESSFUL_VIDEO: 'View Video'
+  },
+  violence: {
+    WARD_VIOLENCE_EC40G: 'View Form EC40G', WARD_VIOLENCE_DUPLICATE: 'View Duplicate Copy',
+    WARD_VIOLENCE_VIDEO: 'View Video'
+  },
+  expose: { WARD_EXPOSE_ORIGINAL: 'View Original Copy', WARD_EXPOSE_ALTERED_COPY: 'View Altered/Fake Copy' }
+};
+const manualType = 'WARD_EC8B_EFORM';
+const mediaTypes = Object.values(wardEvidenceMenu).flatMap(group => Object.keys(group)).filter(type => type !== manualType);
+const feeds = new Map();
+let evidenceWard = null, feedGeneration = 0;
 
- // Evidence is uploaded by the ward, stored in wardEvidenceOfLoss, and
- // filtered to the selected wardCode. It is not sourced from PU result reports.
- const relevant=records.filter(r=>r.source==='wardEvidenceOfLoss');
- const seen=new Set(),sections=[];
- relevant.forEach(r=>{
-  const urls=evidenceUrls(r,kind,[],seen);
-  const isWardEc8bForm=r.documentType==='WARD_EC8B_EFORM'||r.schemaVersion===2||Array.isArray(r.pollingUnits);
-  if(kind==='eform'&&isWardEc8bForm){
-   sections.push(`<section class="ward-evidence-record"><h3>${esc(r.ward||wardName+' Ward')} · Ward E-Form</h3><p class="muted">Submitted by ${esc(first(r.createdByName,r.createdBy,'Ward'))} · ${esc(fmt(r.createdAt))}</p>${readEc8bSheet(r)}<p class="muted">Reference: ${esc(r.id)}</p></section>`);
-   return;
+function wardRecords(ward, type) {
+  const feed = feeds.get(type === manualType ? 'forms' : 'media');
+  const codes = new Set([ward.id, ward.wardCode, ward.code].filter(v => v != null && v !== '').map(String));
+  return [...codes].flatMap(code => feed?.byWard.get(code)?.get(type) || [])
+    .sort((a,b) => dateMs(b.createdAt) - dateMs(a.createdAt) || a.id.localeCompare(b.id));
+}
+function categoryReceived(ward, category) {
+  return Object.keys(wardEvidenceMenu[category]).some(type => wardRecords(ward,type).length > 0);
+}
+function updateWardFeed(name, records, error) {
+  const byWard = new Map();
+  for (const record of records) {
+    const code = String(record.wardCode ?? '');
+    if (!code) continue;
+    if (!byWard.has(code)) byWard.set(code,new Map());
+    const types = byWard.get(code);
+    if (!types.has(record.documentType)) types.set(record.documentType,[]);
+    types.get(record.documentType).push(record);
   }
-  if(!urls.length)return;
-  sections.push(`<section class="ward-evidence-record"><h3>${esc(r.ward||wardName+' Ward')}</h3><p class="muted">${esc(label)} · ${esc(fmt(r.createdAt))}</p>${urls.map(url=>mediaMarkup(url,kind)).join('')}<p class="muted">Reference: ${esc(r.id)}</p></section>`);
- });
-
- if(sections.length){
-  target.innerHTML=`<p><b>${esc(label)} uploaded for ${esc(wardName)} Ward</b></p>${sections.join('<hr>')}`;
-  return;
- }
- target.textContent=relevant.length
-  ? `${label} evidence was not found in the selected ward's uploaded evidence records.`
-  : `No ward-level evidence submission was found for ${wardName} Ward in wardEvidenceOfLoss.`;
+  feeds.set(name,{byWard,error});
+  const scroll = $('wardTable').querySelector('.ec8a-compare-scroll');
+  const top = scroll?.scrollTop || 0, left = scroll?.scrollLeft || 0;
+  renderWards();
+  const updated = $('wardTable').querySelector('.ec8a-compare-scroll');
+  if (updated) { updated.scrollTop = top; updated.scrollLeft = left; }
+  if (evidenceWard && name === (evidenceWard.type === manualType ? 'forms' : 'media')) {
+    showWardEvidence(evidenceWard.type);
+  }
+}
+function listenWardFeed(name) {
+  const manual = name === 'forms';
+  const filters = ['stateCode','lgaCode','electionType','candidateId'].map(field => where(field,'==',assignment[field]));
+  if (manual) filters.push(where('documentType','==',manualType),where('schemaVersion','in',[2,3]));
+  else filters.push(where('documentType','in',mediaTypes));
+  const uid = auth.currentUser.uid, generation = feedGeneration;
+  const current = () => generation === feedGeneration && auth.currentUser?.uid === uid;
+  const q = query(collection(db,'wardEvidenceOfLoss'),...filters);
+  return onSnapshot(q,{includeMetadataChanges:true},snap => {
+    if (!current()) return;
+    // Wait for server authorization before displaying data from a previous session's cache.
+    if (snap.metadata.fromCache) return;
+    const records = snap.docs.map(d => ({...d.data(),id:d.id}));
+    updateWardFeed(name,records);
+    if (manual) renderManualForms(records);
+  }, error => {
+    if (!current()) return;
+    const message = error.code === 'permission-denied'
+      ? 'Firestore denied access. Check the LGA assignment and its published evidence read permission.'
+      : 'Ward evidence could not be loaded (' + (error.code || 'connection error') + ').';
+    updateWardFeed(name,[],message);
+    if (manual) $('manualWardForms').textContent = message;
+  });
+}
+function closeWardEvidence() {
+  if (!evidenceWard) return;
+  $('wardEvidenceModal').classList.remove('show');
+  $('wardEvidenceContent').replaceChildren();
+  const trigger = [...$('wardTable').querySelectorAll('[data-ward-status]')].find(b =>
+    b.dataset.wardId === evidenceWard.wardId && b.dataset.wardStatus === evidenceWard.category);
+  trigger?.focus();
+  evidenceWard = null;
+}
+function openWardEvidence(trigger) {
+  const {wardId, wardName, wardStatus} = trigger.dataset;
+  const choices = wardEvidenceMenu[wardStatus];
+  const ward = data.wards.find(w => w.id === wardId);
+  if (!ward || !choices) return;
+  evidenceWard = {wardId, wardName, ward, choices, category:wardStatus};
+  $('evidenceWardTitle').textContent = wardName + ' Ward';
+  $('evidenceWardMeta').textContent = [assignment.lga || assignment.lgaCode,assignment.electionName || assignment.electionType].join(' · ');
+  $('evidenceStatusLabel').textContent = trigger.textContent.trim();
+  $('evidenceStatusLabel').className = 'evidence-status ' + wardStatus;
+  $('wardEvidenceContent').innerHTML = '<div class="evidence-actions ward-evidence-actions">' +
+    Object.entries(choices).map(([type,label]) => '<button class="evidence-choice" type="button" data-evidence-kind="'+type+'">'+label+'</button>').join('') +
+    '</div><div class="evidence-result" id="ward-evidence-result" role="status"></div>';
+  $('wardEvidenceModal').classList.add('show');
+  $('closeWardEvidence').focus();
+  showWardEvidence(Object.keys(choices)[0]);
+}
+function wardMediaMarkup(record) {
+  let url;
+  try { url = new URL(record.cloudinaryUrl); } catch { return 'This record has no usable file link.'; }
+  if (url.origin !== 'https://res.cloudinary.com' || !url.pathname.startsWith('/hjdnytcb/')) return 'This record has no recognized file link.';
+  const src = esc(url.href);
+  const link = '<a href="'+src+'" target="_blank" rel="noopener noreferrer">Open uploaded file</a>';
+  if (record.cloudinaryResourceType === 'video') return '<video controls playsinline preload="metadata" src="'+src+'"></video>'+link;
+  if (record.fileType === 'application/pdf' || record.cloudinaryFormat === 'pdf' || /\.pdf$/i.test(url.pathname)) return link;
+  return link+'<img src="'+src+'" alt="Uploaded ward evidence" loading="lazy">';
+}
+function showWardEvidence(type) {
+  if (!evidenceWard || !Object.hasOwn(evidenceWard.choices,type)) return;
+  const {ward,wardName} = evidenceWard;
+  evidenceWard.type = type;
+  for (const btn of $('wardEvidenceContent').querySelectorAll('[data-evidence-kind]')) {
+    const active = btn.dataset.evidenceKind === type;
+    btn.setAttribute('aria-pressed', String(active));
+    btn.classList.toggle('active',active);
+    btn.classList.toggle('inactive',!active);
+  }
+  const manual = type === manualType;
+  const feed = feeds.get(manual ? 'forms' : 'media');
+  const result = $('ward-evidence-result');
+  if (!feed) { result.textContent = 'Waiting for Firestore. Check your connection if this takes a while.'; return; }
+  if (feed.error) {
+    result.textContent = feed.error + ' ';
+    const retry = document.createElement('button');
+    retry.type = 'button';
+    retry.className = 'btn secondary';
+    retry.textContent = 'Try again';
+    retry.addEventListener('click',loadData,{once:true});
+    result.append(retry);
+    result._rendered = null;
+    return;
+  }
+  const rows = wardRecords(ward,type);
+  if (!rows.length) { result.textContent = 'No submissions of this type for '+wardName+' Ward yet.'; return; }
+  const html = rows.map(r => '<section class="ward-evidence-record"><h3>'+esc(r.documentName || r.fileName || wardName)+'</h3><p class="muted">'+
+    esc(fmt(r.createdAt))+' · '+esc(r.createdByName || r.fullName || r.createdBy || '')+'</p>'+
+    (manual ? readEc8bSheet(r) : wardMediaMarkup(r))+'<p class="muted">Reference '+esc(r.id)+'</p></section>').join('');
+  // An unrelated ward upload should not restart a video that is already playing.
+  if (result._rendered !== html || !result.firstElementChild) result.innerHTML = html;
+  result._rendered = html;
 }
 
 async function toggleWardPollingUnits(wardCode){
@@ -591,15 +609,9 @@ function readEc8bSheet(f){
     sheetOfficer(f.collationOfficer||{},f.formDate,false)+sheetSignatures(Array.isArray(f.partyAgents)?f.partyAgents:[],false);
 }
 
-function listenForManualEc8b() {
-  const panel=$('manualWardForms');
-  panel.textContent='Loading ward E-Forms…';
-  const formsQuery=query(collection(db,'wardEvidenceOfLoss'),
-    where('documentType','==','WARD_EC8B_EFORM'), where('schemaVersion','==',2),
-    where('stateCode','==',assignment.stateCode), where('lgaCode','==',assignment.lgaCode),
-    where('candidateId','==',assignment.candidateId), where('electionType','==',assignment.electionType));
-  return onSnapshot(formsQuery, snapshot=>{
-    const forms=snapshot.docs.map(d=>({...d.data(),id:d.id})).sort((a,b)=>dateMs(b.createdAt)-dateMs(a.createdAt));
+function renderManualForms(forms) {
+    const panel=$('manualWardForms');
+    forms.sort((a,b)=>dateMs(b.createdAt)-dateMs(a.createdAt));
     if(!forms.length){panel.textContent='No manual EC8B forms have been received for your assignment.';return;}
     const opened=new Set([...panel.querySelectorAll('details[open]')].map(el=>el.dataset.id));
     panel.innerHTML=forms.map(f=>{
@@ -608,7 +620,6 @@ function listenForManualEc8b() {
         ${readEc8bSheet(f)}
         <p class="muted">Submitted by ${esc(f.createdByName||f.createdBy)} · ${esc(fmt(f.createdAt))} · Reference ${esc(f.id)}</p></details>`;
     }).join('');
-  },error=>{panel.textContent='Ward E-Forms could not be loaded. '+(error.code==='permission-denied'?'Check the published Firestore read permission for this LGA assignment.':error.message||error.code);});
 }
 
 const backupToggle = $('lgaBackupToggle');
@@ -695,12 +706,16 @@ backupLink.addEventListener('click', event => {
 });
 
 async function loadData(){
+ feedGeneration++;
+ feeds.clear();
+ if (evidenceWard) showWardEvidence(evidenceWard.type);
+ $('manualWardForms').textContent='Loading ward E-Forms…';
  unsubs.forEach(f=>f());unsubs=[];
  const wardsQ=query(collection(db,'geographyWards'),where('lgaCode','==',assignment.lgaCode));
  const collsQ=query(collection(db,'wardCollations'),where('lgaCode','==',assignment.lgaCode),where('stateCode','==',assignment.stateCode),where('electionType','==',assignment.electionType));
  const histQ=query(collection(db,'lgaCollations'),where('lgaCode','==',assignment.lgaCode));
- const listen=(q,key)=>unsubs.push(onSnapshot(q,s=>{data[key]=s.docs.map(d=>({id:d.id,...d.data()}));renderAll()},e=>{console.error(key,e);const target=key==='wards'?'progressTable':key==='collations'?'wardTable':'historyTable';$(target).innerHTML=`<div class="empty">Unable to read ${key}. Check Firestore Rules and confirm records contain the assigned lgaCode. (${esc(e.code||e.message)})</div>`}));
- unsubs.push(listenForManualEc8b());
+ const listen=(q,key)=>unsubs.push(onSnapshot(q,s=>{data[key]=s.docs.map(d=>({...d.data(),id:d.id}));renderAll()},e=>{console.error(key,e);const target=key==='wards'?'progressTable':key==='collations'?'wardTable':'historyTable';$(target).innerHTML=`<div class="empty">Unable to read ${key}. Check Firestore Rules and confirm records contain the assigned lgaCode. (${esc(e.code||e.message)})</div>`}));
+ unsubs.push(listenWardFeed('forms'),listenWardFeed('media'));
  listen(wardsQ,'wards');listen(collsQ,'collations');listen(histQ,'lgaHistory');
 }
 function renderAll(){renderOverview();renderWards();renderTotals();renderHistory()}
@@ -720,6 +735,7 @@ async function loadProfile(u){
  }
  // Prefer the dedicated agent assignment when available. Fall back to users/{uid}
  // when the agent document is absent or its read is blocked by Firestore Rules.
+ if (auth.currentUser?.uid !== u.uid) return;
  const a=Object.keys(agentData).length?agentData:userData;
  const rawRole=String(a.agentRole||a.role||userData.agentRole||userData.role||'').trim().toLowerCase().replace(/[\s-]+/g,'_');
  const isLgaRole=['local_government_collation_agent','lga_collation_agent','local_government_collation'].includes(rawRole);
@@ -742,24 +758,31 @@ async function loadProfile(u){
 $('loginForm').addEventListener('submit',async e=>{e.preventDefault();const b=$('loginBtn');b.disabled=true;b.textContent='Signing in…';try{await signInWithEmailAndPassword(auth,$('loginEmail').value.trim(),$('loginPassword').value)}catch(err){notice('loginNotice',err.message||'Sign in failed.',true)}finally{b.disabled=false;b.textContent='Sign in securely'}});
 async function logout(){unsubs.forEach(f=>f());unsubs=[];await signOut(auth);window.location.replace('index.html')}
 $('logoutBtn').addEventListener('click',logout);
-onAuthStateChanged(auth,async u=>{resetBackupPanel();$('manualWardForms').textContent='Loading ward E-Forms…';if(!u){$('appView').classList.add('hidden');$('loginView').classList.remove('hidden');return}try{$('loginView').classList.add('hidden');$('appView').classList.remove('hidden');await loadProfile(u)}catch(err){console.error(err);$('appView').classList.add('hidden');$('loginView').classList.remove('hidden');notice('loginNotice',err.message||'Unable to load account. Your sign-in is still active; do not enter your password again until the account assignment is checked.',true);/* Keep the Firebase session alive; do not sign the user out on profile-loading errors. */}});
+onAuthStateChanged(auth,async u=>{
+ feedGeneration++;
+ unsubs.forEach(stop=>stop());unsubs=[];
+ closeWardEvidence();feeds.clear();
+ data={wards:[],collations:[],lgaHistory:[]};renderAll();
+ resetBackupPanel();$('manualWardForms').textContent='Loading ward E-Forms…';if(!u){$('appView').classList.add('hidden');$('loginView').classList.remove('hidden');return}try{$('loginView').classList.add('hidden');$('appView').classList.remove('hidden');await loadProfile(u)}catch(err){console.error(err);$('appView').classList.add('hidden');$('loginView').classList.remove('hidden');notice('loginNotice',err.message||'Unable to load account. Your sign-in is still active; do not enter your password again until the account assignment is checked.',true);/* Keep the Firebase session alive; do not sign the user out on profile-loading errors. */}});
 document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));
 document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.goto)));
 $('menuBtn').addEventListener('click',()=>$('sidebar').classList.toggle('open'));
 $('wardSearch').addEventListener('input',renderWards);$('wardStatus').addEventListener('change',renderWards);$('refreshBtn').addEventListener('click',()=>loadData());
-$('wardTable').addEventListener('click',e=>{const statusBtn=e.target.closest('button[data-ward-status]');if(statusBtn){e.preventDefault();loadWardEvidence(statusBtn.dataset.wardCode,statusBtn.dataset.wardName,statusBtn.dataset.wardStatus);return;}const b=e.target.closest('button[data-expand-ward]');if(!b)return;e.preventDefault();const code=b.getAttribute('data-expand-ward');if(code)toggleWardPollingUnits(code);});
- $('wardEvidenceContent').addEventListener('click',e=>{
-  const b=e.target.closest('button[data-evidence-kind]');if(!b)return;
-  if($('wardEvidenceContent').dataset.exposeMode==='yes'){
-   $('wardEvidenceContent').querySelectorAll('.evidence-choice').forEach(btn=>{
-    const active=btn===b;btn.classList.toggle('active',active);btn.classList.toggle('inactive',!active);
-    btn.setAttribute('aria-pressed',active?'true':'false');
-   });
-  }
-  showEvidenceForWard(b.dataset.evidenceKind);
- });
- $('closeWardEvidence').addEventListener('click',()=>$('wardEvidenceModal').classList.remove('show'));
- $('wardEvidenceModal').addEventListener('click',e=>{if(e.target===$('wardEvidenceModal'))$('wardEvidenceModal').classList.remove('show')});
+$('wardTable').addEventListener('click',e=>{const status=e.target.closest('button[data-ward-status]');if(status){openWardEvidence(status);return;}const b=e.target.closest('button[data-expand-ward]');if(!b)return;e.preventDefault();const code=b.getAttribute('data-expand-ward');if(code)toggleWardPollingUnits(code);});
+$('wardEvidenceContent').addEventListener('click',e=>{
+  const button=e.target.closest('[data-evidence-kind]');
+  if(button)showWardEvidence(button.dataset.evidenceKind);
+});
+$('closeWardEvidence').addEventListener('click',closeWardEvidence);
+$('wardEvidenceModal').addEventListener('click',e=>{if(e.target===$('wardEvidenceModal'))closeWardEvidence();});
+$('wardEvidenceModal').addEventListener('keydown',e=>{
+  if(e.key==='Escape'){closeWardEvidence();return;}
+  if(e.key!=='Tab')return;
+  const items=$('wardEvidenceModal').querySelectorAll('button,a[href],video[controls],[tabindex="0"]');
+  const first=items[0],last=items[items.length-1];
+  if(e.shiftKey && document.activeElement===first){e.preventDefault();last.focus();}
+  if(!e.shiftKey && document.activeElement===last){e.preventDefault();first.focus();}
+});
 $('closeDetail').addEventListener('click',()=>$('detailModal').classList.remove('show'));$('detailModal').addEventListener('click',e=>{if(e.target===$('detailModal'))$('detailModal').classList.remove('show')});
 $('lgaForm').addEventListener('submit',async e=>{
  e.preventDefault();const btn=$('saveLgaBtn');btn.disabled=true;btn.textContent='Saving…';
