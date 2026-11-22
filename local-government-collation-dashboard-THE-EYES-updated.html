@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#08734f">
+<title>THE EYES | Local Government Collation Dashboard</title>
+<style>
+:root{--g:#08734f;--gd:#07543b;--mint:#eaf5ef;--bg:#f3f7f5;--ink:#20372d;--muted:#74847b;--line:#e1eae5;--white:#fff;--gold:#dcae43;--red:#b42318;--shadow:0 4px 18px #163b2910}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,"Segoe UI",Arial,sans-serif}button,input,textarea,select{font:inherit}button{cursor:pointer}.hidden{display:none!important}
+.login-wrap{min-height:100vh;display:grid;place-items:center;padding:20px;background:linear-gradient(135deg,#eef6f1,#f7faf8)}.login{width:min(430px,100%);background:#fff;border:1px solid var(--line);border-radius:18px;padding:28px;box-shadow:0 15px 45px #123b2414}.brand{font-weight:900;color:var(--g);letter-spacing:2px;font-size:20px}.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:.7px;font-weight:500;margin-top:4px}.login h1{font-size:25px;margin:22px 0 6px}.sub{font-size:13px;color:var(--muted);line-height:1.6;margin:0 0 18px}
+.field{margin:13px 0}.field label{display:block;font-size:11px;font-weight:750;margin-bottom:6px}.field input,.field textarea,.field select{width:100%;border:1px solid var(--line);border-radius:9px;padding:11px;background:#fbfcfb;color:var(--ink)}.field textarea{min-height:95px;resize:vertical}
+.btn{border:0;border-radius:9px;background:var(--g);color:#fff;padding:11px 15px;font-size:12px;font-weight:750}.btn:hover{background:var(--gd)}.btn.secondary{background:#edf5f0;color:var(--g)}.btn:disabled{opacity:.55;cursor:not-allowed}
+.notice{display:none;padding:12px;border-radius:9px;background:#edf7f0;color:#17603f;font-size:12px;line-height:1.5;margin-top:12px;white-space:pre-wrap}.notice.show{display:block}.notice.error{background:#fff0ef;color:#a52c25}
+.app{min-height:100vh;display:flex}.sidebar{width:248px;flex:0 0 248px;background:#fff;border-right:1px solid var(--line);padding:22px 16px;display:flex;flex-direction:column}.rolebox{padding:14px;background:#f8faf9;border:1px solid var(--line);border-radius:13px;margin:18px 0}.rolebox small{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:1px;margin-bottom:7px}.rolebox strong{font-size:13px}.rolebox p{font-size:11px;color:var(--muted);line-height:1.5;margin:7px 0 0}.nav{display:grid;gap:6px}.nav button{border:0;background:transparent;text-align:left;padding:12px;border-radius:10px;color:#607168;font-weight:650;font-size:13px}.nav button.active,.nav button:hover{background:var(--mint);color:var(--g)}.sidefoot{margin-top:auto;color:#9aa69f;font-size:10px;line-height:1.6}
+.main{min-width:0;flex:1}.topbar{height:68px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 26px;gap:12px}.topbar strong{font-size:14px}.topright{display:flex;align-items:center;gap:12px}.pill{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:var(--g);background:var(--mint);padding:8px 11px;border-radius:30px}.menu{display:none;border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 10px;color:var(--g)}
+.content{max-width:1500px;margin:auto;padding:28px}.view{display:none}.view.active{display:block}.eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:#69917b;font-weight:800}h1{font-size:32px;letter-spacing:-1px;margin:8px 0}.assigned{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow);margin-bottom:18px}.assigned h2{font-size:17px;margin:0 0 6px}.assigned p{font-size:12px;color:var(--muted);margin:0}.geo{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:15px}.geo div,.stat{background:#f8faf9;border:1px solid #edf1ee;border-radius:10px;padding:11px;min-width:0}.geo small,.stat small{display:block;font-size:10px;color:var(--muted);margin-bottom:6px}.geo b{font-size:12px;overflow-wrap:anywhere}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:16px 0}.stat{background:#fff;padding:16px;box-shadow:var(--shadow)}.stat strong{font-size:25px;display:block;line-height:1.2}.panel{background:#fff;border:1px solid var(--line);border-radius:15px;padding:18px;margin-top:16px;box-shadow:var(--shadow);min-width:0}.panelhead{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}.panel h2{font-size:16px;margin:0}.muted{color:var(--muted);font-size:11px;line-height:1.6}.filters{display:flex;gap:9px;flex-wrap:wrap}.filters input,.filters select{border:1px solid var(--line);border-radius:9px;padding:10px;background:#fbfcfb;color:var(--ink);min-width:150px}.filters input{flex:1;min-width:180px}
+.tablewrap{overflow:auto;width:100%}table{width:100%;border-collapse:collapse;min-width:680px}th,td{text-align:left;padding:11px 10px;border-bottom:1px solid #edf1ee;font-size:11px;vertical-align:top}th{font-size:10px;color:#718178;text-transform:uppercase;letter-spacing:.6px;background:#fafcfb;position:sticky;top:0}td strong{font-size:12px}.tag{display:inline-block;border-radius:30px;padding:5px 8px;background:#eef6f1;color:#17603f;font-size:10px;font-weight:700}.tag.warn{background:#fff5e5;color:#98600a}.tag.bad{background:#fff0ef;color:#a52c25}.lga-status-buttons{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}.lga-status-btn{border:0;border-radius:22px;padding:7px 10px;background:#89928d;color:#fff;font-size:10px;font-weight:750;white-space:nowrap}.lga-status-btn.active.over{background:#08734f}.lga-status-btn.active.violence{background:#b42318}.lga-status-btn.active.success{background:#08734f}.lga-collation-status{display:inline-block;margin-top:8px;border-radius:20px;padding:6px 10px;background:#fff0ef;color:#9b3931;border:1px solid #f3d1ce;font-size:10px;font-weight:800}.lga-party-table{min-width:920px}.lga-party-table th:first-child,.lga-party-table td:first-child{min-width:280px}.lga-party-table td:not(:first-child),.lga-party-table th:not(:first-child){text-align:center;min-width:66px}.lga-party-table tfoot th{background:#eaf5ef;color:#17603f;font-size:12px}.lga-row-name{font-size:12px;font-weight:800;line-height:1.4}.lga-row-agent{font-size:10px;color:var(--muted);margin-top:3px}.empty{padding:28px;text-align:center;color:var(--muted);font-size:12px}.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field.full{grid-column:1/-1}.checkrow{display:flex;align-items:center;gap:9px;font-size:12px;margin:10px 0}.checkrow input{width:auto}.footer{padding:22px 0;color:#9aa69f;font-size:10px}
+.modal{position:fixed;inset:0;background:#0b2018a8;z-index:80;display:none;align-items:center;justify-content:center;padding:18px}.modal.show{display:flex}.modalbox{background:#fff;border-radius:15px;width:min(850px,100%);max-height:88vh;overflow:auto;padding:20px}.modalhead{display:flex;justify-content:space-between;gap:12px;align-items:center}.modalhead h2{font-size:17px;margin:0}.xbtn{border:0;background:#f1f5f2;border-radius:8px;padding:8px 11px}.detailgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:15px 0}.detailgrid div{background:#f8faf9;padding:11px;border-radius:9px}.detailgrid .wide{grid-column:1/-1}.detailgrid small{display:block;color:var(--muted);font-size:10px;margin-bottom:5px}.detailgrid b{font-size:12px;overflow-wrap:anywhere}
+/* Ward status evidence review modal */
+.evidence-modal{position:fixed;inset:0;z-index:100;background:#0b2018b8;display:none;align-items:center;justify-content:center;padding:14px}
+.evidence-modal.show{display:flex}
+.evidence-box{width:min(760px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:22px;padding:20px;box-shadow:0 20px 70px #06170f55}
+.evidence-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:16px}
+.evidence-head h2{font-size:19px;line-height:1.35;margin:0;color:#20372d}
+.evidence-status{display:inline-flex;align-items:center;border-radius:22px;padding:8px 13px;font-size:11px;font-weight:850;background:#eaf5ef;color:#08734f;margin-bottom:9px}
+.evidence-status.violence{background:#fff0ef;color:#b42318}.evidence-status.expose{background:#fff5e5;color:#98600a}
+.evidence-ward{font-size:17px;font-weight:850;margin:0 0 4px}.evidence-sub{font-size:11px;color:var(--muted);margin:0}
+.evidence-pu{border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0;background:#fff}
+.evidence-pu h3{font-size:13px;margin:0 0 10px;line-height:1.4}
+.evidence-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.ward-evidence-actions{margin:12px 0 4px}.evidence-actions button{min-height:54px;border:0;border-radius:12px;background:var(--g);color:#fff;font-size:12px;font-weight:800;padding:10px}
+.evidence-actions button:disabled{opacity:.55;cursor:wait}
+.evidence-actions button.evidence-choice.active{background:var(--g);color:#fff}.evidence-actions button.evidence-choice.inactive{background:#9ca3af;color:#fff}
+.evidence-result{margin-top:12px;padding:12px;border-radius:10px;background:#f7faf8;border:1px solid #edf1ee;font-size:12px;line-height:1.55;overflow-wrap:anywhere}
+.evidence-result img,.evidence-result video{display:block;max-width:100%;max-height:65vh;margin:10px auto;border-radius:9px}
+.evidence-result a{color:#08734f;font-weight:800;overflow-wrap:anywhere}
+.ward-evidence-record{padding:10px 0}.ward-evidence-record h3{font-size:14px;margin:0 0 5px;color:var(--ink)}.ward-evidence-record .muted{font-size:11px;color:var(--muted)}
+@media(max-width:560px){.evidence-box{padding:16px;border-radius:18px}.evidence-head h2{font-size:16px}.evidence-actions{grid-template-columns:1fr 1fr}.evidence-actions button{font-size:10px;padding:9px 6px;min-height:58px}}
+
+@media(max-width:900px){.sidebar{width:215px;flex-basis:215px}.content{padding:20px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.app{display:block}.sidebar{display:none;position:fixed;z-index:50;inset:0 auto 0 0;width:280px;box-shadow:15px 0 40px #102b1c22}.sidebar.open{display:flex}.topbar{height:58px;padding:0 13px}.menu{display:block}.topbar strong{font-size:12px}.pill{display:none}.content{padding:17px 13px 28px}h1{font-size:27px}.assigned{padding:15px}.geo{grid-template-columns:1fr 1fr;gap:7px}.stats{gap:8px}.stat{padding:12px}.stat strong{font-size:22px}.panel{padding:14px}.grid2,.detailgrid{grid-template-columns:1fr}.field.full,.detailgrid .wide{grid-column:auto}}
+
+/* Ward-dashboard-style LGA results table */
+.ec8a-compare-scroll{width:100%;max-height:520px;overflow:auto;border:1px solid var(--line);border-radius:11px;margin-top:12px;background:#fff}
+.lga-party-table{border-collapse:separate;border-spacing:0;min-width:max-content;width:100%}
+.lga-party-table th,.lga-party-table td{padding:11px 12px;border-bottom:1px solid #edf1ee;border-right:1px solid #edf1ee;text-align:center;white-space:nowrap;font-size:12px;vertical-align:top}
+.lga-party-table th{position:sticky;top:0;z-index:3;background:#edf5f0;color:#315b47}
+.lga-party-table th:first-child,.lga-party-table td:first-child{position:sticky;left:0;z-index:2;text-align:left;width:190px;min-width:190px;max-width:190px;white-space:normal;background:#fff}
+.lga-party-table thead th:first-child{z-index:4;background:#edf5f0}
+.lga-party-table tfoot td{position:sticky;bottom:0;z-index:2;background:#eaf5ef;font-weight:850;color:#07543b}
+.lga-party-table tfoot td:first-child{z-index:4;background:#eaf5ef}
+.lga-party-table .lga-row-name{display:block;font-size:10px;line-height:1.25;font-weight:750;overflow-wrap:anywhere}
+.lga-party-table .lga-row-code{display:block;color:var(--muted);font-size:9px;margin-top:3px;line-height:1.2}
+.lga-party-table .lga-status-buttons{display:flex;align-items:center;gap:4px;margin-top:8px;flex-wrap:nowrap;width:100%}
+.lga-party-table .lga-status-btn{box-sizing:border-box;flex:1 1 0;min-width:0;height:24px;padding:0 3px;border:0;border-radius:20px;background:#858d89;color:#fff;font-size:8px;line-height:24px;font-weight:800;white-space:nowrap;opacity:1}
+.lga-party-table .lga-status-btn.active.over,.lga-party-table .lga-status-btn.active.success{background:#08734f}
+.lga-party-table .lga-status-btn.active.violence{background:#b42318}
+.lga-party-table .lga-collation-status{display:block;width:100%;margin-top:7px;padding:6px 8px;border-radius:30px;background:#fff0ef;border:1px solid #f3b8b3;color:#b42318;font-size:8px;font-weight:850;line-height:1.15;text-align:center;white-space:nowrap;box-shadow:0 3px 10px rgba(180,35,24,.12)}
+.lga-party-table .lga-collation-status.pending{background:#fff5e5;border-color:#f1dfb8;color:#98600a;box-shadow:none}
+.lga-party-table td:not(:first-child){min-width:58px}
+.lga-party-table .no-result{color:#a3ada7;background:#fbfcfb;font-style:italic}
+@media(max-width:600px){.ec8a-compare-scroll{max-height:460px}.lga-party-table th,.lga-party-table td{padding:10px 12px}}
+.ward-expand-btn{margin-top:8px;border:1px solid #b9d9c9;background:#edf7f1;color:#07543b;border-radius:18px;padding:7px 11px;font-size:10px;font-weight:800}
+.ward-pu-detail{padding:12px;background:#f7faf8;border-top:1px solid var(--line);white-space:normal}
+.pu-list-head{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px;font-size:11px;font-weight:800;color:#315b47}
+.pu-card{background:#fff;border:1px solid var(--line);border-radius:11px;padding:13px;margin:9px 0;min-width:260px}
+.pu-card-name{font-size:12px;font-weight:850;line-height:1.4;margin-bottom:9px}
+.pu-card .lga-status-buttons{margin:0 0 8px;gap:6px}
+.pu-card .lga-status-btn{font-size:10px;padding:7px 12px;height:auto;line-height:1.2;flex:0 0 auto}
+.pu-card .lga-collation-status{display:inline-block;width:auto;font-size:10px;padding:8px 12px;margin:0 7px 0 0}
+.pu-announcement{display:inline-block;border:1px solid #f0c9c5;background:#fff0ef;color:#a52c25;border-radius:25px;padding:9px 14px;font-size:10px;font-weight:850;box-shadow:0 3px 10px #b4231812}
+.pu-announcement.pending{background:#fff5e5;border-color:#f1dfb8;color:#98600a;box-shadow:none}
+.pu-votes{margin-top:9px;font-size:10px;color:#607168;line-height:1.6}
+
+
+</style>
+<style>
+.ec-paper,#manualWardForms,#manualWardForms details{min-width:0;max-width:100%}
+.ec-paper fieldset{border:0;padding:0;margin:0;min-inline-size:0}
+.ec-paper *{box-sizing:border-box}
+.ec-paper [hidden]{display:none!important}
+.ec-paper input{width:100%;min-width:0;border:1px solid #b9c9bf;border-radius:5px;background:#fff;color:inherit;padding:7px;font:inherit;font-size:16px}
+.ec-paper input:focus{outline:2px solid #08734f;outline-offset:-2px}
+.ec-paper-head{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;text-align:center;margin:12px 0}
+.ec-paper-head img{object-fit:contain}
+.ec-paper-head h2{font:700 1.22rem Georgia,serif;color:#913443;text-transform:uppercase;margin:0}
+.ec-paper-head p{font:700 .8rem/1.45 Georgia,serif;text-transform:uppercase;margin:5px 0}
+.ec-serial{display:grid;gap:6px;text-align:left;max-width:150px}.ec-serial>strong{text-transform:uppercase}.ec-serial label{display:flex;align-items:center;gap:6px;white-space:nowrap}
+.ec-geography{display:grid;grid-template-columns:2fr 1fr 2fr 1fr 2fr 1fr;gap:10px;margin:15px 0}
+.ec-geography strong,.ec-officer span,.ec-sigs span{display:block;overflow-wrap:anywhere}
+.ec-geography small,.ec-officer small{display:block;font-size:.78rem}
+.ec-scroll{max-width:100%;width:100%;overflow-x:auto;overscroll-behavior-x:contain;border:1px solid #abbdb2;border-radius:6px;margin:10px 0;scrollbar-color:#79998a #ecf2ee}
+.ec-paper .ec-matrix,.ec-paper .ec-sigs{width:max-content;min-width:100%;border-collapse:separate;border-spacing:0;table-layout:auto}
+.ec-paper .ec-matrix th,.ec-paper .ec-matrix td,.ec-paper .ec-sigs td{border:0;border-right:1px solid #bdcdc3;border-bottom:1px solid #bdcdc3;padding:5px;color:#20372d;background:white;font-size:13px;vertical-align:middle;white-space:normal}
+.ec-paper .ec-matrix thead th,.ec-paper .ec-matrix tfoot>* >*{background:#eaf2ed;text-align:center;font-weight:700;color:#223c2e;text-transform:none;letter-spacing:normal}
+.ec-paper .ec-matrix thead tr:first-child th[colspan]{text-transform:uppercase;color:#803a42}
+.ec-paper .ec-matrix tbody th{position:sticky;left:0;z-index:1;text-align:center;background:#f2f6f3;min-width:36px}
+.ec-paper .ec-matrix td{min-width:78px;text-align:center}
+.ec-paper .ec-matrix td:nth-child(2){min-width:160px;text-align:left}.ec-paper .ec-matrix td:nth-child(3){min-width:98px}
+.ec-matrix input{width:74px}.ec-matrix input[data-key=name]{width:155px}.ec-matrix input[data-key=code]{width:98px}
+.ec-paper .ec-matrix input[type=number]{appearance:textfield}.ec-matrix input::-webkit-inner-spin-button{appearance:none}
+.ec-zero{display:block;background:none;border:0;color:#086746;text-decoration:underline;padding:5px 0;cursor:pointer}
+#ec8bChecks,.ec-difference{color:#844a02;white-space:pre-line}
+.ec-officer{display:grid;grid-template-columns:2fr 2fr 1fr 1fr;gap:12px;margin:20px 0 14px}
+.ec-officer label,.ec-officer small{font-weight:650}.ec-officer input{margin-top:5px}
+.ec-sigs caption{text-align:left;font-weight:bold;padding:7px}.ec-paper .ec-sigs td{width:160px;min-width:160px}.ec-sigs input{display:block;margin-top:5px}
+#manualWardForms details{padding:15px 0;border-bottom:1px solid #cad7ce}#manualWardForms summary{cursor:pointer}
+@media(max-width:700px){.ec-geography{grid-template-columns:minmax(0,2fr) minmax(0,1fr)}.ec-paper-head{grid-template-columns:auto 1fr}.ec-serial{grid-column:1/-1;max-width:none;grid-template-columns:auto minmax(0,180px);align-items:center;justify-content:space-between}.ec-officer{grid-template-columns:repeat(2,minmax(0,1fr))}.ec-paper .ec-matrix input{min-height:42px}}
+
+.ec-scroll.ec-results{max-height:min(72vh,700px);overflow:auto}
+.ec-results .ec-matrix thead tr:first-child th{position:sticky;top:0;z-index:3;height:38px}
+.ec-results .ec-matrix thead tr:nth-child(2) th{position:sticky;top:38px;z-index:2}
+.ec-results .ec-matrix tbody th{top:auto}
+.ec-results .ec-matrix tfoot th{position:static}
+.lga-backup {margin:16px 0;}
+.lga-backup [hidden] {display:none!important;}
+#lgaBackupToggle {min-height:44px;}
+#lgaBackupPanel {margin:12px 0 0;max-width:720px;}
+#lgaBackupPanel label {display:block;font-weight:700;margin-bottom:8px;}
+#lgaBackupText {width:100%;box-sizing:border-box;resize:vertical;padding:12px 14px;border:1px solid #b5c7bc;border-radius:10px;font:inherit;font-size:16px;line-height:1.5;color:inherit;}
+#lgaBackupHint {display:block;margin:5px 0;}
+#lgaBackupLink {display:inline-block;padding:12px 0;color:var(--g);font-weight:700;text-underline-offset:3px;}
+#lgaBackupPanel :focus-visible {outline:2px solid var(--g);outline-offset:2px;}
+#lgaBackupItems {list-style:none;padding:0;margin:0;}
+#lgaBackupItems li {border-top:1px solid var(--line);padding:14px 0;overflow-wrap:anywhere;}
+#lgaBackupItems small {display:block;color:var(--muted);}
+#lgaBackupItems p {white-space:pre-wrap;margin:8px 0;line-height:1.55;}
+/* Compact, independently scrollable EC8B reader. */
+.ec-read-sheet{width:100%;min-width:0;overflow-wrap:normal;color:#20372d}
+.ec-read-sheet .ec-paper-head{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:center;text-align:left;margin:6px 0}
+.ec-read-sheet .ec-paper-head img{width:30px;height:38px;margin:0}
+.ec-read-sheet .ec-paper-head h2{font-size:15px;line-height:1.2}
+.ec-read-sheet .ec-paper-head p{font-size:11px;line-height:1.3;margin:2px 0}
+.ec-read-sheet .ec-serial{grid-column:auto;display:flex;flex-direction:column;align-items:flex-start;gap:2px;font-size:11px;max-width:9em;overflow-wrap:anywhere}
+.ec-register-strip{width:100%;max-width:100%;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-color:#79998a #edf3ef;border:1px solid #cbd9d0;background:#f2f7f4;border-radius:8px}
+.ec-register-strip dl{width:max-content;min-width:100%;display:flex;margin:0}
+.ec-register-strip dl>div{padding:7px 11px;border-right:1px solid #d8e3db;flex:1 0 auto}
+.ec-register-strip dt{font-size:11px;color:#495f54;white-space:nowrap}
+.ec-register-strip dd{font-size:13px;line-height:1.35;margin:2px 0 0;font-weight:650;white-space:nowrap}
+.ec-register-strip dd.ec-register-code{font-size:11px;font-weight:450;color:#435b50}
+.ec-read-sheet .ec-results{margin:8px 0;max-height:clamp(230px,53vh,560px)}
+.ec-read-sheet .ec-matrix th,.ec-read-sheet .ec-matrix td{white-space:nowrap;word-break:normal;overflow-wrap:normal;font-size:12px;line-height:1.35;padding:6px 8px;font-variant-numeric:tabular-nums}
+.ec-read-sheet .ec-matrix td{min-width:48px}
+.ec-read-sheet .ec-matrix td:nth-child(2){min-width:150px;max-width:34ch;white-space:normal}
+.ec-read-sheet .ec-matrix thead tr:first-child th{height:28px;padding-block:4px}
+.ec-read-sheet .ec-matrix thead tr:nth-child(2) th{top:28px}
+.ec-read-sheet .ec-matrix thead th{font-size:11px}
+.ec-read-sheet .ec-officer{font-size:12px;margin:12px 0}
+.ec-read-sheet .ec-sigs td{font-size:12px}
+.lga-party-table .lga-collation-status.received{background:#e5f4ec;color:#145c3c;border-color:#bfddcc;box-shadow:none}
+.ec-register-strip:focus-visible,.ec-scroll:focus-visible,.ec8a-compare-scroll:focus-visible{outline:2px solid #08734f;outline-offset:-2px}
+@media(max-width:600px){.evidence-box{padding:12px}.evidence-result{padding:8px}.ec-read-sheet .ec-paper-head h2{font-size:14px}.ec-read-sheet .ec-paper-head p{font-size:10.5px}}
+/* Primary Upload and Backup Request actions — compact stacked buttons matching reference photo 2 */
+#lgaUploadButton,
+#lgaBackupToggle{
+  display:block;
+  width:max-content;
+  max-width:100%;
+  min-height:64px;
+  padding:18px 30px;
+  border:0;
+  border-radius:14px;
+  background:#087a55;
+  color:#fff;
+  font-size:18px;
+  line-height:1.25;
+  font-weight:800;
+  text-align:center;
+  box-shadow:none;
+}
+#lgaUploadButton{margin-top:16px}
+#lgaBackupToggle{margin-top:16px}
+#lgaUploadButton:hover:not(:disabled),
+#lgaBackupToggle:hover:not(:disabled){background:#075f43}
+#lgaUploadButton:focus-visible,
+#lgaBackupToggle:focus-visible{outline:3px solid #9acbb5;outline-offset:3px}
+@media(max-width:520px){
+  #lgaUploadButton,#lgaBackupToggle{min-height:60px;padding:17px 26px;font-size:17px}
+}
+#uploadBack{min-height:44px}
+#uploadScope{margin:16px 0 4px}
+#uploadHeading{margin:0 0 16px;overflow-wrap:break-word}
+.upload-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));gap:12px;max-width:840px}
+.upload-tile{display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left;min-height:94px;padding:16px;border:1px solid #cadbd1;border-top:4px solid #167351;border-radius:14px;background:white;color:#193e30;font-size:14px;line-height:1.4;font-family:inherit;font-weight:750;cursor:pointer;box-shadow:0 3px 12px #153c2909}
+.upload-tile span:last-child{font-size:24px;color:#548270}
+.upload-tile:hover,.upload-tile:focus-visible{background:#eff8f3;outline:2px solid #187652;outline-offset:1px}
+.upload-entry{max-width:840px}
+.upload-controls{border:0;margin:0;padding:0;min-width:0}
+.upload-entry label{display:grid;align-content:start;gap:4px;font-size:13px;font-weight:650}
+.upload-entry input,.upload-entry textarea{box-sizing:border-box;width:100%;min-width:0;border:1px solid #bdcdc4;border-radius:8px;background:white;color:#20372d;font:inherit;font-size:16px;padding:9px}
+.upload-fields,.upload-parties{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:12px;margin:12px 0}
+.upload-parties{grid-template-columns:repeat(auto-fit,minmax(88px,1fr))}
+.upload-line{min-width:0;border:1px solid #cdded4;border-radius:10px;padding:12px;margin:12px 0}
+.upload-line legend{padding:0 6px;font-weight:700}
+.upload-remove{background:none;border:none;color:#714236;text-decoration:underline;cursor:pointer;min-height:40px}
+.upload-entry button[type=submit]{margin-top:14px;min-height:44px}
+.upload-feedback{overflow-wrap:anywhere;color:#304d40}
+@media(max-width:520px){.upload-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.upload-tile{font-size:12px;min-height:88px;padding:12px}}
+</style></head>
+<body>
+<section id="loginView" class="login-wrap">
+ <form id="loginForm" class="login">
+  <div class="brand">◉ THE EYES <small>Election Monitoring &amp; Reporting System</small></div>
+  <h1>Local Government Collation</h1><p class="sub">Sign in with the Local Government Collation Agent account created by the Super Admin.</p>
+  <div class="field"><label for="loginEmail">Email address</label><input id="loginEmail" type="email" autocomplete="username" required></div>
+  <div class="field"><label for="loginPassword">Password</label><input id="loginPassword" type="password" autocomplete="current-password" required></div>
+  <button class="btn" id="loginBtn" style="width:100%">Sign in securely</button>
+  <div id="loginNotice" class="notice"></div>
+ </form>
+</section>
+<div id="appView" class="app hidden">
+ <aside class="sidebar" id="sidebar">
+  <div class="brand">◉ THE EYES <small>Election Monitoring System</small></div>
+  <div class="rolebox"><small>Signed in as</small><strong id="sideName">Loading…</strong><p id="sideScope">Loading assigned LGA…</p></div>
+  <nav class="nav">
+   <button data-view="overview">▦ Overview</button>
+   <button class="active" data-view="wards">▤ Ward Collations</button>
+   <button data-view="ward-forms">Ward EC8B E-Forms</button>
+   <button data-view="results">▥ Consolidated Results</button>
+   <button data-view="submit">＋ Submit LGA Collation</button>
+   <button data-view="history">◷ Collation History</button>
+   <button data-view="profile">♙ My Profile</button>
+  </nav>
+  <div class="sidefoot">THE EYES · Restricted Local Government access<br>Data is limited to your assigned LGA and election.</div>
+ </aside>
+ <main class="main">
+  <header class="topbar"><div style="display:flex;align-items:center;gap:10px"><button class="menu" id="menuBtn">☰</button><strong id="topTitle">Local Government overview</strong></div><div class="topright"><span class="pill">LGA Collation Agent Portal</span><span id="topName" class="muted"></span><button class="btn secondary" id="logoutBtn">Log out</button></div></header>
+  <div class="content">
+   <section class="view" id="view-overview">
+    <div class="eyebrow">Assigned collation area</div><h1 id="welcomeTitle">Local Government Dashboard</h1><p class="sub">Review submitted ward collations and prepare the Local Government collation record.</p>
+    <div class="assigned"><h2 id="lgaTitle">Loading assigned Local Government…</h2><p id="stateTitle">Loading State…</p><div class="geo"><div><small>Election</small><b id="electionTitle">—</b></div><div><small>Candidate</small><b id="candidateTitle">—</b></div><div><small>Assigned LGA code</small><b id="lgaCodeTitle">—</b></div></div></div>
+    <div class="stats">
+     <div class="stat"><small>Registered wards</small><strong id="statWards">—</strong></div>
+     <div class="stat"><small>Ward collations received</small><strong id="statReceived">—</strong></div>
+     <div class="stat"><small>Wards awaiting collation</small><strong id="statPending">—</strong></div>
+     <div class="stat"><small>Reported valid votes</small><strong id="statVotes">—</strong></div>
+    </div>
+    <div class="panel"><div class="panelhead"><h2>Ward collation progress</h2><span class="tag" id="progressLabel">Live</span></div><div id="progressSummary" class="muted">Loading ward progress…</div><div id="progressTable" class="tablewrap" style="margin-top:12px"></div></div>
+   </section>
+   <section class="view active" id="view-wards">
+<div class="panel"><div class="panelhead"><h2>Local Government Collation Dashboard</h2><div class="filters"><input id="wardSearch" placeholder="Search ward…"><select id="wardStatus"><option value="">All wards</option><option value="expose">Expose</option><option value="violence">Violence</option><option value="successful">Successful</option><option value="collation">Collation or EC8B received</option></select></div></div><div id="wardCount" class="muted" style="margin:0 0 12px">Loading assigned wards…</div><div id="wardTable" class="tablewrap"><div class="empty">Loading ward collation records…</div></div></div>
+    <button type="button" class="btn" id="lgaUploadButton" disabled>Upload</button>
+    <div class="lga-backup">
+      <button type="button" class="btn" id="lgaBackupToggle" aria-expanded="false" aria-controls="lgaBackupPanel" disabled>Backup Request</button>
+      <div id="lgaBackupPanel" class="panel" hidden>
+        <label for="lgaBackupText">Write a backup request</label>
+        <textarea id="lgaBackupText" rows="5" placeholder="Describe the support you need and the location." aria-describedby="lgaBackupHint"></textarea>
+        <small class="muted" id="lgaBackupHint">Draft for this browser tab.</small>
+        <a id="lgaBackupLink" href="#lgaBackupList" aria-controls="lgaBackupList" aria-expanded="false">View Ward Backup Requests</a>
+        <div id="lgaBackupList" hidden>
+          <h3>Ward backup requests</h3>
+          <p class="muted" role="status" id="lgaBackupStatus"></p>
+          <ul id="lgaBackupItems"></ul>
+        </div>
+      </div>
+    </div>
+   </section>
+   <section class="view" id="view-uploads">
+     <button id="uploadBack" type="button" class="btn secondary">Back</button>
+     <p id="uploadScope" class="muted"></p>
+     <h1 id="uploadHeading" tabindex="-1">Upload</h1>
+     <div id="lgaUploadView"></div>
+   </section>
+   <section class="view" id="view-ward-forms"><div class="eyebrow">Ward Evidence of Loss</div><h1>Ward EC8B E-Forms</h1><p class="sub">Open a ward submission to review polling-unit figures, party votes and the paper sign-off details.</p><div class="panel" id="manualWardForms" aria-live="polite">Loading ward E-Forms…</div></section>
+   <section class="view" id="view-results">
+    <div class="eyebrow">Election aggregation</div><h1>Consolidated Results</h1><p class="sub">Totals calculated from the latest submitted ward collation for each ward. This view does not modify ward source records.</p>
+    <div class="stats">
+     <div class="stat"><small>Total valid votes</small><strong id="totalValid">0</strong></div>
+     <div class="stat"><small>Total rejected ballots</small><strong id="totalRejected">0</strong></div>
+     <div class="stat"><small>Ward records included</small><strong id="totalIncluded">0</strong></div>
+     <div class="stat"><small>Source records referenced</small><strong id="totalSources">0</strong></div>
+    </div>
+    <div class="panel"><div class="panelhead"><h2>Ward-by-ward totals</h2><button class="btn secondary" id="refreshBtn">Refresh data</button></div><div id="totalsTable" class="tablewrap"></div></div>
+   </section>
+   <section class="view" id="view-submit">
+    <div class="eyebrow">Final LGA collation</div><h1>Submit LGA Collation</h1><p class="sub">Create a separate Local Government record referencing the ward collations selected for this election. Original ward and polling-unit records remain unchanged.</p>
+    <form id="lgaForm" class="panel">
+     <div class="grid2">
+      <div class="field"><label for="collationDate">Collation date *</label><input id="collationDate" type="date" required></div>
+      <div class="field"><label for="reviewStatus">Review status *</label><select id="reviewStatus" required><option value="reviewed">Reviewed</option><option value="provisional">Provisional</option><option value="final">Final</option></select></div>
+      <div class="field"><label for="validVotes">Total valid votes (from ward collations)</label><input id="validVotes" type="number" min="0" step="1" readonly></div>
+      <div class="field"><label for="rejectedVotes">Total rejected ballots (from ward collations)</label><input id="rejectedVotes" type="number" min="0" step="1" readonly></div>
+      <div class="field full"><label for="lgaSummary">LGA collation summary *</label><textarea id="lgaSummary" required placeholder="Enter the Local Government collation summary…"></textarea></div>
+      <div class="field full"><label for="lgaDiscrepancies">Discrepancies / remarks</label><textarea id="lgaDiscrepancies" placeholder="Record discrepancies, missing ward returns, or remarks…"></textarea></div>
+     </div>
+     <label class="checkrow"><input id="confirmWardReview" type="checkbox" required> I confirm that I have reviewed the ward collation records selected for this LGA.</label>
+     <div class="muted" id="sourceCountText">Loading eligible ward collation sources…</div>
+     <div class="notice" id="lgaNotice"></div>
+     <div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:15px"><button class="btn" id="saveLgaBtn" type="submit">Save LGA Collation</button><button class="btn secondary" type="button" data-goto="results">Back to results</button></div>
+    </form>
+   </section>
+   <section class="view" id="view-history">
+    <div class="eyebrow">Saved LGA records</div><h1>Collation History</h1><p class="sub">Previously submitted Local Government collation records.</p>
+    <div class="panel"><div id="historyTable" class="tablewrap"><div class="empty">Loading history…</div></div></div>
+   </section>
+   <section class="view" id="view-profile">
+    <div class="eyebrow">Account information</div><h1>My Profile</h1>
+    <div class="panel"><div class="detailgrid" id="profileGrid"></div></div>
+   </section>
+   <div class="footer">THE EYES · Election Monitoring &amp; Reporting System</div>
+  </div>
+ </main>
+</div>
+<div class="evidence-modal" id="wardEvidenceModal" role="dialog" aria-modal="true" aria-labelledby="evidenceWardTitle">
+ <div class="evidence-box">
+  <div class="evidence-head"><div><span class="evidence-status" id="evidenceStatusLabel">Successful</span><h2 id="evidenceWardTitle">Ward evidence</h2><p class="evidence-sub" id="evidenceWardMeta">Evidence uploaded by this ward</p></div><button class="xbtn" id="closeWardEvidence">Close</button></div>
+  <div id="wardEvidenceContent"><div class="empty">Loading ward evidence…</div></div>
+ </div>
+</div>
+<div class="modal" id="detailModal"><div class="modalbox"><div class="modalhead"><h2 id="detailTitle">Ward collation details</h2><button class="xbtn" id="closeDetail">Close</button></div><div id="detailContent"></div></div></div>
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {initializeFirestore,doc,getDoc,setDoc,getDocFromServer,collection,query,where,onSnapshot,addDoc,serverTimestamp,getDocs} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+const firebaseConfig={apiKey:"AIzaSyBEbkeWDLuQOSPz2ojp59UWgqf0OakRrCo",authDomain:"election-8e790.firebaseapp.com",projectId:"election-8e790",storageBucket:"election-8e790.firebasestorage.app",messagingSenderId:"346568561664",appId:"1:346568561664:web:5618be1ebb4057f9c6f4e5"};
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=initializeFirestore(app,{experimentalForceLongPolling:true});
+const $=id=>document.getElementById(id);
+const first=(...v)=>v.find(x=>x!==undefined&&x!==null&&String(x).trim()!=='');
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=v=>{if(!v)return '—';const d=v?.toDate?v.toDate():(v instanceof Date?v:new Date(v));return isNaN(d)?String(v):d.toLocaleString()};
+const dateMs=v=>{if(!v)return 0;const d=v?.toDate?v.toDate():(v instanceof Date?v:new Date(v));return isNaN(d)?0:d.getTime()};
+const electionNames={presidential:'Presidential Election',gubernatorial:'Gubernatorial Election',senatorial:'Senatorial Election',house_of_representatives:'House of Representatives Election'};
+let user=null,profile={},assignment={},data={wards:[],collations:[],lgaHistory:[]},unsubs=[];
+function notice(id,msg,error=false){const el=$(id);el.textContent=msg;el.className='notice show'+(error?' error':'')}
+function roleOK(a){return a&&a.agentRole==='local_government_collation_agent'&&a.active===true&&a.status==='active'}
+function getLgaCode(a){return first(a.geography?.lgaCode,a.assignedScope?.lgaCode,a.lgaCode,'')}
+function getStateCode(a){return first(a.geography?.stateCode,a.assignedScope?.stateCode,a.stateCode,'')}
+function recordName(r){return first(r.name,r.wardName,r.label,r.title,r.code,r.wardCode,r.id,'Unnamed ward')}
+function loadAssignment(a){
+ const g=a.geography||{},s=a.assignedScope||{};
+ assignment={
+  stateCode:String(first(g.stateCode,s.stateCode,a.stateCode,'')),
+  state:first(g.state,s.stateName,a.stateName,''),
+  lgaCode:String(first(g.lgaCode,s.lgaCode,a.lgaCode,'')),
+  lga:first(g.lga,s.lgaName,a.lgaName,''),
+  electionType:String(a.electionType||''),
+  electionName:first(a.electionName,electionNames[a.electionType],a.electionType,''),
+  candidateId:String(a.candidateId||''),
+  candidateName:first(a.candidateName,'')
+ };
+ if(!assignment.stateCode||!assignment.lgaCode||!assignment.electionType||!assignment.candidateId)throw new Error('Your Local Government Agent assignment is incomplete. Ask the Super Admin to verify State, LGA, candidate and election type.');
+}
+function latestByWard(){
+ const map=new Map();
+ data.collations.forEach(r=>{
+  const code=String(r.wardCode||r.geography?.wardCode||'').trim();if(!code)return;
+  const prev=map.get(code);if(!prev||dateMs(r.createdAt)>dateMs(prev.createdAt))map.set(code,r);
+ });
+ return map;
+}
+function eligibleWardCollations(){return [...latestByWard().values()].filter(r=>r.recordType==='ward_collation'&&String(r.lgaCode||'')===assignment.lgaCode&&String(r.stateCode||'')===assignment.stateCode&&String(r.electionType||'')===assignment.electionType);}
+function totals(){
+ const rows=eligibleWardCollations();
+ return rows.reduce((a,r)=>{a.valid+=Number(r.wardTotals?.validVotes)||0;a.rejected+=Number(r.wardTotals?.rejectedBallots)||0;a.sources+=Number(r.sourceCounts?.total)||0;return a},{valid:0,rejected:0,sources:0});
+}
+function renderOverview(){
+ const latest=latestByWard(),eligible=eligibleWardCollations(),registered=data.wards.length,received=eligible.length;
+ $('statWards').textContent=registered;$('statReceived').textContent=received;$('statPending').textContent=Math.max(0,registered-received);
+ $('statVotes').textContent=totals().valid.toLocaleString();
+ $('progressSummary').textContent=`${received} of ${registered} registered wards have submitted an LGA-matching ward collation for ${assignment.electionName}.`;
+ const rows=data.wards.map(w=>{const code=String(first(w.wardCode,w.code,w.id,''));const r=eligible.find(x=>String(x.wardCode)===code);return {w,code,r}}).sort((a,b)=>recordName(a.w).localeCompare(recordName(b.w),undefined,{numeric:true}));
+ $('progressTable').innerHTML=rows.length?`<table><thead><tr><th>Ward</th><th>Ward code</th><th>Submission</th><th>Valid votes</th><th>Submitted</th></tr></thead><tbody>${rows.map(x=>`<tr><td><strong>${esc(recordName(x.w))}</strong></td><td>${esc(x.code)}</td><td>${x.r?'<span class="tag">Received</span>':'<span class="tag warn">Awaiting</span>'}</td><td>${x.r?Number(x.r.wardTotals?.validVotes||0).toLocaleString():'—'}</td><td>${x.r?esc(fmt(x.r.createdAt)):'—'}</td></tr>`).join('')}</tbody></table>`:'<div class="empty">No registered wards found for this LGA. Check the geographyWards collection and the assigned LGA code.</div>';
+}
+const LGA_PARTIES=['ADC','APC','A','AA','AAC','ADP','APGA','APM','APP','BP','LP','NNPP','NRM','PDP','PRP','SDP','YPP','ZLP'];
+const ballotColumns = [
+  ['registeredVoters','Registered voters'], ['accreditedVoters','Accredited voters'],
+  ['validVotes','Valid votes'], ['rejectedVotes','Rejected votes'], ['votesCast','Votes cast']
+];
+const wardResultColumns = [...LGA_PARTIES.map(p=>[p,p]),...ballotColumns];
+function ec8bFigures(form) {
+  const units = Array.isArray(form.pollingUnits) ? form.pollingUnits.filter(Boolean) : [];
+  const figures = {};
+  function number(value) {
+    if (value == null || String(value).trim()==='') return null;
+    const n = Number(value);
+    return Number.isSafeInteger(n) && n >= 0 ? n : null;
+  }
+  function sum(read) {
+    const values = units.map(read).map(number);
+    return values.length && values.every(v=>v!==null) ? values.reduce((a,b)=>a+b,0) : null;
+  }
+  for (const party of LGA_PARTIES) {
+    figures[party] = number(form.partyTotals?.[party]) ?? sum(unit=>unit.partyVotes?.[party]);
+  }
+  for (const [key] of ballotColumns) {
+    const paperKey = key==='validVotes' ? 'paperValidVotes' : key==='votesCast' ? 'paperVotesCast' : null;
+    figures[key] = (paperKey ? sum(unit=>unit[paperKey] ?? unit[key]) : null)
+      ?? number(form.wardTotals?.[key]) ?? sum(unit=>unit[key]);
+  }
+  return figures;
+}
+function renderWards(){
+ const term=$('wardSearch').value.trim().toLowerCase(),filter=$('wardStatus').value;
+ const allRows=data.wards.map(w=>{
+  const code=String(first(w.wardCode,w.code,w.id,''));
+  const submitted=eligibleWardCollations().find(r=>String(first(r.wardCode,r.geography?.wardCode,''))===code)||null;
+  const form=wardRecords(w,manualType)[0];
+  return {w,code,r:submitted,form,figures:form ? ec8bFigures(form) : null,flags:{
+    over:categoryReceived(w,'expose'), violence:categoryReceived(w,'violence'), success:categoryReceived(w,'successful')
+  }};
+ });
+ let rows=allRows.filter(x=>[recordName(x.w),x.code,x.form?.createdByName||'',x.r?.createdByName||'',x.r?.summary||''].join(' ').toLowerCase().includes(term));
+ rows=rows.filter(x=>{
+  const flags=x.flags;
+  if(filter==='expose')return flags.over;
+  if(filter==='violence')return flags.violence;
+  if(filter==='successful')return flags.success;
+  if(filter==='collation')return Boolean(x.r || x.form);
+  return true;
+ }).sort((a,b)=>recordName(a.w).localeCompare(recordName(b.w),undefined,{numeric:true,sensitivity:'base'}));
+ const allCount=data.wards.length;
+ const receivedCount=allRows.filter(x=>x.form).length;
+ const feed=feeds.get('forms');
+ const feedStatus=feed?.error || (feed ? receivedCount+' of '+allCount+' wards have an EC8B E-Form' : 'Loading EC8B E-Forms…');
+ $('wardCount').textContent='Showing '+rows.length+' of '+allCount+' wards · '+feedStatus;
+ const totals=new Map(), incomplete=new Set();
+ const body=rows.map(({w,code,r,flags,form,figures})=>{
+  const cells=wardResultColumns.map(([key])=>{
+    const n=figures?.[key];
+    if(form && n==null) incomplete.add(key);
+    if(n!=null) totals.set(key,(totals.get(key)??0)+n);
+    return n==null ? '<td class="no-result">—</td>' : '<td>'+n.toLocaleString()+'</td>';
+  }).join('');
+  const status=form?'EC8B received':feed?.error?'EC8B unavailable':!feed?'Loading EC8B…':r?'Collation received · awaiting EC8B':'Awaiting EC8B';
+  return `<tr><td><span class="lga-row-name">${esc(recordName(w))}</span><span class="lga-row-code">${esc(code)}</span><div class="lga-status-buttons"><button class="lga-status-btn ${flags.over?'active over':''}" type="button" data-ward-status="expose" data-ward-id="${esc(w.id)}" data-ward-code="${esc(code)}" data-ward-name="${esc(recordName(w))}">Expose</button><button class="lga-status-btn ${flags.violence?'active violence':''}" type="button" data-ward-status="violence" data-ward-id="${esc(w.id)}" data-ward-code="${esc(code)}" data-ward-name="${esc(recordName(w))}">Violence</button><button class="lga-status-btn ${flags.success?'active success':''}" type="button" data-ward-status="successful" data-ward-id="${esc(w.id)}" data-ward-code="${esc(code)}" data-ward-name="${esc(recordName(w))}">Successful</button></div><div class="lga-collation-status ${form?'received':'pending'}">${status}</div></td>${cells}</tr><tr class="ward-detail-row hidden" id="ward-detail-${esc(code)}"><td colspan="${wardResultColumns.length+1}"><div class="ward-pu-detail" id="ward-pu-${esc(code)}"></div></td></tr>`;
+ }).join('');
+ const totalCells=wardResultColumns.map(([key])=>`<td>${incomplete.has(key) ? '—' : totals.get(key)?.toLocaleString() ?? '—'}</td>`).join('');
+ $('wardTable').innerHTML=rows.length?`<div class="ec8a-compare-scroll" role="region" tabindex="0" aria-label="Ward EC8B figures by political party and ballot totals"><table class="lga-party-table"><thead><tr><th>WARD</th>${wardResultColumns.map(([,label])=>`<th scope="col">${esc(label)}</th>`).join('')}</tr></thead><tbody>${body}</tbody><tfoot><tr><td><span class="lga-row-name">TOTAL</span><span class="lga-row-code">EC8B figures · visible wards</span></td>${totalCells}</tr></tfoot></table></div>`:'<div class="empty">No wards match this filter.</div>';
+}
+function puCode(p){return String(first(p.pollingUnitCode,p.code,p.unitCode,p.id,''));}
+function puName(p){return first(p.pollingUnitName,p.name,p.pollingUnit,p.label,p.title,puCode(p),'Unnamed polling unit');}
+function puStatusFlags(r){
+ const t=[r?.status,r?.resultStatus,r?.electionStatus,r?.announcement,r?.summary,r?.reportType].filter(Boolean).join(' ').toLowerCase().replaceAll('_',' ').replaceAll('-',' ');
+ return {
+  over:Boolean(r?.overVoting||r?.hasOverVoting||t.includes('over voting')||t.includes('overvoting')),
+  violence:Boolean(r?.violence||r?.hasViolence||t.includes('violence')),
+  success:Boolean(r?.successful||r?.isSuccessful||t.includes('successful')||t.includes('submitted'))
+ };
+}
+function puPartyMap(r){
+ const list=Array.isArray(r?.partyResults)?r.partyResults:(Array.isArray(r?.results)?r.results:(Array.isArray(r?.votes)?r.votes:[]));
+ const out={};list.forEach(x=>{const n=String(first(x.party,x.partyName,x.abbreviation,x.partyCode,x.code,'')).trim().toUpperCase();const v=Number(x.votes??x.voteCount??x.totalVotes);if(n&&Number.isFinite(v))out[n]=v;});return out;
+}
+const wardEvidenceMenu = {
+  successful: {
+    WARD_EC8B: 'View Form EC8B', WARD_EC8B_EFORM: 'View E-Form',
+    WARD_EC8B_DUPLICATE: 'View Duplicate Copy', WARD_SUCCESSFUL_VIDEO: 'View Video'
+  },
+  violence: {
+    WARD_VIOLENCE_EC40G: 'View Form EC40G', WARD_VIOLENCE_DUPLICATE: 'View Duplicate Copy',
+    WARD_VIOLENCE_VIDEO: 'View Video'
+  },
+  expose: { WARD_EXPOSE_ORIGINAL: 'View Original Copy', WARD_EXPOSE_ALTERED_COPY: 'View Altered/Fake Copy' }
+};
+const manualType = 'WARD_EC8B_EFORM';
+const mediaTypes = Object.values(wardEvidenceMenu).flatMap(group => Object.keys(group)).filter(type => type !== manualType);
+const feeds = new Map();
+let evidenceWard = null, feedGeneration = 0;
+
+function wardRecords(ward, type) {
+  const feed = feeds.get(type === manualType ? 'forms' : 'media');
+  const codes = new Set([ward.id, ward.wardCode, ward.code].filter(v => v != null && v !== '').map(String));
+  return [...codes].flatMap(code => feed?.byWard.get(code)?.get(type) || [])
+    .sort((a,b) => dateMs(b.createdAt) - dateMs(a.createdAt) || a.id.localeCompare(b.id));
+}
+function categoryReceived(ward, category) {
+  return Object.keys(wardEvidenceMenu[category]).some(type => wardRecords(ward,type).length > 0);
+}
+function updateWardFeed(name, records, error) {
+  const byWard = new Map();
+  for (const record of records) {
+    const code = String(record.wardCode ?? '');
+    if (!code) continue;
+    if (!byWard.has(code)) byWard.set(code,new Map());
+    const types = byWard.get(code);
+    if (!types.has(record.documentType)) types.set(record.documentType,[]);
+    types.get(record.documentType).push(record);
+  }
+  feeds.set(name,{byWard,error});
+  const scroll = $('wardTable').querySelector('.ec8a-compare-scroll');
+  const top = scroll?.scrollTop || 0, left = scroll?.scrollLeft || 0;
+  renderWards();
+  const updated = $('wardTable').querySelector('.ec8a-compare-scroll');
+  if (updated) { updated.scrollTop = top; updated.scrollLeft = left; }
+  if (evidenceWard && name === (evidenceWard.type === manualType ? 'forms' : 'media')) {
+    showWardEvidence(evidenceWard.type);
+  }
+}
+function listenWardFeed(name) {
+  const manual = name === 'forms';
+  const filters = ['stateCode','lgaCode','electionType','candidateId'].map(field => where(field,'==',assignment[field]));
+  if (manual) filters.push(where('documentType','==',manualType),where('schemaVersion','in',[2,3]));
+  else filters.push(where('documentType','in',mediaTypes));
+  const uid = auth.currentUser.uid, generation = feedGeneration;
+  const current = () => generation === feedGeneration && auth.currentUser?.uid === uid;
+  const q = query(collection(db,'wardEvidenceOfLoss'),...filters);
+  return onSnapshot(q,{includeMetadataChanges:true},snap => {
+    if (!current()) return;
+    // Wait for server authorization before displaying data from a previous session's cache.
+    if (snap.metadata.fromCache) return;
+    const records = snap.docs.map(d => ({...d.data(),id:d.id}));
+    updateWardFeed(name,records);
+    if (manual) renderManualForms(records);
+  }, error => {
+    if (!current()) return;
+    const message = error.code === 'permission-denied'
+      ? 'Firestore denied access. Check the LGA assignment and its published evidence read permission.'
+      : 'Ward evidence could not be loaded (' + (error.code || 'connection error') + ').';
+    updateWardFeed(name,[],message);
+    if (manual) $('manualWardForms').textContent = message;
+  });
+}
+function closeWardEvidence() {
+  if (!evidenceWard) return;
+  $('wardEvidenceModal').classList.remove('show');
+  $('wardEvidenceContent').replaceChildren();
+  const trigger = [...$('wardTable').querySelectorAll('[data-ward-status]')].find(b =>
+    b.dataset.wardId === evidenceWard.wardId && b.dataset.wardStatus === evidenceWard.category);
+  trigger?.focus();
+  evidenceWard = null;
+}
+function openWardEvidence(trigger) {
+  const {wardId, wardName, wardStatus} = trigger.dataset;
+  const choices = wardEvidenceMenu[wardStatus];
+  const ward = data.wards.find(w => w.id === wardId);
+  if (!ward || !choices) return;
+  evidenceWard = {wardId, wardName, ward, choices, category:wardStatus};
+  $('evidenceWardTitle').textContent = wardName + ' Ward';
+  $('evidenceWardMeta').textContent = [assignment.lga || assignment.lgaCode,assignment.electionName || assignment.electionType].join(' · ');
+  $('evidenceStatusLabel').textContent = trigger.textContent.trim();
+  $('evidenceStatusLabel').className = 'evidence-status ' + wardStatus;
+  $('wardEvidenceContent').innerHTML = '<div class="evidence-actions ward-evidence-actions">' +
+    Object.entries(choices).map(([type,label]) => '<button class="evidence-choice" type="button" data-evidence-kind="'+type+'">'+label+'</button>').join('') +
+    '</div><div class="evidence-result" id="ward-evidence-result" role="status"></div>';
+  $('wardEvidenceModal').classList.add('show');
+  $('closeWardEvidence').focus();
+  showWardEvidence(Object.keys(choices)[0]);
+}
+function wardMediaMarkup(record) {
+  let url;
+  try { url = new URL(record.cloudinaryUrl); } catch { return 'This record has no usable file link.'; }
+  if (url.origin !== 'https://res.cloudinary.com' || !url.pathname.startsWith('/hjdnytcb/')) return 'This record has no recognized file link.';
+  const src = esc(url.href);
+  const link = '<a href="'+src+'" target="_blank" rel="noopener noreferrer">Open uploaded file</a>';
+  if (record.cloudinaryResourceType === 'video') return '<video controls playsinline preload="metadata" src="'+src+'"></video>'+link;
+  if (record.fileType === 'application/pdf' || record.cloudinaryFormat === 'pdf' || /\.pdf$/i.test(url.pathname)) return link;
+  return link+'<img src="'+src+'" alt="Uploaded ward evidence" loading="lazy">';
+}
+function showWardEvidence(type) {
+  if (!evidenceWard || !Object.hasOwn(evidenceWard.choices,type)) return;
+  const {ward,wardName} = evidenceWard;
+  evidenceWard.type = type;
+  for (const btn of $('wardEvidenceContent').querySelectorAll('[data-evidence-kind]')) {
+    const active = btn.dataset.evidenceKind === type;
+    btn.setAttribute('aria-pressed', String(active));
+    btn.classList.toggle('active',active);
+    btn.classList.toggle('inactive',!active);
+  }
+  const manual = type === manualType;
+  const feed = feeds.get(manual ? 'forms' : 'media');
+  const result = $('ward-evidence-result');
+  if (!feed) { result.textContent = 'Waiting for Firestore. Check your connection if this takes a while.'; return; }
+  if (feed.error) {
+    result.textContent = feed.error + ' ';
+    const retry = document.createElement('button');
+    retry.type = 'button';
+    retry.className = 'btn secondary';
+    retry.textContent = 'Try again';
+    retry.addEventListener('click',loadData,{once:true});
+    result.append(retry);
+    result._rendered = null;
+    return;
+  }
+  const rows = wardRecords(ward,type);
+  if (!rows.length) { result.textContent = 'No submissions of this type for '+wardName+' Ward yet.'; return; }
+  const html = rows.map(r => '<section class="ward-evidence-record"><h3>'+esc(r.documentName || r.fileName || wardName)+'</h3><p class="muted">'+
+    esc(fmt(r.createdAt))+' · '+esc(r.createdByName || r.fullName || r.createdBy || '')+'</p>'+
+    (manual ? readEc8bSheet(r) : wardMediaMarkup(r))+'<p class="muted">Reference '+esc(r.id)+'</p></section>').join('');
+  // An unrelated ward upload should not restart a video that is already playing.
+  if (result._rendered !== html || !result.firstElementChild) result.innerHTML = html;
+  result._rendered = html;
+}
+
+async function toggleWardPollingUnits(wardCode){
+ const row=$(`ward-detail-${wardCode}`),target=$(`ward-pu-${wardCode}`);if(!row||!target)return;
+ if(!row.classList.contains('hidden')){row.classList.add('hidden');return;}
+ row.classList.remove('hidden');
+ if(target.dataset.loaded==='yes')return;
+ target.innerHTML='<div class="empty">Loading all registered polling units in this ward…</div>';
+ try{
+  // Geography master records are stored as geographyPollingUnits/{pollingUnitCode}
+  // and use wardCode as their parent reference. Query by that canonical parent
+  // field only; adding stateCode/lgaCode constraints can hide valid records if
+  // older geography rows do not carry those optional scope fields.
+  const puSnap=await getDocs(query(
+   collection(db,'geographyPollingUnits'),
+   where('wardCode','==',String(wardCode))
+  ));
+  const units=puSnap.docs.map(d=>({id:d.id,...d.data()})).filter(p=>
+   String(first(p.wardCode,p.geography?.wardCode,''))===String(wardCode)
+  );
+  const sourceNames=['ec8aResults','pollingUnitReports'];
+  const sourceSnaps=await Promise.all(sourceNames.map(async name=>{
+   try{return await getDocs(query(collection(db,name),where('stateCode','==',assignment.stateCode),where('lgaCode','==',assignment.lgaCode),where('electionType','==',assignment.electionType),where('candidateId','==',assignment.candidateId)));}
+   catch(e){console.warn('Could not read '+name,e);return null;}
+  }));
+  const submissions=sourceSnaps.filter(Boolean).flatMap(s=>s.docs.map(d=>({id:d.id,...d.data()}))).filter(r=>String(first(r.wardCode,r.geography?.wardCode,''))===String(wardCode));
+  const byPu=new Map();
+  submissions.forEach(r=>{const c=String(first(r.pollingUnitCode,r.geography?.pollingUnitCode,r.puCode,''));if(!c)return;const old=byPu.get(c);if(!old||dateMs(r.createdAt)>dateMs(old.createdAt))byPu.set(c,r);});
+  units.sort((a,b)=>puName(a).localeCompare(puName(b),undefined,{numeric:true,sensitivity:'base'}));
+  const totalVotes=Object.fromEntries(LGA_PARTIES.map(p=>[p,0]));
+  let submitted=0;
+  const cards=units.map(p=>{
+   const code=puCode(p),r=byPu.get(code)||null,flags=puStatusFlags(r),votes=puPartyMap(r);
+   if(r)submitted++;
+   Object.keys(votes).forEach(k=>{if(totalVotes[k]!==undefined)totalVotes[k]+=Number(votes[k])||0;});
+   const announcement=first(r?.resultAnnouncement,r?.announcementText,r?.announcement,r?.resultStatusLabel,flags.success?'Result Announcement':'Awaiting election process');
+   return `<div class="pu-card"><div class="pu-card-name">${esc(puName(p))} (PU ${esc(code)})</div><div class="lga-status-buttons"><button class="lga-status-btn ${flags.over?'active over':''}" type="button" disabled>Over Voting</button><button class="lga-status-btn ${flags.violence?'active violence':''}" type="button" disabled>Violence</button><button class="lga-status-btn ${flags.success?'active success':''}" type="button" disabled>Successful</button></div><div><span class="lga-collation-status ${r?'received':'pending'}">Status: ${r?'Submitted':'Awaiting'}</span><span class="pu-announcement ${r?'':'pending'}">${esc(announcement)}</span></div>${r?`<div class="pu-votes">Party figures: ${Object.entries(votes).map(([k,v])=>`${esc(k)}: ${Number(v).toLocaleString()}`).join(' · ')||'No party figures found in this submission'}</div>`:''}</div>`;
+  }).join('');
+  target.innerHTML=`<div class="pu-list-head"><span>ALL POLLING UNITS IN THIS WARD</span><span>${submitted} of ${units.length} submitted</span></div>${cards||'<div class="empty">No polling units were found for this ward in geographyPollingUnits.</div>'}<div class="pu-votes"><b>Party totals across submitted polling units:</b> ${Object.entries(totalVotes).filter(([,v])=>v).map(([k,v])=>`${esc(k)}: ${v.toLocaleString()}`).join(' · ')||'No submitted party figures yet'}</div>`;
+  target.dataset.loaded='yes';
+ }catch(e){console.error(e);target.innerHTML=`<div class="empty">Could not load polling units or their submissions. Check Firestore Rules for geographyPollingUnits, ec8aResults and pollingUnitReports. (${esc(e.code||e.message)})</div>`;}
+}
+
+function renderTotals(){
+ const rows=eligibleWardCollations().sort((a,b)=>String(a.ward||a.wardName||'').localeCompare(String(b.ward||b.wardName||''),undefined,{numeric:true}));
+ const t=totals();$('totalValid').textContent=t.valid.toLocaleString();$('totalRejected').textContent=t.rejected.toLocaleString();$('totalIncluded').textContent=rows.length;$('totalSources').textContent=t.sources;
+ $('validVotes').value=t.valid;$('rejectedVotes').value=t.rejected;$('sourceCountText').textContent=`${rows.length} latest ward collation record(s) will be referenced. ${t.sources} underlying polling-unit submission reference(s) are represented by these ward records.`;
+ $('totalsTable').innerHTML=rows.length?`<table><thead><tr><th>Ward</th><th>Valid votes</th><th>Rejected ballots</th><th>Source records</th><th>Ward collation date</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${esc(first(r.ward,r.wardName,r.wardCode,'—'))}</td><td>${Number(r.wardTotals?.validVotes||0).toLocaleString()}</td><td>${Number(r.wardTotals?.rejectedBallots||0).toLocaleString()}</td><td>${Number(r.sourceCounts?.total||0)}</td><td>${esc(fmt(r.collationDate||r.createdAt))}</td></tr>`).join('')}</tbody><tfoot><tr><th>LGA TOTAL</th><th>${t.valid.toLocaleString()}</th><th>${t.rejected.toLocaleString()}</th><th>${t.sources}</th><th></th></tr></tfoot></table>`:'<div class="empty">No ward collation records are available for aggregation yet.</div>';
+}
+function renderHistory(){
+ const rows=data.lgaHistory.slice().sort((a,b)=>dateMs(b.createdAt)-dateMs(a.createdAt));
+ $('historyTable').innerHTML=rows.length?`<table><thead><tr><th>Date</th><th>Review status</th><th>Wards included</th><th>Valid votes</th><th>Rejected ballots</th><th>Created by</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${esc(fmt(r.collationDate||r.createdAt))}</td><td>${esc(r.reviewStatus||r.status||'—')}</td><td>${Number(r.sourceCounts?.wards||r.sourceWardCollationIds?.length||0)}</td><td>${Number(r.lgaTotals?.validVotes||0).toLocaleString()}</td><td>${Number(r.lgaTotals?.rejectedBallots||0).toLocaleString()}</td><td>${esc(r.createdByName||'—')}</td></tr>`).join('')}</tbody></table>`:'<div class="empty">No Local Government collation history yet.</div>';
+}
+function openWard(id){
+ const r=data.collations.find(x=>x.id===id);if(!r)return;
+ $('detailTitle').textContent=`${first(r.ward,r.wardName,'Ward')} — Collation record`;
+ const fields=[['Ward',first(r.ward,r.wardName,'—')],['Ward code',r.wardCode],['Local Government',r.lga],['Election',r.electionName||r.electionType],['Candidate',r.candidateName],['Valid votes',r.wardTotals?.validVotes],['Rejected ballots',r.wardTotals?.rejectedBallots],['Source records',r.sourceCounts?.total],['Review status',r.reviewStatus||r.status],['Submitted by',r.createdByName||r.createdBy],['Submitted at',fmt(r.createdAt)],['Summary',r.summary],['Discrepancies',r.discrepancies]];
+ $('detailContent').innerHTML=`<div class="detailgrid">${fields.filter(x=>x[1]!==undefined&&x[1]!==null&&x[1]!=='').map(([k,v])=>`<div><small>${esc(k)}</small><b>${esc(v)}</b></div>`).join('')}</div><p class="muted">This is a read-only copy of the Ward Agent's submitted collation. The original ward record is not changed here.</p>`;
+ $('detailModal').classList.add('show');
+}
+function switchView(v){
+ document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id==='view-'+v));
+ document.querySelectorAll('.nav [data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===v));
+ $('topTitle').textContent=({overview:'Local Government overview',uploads:'Local Government uploads','ward-forms':'Ward EC8B E-Forms',wards:'Local Government Collation Dashboard',results:'Consolidated results',submit:'Submit LGA collation',history:'Collation history',profile:'My profile'})[v]||'Local Government operations';
+ $('sidebar').classList.remove('open');window.scrollTo({top:0,behavior:'smooth'});
+}
+function renderProfile(){
+ const rows=[['Full name',profile.fullName],['Username',profile.username],['Email',profile.email||user.email],['Phone',profile.phone],['Role',profile.agentRoleLabel||profile.agentRole],['Election',assignment.electionName],['Candidate',assignment.candidateName],['State',assignment.state],['Local Government',assignment.lga],['LGA code',assignment.lgaCode],['Account status',profile.status]];
+ $('profileGrid').innerHTML=rows.filter(x=>x[1]!==undefined&&x[1]!==null&&x[1]!=='').map(([k,v])=>`<div><small>${esc(k)}</small><b>${esc(v)}</b></div>`).join('');
+}
+const sheetParties = 'A AA AAC ADC ADP APC APGA APM APP BP LP NNPP NRM PDP PRP SDP YPP ZLP'.split(' ');
+const sheetColumns = [
+  ['name','Name'],['code','Code'],['registeredVoters','No. of registered voters'],
+  ['accreditedVoters','No. of accredited voters'],...sheetParties.map(p=>[p,p]),
+  ['paperValid','Total valid votes'],['rejectedVotes','Rejected votes'],['paperCast','Total votes cast']
+];
+const sheetMeasures = ['registeredVoters','accreditedVoters','validVotes','rejectedVotes','votesCast'];
+function sheetHeading(scope,serial,editable){
+  const geo=[['State','state'],['Local Government Area','lga'],['Name of the Registration Area/Ward','ward']];
+  const title=scope.electionName||scope.electionType||'Presidential election';
+  return `<header class="ec-paper-head"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAAB4CAIAAACLlMDjAAAACXBIWXMAAAsSAAALEgHS3X78AAAgAElEQVR42pS9V3MkW5Im5uKIiEgJoIBCiSv6dvf07M7skrYkjeQLjTT+cj6QZjPdsz3Td1pMyytLoApAqlBHuPPhZCZE1d2ezQeoSiAzPFx8/vnnpzBpt1rdEkPb7larG4U0jP123Y6jpqhExhgmIkRU1ZRS13WImFJSVefcZDJpmqaqKsNGs4KiZeu8d84AUU65D+Ou38UUXeV95ZF5CEPbtsM4imbR/OzZszGM4zCMYez6brvZxDF45yaTKRsexzGKMHM9aSbz2WQ6aZpmUk8lSt/1YRxFlMlYJk0iIog8dH0YQuhHEDGGGc04RltZ23gy5uTk5PzJk6ZpyrX0ff/27VtmrqrKe++9Z2ZVddayAmSdTafGGFVlZuzD+tWr77p+t16vV6sbIgSUGKNmihGNcQCgoJIl5xxCSCm9f/8+xdQ0zXQ6nUymVVUZY1QEFJpqqlmyqKBIliQpSMqqIceQxqqqyBoAyCoCkrOqpmbabNbr3W4bx9B1Xd93hng5X8znc+ecc04IAZErl0X6YQgp5jGzkrWWiVQVgRhRcw5DGPoxxyRJJIl3bjGfLWdL76pqWqPjLPuriDGKCBERUQihaRpmDiEMw5BzJuamqubN9OLsyfNnz+bzuYqKiun79vr63bv3V9vtNsawXC5PT5dVXXs3ATEhpr7vh2EIIaSYnPXMfP7kwvvKe4eIOeeUkogQkmWXo9R1TcawZTLMxpBnP61X623fd27ijWFmJqaYc9e1u3b7+u33fRz6FPqxM0SXT5/NJpOmqsmYFCMAjkPICBUSGVM1zUkzIcHKWOtcP/TbzXZoh13Xblbrvu0M2elkMl8uvXWWjTVGVDftbjPsyDIQ5pRTSkTUNM18Pq/rGgByzu/fv//+++/brvPOzRdza0yIYbvd5osLAAACTYqv3n715Ze/en99ZS1PJpMXL188f/asrpthCO/e3hIaBWAm55wxhpmNMeULEYkxlng0xnjvK1uHMVrjADFJzpqFEAwIg+PKALcw7satiIRhuF2vco6b3dZYbpoJiIQhSM4S0tj2IYyE6L1nY8iYZjm7uHhazSYhpWEYU4hxGK/fX2+2ayKe1lNnrKSIgI1vJnXDaDTnHBMoGDLGWDTkKjddzAybYRjatu26ruu7YRi3m025FhWZzWbTyXQYx9122+9aVP3RF1+8ePHCeeecN+M4DsPgvX/58sXTpxdnZ09m9TSDELof/+QMlZCQiAhIQbPk4saqaq2tq5oNl3Smqig0nVcAAAAeIAP0eezSEMa8o8E4pwgRxddWSH30SYxJIyC1fd/t2vXN7dD3mNUoGqKmbmaT2XQxny+Xs8Wcvd/sdpvdjo1ZLpc8h8XJEhEbX9fUeLAWQAAAQEFElAgZ0ACW97MdhzGO3lcGGQBAtfJ+uViIiLPOOUeIhrlylWh+9+7dmzdvdrs25vSb3/+bEE6n08vLS5NSJjIny+kXX/z4/OQcAAFyiEGVHHtRQUQAEBBQIEQyxrBBREICAAUQEFUAxfImwhiUkY0VBCW11hnHgiiAq+Hm6vYqhuHq3bvX33+fU9622/XtxpCxzBpzZdxiNp/VEyYbQ/r+u9fVzW3Sr2JOYI2rq8XJyenFk+9fvdKUTk5PF/NZAlkPK8t2ZqcMOMZAoAgEUUDAGmPIiCgqTKqGkbPkPEZvbDWdWTIKioCiIjkTEQEw8pPlqUHedu16t73drMcY4mZ9fnlhAJCZm2bSVFMAk/IIpIYdEikoIoACACCiIoCiAiAhAGRQAARVLWZCUARAZctCKChRJSMk1DbvsiIwvtq+vV3fMMN62F5tblIIQ9vOZ8vLs2fz2cyyqdg0rqKsmgUUhmFomibm3I7jkMabm9Uf//zV7ea2qvzf/uxvZov5nBcI0LlWsnTSWTAhh4qdY4uMhEiIqMCo1lSAICoIOGsa3LuAIKJIAgUCRAUQBULn3OnJyWQ2raeT69ubkrXzF18YZiailERUk8YhxspVlgwAyNEwiAqqxXNUi+2KxyMiIIDuP7Vdy4aYbAZIKAIaIW3CFoiIzM369vurV227/dMf//TmzasXz589OXvy089++rMv/vbi5Lw23igaRRK1zGwNIRHQbb95dfX29bu34c3rnNNms4s5v766mn3zNSMvFye18UoKoElyXU0scMzRIjOamCKoVtblnAEBARAQAVT3TgCg5SoQUEFFBQUR0RiDhtGa6XR6c3Oz2+1SSgYUnfN1XRtyjNY7YKKsAopEVFymPBBA998gACIgIKoC4tF44rxHAkEcZUiIBj2BkufX797+6re/+Ydf/Pz3f/i95tju2qbyZ0/OtsNutly+fP7JDKYImvLIgJ6NARSVcRwAUbJM68n52UUf49Xqlph+89tf/9M///zTTz770eefv/zk5WI6/+TFy7/74u9SDgmFkPvYZzZEdc6ZEGNKkpJzTvXuWo6fEBERiSjnnHM+ukIGQSJr7bGUmRCCKqhAliyQcxYio/tciXem2n+h5QvdxyYAavmsoApq2GTIQcfd2CbCPt386ve//n/+4f/9y3dfR9Bvvv0mprhcziqo6rp2M6+EzjkGzpBCHHKMjfHIhoCy5MrVqiBAOStY0+ah/+2//OW7r9rQk4E/ff2nN1dXJ7//vXX2Zz/5m812RwB/+zc/O6tP2ThFEFC2zEgIxIQCisW7Hj5UtViHiFS12EsBVHUIQ865mDLlZEQ0xZRSUi1wAkERgRDxobH03h8/eNLei1VBAUBAu9iThTGPMcdR5Ou33/3jL3/xj//1F4OE+WLuG+/BW++GsU8aM6ZubNfbTdRUo5vaCVmtgBAgDMEgjXFEQiIVETZsrYkpCsh0PiXEtuuGFN7fXhs2lxdP0eDZ6dlmt63Y1a4iIABiKvcUFQhU4GOPUsqLQ5WkhIgKmkU0hhhjge8pJqNaooiImMGqQSrFFbBkbkSFh7cDD96r+xfSfcVG2XXbauqssfPpfAdDktTHwdUWgfowDEOfJYRou+0OZdptO4sGIRMkgJRSjmMwfgopt+vdpJlYZgFQEGutYBrGYRh61bzbdKv1Co2pnOO6CUFevX79y1/+Mqf0+ec/+vv/8B/PFqeVccAuKYKqIUZRS+bujv/Ao4Tk8VvvvKqKCDPnnI1IBiAkRqTy5AdRtq9z9821T1F7uCCgCqoqqkrZeQuG3u9u//D1n3//9Z9/8a+//MWv/mnVbprZlC3nNIJCVdduNnfEkHR5snBM29Vq0BaTYBA3BceWEH3lwaIK9GlEVGZMKbW73Xa9CZJ9XVtriSipdG3Xft3147DdbP7H1bpumvEyLCbTs8WJZ68SAcAS7y318Nbvm779Ve9jsMRjSsl5z0QAUDzOxBhTinkfhpCzAhdjKR0T9wFAgFJJ8vt8rppRBDRDzqhBRl83W9j95qs//MM//eOv//C7r19/M8S+bry1GEKnSXKSQDwOIVnHCovpbD6ZT5tm3PaSJad4ffN+7MPmdlNX1dPLy/Vu28aevJ2cLQiJkGKIQWNI0XkPgN57NAgEfRy7ML5+f/Xm6q21dhiHpppMJ7PMSMCIKAp8SCN3Bf3gTcWDVJWISmVkZlVBIjw8TNw/conoElX75zz00EOS1331BQDaGzKDZpRN3+1WV3/4yx//4Z9+/qtf/+p6cy0o0/kUCQG0axMCIYgkgSSKWVKOY+p27ddff/3V7//SbdphO8R22NyuVteryvuLi4t1uzON/+ynn//sP/9HQqirigAkZ+edMRxjFgB2jpnQGlv7bbf79s2rMYTFdL6Yzs8np4isQIfcCscwKzbb9x6IxUzMvL9aQQKUkm1UiymNKoogHGKVmQkJuKCCYpKCDgAVC3gD0Jw0q5JlBe1lzCgCOWH+1W9//W9//sM3r79fbdchRmTo49APffF2Y8liVVeVUWSlNKRuvf3Xf/mX9nr7h9/8PvaBMlDG2Me+7WfT6b98+WUfhieXF2Dp4uULqCgniSFqzujMGMKubW0cnfPEDIbHoe/Gwf7RvWpeXZw+ef708rNnnxJAUjVQMWIBzg9K1Q+k/PKFiMDB40TEEKExjKCiGQCYCEAUFABFRREIAJVQCQ8RLwI55RKRqpI1E5oMsl7d7rpdF4YhjEMYh3EAhiGFlCIRqwgqkCIrKCAByhDCrnu17t999+7bb76zwLWtKuOtMd57Uc2SVWEYx+ub99+/+tY2vt9tQYSJCcA5Z8NomEUlxbzpdilGZnO1et8PHSHdbG8RUEEEc4ZsgA6xoX81zZeSX3xRDz8x1hpjaBz7GEaYzBTkXvVTAFUghNIIIAKCAiE4bxUhgSgCIhk0bWhfv3n9z1/+6vd/+dPtdrXuWgCxxlhjDSESxWGQmCWlQUBDdmg1JAlRosYQUkqgImPsofXsx26MMc5Plgqw2Wy++svXbtKcPj0bh9FbzyjKiExsaAy9r+qqqZKK8ca5KmkOKbZd9/bd1fer108WywrdKIPDCo72ggdp6+MmOwbVPsaUDhmO4FARFEt1A0UoXYHew1ulO1BUURXVmGNWSSCr7frrb7757e9+99X33wx5tLWztQPGLHmMYRxHBGREQ2yJDSBl1ZjzmHer7W69TmEkgJwlhqQISphBN7tt2+426/V2s2l3m+1mDSJN5XMMcRhzjqiaJMHhHTIbEQkpjSlu2823337zpz/9aRxGBIgxyj5v6b/TWHCAVIBARKBgjnnuGKWlcNIB69I+W+F9Fw0hJ8xCGiURk4L2Ybhdr5PkatL4qR/GbuhDzjmnMaeICNZUTd00rp5Xk2HdjbtBQw7dIFGmzXRoegbOKJBVVZlJVQ0zM48ppJyu398MMfRdh4KVs2LRVJUqCCgzFuiChDnmJIkBMabXr1//+c9//tkXP5nVk5yzgijwfdR4vOofSl5EZIwlpPIre2MV2PqgOsDerQSAUAAI9S44QQGRmNAxBMiDDJvtthv63dCuunUFVRj7mJJ3tp40GmMWQaFpM31+cbmoZuO0e//6XQpxFzZjOxripvLWVo2rU0jtrotjyimPIVR1PZ8sgOn29maMA1psmqoyFdXWVHbTtrzhwm3kJCnnMUVI4o0JCbque/X6+67b9b42sn/fh6p1hxju+9ejbxHRWsPMoiKq5r6l9lF4qIzlJhAoKuO9UEQE65hABSEpbdvV1erdN19/891337MxTy8vBaVt0UpyzOM4xnGsrLXMJ4v5Tz7/XEeNbhK2Q7tuq8rZCXvjP3/x+dOnl964d1fvX33/6oZXzrmU8+L05Oziia0tMChplDQFsY1181oYze1NSHGIIaWYcyShnAJkBdUYs4KuV7fr21tK8GS+FNVCKf1g9OkRh0PJVAioCiLirQMRc8QXhWNQLTDqPmpHQFFA1BKRusdWCoIwyHi7WX3z3Xdv3r1dt9sgCVRFRQkMWwCNIQJAUzcOLSiOfXBkKl9PJzMYdbk4mU/nLy+fnS5PT05O2207dAMCEpFzbt7UT589u3xx+fT55WQxXe/WX3/7dd/vmuW0XkwGCZvN5tCa3VFqgEhE3dgiQNt2766u1reryY9/BvPTIx/wISItV3xnNwRVYIAcYx6Dn0xB1BxdqfR6Hze4MioewhAVQRQARDTXXBHzersdQsDCckQRyGEMiOCtmUxqg810OnNgFCGDWOdm06lVs/K3TdU8O7/46U9+GvvYbttvv/nu66++fv/uXRYgwycnJ4vlcjqdPXt2efHs4u37q9vba9U8aZqqbtIgqpJTBlU2bDJjyciGkbAbdgK5a7t319cQ5fPLl1Ig/DHbAIAqImABzXhohQpmAMDSy4kCUenIzf24u4MY9+g9RTxUxSNOKXCeBVVAxhj6vm/7LsSYRXLSkMcxDkzkGCyxYaM5C2COyZB1xtf15Hx2vpwsdtuW2Xo271dv37y5+uabb29u32cRV9XO+aqqiFAkhzHuNt3QDU3V+NqfnC3FaILg2Bhmy4ikYwoiQoTOMjOOMY4xEdH71ToPMYgCUjGB3mMa6M5SD2kCAEHcT/UArLGEZMrsrARjlmyNDTFYY3HP6SlpiTu6TwPq4Q5lkH4Ybneb2826D2OWnHO524KCOeekKimHtmdFWhTUooT45OIcgW5vt6v15u3bq6ur96vVWgQqP8kJkE25HOc8Ed/e3lxdvwkpzGaT88vz0/PT23alFqbv3tp3NktSEDIEAMgoknZde3J2suv6ejlZbXcSpB1jKkaRe9eBSLjvBMvHh9zKnt0mImstM+1p5UJxFdoIH7ANx4wgAFRiUY8cI1CCOMSw2+12uzamCCCgmRC8MUSomlJCBpaYUsLBjWMYR66yqHdesra7NhL/7t9+F8eAwNOm7ptut9uOfUdsmGm5nE9mk+1u+/b6TdX404vlydnp4my5yV039N99//3N+rqaNzGlJIkMq+SsIlkIMUvux74fR42y2m5Dig2ZY4P4gCP4gYwvoMS07xkR73BWztkYc9dh7uHnHeZ4SG3sraYKKaZxHIcwKgAhASiyMjNkSTEbaxaTOaPxaFGg6/qKamZmprbddEM7WZy1t7cX5xfnTy5UlejPwzCkFL33i5PJ8nRinV3txpgGj2bMQztum9QA6ZDitm9DHK1UGTTlAIKCIBkMMCAmlT6MXeghw67dpZjAPqiGe+odP3SrYwihYS5hWxrpkqultIuH5Keo+DjN3yfkj9QQIhCKSmmV2RjAjAAGKamoalVXl5eXp7Pl2fL0zXdvYgxZsnPOWDuMo4p477KrcswxhBDCi2dPa28Mc9V4tLTZXMecd+1mvpwuz04QYLfbPdGLum6ayWQ6nQxxvjg56yUkyUOOOeUkmYgMkyLEmFIWRhNySiof9SE8TKc+juCZJeecc4zxzrNE5KEZPmTK8BiVigfGA9AYw8aSYeusIc4iopITphgla1NNnjx58uzJ5ZPlk7gL/bZz1nhnbm9vttvtdDpZrW/X726+2vz55ORk0jR//5/+7tNPX04mdZb0L19++a+/+82ub5vZ5POf/jjl/N3rV/O+vfzkpXNuOp08eXJeTZuzpxfrvo2S1+0OhlGyAhIZBuYkqgacd2BZ6THAUtXiVh+1VPEOQko5jeOYczZwj7J5UAc/gtwUHzicAAgBOesMGy4CB2QFBkIlImMReRzidr27PNWrN2+GoXfOVd7nnG5ub66vr7ttRymvr2+v371/8+ZNVVUnp8vZdLZtd7/7t9/9/Bc//+a779qx/+TTl6cX59uufXd7ffn82dD3Fh0BTuoaGKqq6nM0xpAxZKKrvGZAZrKMEYz19WRqq4qYEPEIHe43OvhDrqF7LOCcs9buQel9pL//ePCh+zit/CjjPi8ymgQJMkxcU1O9GbYgROzYqIgAioB0Xf/u3XsDpFFCO1yenhPCze1tv+nfv38HWWv2J6en6/Xm+t27cRi++OLzH33+I3a83qzfXF3drlb1tHGVL5NkyZJSevf+PXler9bdrn13+37dtn0a265LOeWcva/DEJVACZHReNvMGl+5Qh8jUmEKjvmnNMn7C1cQlWI8ERFQ5521tshszJFyvmem/UcFBGAoI9TDKEz2zDsIggOKgo7d2fz0enq73e4s+YBpjH0co0gCzUHg+vZm7HvK4NCczRdd163er7ttNwzd6eJsUk0qsvP3s+163Xd9iJGIvHPeV9baZtI8eXqxOFlaa2tnyZoU079++WWzmPQx3N7evn79Ri2J5QiSQUKIzWSmY0w5i9GSJSpXW+OIaH9Zx3J4cA5RISAEFJAytYbCnQLWVW2MKf5kjg5ZuPpjahKVrALEiEilON7P84qEKACWzMlieXlxud7srlc3tEIEkJRzSgBqjSGklGI/ACUA4/t+vJbb1fUKgoiorzwijsOYJbMxbG0IcbPZdIO5vb0Zx2HSTIy1McZhGKbOIuLN7c1X3317cnFaTxpVRYKsapiJTUohhLFQw4woMTFaJpxOJzmlvu15McllkHcvhj5SAg+hmkREJaVUVErGe19SfQgh56xGH7aVexyCcGwHYC+mgFz+8qRuLi4ubterv3xTacpskYAMGiIwTITIzNY4ySmkuGk3cQir27UDDmNYbzaxC1a53bUpJUAQkRCDklrnKl9t23Ychm3bmrrKqNuuvVmtgGm33SKT934+mw85RlARUVFjTN92McbF8jS0sfZ+OplenJ+fP3lS1VV+iA/uYITeDZELxV7iNMfYt904juM4FtHVHsQ/6gYR6UPsgXtZDwpqzlkxK5G19mS5eHJ6Om0mBpmBvXEGGUAKJEkCGQUAYkybzS5bGYY+Ku3W2xRzv97V5LarTYrZGTuZTpv5VCSLSkwJCAsGbNu2G7p1uw0x2roaV2HbtewNMQ192I6D8RYILBuEIp5hW5nTxeLJ4uRicfr05KxxtajQD5B8AHfT4r1nqKaUsu5HPsYYc38Mez9n3bWJD32VDu0mKQgAATpj55PZ+ZPz8/Mny/kCojKQ5Cw5xRRCGGKKbUiGWWLebDdQazv0mHR1ewuKY9eD1WEMKGq8V9CccmE0kWi1XndxcN2WvUsoIUUBUMJ6WjfTiVWXqQz7FBF4P79WAswhOrXTerJsJvOq9mwQBIHvBCEHt7r/xQeDap00TRHNVnVtjrKIBwGsd6Z5NLwvXsuAho0CKqBBndTNk9Ozl8+ev3h6md/HUcKYolBiZBToc9/3Q115UNhuOxYz9D0JEXNO2VhbZALd0Fvntrvd++vrqvK7dhdTnC/mGTTnHLpulDimhJbrySRn2bWtwwwGC94s9BMjMpEByGNAa85m84vT85P5sjIWsgDRD7nV0UJ73dlh2l7XdeV90TuaI3C/z+wch7fHiD5yRocJIjKSAAgAAyjzrJmcL8/OFqfv1u9zyIoKhjNxISdRgJDYUsqaQMhapzytJ7vVBpLMpvV8MWck513btt9++60xvF6vkTmNw5hTkoiG0fHEO1dVrqn7OMQwyoDsef+eAQiQkaZVbcjE3dA4/+zi8tPnz56enFToWfDwxI/zyI9+uB+7ZhDVEGNVVaboaY7DWMC7iFXdi9nwobEUUSSLKhIDaM4JiLyxy/ni5bOXf/jqj6fz09X69v3N+6yZGJx11tic4tj3OWeNfR5DELLIOcc0xsEMmpSYAbEfh9Vm3TS1McY7t9ltjTHOWLQsjAKaco5tCwbZ8L6LYGbZ4x0GZMTaesFx4qqL07OT+UlDtVXKGhHpB5C6HuCC7BN14cYQVaHrOlAdxsHclzrf16fpgSA7mknxSEgCKvA+KWLFHhBH0vPlyd/++Ker3Spz/vLXX7abLXvbhW6z25IhIrTWEbBHy75mQRIFV/XQZcm1r5u6QcS27UL43hjTD10/DifLZUZQkgiqqMrEzhpnM8iQgzISMRMIASEaImAeu35qm9r6xXR2tjxpvANNCJaBDhqWh0T7nkVRVDDEAKAihOiMDcYY52IIiCiiJqVU1O2FpXnYGz6A76gHq4EyMSDIQXyUQRnJGTurm//pP/8Pv/3j78NuJMF5M0XGrut27c46ezKbJ06OjCeb+pCHMG0ao3Q2P/XsUyhCgmCtmc6mJ09OYkpsjfFOWfsUQwoZFZmQuA19DJpBkJEYWaBoIg0xJpjWDZn6bHF6cfJk4WdGySAr71VHCPe6wcPtFymDGy48woMsxiwinrlMm7gURGYuWl9RMWw+Turv/UtVjpgEEJQIJ01zdnK6G7qL0/PnT5+3XbfbtMK6XJw201k/tMM4EmBMqaocEdnKf/7Zj05my8ZUEz91xiLAMPTjOIhKSGGMYX56knLa9bvrzTruYs4pxTCEkEjZm5wiABIUHQySIGSe+Orl+bNPn7788fPPX148A9CYYmEdnbWojyJQ4Qca6SPGJ6QsmZnNZDIZxzGEsFePoH5onQ//DIioSBn2KwCIGqa6qgBOzi4u2rFVlTEM3169imlIEpMkYva+gixjOwIAEk2b5u/+/u8/uXzxn372d0/PLrfr7fX1+2+++frbb76+ublRUGNMjnG+XDx78ewnTN3Y3W431+vVq7dvVt12lJxFSK1BA5ItmXk9N8hG8Wcvf/J//u//x5PFWWN90XsymSM6KETDA7HLDz8KsJAsRLSvho8pmgd0zwelEEBUVZSo8M2KqijoyUKNUVJl3Reffk7/1/99221/+5ff/evvfq1jP6kaJs5x7DZdTDEMo0eeTCanp2fee0Swzp2cniHhyXLBzNPZpJo0bPjk7KyeTDbd5tXV2z9+/dX/9/N/6IZRFFOWKODIGLIQwaBxYjTKk5Oz8+UTg1aTkCOPFvio/PnQGeDR8OGBW+FeBVpy1F2sichHCEPds1dHGutguwOc209iFVGRyCCPYQCE87Pzk/Mn27G92d3885e/HMZBqYiUEAG9r3TYq12N4WEMscn1pD49O3n+/BJyIiRmAqSYorMe0KzSRhURqe+GthvVErIxoAaIhFDAGFNbT4a++OKLzz/7/HR54tgYNgRFpw+imffU6F9zp3ttoogoQM6ZiMyRrDiqHY9NTQENRwPtO/YS44T70Zoe1PAiiig5Tf0UkYY6bEPLxJfnl3/z45+9vr5q211OadpMXMTl7GQEZ5AnzcS5yjd1M23GcYw5THxtjAcoE2RMGnOOmVIIcRhCiMlY1zRNxBSGFkUhgzVY1ZNnT5/9h5/87OLs/PNPP/vs8pNlNUuaCEAkSRZjOKUExv577XTMN1lK34NHDn6vRbqziT6gwe6gCNwNYplV8rEMZxFQzTkPKVS+njUzW7u5zv+3//K/LmfLX/zzf/3jn/+ACjHE1XaMNjjyk6ap/MRXtfPem8qwsWhQVTQBgEiOMTjryRgC8t6XZT7rrGFGwJP5UlKe1pP5ZD6fzP7mJz/5n//L//L5y09q66emwSKKVRBVyIJWiBAA/nqWehiJJUHFFOG+sVQfM9TH1K4HcuvuxejeEgECG1PQsRIatERIWVjJGyM1x9kAACAASURBVNecNvKZ3Ly9Hrf9dr1uU1sZX9vKMHvjU8qIFGPsc2/JZpAoEbOaPdwVtRAlCWGWPIxj1/cxxhSTolpyyDyrp2eLk/Ozs5eXLy7PnszqhpEZMKckKZFzIGX6hcaYEgmIH1c2fHzAI9LUDSFx0egcdYJHZLX3HVElRcV9tgJ40FYTFmGaou7JRgQHjAAC5WoRgJJKbf0nL14Q0np9e/P+mkWWiwWIasrb9WazWRNA7f18NmfgDEAIxjgEwolRkJAzEgFCzjmlyMSV80mSAVpMF588++TFs2dPTk5fPn0+8xOKgChiUtHOWTJJEyQAAM0ZyOBDucN9meT9TF+axDLHmUwnBc0/SPBwUBEaZhVh5iMQPSq79AORt4qMGkGBDRvkrDmBICIrCighLubzn/zoi2eXz4jgu2++vTg7RcSx61bXt91ud/X6jaY8n8+rJpGhlBOK9jCqyBhHYhpjVMKytxlDmtTN5dNLb+2L5y8uzs6/+OJHF+dPK3anJ8u5m1ngrEE0IxGVdQGkMSdVDTESAxtTNnHLzkmMMedsrf0IF4hHr8BcWBoEVBFvHQFKTsQmSzJscs7MXDK9HpjmPTtT9IN79H6Y8quqqJCmnIDAoBWkDBlUG+ur0wsErKFaNrPlbJZCuL25vZq8RsSh71erFb96td5urDFpDJqEEbNI3w9NXQ8hKEEbxpubNQG9ePHJJ598dvHk4otPPp3P5hfLc8u27TeGGEGzRgBw5AhRREIYELFpmsKppxxqZgVIKZUhaaFbisz9GJjHjwVWEVEuTCkhlgn1nfj/njfiX8NtiMjEcFjkCCHEOJIhZ0UAxhRjjoU6IaJdHkn0xcVTRDydL5bT6TiMCBglv37z5nZVMRKVvuDQmm62bdu3rq5cXc1ns/PLpxdPny6Wy9PpMo5j7SqPTkErWyGi5AxZmAgNEhIxZgBmU+5z3TTjGB6lqkdbAg9S+152K4gkqohojqMd/Wuy1Aep/8iWle4cUFGHYei6brvd5BydtQowppRSUgRkICbRrALNpDKGm7qun78o6qIhxpvNBgAkZ1IoAmEmqqtaQBdpOZ3Pp/MZMRvvjbOECCqNbawiohKgM81+csCKCiiaIZVRTRjaGCMAGDbOVkRUNiZKMBYMULo9EbnPzStozlLgqIoAgLmv+QP478IgZWlzn+aKpfphaHfbse+ddWxYCctyHRKRQBleDLsuhJEMX1w8nU+nhJgATsYxjGPO4tg47wyZQt3GFNkY53zZxckgGbICsJJHR6I55piTyIgqhMWPNOdUvCPn3HW7ruuIcNLMnKvvX2lZAzuy6o9cTFVFcopRVXLOqmoe1YX/XnuhQpLc9f12t+u6TlUnk+nJYmHIWGcLCyqggMrMKjKOwxCG91273Wy9dYvJxBq/Xt9c36yQ2RhjK2YiNowKOSVEVIUYggIkySllkawKmrIFN7R93/UxRkScNPVsNptMmiJsjDGISgEc681GQYcQXOVdcsMQnLPOuZLjD/NEvEOaeJeIU845SyrG+nfqdh/3i7rPfOU1dm27Wq1SStaY55dPT5YnOaeyoiF7xkOIWTTzfN4ObRyHsR922+279++y6PXtegihQKGxaWKIzWTinUcyloiIYox9129327ZtQwgighlWN2tNysje26ZpGJCRwzhab7zz4zhEzTGG3Xaz6ztVDSkbvkZFUF0ul8dJzXFY85FqqFB8KpV9w/ug9ONk6+MEv+9/igMraLvbrVar3W5njGmahowRzUdfp73OCxWAACULIy0Xy6w6hvF2tWq7oRvGytdsTOXr2jdNNWl8Y81eWiAiEnPfde1m2+7aGAMiGTIni9PaVt575xwzq+YxjNtdQATrTM5ZSUulW56eIKMzbrNar69Xk2Za1/VsNjte9TGLfWgBFSFCYprP5+YREnusef7AUsftl/IrWVLbdTFGa21d19PpzDlX/Bk/YC/KCigzL5ZL21Tb3W6722UAV1WzydzZatLUTTNxzjEyACTNClIoUkc8rZvGOkLy3ntXL+YLawwzq3KMKYxDSKHQcf3YW2fJEDNXlXN1BYCS05dXv7q6evfkiaaU9twBIiKO4+i9v9/fMHPxCSmkjqgpB4fknAtUfSSFV1UC/ujqZ6kgiBjGmHN21rrpdDabzWZzaxk0430BwVFSrSIpE6N33taOmMlwkyaqWLnKkauqyrmqNKdZUooREBjJWcuz2XI6IyJvnbGWyKRQoAIgqnemrqdHeUcXRiYWiKpqjSujeWX2pipMZ0qp73siqqrqqH08woijQk0k55Qk5zJnNWUyfly1u+9WdxDrnmjk+O8l1EMYi1stFovZbOaMlbKTUYqgPNbgA2JWSZqyakxRAYhZsqYQy748qBprS09euog9j+s9AxJS2XVUkZwzlmVBBgDIose9r8Z5BBBgUShrIKK5tvXzy+eokHNerVbb7dZae3Z2dnZ25px7PGY+KkdUAbHUTVOGho/2LB7H4MNoPnJeOeeUs4hY7+u69sZmVdFMZcvgQN7seQsVNMSGU5aQYh/GtuuS5gwgY2YBMFpEdiUbMrN1row06aC/iDGqaDlEwXl/2F3b31s69BlyWMIt1icyAAYAzi+eTCbN7e1t3/fl5Jnb21sRqapqPp8/slcZqCKiNXuAZe4noEdFAR/Z7PCMYqxy5/WwNlx+K6Yokr13CiBFcl/etwqIYtmLQhSVLEJElXMCMOpohR0bOuinyh5IyVx096LIbIEPtFop7vh4830/Hy1MCe7F20d/8d5fXl7GGN+8efP69ethGJxzZ2dnx0i8b6wyoSgrswDw2LMedOQf8O93ctNDdizK1JxSjEn8MZXjQVZ3mJSoAmoMYxJhQ0TkrC1nJ+ScyQFmAiRlg0WFRgb3rrlHKvBgo7a8B4VHAseitkMkpMPrAiJIOaSonC5kraqO47gXxhhjrS3HQH1YCssyBRtTrtf8kPjmzo0+wLWKWoZABdEBQIghhFG0MbYsXYvu223ZnywBSkQ5ZlFhYm8Mo2mHob/dJRHDLKLKVDxrv2l7kO7cV9bdpUL82LjhnvR4PyreDwX3vWZIod3tQgjb7VZVX7x4MZlMrLXDMBzR6Ud382OM4zg+8KwPCHzZCy5V4J7rHYgLMmyYGEBTCjENKY3WWkuYIQGIltOiVESFgJkZGBgZD8vCIBkBWAF1L7ZAgGIputuI0f0pHweNQUmBpLi/aT8Ap4/jP0RkJCBQ1d12d/X27V7tNZ3O5/PlcgkAhbH5sN1RERHJKZUBmDm2RccBz+HXSptMsOdj9t8DIaiUDtN6w6wxDnEccwjdbkuExhGyqOyVFSU6MkhM0TpnjUXALJqzgAAoEjExIxuicrYW4d3i0CE9FI74vn6zzADw40OaLLnc17LFrACSpYhom6bpum4cxz1fHGNpRe73yPdbn0KlFPBo9hP9B6WwPJWQMEtGwLKHnlNGRDZGNMne16Qf+vV6HcLYTCs2BAAmIpEW1Ym1jtmAgqrkDMYYRhZRUQUpnZnux/psgQswQFA8DuiKxKcoFuEepsHDSsNH7XXMLUUSIypjGDebzXq9lpTPzs6eP3/eNI1zLqU0juMxbd2vdcf98nKqHQAYQAJiUE1ZjPMCSMwhBmZDhDEm3qeOst8kkDMzeeetsoB0XZdSqur69ORkuTwRySnFGIMx1jlnjSUgLSdkoBAyAqtmUCDe73gQERtfjrc7On/Jx+Wea/H6B6UKAVSpiF3hqKK5S8xlzeTw1BDCarXqus5ZV8+q+XzuvT+Wv6YcenTwpvvBuEcw1uK+GjIDkeacDmT8PjuqgiIhlf2gB/Ci5BLRkEJBpFVViehmswkhGGNmsymAimiMqcAdBUgpWyY0CECEUMJPih6KjotwD3QGh3Ob5MgB3D9nAIGQ7zSuD8ZRiOM4xhQrX1ljttvtu3fvnHcX5xfz6ez+iuWjxa4H4nYANmav+TMGCU05ZErKxT1K8wh4ON2hoITillmSiFxfv99uN13XOedms1lVeWNs0zTlWCDJKeWsmojIsCUiw4b2U4zCb/GhDdqvnZV58bGG7PWIsCdqjtmkDEcQQRBUZA8U7rG8CkqIooKExpgkeRzHcjU5Z1DFezTDfcz0IXpgIqJydqFBQHNfuFWG0g+OgcLjVFaZuEx5+nEchuGrr77q+265XF5cXCyXC1Hpuq50W00zSUiSoopSOc8BDSAqSBaRw5JZeYGcAQGID5Y63Nmc8ziOkrN3bhgGSdk5V0Jmb7XDSTxlyvngghmc3XcwXdeV40JLYioDi/u08n/DWAXBHJOXORbB/foOHCcRB12baM6KJABMgCHFtm1LY8U8nc1m8/ncGHOzuunarmmauq6zahJJWQBAALNC1pxzIiRrvUgGwLx/ORQBRFDJAHdVqZz0WdrVEMI4jprlgOwNIyEzEuGdnFHvCgLi/oQZgDGGzWaTUqqqqpk0xx7w0X7lo6XLB3ng0KCIiBHZc6b3h9JHmF50NUSIxIU23Gw22+22lN6jHhUAcsohhLquiaht2wJMAMC5ajKZeu9ECAgVgJiyaAgxp4RU9tSVGAopnkUY0RrrvW/qRkH7tvXeg2hxjbJapYdRwKNFmr0+FhABkuTtdtt1nbV2Pp8X/HmcOTwSgDzq+fa1RfVYgrPkO8/aG/ixNkQLTiQEUR3GYbvdtm0Xwvjs2bPZbGqtndTTmIOxxjmnqrvdbr3Z9uMwhgAITTVhY+qq9pYzaEmDSKBGJeecUoH4LKQiZbJQ+co7YuKiiR+GIaWkon3fl0vyzjdV7bxDQ8eydQ/uIyhkkK7rdrudiMxms8Vi4Z3PkgGgND9H4uS+se6T7I+IPUl5T60ecc3d693zRFXNooi4Wq3Wm03XtrPZdLlcVJVXLX8nqWj5OyFGV1dDDOUo2BhjM20mk2llfErDrltba41xItKHvh/6nPIYxsp671xpdL131tgsuaQbEGFmY7mAJmNMXdXGGlXN91D0/XIYchiHsRzUV1XVdDqtfIUAeX/+wiP4DR9ypPuz2piZuO06a7hyztyfAhX+sByQUTzuyFqknJx1fd/nlBChqipmo3pnWZFc/AKNmU4mbd9FSVFShSAgSWMCFlTnHRGzoTTmzWZze3tbKqJbGiZmw3VdW+tKTignxs5ns1KMCoQr1Bvv35juG0ktaEezZBHpuq6kAkSsm8Z7r0W5myIj/RCTftz5uquGzEyUQmAgUrwjS6uqKsY66v8ei7vKWTnWIYL3/ohUipeWBqiMcACBmKqqnjST2XzmnI1pRAYATGlMSZyzoqoQq9rM5rP5bO7YM5lSdxCx5Pey01CuiGg/iSFmQ4xEAipZ+VCIVDXlvTVLABJRUzeV90ysogBg2R5h0Ee25z9QxhfLaBYVSSmZ0v7cp5X3m6zHufzjE0f2gAuR7iul76fYGAOiTGdVU9e+8ip56DtmQuRd14KCr6w3tsxXrLHWWm8to1EgAM2SJRWMAUQ0aSZ8yMo5CxESUkop5XTcU8ajKCGl3a7drNZEtJwv6rq2xlCRVwORoY+G24dymvvb0IXg3E93ilT56D5yODfk0XFv97eDj88/HHMG5baXh4IQo/fOeYeIQ+gB0HlfVYwAMUdVIWYiVJXC1u3aVpJWvnbeEZIqpJRiSpLzYK33DhVCCDknZmMMA0KRa+WUy+HORKSAMcTtZpNSWiwW3ntjDDEXFCoi+82jHyAqHlXD+/CzuJQRkXJW8iOEhvSRudDxN/UgDBERASkjvzKVKi5ChCJKjIYJsZwKPcIoXbcTyTlNQezQde+vrtrNtqoqAJrU09l0Nse5d84wojWEEFUqZwlxjGOWBAgKIorMpUQfS38ZPndd1w3DUGjiuq5LuB0r2P0s/EMbFo8w131JlrnvL3fGEgUuln6s/lLV/THlRGUGuT8Pz5hyJ9kYpFyG6bWv6romoHbXpjFixtlkEsZQWc9IcQz9rktjvHp7ZY379NPPUq4kJxAmImBMSUXy1dUVIFhry8n2xyyGhCmm4zw5hNC27TAMAFBVVSEVHpT4f8cg+fE67wHi7jn441T5wdj6nua2JFe41yE6Z733xliRuI9HgHLouTWWDCdRUNQEmtSC87Zqpe2HPrI4ZyEDARu0zthp00ymE1Csq+by4mnZvypdemGTEXHX7srR6oUOLjXXWmuMSSE3pdipjuO42+0KMC5buh8m03+/sY4Q7KhJ2h9RVbz0PnYvtePgh9lwOTuiNLdYTr8XzUTsvEciVZmaOQIKaM6ZMtVu0ucBMhKQI8do4tgNadjD/bNgfD1tmnG5PD8/Xy6XqsporHMFNBZXrev6uIolIqvV6ug7++LAbrFYzOdzESlgnYjquvbel4grtevBguAHx0B9dNfp+IQHxiokHUAvekdz6N2ZnooEURIbkzRliH3obGW6oRvTOJ/Ny2gtSRFj72OkrmpD7G3vvWcwltVZl1Pebrfl/4kwxgKYIhspipcUczfurA3FZbz3CMjGlIHobrfbbrer1aqA+D3BolD5urRrxVg5Z+99XddFyfdICPnXz627hxiO/kVEKaXyrgyAEkHOiRDKGYmlgCjIfjZBOoxD5auYQtkWHoahvMXtZrsvQ6qlrbfWiqqkSnUPR7ImJPTe7zF3zsylNdFxHNe3674b2l2HyMbYYwQV/iNLjDFut9vNZrPb7WKMVVUdbZFSBoGc83q9Ltmg0OrFH8ud+1B19d+OwXJvjpOL4wHVxbuNSAJQkXwYxtxbHSidjmYiUBBn3WKxKP/HQFFjiggx4UFUk1IKMYzjeB0SqFT1/1/Zl/62lVx7njq13pWbKMmW3U7SSXryHwTvAYP5/5FveZievOks7djWSpGXd6u95kNRtKa78SYD2IZgSBBZrFt1zm87qmkaRJRSCiGbug0u9H3vbNDaINLgIyEYQzTGCiHzpsh8erY8ncdnIGLTNJvNJh9q53MjuDjP8+FwMMY0TXNxcZG50tdb6Sed839dNPzkrjzjMScqLDe2kPnQE9D0EmuUEhBCCUdBCRAEXC1XZVmeN2cG3vLC51tiHMbJjvd3dzHGy8tLwaXgjlHOGW+bliL1PuRLjTG2Wq0opUIIpSQhyJjIoEUe8jIMQ16spmlWqxVjTCmV99QZcWbID4dDJrKapjnvyqzsOKv6frEQ/flR9ZMu+oxnnB6REBgBCoApkZS+phq9CmXDmCIkiBATSRRpIQuKFAAiPTnHTkE0SFNKDFmKaf+8t9aklDIUJaXM0PN5ZEihCkpo27RVXQkuEKiPLoTEKU+QnHO5Ysp9uBAiE1b5974E+SYkaK2llK7Xa0JIFh59FVW8Wpf/L/XZa3nIuQI/VfDkJEdIAOnnsHIWKMUYcm7bWUtEyFfmI8ZEM4REsK5qJAgQx2n0zs/zTCnNh0g+IgtV+OATpPxvflcxhRgTIZh/RY5cz+BfjJFzzpD76DLA8jpHjgue4cB8VZ1L0J9Q6//KAv2CMuvVnspfsP/Lav4qSfdV5805ZTHFEALFnLkLhCBJ6IM/1fEhvXg3iWDi5s27YRp+/PHvwzBSSp1zRVEAICGJEGSEx5jP/4SICV80HHC6gCijIYT8cL179261Wvnofg5m5pTVc5zHT4DA/6JS/1e0sq/L97xYIQSWzomU6cXflNO5CZBEIomYgRBCkZ22knc+pUg5JUAooy9yGp9PUy4EEGCMLxYra73WNmuCY/SIFCCch2llm4JzyXvvnCMEMosxjuMwDMMwLBaLtmkFky7Yn3jkz2Fg5FWXliHff7H+/H+Xp69g0dNiQURIJ8tgSi8zKU4DKwhJ6L3LvO5XfSqSGGPmJk9qE8bOZ6F3PkJUqmjbxdPTru/7p6enGGNVVXVVxxclfn7uEOkLwJ2Ox+4Et6eUv18IoY2WUlJGfy6KOhklEjmnyb0ujn4Re/kFrcsvpgS/zAzI4qz8x8fA4NXMk1eSna969wyD5DFXuXTOVfWLQDCGF040y8pzYHMIkRAsyzolIASt9ZRaQmZETAliDDHGjI4hkKzrjzH885//fHh4kFJut9vVapWbzTMl8bP98tO+73Wl/sv6WPLVZfoiyXn5e/7Bk6c5hhSymX+2s312v160TAgpZUkpz+kRhECMEOOpHwwhIRKKcEafY4yINM95MtrmtEPKGGdUcJFfhLHWey+FWi5X3ntjbEpDhjcyXZ5hzCzY5ZxnwOD29vPj46P3/v3792VZrlarU93M2M9zavO7opQSwNfq0J+RpoBIvg5OOCnrErxMygF8GZwQk3H2NOoFASC5kNMpwIdgfYwE2DnOFREpxdOQmDNviBC8B8zyTxZP4wggQgohEiCUZgiQxJgAUgzRGksZlmURIS3JghDouq7rus+fPz89PeUCIoNCRVGsVsvFYiGEbNumbb/79ttvlVLb7bapmggxC9zJi3noJxMCToIOgt6fjyp4AQXSy5uiWk+5UfHOccFPqdshQYgJECjN3Z2PCYAyigApEpIwAZLkE8n2kAQxxbMFj5yvXoCEL1IBJCQgpgg5qSf4QClFhpmkoZyfyFIPIWTXCZVCGm8OXadKVUilLmVZlk1Tr9frN2/fQALGWNYUCSGrqiqLEhFjCgABgHDOBRcxRf/ikogJKGEhBXi1b3IAXW4eGENrjTW2qhtIARkN3hg9McYSUj0PShVc8JjC2OtSFSgkpHDaajHDPZRSwigheNISRohZgpknxcREzox0eoGlifNgjAUglBKAnLrOkJDognc+xZQrhkzPT9N0Tu7M2jYpBCBOWh+650SgruuyKGJKUhZCKM4E51ypghCCSPPHoyQLEVKO7qcYUtTGxhgZZQnAGkcpU5JSQlMCa7wQLEaYRi0ljcGFYBHTMAxaa63HeZ61Ns65xWKxXC7nua+bhgChlJelmOLAVAUQgLIT+ZjAW58ICM4IgRAgpAQkIcXcwxCkBGke55EZGhJjCiEaY1Pqu657aZgNRSwL5Y25+3J7e3unta6ber1eV1WVueL8WM3zPAxDdk4SSrvh+PB4XzfNzc27q6srIURZlKv1qrle5rqcMWqMztPvuu4IkLque3P9Jv9nXdXtYjFYfTh01lrBxWK5WC7blMBo61zU2nTdESlITjlP2swhxLZtrHVKlcMwCakIoUoVxjjnwuHQzeMEBKyxV9uNkjz5SJEzxo0PwzDaEJQqpVJIaSCRciyUyNU6oYgCgwmQNbwZk9VaZ7PS4+NjfvP7/T6FGIJ32kjO66a52F5IKZ1znz597vvjxXYbY2KMHg6H+/sHY01VVnVTA5C2WYpCEUKPx0HrGZEunhZlWd4/3D/cP0zT9OPHHznj//Zv//7999/f3Nw8P++t9l3XHfaHpm0ut1uCmBVViPjtt99yLsqy4CLfBsM4HgEgVYoxpbUdhhGRffr0ab3e/PnP/zN4f3l5dXf7YK3NeqPj8eicX6+Wnz9+ZEiQgCqquq4DwLEbZmOFVBcXF82ijZDKupRC5OORIiJh8dXOgperymUERmvdH/v7+3szG0S4WK2v37xZrdfWnKBbIcR2ewkAztoYaErAGLPGWG36GCMkXqjNelPX9Tzr/b57eHjwPlxfXS2Wy6Ko6rr99tvfIcG7u7u6ajbri0WzEEJYa552j8e+45yu12sphVKCMdY0VVUVRcGmyR4Ox8fHx6enpxCjYKRtq+Nx+PTpn4vF4vb29o9//CNFyhUnhNzd3VVVdTgcGGNv3ry9vb1VqvjbDz+MfccoqdvlxcWWc9X3/WydKstEiIuBUESOMTWAJHNZGa/MauWvFTBFDhSlKGIASgdCWAh6s7549/Zm0S4QSFkUzloCsH/eH/sjRZpNMIVUl5ttWG7yoI7ZaOBsGjWj4vLyqlDl/d3948PDZrUWnAfv66r88P49QfL3v/2VUYzBlaXknFFKQvDWJuccY0zK01jZ9XotJUsJ5lkfj90+x3ZOU4z++vKCcaa1ZoxzLq6urqVUmbP4y1/+khLp++H6+s27d++HYaSMjeOQUtLGpqGXSnHpjuNgnCeUzvPMBOeFjClxxiMkh46QLEplhBAWzzFdyFIkSpUhPI6jbprlr3+lkJChO8yTLpW5P9xLqfq+r+u6Khspig8fPqxWKyS4P+x3u52UarVaDsMw39/N4zBMI6SwvVgLTkslq0Kl6OdxlEKQmL58/pwvt93jk5l1WZVX19cA0DR1JrtSilLypqmqqqrrChFiPA08LYpCCHE4HLyzPkSpOCKbZ00I7nbPMSbvY9suiqJ0zufEzAwopZiWq5XgtOv2zkfrnE+kOx5nbQjS1lvhXZhC13VSSaGEVByROm+7/qCNYSd7SiTGOG1MWdVlWVMqLrdXnIu6ru6/fHq8ve0Oh++//08hOGf8mw8yq8kp0gyn7HY7a+1mvVktVwBAHtLT46NSCgnO4xRCuHl7s73YZmaIINkf9lprxujvv/v9jx9//Ob9+1xViu12vV5nkEtKqZRqmqaqqpSSc3ASOhSqaZt5noydu8PhcDicyjFCNpvNMAxKKSE453y5XD49PVFKd7vdfr8fhmG7vdhst1Uhl8vW+wgEfYjF+3dCFMhYInDY7+d5etg93j3eba+3H775JnjvvNfWZQEuIKUAMQTPGC3LIt90QJJ1c9cZ721RKkKWv/rVh+3Ftq7rd+/eZZ3vn//jP7x3b9+8/fDhw3a7XaxqQFiuF2Wjyqq4vL5erZa5N/rmw/sU4zRNzrlpGBni737zm3me//CHP3htfvvhNz/87YfFcrG+2FDKUorzPBtrkBKA6Lyd9UQIMMby3A6lxNX1Zd1U8zQx+pWgury81Fpnf5oQ4vLy8sxlhBCur683m808j4umkpI7F/bPz8aFsm6Q8v3hsD/srbWJECo45zJFsM4lAkVRMHqM8RQXnJASVYiikG3LtW6VkpeXKykZIoxdkzwpS7Xb7eu6GsexLEtrrTb6v/+Pf+dCYYIGSAAACspJREFUZJ0IAOwPh2kaGeNt2/7ut79FpJgIIyiLIsZojVnW7eXlFigZh7FaVtN+LOtis1lRRgSnSgpVyEz2ISUqZHJDImZSGQHAuQCQOOcpxaurS86E0SYEn1URGWWVUtZ1naGaoihCCM/Pz/kuahftPCuGOesYFssVl4UslA9JSFk29ThNQKBqq6KQQgkhZYRAEXP7zwikDMBpPRs7z1p33W73vB/HPWXMaCO5eHv9JkTfj91u//Dp8+eiKKuybNv22PsvX27neSqKkhDY7XbWms1mc3l5uVwup7FHguX2oq5LrXUIVilpvYGE1bJ6unsMxgnOvnn3bp7n3//2dxEJIcg4IwApxXmeuu7gnAWAi4vNOA7Pz3tCYLPZcM7GUbdtW9f1MSXEglLKOQMgWToIkPp+cM4whtZZQmLTNMOQCCaphJLcB09FBADnw/F4dD6KotjW29ZYRJSVBAAXXa6our43xhIgDDDlAUWMobHz4+PjX/73//r86fPl5dV6vVZSYpWGsSdQj+PQ9/393Z2UommaGP0wDsfj3gcfonXOznpSSgpJnTPT2I/DlMcOPNzdPT09jcOYb96ry8u3b9/86U9/AoDv/tt369Xq8Py8WC3bzQo5TSkASfM8/OMff//y5RYg1XVDKRnH8XDYSykzJeG93+2ejsejt8F5751LKTHOpJQxhufnHaXYtu2s+67rpmlcrzf39/eZBFqvV4iISJ0Nz/vu6fmZIH1zc7PZbIAQLgXjHEhMPlCKlHMqsiskMSCRkIQUqloxhi5YrSfntBC4XDVVWXrrDocdZ+CDSeAJxgRem2n3/FgodbHdlEUpldRaD8OQO7d+6A77Z8l4VVWfP318enqKMXRdJwT/9a9/0w+HH/7aPz7dDf2wXLVKiUJJzllKMUbCufDeDcNw7PsYg1JKSnH/cGetnadpHPtxGkLww9B7H5FQa0wIXus542t1XQPAw8NDVVVXV1eIuNvthqG/vr7+8uXWOUspu7q6KoqCCwlA+nHUemZc7A8HrbWPsayrjV8LIZCRdsHrqlq0y/3DISVgBCJmmbo33lvGiBBYNappK85p1+1jiNvNBQFijc2sn1SqyInhjCwW7XqzLsvicDgYP1tjy6osVXn76XNdlxeb9e7pYeg7xjlnrGkaIXhG+Pp+8MFPeo4pVnWFjBijBapM2vpgOaer9bIoiqIoPn/5rJRarpZa66enp/v7+3EcM9A29gNjzHs/TxMQUte1EHwYRmM0pVRKMY7DNE/zPPvgEqQQnbWGAFjruZB12awWFxFgmOYvX76M86zK4nH3qApZVgopMMmdszF6Ql5NRzkej6vVIASjFEPwh8MzQUgxcmTH436eh0j8qPt6US1Xy6ZuvHdSqbIsKKdIUUh51l0P01DWBWV033UREnI6zmNRllTQQ3+QhRr0gJLSCLcPt8jx5uambpqiKhUlAME5xzjfbDaUUsYoAKmrumma5XJxOHT393d9fxzHMQOqkgtKBaUiRG+0nvUYo0QKjFOkQDCVlUoQpGJ1XVBKtTGEEB+805Ya0zStKgoE4pwdptHHGKfJBSskb219dXmxKTdlUXJKIUamlBKSz3oCUpRVwTgN0fX9MaYglVgul0abT18+1VX9QjvnOfBCSjHN0/HYZQyPMQqYGMcQo3feaBNCnPWcKCw3q7SHpm24EA9Pj9dX15Sxm7c3IYbD4fDp82epZEIAhkUsOTDGKGcUkXjvvHeEEMao1vPd3dx1XVYfSymPx+M0TYu2FopJIUoiEVOMAWkqZNE0JUCwNmTlXQieUqzr6sR0IFJOYowueIJECFnXVQCvpDTeQorHoZ8nwhimGATSuqwwO1kpZQSJc26/34cQqqp+9+5dURTL5YILPvTHvu8oJQTRehNjhEOYzYSIWutTnDWnTbtZrVeI6H0Iwf/9r/+IPqaY1pv125u3u+dnqaRz/h+fPn66/5LtpIyzwc7B+8lpcthb74pCKSGz3r/v+77vKaW5DjgeuxyysVwuVqtlCOF4PB4O++ht3TRVVXPOvA/ZNrRYLJRS4zjGGOu66fu+LEtVVE3bUn4IISpVMMGNsceuf/jPh0SgqeumbZXi3CUlpbWTYFQJEYxN3ksuGFLmvVdSXay3SNG7YI29uLhYrZaMYdsuGGNKisvttm1bxrgxJzI9A74pxdzEtW2bPzQfvLXWOajbxhgTMFaLZrFYqKaUQhpjnrs9Y0xw8ebNdVEUVVVZZ5umsdYaa7SerSszycg5ZQw5Z2VZrFaLqiqstXVdKymd98EH6+w8z5AiF1JJKaRMKVlnAYhUMiUYxsE5C0BUUwEh0ntrLZOqEKKqqrIsnHOEYiABKV2tlm3bZqtc0zSL5ZJSSgkeD900jhSxUIoYO43TdHv7xXv/9PSEiFfXV1VVUoqr1bKUpfEmhSClIECct865mCKlJ//s6dUoiUCtzzcApZQf9sf9vpumebFoy7IkSMqicN4PQ79YLKy1WWx2PB5nPQPArGeI0NY1ZZRzQZF677QxkEBIwRif54lS2rQNJBinMcXIOCOE+hgIEkppdtrFlJx1xppMSuac+1O4ezjF4FNKpVJSiOzB9c5nwVcGir33TdOcYavb29vdbqe4urm+YYIXfCGFEA8PDx8/fhzHMd/inHMhJCF0noeh7wRnjHPOGSFZ9X2KCMqR+1qLlOKsdUpJCIGUtu0iESgqxTk3VlNKJ53mea7qajZ6nudZ6+y31cYgISmRqiwAyTCOnNumaYqqLOoSUkJEY40qJGXUOB18SCQiIwSz6SnFPC0ihhii85nNztqLTFjQs20qc4sZFs5UyIItKDsp7PO35RKEEJJ7XmPMarVatsuqrFiIEYAoWTbtsm2XWpu+H5zzCdLd/R0SEqOXgjlvcx+bk4dyIEw2DwNAURRIqXOOAAgpIJHFYnXsRlUUjLLdbocEY0p939dV3XXdiW1HSoAwzpu6adrG6FnbSQouhBzG45mayO/8zC3lD+n0dUxF2ZzM1C8S4cz7O++MNuf54rkzz0RR7hwz432Si5/kBwQRsyoVAOZpvru7c86tb9br1VrxgoyTjjFShkKI5+en+/u7aRq9t85556wPnlIQkmo9hxC44EKIEIJznjPmQ5inSUhZFiUhmF9cjDH4FCM4GxjjKUbrXIoxhAgJQoycc4oU6SlShHGmVKGUIhhc0IhZEhXzgGvvg3PuhTGLr5UtzjkXAkHqQx5NFM8eu9PKhphVJFLIXK/l9coKhPNDlx+ObNgviiL40B27vPu01ovF4rvff7dslkgomWYTQjhbLYydu+6Qi8+sjRKSExKctyklKSRjLMX0ss+jdx4ICT4466y1Np8RMW8HBvCVIj6HAljrGKOMsRBiDhyJMTJKrdddvy9LxbnIXGyW41PGCID3PmY+PZ0GJmR96dPzc85ryiuVVYNKngJ9vg4FSF9dKPM8Z3EOeYkCySIypZQQQggxjiMhpGkaIcR2u/3mzTc+eUhAnI8xBs6ZtYYxThF98JkEi9EnAETIEQJZupUgN3w+hOC8z8/jyav4Sq4KCQHoi6vg6yRTznk2v2bZ0DkznBBACkJyITmlLL8N53wG7bL2IZf+2aMS4ykJmyt5sg7ElAuovF4AMAxDPn1Oj2cMWa2afYt5Kc+rnH8w8+HTNM16bupGFWq5WK6a1aznUlX/B6OVeKrEaFclAAAAAElFTkSuQmCC" width="44" height="53" alt=""><div><h2>${esc(title)}</h2><p>Summary of results from polling units<br>Collation at registration area level</p></div><div class="ec-serial"><strong>Form EC 8B</strong>${editable?'<label>S/N <input id="ec8bSerial" maxlength="100" aria-label="Form serial number"></label>':'<span>S/N '+esc(serial||'—')+'</span>'}</div></header>
+    <div class="ec-register-strip" role="region" aria-label="Registration area details, scroll horizontally" tabindex="0"><dl>${geo.map(([label,key])=>`<div><dt>${label}</dt><dd>${esc(scope[key]||'—')}</dd><dd class="ec-register-code">Code · ${esc(scope[key+'Code']||'—')}</dd></div>`).join('')}</dl></div>`;
+}
+function sheetTableHead(){
+  return `<thead><tr><th colspan="5" scope="colgroup">Polling units</th><th colspan="18" scope="colgroup">Votes received by political parties</th>${sheetColumns.slice(-3).map(([,label])=>'<th rowspan="2" scope="col">'+label+'</th>').join('')}</tr>
+    <tr><th scope="col">S/N</th>${sheetColumns.slice(0,-3).map(([,label])=>'<th scope="col">'+label+'</th>').join('')}</tr></thead>`;
+}
+function sheetFooter(ward,parties,valid,cast){
+  const ordered=[ward.registeredVoters,ward.accreditedVoters,...sheetParties.map(p=>parties[p]),valid,ward.rejectedVotes,cast];
+  return '<tr><th colspan="3" scope="row">Total no. of votes</th>'+ordered.map(n=>'<td>'+esc(n??'')+'</td>').join('')+'</tr>';
+}
+function sheetSignatures(agents,editable){
+  const group=(parties)=>'<tr>'+parties.map(p=>{
+    const a=agents.find(a=>a && a.party===p)||{};
+    return `<td><b>${p}</b>${editable?`<input id="agentName${p}" maxlength="160" aria-label="${p} party agent name" placeholder="Name"><input id="sig${p}" maxlength="160" aria-label="${p} signature or confirmation" placeholder="Signature / confirmation">`:`<span>${esc(a.name||'—')}</span><span>${esc(a.signature||'—')}</span>`}</td>`;
+  }).join('')+'</tr>';
+  return `<div class="ec-scroll" role="region" tabindex="0" aria-label="Party agent names and signatures"><table class="ec-sigs"><caption>Name/Sign. of Party Agent</caption><tbody>${group(sheetParties.slice(0,9))}${group(sheetParties.slice(9))}</tbody></table></div>`;
+}
+function sheetOfficer(officer,date,editable){
+  return '<div class="ec-officer">'+[['ec8bOfficer','Name of Collation Officer',officer.name],['ec8bSigned','Signature / confirmation',officer.signature],['ec8bDate','Date',date],['ec8bStamp','Stamp',officer.stamp]].map(([id,label,val])=>editable?
+    `<label>${label}<input id="${id}" ${id==='ec8bDate'?'type="date"':'maxlength="160"'}></label>`:
+    `<div><small>${label}</small><span>${esc(val||'—')}</span></div>`).join('')+'</div>';
+}
+
+function readEc8bSheet(f){
+  const units=Array.isArray(f.pollingUnits)?f.pollingUnits.filter(u=>u && typeof u==='object'):[];
+  const totals=f.wardTotals||{}, parties=f.partyTotals||{};
+  const cell=v=>'<td>'+esc(v??'')+'</td>';
+  const lines=Array.from({length:22},()=>null);
+  for(const u of units){
+    const index=Number.isSafeInteger(u.rowNumber) && u.rowNumber>0 && u.rowNumber<=Math.max(22,units.length)+1000?u.rowNumber-1:lines.length;
+    if(lines[index])lines.push(u);else lines[index]=u;
+  }
+  let valid=0,cast=0;
+  const notes=[];
+  const rows=Array.from(lines,(u,i)=>{
+    if(!u)return '<tr><th scope="row">'+(i+1)+'</th>'+'<td></td>'.repeat(sheetColumns.length)+'</tr>';
+    valid+=Number(u.paperValidVotes??u.validVotes)||0;
+    cast+=Number(u.paperVotesCast??u.votesCast)||0;
+    if((u.paperValidVotes!=null && u.paperValidVotes!==u.validVotes)||(u.paperVotesCast!=null && u.paperVotesCast!==u.votesCast)){
+      notes.push('Row '+(i+1)+' · Calculated valid votes '+esc(u.validVotes)+' and votes cast '+esc(u.votesCast)+'. The table shows the transcribed figures.');
+    }
+    const values=[u.name,u.code,u.registeredVoters,u.accreditedVoters,...sheetParties.map(p=>u.partyVotes?.[p]),u.paperValidVotes??u.validVotes,u.rejectedVotes,u.paperVotesCast??u.votesCast];
+    return '<tr><th scope="row">'+(i+1)+'</th>'+values.map(cell).join('')+'</tr>';
+  }).join('');
+  return '<div class="ec-paper ec-read-sheet">'+sheetHeading(f,f.documentReference,false)+
+    '<div class="ec-scroll ec-results" tabindex="0" role="region" aria-label="EC8B polling unit results"><table class="ec-matrix">'+sheetTableHead()+'<tbody>'+rows+'</tbody><tfoot>'+sheetFooter(totals,parties,valid,cast)+'</tfoot></table></div>'+
+    (notes.length?'<p class="ec-difference">'+notes.join('<br>')+'</p>':'')+
+    sheetOfficer(f.collationOfficer||{},f.formDate,false)+sheetSignatures(Array.isArray(f.partyAgents)?f.partyAgents:[],false)+'</div>';
+}
+
+function renderManualForms(forms) {
+    const panel=$('manualWardForms');
+    forms.sort((a,b)=>dateMs(b.createdAt)-dateMs(a.createdAt));
+    if(!forms.length){panel.textContent='No manual EC8B forms have been received for your assignment.';return;}
+    const opened=new Set([...panel.querySelectorAll('details[open]')].map(el=>el.dataset.id));
+    panel.innerHTML=forms.map(f=>{
+      const count=Array.isArray(f.pollingUnits)?f.pollingUnits.length:0;
+      return `<details class="ec-paper" data-id="${esc(f.id)}" ${opened.has(f.id)?'open':''}><summary><strong>${esc(f.ward||f.wardCode)}</strong> · ${count} polling unit(s) · ${esc(f.wardTotals?.validVotes)} calculated valid votes</summary>
+        ${readEc8bSheet(f)}
+        <p class="muted">Submitted by ${esc(f.createdByName||f.createdBy)} · ${esc(fmt(f.createdAt))} · Reference ${esc(f.id)}</p></details>`;
+    }).join('');
+}
+
+const backupToggle = $('lgaBackupToggle');
+const backupPanel = $('lgaBackupPanel');
+const backupText = $('lgaBackupText');
+const backupLink = $('lgaBackupLink');
+const backupList = $('lgaBackupList');
+const backupItems = $('lgaBackupItems');
+const backupStatus = $('lgaBackupStatus');
+let backupScope, backupDraftKey, stopBackupList, backupGeneration = 0;
+function closeBackupList() {
+  backupGeneration++;
+  if (stopBackupList) stopBackupList();
+  stopBackupList = null;
+  backupItems.replaceChildren();
+  backupStatus.textContent = '';
+  backupList.hidden = true;
+  backupLink.setAttribute('aria-expanded','false');
+  backupLink.textContent = 'View Ward Backup Requests';
+}
+function resetBackupPanel() {
+  closeBackupList();
+  backupScope = backupDraftKey = null;
+  backupPanel.hidden = true;
+  backupToggle.disabled = true;
+  backupToggle.setAttribute('aria-expanded','false');
+  backupText.value = '';
+}
+function enableBackupPanel(uid) {
+  if (uid !== auth.currentUser?.uid) return;
+  const fields = ['stateCode','lgaCode','electionType','candidateId'];
+  if (!fields.every(k => assignment[k] && assignment[k] !== 'undefined')) return;
+  backupScope = Object.fromEntries(fields.map(k => [k,assignment[k]]));
+  backupDraftKey = 'botas:lga-backup:' + JSON.stringify([uid,backupScope]);
+  try { backupText.value = sessionStorage.getItem(backupDraftKey) || ''; } catch {}
+  backupToggle.disabled = false;
+}
+backupText.addEventListener('input', () => {
+  if (!backupDraftKey) return;
+  try { sessionStorage.setItem(backupDraftKey,backupText.value); } catch {}
+});
+backupToggle.addEventListener('click', () => {
+  backupPanel.hidden = !backupPanel.hidden;
+  backupToggle.setAttribute('aria-expanded',String(!backupPanel.hidden));
+  if (backupPanel.hidden) closeBackupList();
+  else backupText.focus();
+});
+backupLink.addEventListener('click', event => {
+  event.preventDefault();
+  if (!backupList.hidden) { closeBackupList(); return; }
+  if (!backupScope) return;
+  const generation = ++backupGeneration;
+  const uid = auth.currentUser?.uid;
+  const isCurrent = () => uid && uid === auth.currentUser?.uid && generation === backupGeneration;
+  backupList.hidden = false;
+  backupLink.setAttribute('aria-expanded','true');
+  backupLink.textContent = 'Hide Ward Backup Requests';
+  backupStatus.textContent = 'Loading ward requests…';
+  const constraints = Object.entries(backupScope).map(([field,value]) => where(field,'==',value));
+  stopBackupList = onSnapshot(query(collection(db,'wardBackupRequests'),...constraints), snapshot => {
+    if (!isCurrent()) return;
+    const rows = snapshot.docs.map(doc => ({...doc.data(),id:doc.id}))
+      .sort((a,b) => dateMs(b.createdAt)-dateMs(a.createdAt) || b.id.localeCompare(a.id));
+    backupItems.replaceChildren();
+    backupStatus.textContent = rows.length ? rows.length + (rows.length===1?' request':' requests') + ' · Newest first' : 'No ward backup requests received yet.';
+    for (const row of rows) {
+      const item = document.createElement('li');
+      const title = document.createElement('strong');
+      title.textContent = row.wardName || row.wardCode;
+      const sender = document.createElement('small');
+      sender.textContent = [row.agentName,fmt(row.createdAt)].filter(Boolean).join(' · ');
+      const message = document.createElement('p');
+      message.textContent = row.message;
+      const reference = document.createElement('small');
+      reference.textContent = 'Reference: ' + row.id;
+      item.append(title,sender,message,reference);
+      backupItems.append(item);
+    }
+  },error => {
+    if (!isCurrent()) return;
+    backupItems.replaceChildren();
+    backupStatus.textContent = 'Could not load ward requests. ' + (error.code || error.message) + '. Close and reopen the list to retry.';
+  });
+});
+
+// LGA uploads are independent of ward evidence and final LGA collation records.
+const uploadGroups = {
+  successful:{label:'SUCCESSFUL LOCAL GOVT COLLATION',actions:{ec8c:'UPLOAD FORM EC8C',duplicate:'UPLOAD DUPLICATE COPY',eform:'FILL E FORM',video:'UPLOAD VIDEO'}},
+  violence:{label:'VIOLENCE',actions:{ec40g:'UPLOAD FORM EC40G',duplicate:'UPLOAD DUPLICATE COPY',eform:'FILL E FORM',video:'UPLOAD VIDEO'}},
+  expose:{label:'EXPOSE',actions:{original:'UPLOAD ORIGINAL COPY',altered:'UPLOAD FAKE/ALTERED COPY'}}
+};
+const uploadPanel=$('lgaUploadView');
+let uploadGroup='', uploadAction='', uploadSession=0, uploadBusy=false, pendingMedia=null;
+function uploadTile(key,label,group=false){
+  return '<button type="button" class="upload-tile" data-'+(group?'group':'action')+'="'+key+'"><span>'+label+'</span><span aria-hidden="true">›</span></button>';
+}
+function showUploadMenu(group=''){
+  uploadGroup=group; uploadAction=''; pendingMedia=null;
+  switchView('uploads');
+  $('uploadHeading').textContent=group?uploadGroups[group].label:'Upload';
+  $('uploadScope').textContent=[assignment.lga,assignment.state,assignment.electionName].filter(Boolean).join(' · ');
+  uploadPanel.innerHTML='<div class="upload-grid">'+(group
+    ?Object.entries(uploadGroups[group].actions).map(([k,v])=>uploadTile(k,v)).join('')
+    :Object.entries(uploadGroups).map(([k,v])=>uploadTile(k,v.label,true)).join(''))+'</div>';
+  $('uploadHeading').focus();
+}
+function lineInputs(success){
+  const txt=(key,label)=>'<label>'+label+'<input data-cell="'+key+'" maxlength="160"></label>';
+  const count=(key,label)=>'<label>'+label+'<input data-cell="'+key+'" type="number" min="0" step="1" max="999999999" inputmode="numeric"></label>';
+  const parties=success?'<div class="upload-parties">'+sheetParties.map(p=>count(p,p+' votes')).join('')+'</div>':'';
+  return '<fieldset class="upload-line"><legend>Ward entry</legend><div class="upload-fields">'+
+    '<label>Ward name or code<input data-cell="ward" list="uploadWardNames" maxlength="160" required></label>'+
+    (success?count('registered','Registered voters')+count('accredited','Accredited voters')+count('valid','Valid votes')+count('rejected','Rejected votes')+count('cast','Votes cast'):
+    txt('units','Affected polling units or codes')+count('registered','Registered voters affected')+count('pvcs','PVCs collected')+'<label>Reason recorded on the form<textarea data-cell="reason" rows="2" maxlength="1500" required></textarea></label>')+
+    '</div>'+parties+'<button class="upload-remove" type="button" data-remove>Remove entry</button></fieldset>';
+}
+function updateLines(){
+  const lines=uploadPanel.querySelectorAll('.upload-line');
+  lines.forEach((line,i)=>{
+    line.querySelector('legend').textContent='Ward entry '+(i+1);
+    line.querySelector('[data-remove]').hidden=lines.length===1;
+  });
+}
+function showUploadAction(action){
+  uploadAction=action; pendingMedia=null;
+  const eform=action==='eform', successful=uploadGroup==='successful';
+  const label=uploadGroups[uploadGroup].actions[action], formName=successful?'EC8C':'EC40G';
+  $('uploadHeading').textContent=eform?'Fill '+formName+' E-Form':label;
+  $('uploadScope').textContent=[uploadGroups[uploadGroup].label,assignment.lga,assignment.electionName].filter(Boolean).join(' · ');
+  const content=eform?
+    '<div class="upload-fields"><label>Form reference or serial number<input name="serial" maxlength="120"></label><label>Form date<input name="date" type="date" required></label></div>'+
+    '<p class="muted">Enter the figures and details recorded on the paper form.</p><datalist id="uploadWardNames">'+data.wards.map(w=>'<option value="'+esc(recordName(w))+'"></option>').join('')+'</datalist>'+
+    '<div id="uploadLines">'+lineInputs(successful)+'</div><button class="btn secondary" type="button" data-add>Add ward entry</button>'+
+    '<div class="upload-fields"><label>Collation officer’s name<input name="officer" maxlength="160"></label><label>Remarks<textarea name="remarks" rows="2" maxlength="2000"></textarea></label></div>':
+    '<label>Choose '+(action==='video'?'a video':'a photo or PDF')+'<input type="file" name="file" accept="'+(action==='video'?'video/*':'image/*,application/pdf,.pdf')+'" required></label>';
+  uploadPanel.innerHTML='<form class="panel upload-entry"><fieldset class="upload-controls">'+content+
+    '<button class="btn" type="submit">'+(eform?'Save '+formName+' E-Form':'Upload file')+'</button></fieldset><p role="status" class="upload-feedback"></p></form>';
+  if(eform)updateLines();
+  $('uploadHeading').focus();
+}
+$('lgaUploadButton').addEventListener('click',()=>{if(uploadBusy){switchView('uploads');return;}if(uploadAction){switchView('uploads');return;}showUploadMenu();});
+$('uploadBack').addEventListener('click',()=>{
+  if(uploadBusy)return;
+  if(uploadAction)showUploadMenu(uploadGroup);
+  else if(uploadGroup)showUploadMenu();
+  else {switchView('wards');$('lgaUploadButton').focus();}
+});
+uploadPanel.addEventListener('click',event=>{
+  const b=event.target.closest('button');
+  if(!b||uploadBusy)return;
+  if(b.dataset.group)showUploadMenu(b.dataset.group);
+  else if(b.dataset.action)showUploadAction(b.dataset.action);
+  else if(b.hasAttribute('data-add')){
+    $('uploadLines').insertAdjacentHTML('beforeend',lineInputs(uploadGroup==='successful'));
+    updateLines();$('uploadLines').lastElementChild.querySelector('input').focus();
+  }else if(b.hasAttribute('data-remove') && uploadPanel.querySelectorAll('.upload-line').length>1){
+    b.closest('.upload-line').remove();updateLines();
+  }
+});
+function lgaEntryData(form){
+  const entries=Array.from(form.querySelectorAll('.upload-line'),line=>{
+    const entry={};
+    for(const input of line.querySelectorAll('[data-cell]')){
+      const value=input.value.trim();
+      if(value)entry[input.dataset.cell]=input.type==='number'?Number(value):value;
+    }
+    if(!entry.ward || (uploadGroup==='violence' && !entry.reason))throw Error('Enter the ward and the required details for each row.');
+    if(uploadGroup==='successful' && !sheetParties.some(p=>p in entry))throw Error('Enter at least one party figure for each ward. Enter 0 for a recorded zero.');
+    return entry;
+  });
+  return {formDate:form.elements.date.value,reference:form.elements.serial.value.trim(),officer:form.elements.officer.value.trim(),remarks:form.elements.remarks.value.trim(),entries};
+}
+async function uploadLgaFile(file,video){
+  const type=video?'video':'image';
+  const body=new FormData();body.append('file',file);body.append('upload_preset','Obaestate');body.append('folder','botas-photo/lga-evidence');
+  const response=await fetch('https://api.cloudinary.com/v1_1/hjdnytcb/'+type+'/upload',{method:'POST',body,signal:AbortSignal.timeout(300000)});
+  const result=await response.json();
+  if(!response.ok || !result.public_id || result.resource_type!==type || !result.secure_url?.startsWith('https://res.cloudinary.com/hjdnytcb/'+type+'/upload/')){
+    throw Error(result.error?.message || 'The file service could not confirm the upload.');
+  }
+  return {cloudinaryUrl:result.secure_url,cloudinaryPublicId:result.public_id,cloudinaryResourceType:type,fileName:file.name,fileSize:file.size,fileType:file.type||'application/pdf'};
+}
+async function entryHash(bytes){
+  return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),v=>v.toString(16).padStart(2,'0')).join('');
+}
+uploadPanel.addEventListener('submit',async event=>{
+  event.preventDefault();
+  const form=event.target;
+  if(uploadBusy || !form.reportValidity())return;
+  const uid=auth.currentUser?.uid, session=uploadSession, feedback=form.querySelector('[role=status]');
+  const sameSession=()=>uid && uid===auth.currentUser?.uid && session===uploadSession;
+  const group=uploadGroup,action=uploadAction,eform=action==='eform';
+  uploadBusy=true;form.querySelector('fieldset').disabled=true;$('uploadBack').disabled=true;
+  let saved=false;
+  try{
+    if(!sameSession() || uid!==user?.uid || !assignment.lgaCode)throw Error('Sign in with the assigned LGA account.');
+    const {stateCode,lgaCode,electionType,candidateId}=assignment;
+    const common={stateCode,lgaCode,electionType,candidateId,createdBy:uid,category:group,action};
+    const file=eform?null:form.elements.file.files[0],video=action==='video';
+    if(!eform && (!file?.size || file.size>100*1024*1024))throw Error('Choose a non-empty file up to 100 MB.');
+    if(file && (video?!file.type.startsWith('video/'):!(file.type.startsWith('image/') || file.type==='application/pdf' || (!file.type && /\.pdf$/i.test(file.name)))))throw Error(video?'Choose a video file.':'Choose a photo or PDF.');
+    feedback.textContent=eform?'Saving E-Form…':'Preparing file…';
+    const manual=eform?lgaEntryData(form):null;
+    const encoder=new TextEncoder();
+    const fingerprint=file?await entryHash(await file.arrayBuffer()):manual;
+    const id=await entryHash(encoder.encode(JSON.stringify([common,fingerprint])));
+    if(!sameSession())return;
+    const ref=doc(db,'lgaEvidenceUploads',id);
+    let payload={form:manual};
+    if(file){
+      // Reopening a completed upload should reuse its receipt before another media transfer.
+      let previous;
+      try { previous=(await getDocFromServer(ref)).data(); }
+      catch(error){ if(error.code!=='permission-denied') throw error; }
+      if(!sameSession())return;
+      if(previous && Object.entries(common).every(([key,value])=>previous[key]===value)){
+        feedback.textContent='Already saved in Firestore. Reference: '+id;
+        saved=true;return;
+      }
+      feedback.textContent='Uploading file…';
+      if(pendingMedia?.id!==id){
+        const media=await uploadLgaFile(file,video);
+        if(!sameSession())return;
+        pendingMedia={id,media};
+      }
+      payload={media:pendingMedia.media};
+    }
+    feedback.textContent='Saving the Firestore reference…';
+    try{await setDoc(ref,{...common,...payload,createdAt:serverTimestamp()});}
+    catch(error){
+      // A repeat of the same submission may already have a create-only receipt.
+      if(error.code!=='permission-denied')throw error;
+      const prior=(await getDocFromServer(ref)).data();
+      if(!prior || !Object.entries(common).every(([k,v])=>prior[k]===v))throw error;
+    }
+    if(!sameSession())return;
+    feedback.textContent='Saved in Firestore. Reference: '+id;
+    pendingMedia=null;saved=true;
+  }catch(error){
+    if(sameSession())feedback.textContent=(pendingMedia?'File uploaded. Firestore registration is pending. ':'')+(error.code==='permission-denied'?'Firestore denied this submission. Check the LGA upload rule and account assignment.':error.message||'Submission failed. Please retry.');
+  }finally{
+    if(session===uploadSession){
+      uploadBusy=false;$('uploadBack').disabled=false;form.querySelector('fieldset').disabled=saved;
+    }
+  }
+});
+
+async function loadData(){
+ feedGeneration++;
+ feeds.clear();
+ if (evidenceWard) showWardEvidence(evidenceWard.type);
+ $('manualWardForms').textContent='Loading ward E-Forms…';
+ unsubs.forEach(f=>f());unsubs=[];
+ const wardsQ=query(collection(db,'geographyWards'),where('lgaCode','==',assignment.lgaCode));
+ const collsQ=query(collection(db,'wardCollations'),where('lgaCode','==',assignment.lgaCode),where('stateCode','==',assignment.stateCode),where('electionType','==',assignment.electionType));
+ const histQ=query(collection(db,'lgaCollations'),where('lgaCode','==',assignment.lgaCode));
+ const listen=(q,key)=>unsubs.push(onSnapshot(q,s=>{data[key]=s.docs.map(d=>({...d.data(),id:d.id}));renderAll()},e=>{console.error(key,e);const target=key==='wards'?'progressTable':key==='collations'?'wardTable':'historyTable';$(target).innerHTML=`<div class="empty">Unable to read ${key}. Check Firestore Rules and confirm records contain the assigned lgaCode. (${esc(e.code||e.message)})</div>`}));
+ unsubs.push(listenWardFeed('forms'),listenWardFeed('media'));
+ listen(wardsQ,'wards');listen(collsQ,'collations');listen(histQ,'lgaHistory');
+}
+function renderAll(){renderOverview();renderWards();renderTotals();renderHistory()}
+async function loadProfile(u){
+ user=u;
+ // The main index page has already authenticated this user. Reuse that same
+ // Firebase session; do not require a second username/password entry.
+ const userSnap=await getDoc(doc(db,'users',u.uid));
+ const userData=userSnap.exists()?userSnap.data():{};
+ let agentData={},agentReadError=null;
+ try{
+  const agentSnap=await getDoc(doc(db,'electionAgents',u.uid));
+  if(agentSnap.exists())agentData=agentSnap.data();
+ }catch(err){
+  agentReadError=err;
+  console.warn('Could not read electionAgents profile; trying users profile.',err);
+ }
+ // Prefer the dedicated agent assignment when available. Fall back to users/{uid}
+ // when the agent document is absent or its read is blocked by Firestore Rules.
+ if (auth.currentUser?.uid !== u.uid) return;
+ const a=Object.keys(agentData).length?agentData:userData;
+ const rawRole=String(a.agentRole||a.role||userData.agentRole||userData.role||'').trim().toLowerCase().replace(/[\s-]+/g,'_');
+ const isLgaRole=['local_government_collation_agent','lga_collation_agent','local_government_collation'].includes(rawRole);
+ if(!isLgaRole)throw new Error('This signed-in account is not assigned to the Local Government Collation Agent role. Ask the Super Admin to check the role in users/{uid}.');
+ if(a.active===false||a.status==='disabled'||userData.active===false||userData.status==='disabled')throw new Error('Your account is disabled. Contact the Super Admin.');
+ profile={...userData,...a};
+ loadAssignment(a); enableBackupPanel(u.uid); $('lgaUploadButton').disabled=false;
+ $('sideName').textContent=first(profile.fullName,u.displayName,u.email,'LGA Agent');
+ $('sideScope').textContent=`${assignment.lga} · ${assignment.state}`;
+ $('topName').textContent=first(profile.fullName,u.email,'');
+ $('welcomeTitle').textContent=`${assignment.lga} Collation Dashboard`;
+ $('lgaTitle').textContent=assignment.lga||'Assigned Local Government';
+ $('stateTitle').textContent=assignment.state||'Assigned State';
+ $('electionTitle').textContent=assignment.electionName;
+ $('candidateTitle').textContent=assignment.candidateName||'Not specified';
+ $('lgaCodeTitle').textContent=assignment.lgaCode;
+ $('collationDate').value=new Date().toISOString().slice(0,10);
+ renderProfile();await loadData();
+}
+$('loginForm').addEventListener('submit',async e=>{e.preventDefault();const b=$('loginBtn');b.disabled=true;b.textContent='Signing in…';try{await signInWithEmailAndPassword(auth,$('loginEmail').value.trim(),$('loginPassword').value)}catch(err){notice('loginNotice',err.message||'Sign in failed.',true)}finally{b.disabled=false;b.textContent='Sign in securely'}});
+async function logout(){unsubs.forEach(f=>f());unsubs=[];await signOut(auth);window.location.replace('index.html')}
+$('logoutBtn').addEventListener('click',logout);
+onAuthStateChanged(auth,async u=>{
+ uploadSession++; uploadGroup=uploadAction=''; uploadBusy=false; pendingMedia=null;
+ uploadPanel.replaceChildren();$('uploadBack').disabled=false;$('lgaUploadButton').disabled=true;
+ if($('view-uploads').classList.contains('active'))switchView('wards');
+ feedGeneration++;
+ unsubs.forEach(stop=>stop());unsubs=[];
+ closeWardEvidence();feeds.clear();
+ data={wards:[],collations:[],lgaHistory:[]};renderAll();
+ resetBackupPanel();$('manualWardForms').textContent='Loading ward E-Forms…';if(!u){$('appView').classList.add('hidden');$('loginView').classList.remove('hidden');return}try{$('loginView').classList.add('hidden');$('appView').classList.remove('hidden');await loadProfile(u)}catch(err){console.error(err);$('appView').classList.add('hidden');$('loginView').classList.remove('hidden');notice('loginNotice',err.message||'Unable to load account. Your sign-in is still active; do not enter your password again until the account assignment is checked.',true);/* Keep the Firebase session alive; do not sign the user out on profile-loading errors. */}});
+document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));
+document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.goto)));
+$('menuBtn').addEventListener('click',()=>$('sidebar').classList.toggle('open'));
+$('wardSearch').addEventListener('input',renderWards);$('wardStatus').addEventListener('change',renderWards);$('refreshBtn').addEventListener('click',()=>loadData());
+$('wardTable').addEventListener('click',e=>{const status=e.target.closest('button[data-ward-status]');if(status){openWardEvidence(status);return;}const b=e.target.closest('button[data-expand-ward]');if(!b)return;e.preventDefault();const code=b.getAttribute('data-expand-ward');if(code)toggleWardPollingUnits(code);});
+$('wardEvidenceContent').addEventListener('click',e=>{
+  const button=e.target.closest('[data-evidence-kind]');
+  if(button)showWardEvidence(button.dataset.evidenceKind);
+});
+$('closeWardEvidence').addEventListener('click',closeWardEvidence);
+$('wardEvidenceModal').addEventListener('click',e=>{if(e.target===$('wardEvidenceModal'))closeWardEvidence();});
+$('wardEvidenceModal').addEventListener('keydown',e=>{
+  if(e.key==='Escape'){closeWardEvidence();return;}
+  if(e.key!=='Tab')return;
+  const items=$('wardEvidenceModal').querySelectorAll('button,a[href],video[controls],[tabindex="0"]');
+  const first=items[0],last=items[items.length-1];
+  if(e.shiftKey && document.activeElement===first){e.preventDefault();last.focus();}
+  if(!e.shiftKey && document.activeElement===last){e.preventDefault();first.focus();}
+});
+$('closeDetail').addEventListener('click',()=>$('detailModal').classList.remove('show'));$('detailModal').addEventListener('click',e=>{if(e.target===$('detailModal'))$('detailModal').classList.remove('show')});
+$('lgaForm').addEventListener('submit',async e=>{
+ e.preventDefault();const btn=$('saveLgaBtn');btn.disabled=true;btn.textContent='Saving…';
+ try{
+  if(!user||!assignment.lgaCode)throw new Error('Your assigned Local Government is not loaded.');
+  const rows=eligibleWardCollations();if(!rows.length)throw new Error('No eligible ward collation records are available. Nothing can be submitted yet.');
+  if(!$('confirmWardReview').checked)throw new Error('Confirm that you have reviewed the ward records.');
+  const t=totals();
+  const sourceWardCollationIds=rows.map(r=>({id:r.id,wardCode:r.wardCode,ward:r.ward||r.wardName||''}));
+  const payload={
+   recordType:'lga_collation',createdBy:user.uid,createdByName:first(profile.fullName,user.displayName,user.email),
+   createdAt:serverTimestamp(),collationDate:$('collationDate').value,reviewStatus:$('reviewStatus').value,status:'submitted',
+   electionType:assignment.electionType,electionName:assignment.electionName,candidateId:assignment.candidateId,candidateName:assignment.candidateName,
+   stateCode:assignment.stateCode,lgaCode:assignment.lgaCode,state:assignment.state,lga:assignment.lga,
+   sourceCounts:{wards:rows.length,total: t.sources},sourceWardCollationIds,
+   lgaTotals:{validVotes:t.valid,rejectedBallots:t.rejected},
+   summary:$('lgaSummary').value.trim(),discrepancies:$('lgaDiscrepancies').value.trim()
+  };
+  await addDoc(collection(db,'lgaCollations'),payload);
+  notice('lgaNotice','Local Government collation saved successfully. Ward and polling-unit source records remain unchanged.');
+  $('lgaForm').reset();$('collationDate').value=new Date().toISOString().slice(0,10);$('validVotes').value=t.valid;$('rejectedVotes').value=t.rejected;
+ }catch(err){console.error(err);notice('lgaNotice',err.code==='permission-denied'?'Firebase denied this save. Firestore Rules must permit this LGA Agent to create an lgaCollations record for the assigned LGA.':`Could not save LGA collation: ${err.message||err}`,true)}
+ finally{btn.disabled=false;btn.textContent='Save LGA Collation'}
+});
+</script>
+</body>
+</html>
