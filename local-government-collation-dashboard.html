@@ -114,6 +114,19 @@
 .ec-results .ec-matrix thead tr:nth-child(2) th{position:sticky;top:38px;z-index:2}
 .ec-results .ec-matrix tbody th{top:auto}
 .ec-results .ec-matrix tfoot th{position:static}
+.lga-backup {margin:16px 0;}
+.lga-backup [hidden] {display:none!important;}
+#lgaBackupToggle {min-height:44px;}
+#lgaBackupPanel {margin:12px 0 0;max-width:720px;}
+#lgaBackupPanel label {display:block;font-weight:700;margin-bottom:8px;}
+#lgaBackupText {width:100%;box-sizing:border-box;resize:vertical;padding:12px 14px;border:1px solid #b5c7bc;border-radius:10px;font:inherit;font-size:16px;line-height:1.5;color:inherit;}
+#lgaBackupHint {display:block;margin:5px 0;}
+#lgaBackupLink {display:inline-block;padding:12px 0;color:var(--g);font-weight:700;text-underline-offset:3px;}
+#lgaBackupPanel :focus-visible {outline:2px solid var(--g);outline-offset:2px;}
+#lgaBackupItems {list-style:none;padding:0;margin:0;}
+#lgaBackupItems li {border-top:1px solid var(--line);padding:14px 0;overflow-wrap:anywhere;}
+#lgaBackupItems small {display:block;color:var(--muted);}
+#lgaBackupItems p {white-space:pre-wrap;margin:8px 0;line-height:1.55;}
 </style></head>
 <body>
 <section id="loginView" class="login-wrap">
@@ -157,6 +170,20 @@
    </section>
    <section class="view active" id="view-wards">
 <div class="panel"><div class="panelhead"><h2>Local Government Collation Dashboard</h2><div class="filters"><input id="wardSearch" placeholder="Search ward…"><select id="wardStatus"><option value="">All wards</option><option value="expose">Expose</option><option value="violence">Violence</option><option value="successful">Successful</option><option value="collation">Status: Collation</option></select></div></div><div id="wardCount" class="muted" style="margin:0 0 12px">Loading assigned wards…</div><div id="wardTable" class="tablewrap"><div class="empty">Loading ward collation records…</div></div></div>
+    <div class="lga-backup">
+      <button type="button" class="btn" id="lgaBackupToggle" aria-expanded="false" aria-controls="lgaBackupPanel" disabled>Backup Request</button>
+      <div id="lgaBackupPanel" class="panel" hidden>
+        <label for="lgaBackupText">Write a backup request</label>
+        <textarea id="lgaBackupText" rows="5" placeholder="Describe the support you need and the location." aria-describedby="lgaBackupHint"></textarea>
+        <small class="muted" id="lgaBackupHint">Draft for this browser tab.</small>
+        <a id="lgaBackupLink" href="#lgaBackupList" aria-controls="lgaBackupList" aria-expanded="false">View Ward Backup Requests</a>
+        <div id="lgaBackupList" hidden>
+          <h3>Ward backup requests</h3>
+          <p class="muted" role="status" id="lgaBackupStatus"></p>
+          <ul id="lgaBackupItems"></ul>
+        </div>
+      </div>
+    </div>
    </section>
    <section class="view" id="view-ward-forms"><div class="eyebrow">Ward Evidence of Loss</div><h1>Ward EC8B E-Forms</h1><p class="sub">Open a ward submission to review polling-unit figures, party votes and the paper sign-off details.</p><div class="panel" id="manualWardForms" aria-live="polite">Loading ward E-Forms…</div></section>
    <section class="view" id="view-results">
@@ -584,6 +611,89 @@ function listenForManualEc8b() {
   },error=>{panel.textContent='Ward E-Forms could not be loaded. '+(error.code==='permission-denied'?'Check the published Firestore read permission for this LGA assignment.':error.message||error.code);});
 }
 
+const backupToggle = $('lgaBackupToggle');
+const backupPanel = $('lgaBackupPanel');
+const backupText = $('lgaBackupText');
+const backupLink = $('lgaBackupLink');
+const backupList = $('lgaBackupList');
+const backupItems = $('lgaBackupItems');
+const backupStatus = $('lgaBackupStatus');
+let backupScope, backupDraftKey, stopBackupList, backupGeneration = 0;
+function closeBackupList() {
+  backupGeneration++;
+  if (stopBackupList) stopBackupList();
+  stopBackupList = null;
+  backupItems.replaceChildren();
+  backupStatus.textContent = '';
+  backupList.hidden = true;
+  backupLink.setAttribute('aria-expanded','false');
+  backupLink.textContent = 'View Ward Backup Requests';
+}
+function resetBackupPanel() {
+  closeBackupList();
+  backupScope = backupDraftKey = null;
+  backupPanel.hidden = true;
+  backupToggle.disabled = true;
+  backupToggle.setAttribute('aria-expanded','false');
+  backupText.value = '';
+}
+function enableBackupPanel(uid) {
+  if (uid !== auth.currentUser?.uid) return;
+  const fields = ['stateCode','lgaCode','electionType','candidateId'];
+  if (!fields.every(k => assignment[k] && assignment[k] !== 'undefined')) return;
+  backupScope = Object.fromEntries(fields.map(k => [k,assignment[k]]));
+  backupDraftKey = 'botas:lga-backup:' + JSON.stringify([uid,backupScope]);
+  try { backupText.value = sessionStorage.getItem(backupDraftKey) || ''; } catch {}
+  backupToggle.disabled = false;
+}
+backupText.addEventListener('input', () => {
+  if (!backupDraftKey) return;
+  try { sessionStorage.setItem(backupDraftKey,backupText.value); } catch {}
+});
+backupToggle.addEventListener('click', () => {
+  backupPanel.hidden = !backupPanel.hidden;
+  backupToggle.setAttribute('aria-expanded',String(!backupPanel.hidden));
+  if (backupPanel.hidden) closeBackupList();
+  else backupText.focus();
+});
+backupLink.addEventListener('click', event => {
+  event.preventDefault();
+  if (!backupList.hidden) { closeBackupList(); return; }
+  if (!backupScope) return;
+  const generation = ++backupGeneration;
+  const uid = auth.currentUser?.uid;
+  const isCurrent = () => uid && uid === auth.currentUser?.uid && generation === backupGeneration;
+  backupList.hidden = false;
+  backupLink.setAttribute('aria-expanded','true');
+  backupLink.textContent = 'Hide Ward Backup Requests';
+  backupStatus.textContent = 'Loading ward requests…';
+  const constraints = Object.entries(backupScope).map(([field,value]) => where(field,'==',value));
+  stopBackupList = onSnapshot(query(collection(db,'wardBackupRequests'),...constraints), snapshot => {
+    if (!isCurrent()) return;
+    const rows = snapshot.docs.map(doc => ({...doc.data(),id:doc.id}))
+      .sort((a,b) => dateMs(b.createdAt)-dateMs(a.createdAt) || b.id.localeCompare(a.id));
+    backupItems.replaceChildren();
+    backupStatus.textContent = rows.length ? rows.length + (rows.length===1?' request':' requests') + ' · Newest first' : 'No ward backup requests received yet.';
+    for (const row of rows) {
+      const item = document.createElement('li');
+      const title = document.createElement('strong');
+      title.textContent = row.wardName || row.wardCode;
+      const sender = document.createElement('small');
+      sender.textContent = [row.agentName,fmt(row.createdAt)].filter(Boolean).join(' · ');
+      const message = document.createElement('p');
+      message.textContent = row.message;
+      const reference = document.createElement('small');
+      reference.textContent = 'Reference: ' + row.id;
+      item.append(title,sender,message,reference);
+      backupItems.append(item);
+    }
+  },error => {
+    if (!isCurrent()) return;
+    backupItems.replaceChildren();
+    backupStatus.textContent = 'Could not load ward requests. ' + (error.code || error.message) + '. Close and reopen the list to retry.';
+  });
+});
+
 async function loadData(){
  unsubs.forEach(f=>f());unsubs=[];
  const wardsQ=query(collection(db,'geographyWards'),where('lgaCode','==',assignment.lgaCode));
@@ -616,7 +726,7 @@ async function loadProfile(u){
  if(!isLgaRole)throw new Error('This signed-in account is not assigned to the Local Government Collation Agent role. Ask the Super Admin to check the role in users/{uid}.');
  if(a.active===false||a.status==='disabled'||userData.active===false||userData.status==='disabled')throw new Error('Your account is disabled. Contact the Super Admin.');
  profile={...userData,...a};
- loadAssignment(a);
+ loadAssignment(a); enableBackupPanel(u.uid);
  $('sideName').textContent=first(profile.fullName,u.displayName,u.email,'LGA Agent');
  $('sideScope').textContent=`${assignment.lga} · ${assignment.state}`;
  $('topName').textContent=first(profile.fullName,u.email,'');
@@ -632,7 +742,7 @@ async function loadProfile(u){
 $('loginForm').addEventListener('submit',async e=>{e.preventDefault();const b=$('loginBtn');b.disabled=true;b.textContent='Signing in…';try{await signInWithEmailAndPassword(auth,$('loginEmail').value.trim(),$('loginPassword').value)}catch(err){notice('loginNotice',err.message||'Sign in failed.',true)}finally{b.disabled=false;b.textContent='Sign in securely'}});
 async function logout(){unsubs.forEach(f=>f());unsubs=[];await signOut(auth);window.location.replace('index.html')}
 $('logoutBtn').addEventListener('click',logout);
-onAuthStateChanged(auth,async u=>{$('manualWardForms').textContent='Loading ward E-Forms…';if(!u){$('appView').classList.add('hidden');$('loginView').classList.remove('hidden');return}try{$('loginView').classList.add('hidden');$('appView').classList.remove('hidden');await loadProfile(u)}catch(err){console.error(err);$('appView').classList.add('hidden');$('loginView').classList.remove('hidden');notice('loginNotice',err.message||'Unable to load account. Your sign-in is still active; do not enter your password again until the account assignment is checked.',true);/* Keep the Firebase session alive; do not sign the user out on profile-loading errors. */}});
+onAuthStateChanged(auth,async u=>{resetBackupPanel();$('manualWardForms').textContent='Loading ward E-Forms…';if(!u){$('appView').classList.add('hidden');$('loginView').classList.remove('hidden');return}try{$('loginView').classList.add('hidden');$('appView').classList.remove('hidden');await loadProfile(u)}catch(err){console.error(err);$('appView').classList.add('hidden');$('loginView').classList.remove('hidden');notice('loginNotice',err.message||'Unable to load account. Your sign-in is still active; do not enter your password again until the account assignment is checked.',true);/* Keep the Firebase session alive; do not sign the user out on profile-loading errors. */}});
 document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));
 document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.goto)));
 $('menuBtn').addEventListener('click',()=>$('sidebar').classList.toggle('open'));
