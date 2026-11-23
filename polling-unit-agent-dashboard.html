@@ -381,8 +381,6 @@ h1{font-size:clamp(28px,3.5vw,44px);letter-spacing:-1.2px;margin:8px 0 10px;line
     <form id="reportForm"><div class="form-grid">
       <div class="field"><label for="reportCategory">Election stage</label><select id="reportCategory" required><option value="">Select election stage</option><option>Opening of Polls</option><option>Accreditation</option><option>Voting Process</option><option>Vote Counting</option><option>Result Announcement</option><option>Closing of Polls</option></select></div>
       <div class="field"><label for="reportTime">Observation time</label><input id="reportTime" type="datetime-local" required></div>
-      <div class="field full"><label for="reportDetails">Observation notes (optional)</label><textarea id="reportDetails" placeholder="Describe what you observed clearly and objectively…"></textarea></div>
-      <div class="field full"><label for="evidencePhoto">Evidence photo (optional)</label><input id="evidencePhoto" type="file" accept="image/*" capture="environment"><small style="color:#7b8b81">Optional photo evidence is uploaded to the configured Cloudinary account and linked to this report.</small></div>
     </div><div class="form-actions"><button class="btn" type="submit">Save election status</button><button class="btn secondary" type="reset">Clear form</button><button type="button" class="btn secondary" data-open="dashboard">Dashboard</button></div><div class="notice" role="status" id="reportNotice"></div></form>
   </div>
   <div class="form-actions"><button class="btn secondary" type="button" data-open="dashboard">Back to Dashboard</button></div>
@@ -572,7 +570,57 @@ async function loadAuthenticatedProfile(user){
   watchElectionStatus(user.uid);
 }
 
-function showView(view){
+// Each visited screen has its own history entry. Store only navigation metadata.
+let navigationUid = "";
+function startNavigation(uid) {
+  navigationUid = uid;
+  const saved = history.state;
+  if (saved?.puAgent === uid && saved.path?.length) {
+    renderRoute(saved);
+    return;
+  }
+  history.replaceState({puAgent:uid, homeBoundary:true}, "");
+  const home = {puAgent:uid, path:["dashboard"]};
+  history.pushState(home, "");
+  renderRoute(home);
+}
+
+function renderRoute(route) {
+  const view = route.path[route.path.length - 1];
+  if (view === "evidence-upload" && route.evidence !== activeEvidenceKey) configureEvidence(route.evidence);
+  if (view === "ec8a-form") prepareEc8a();
+  if (view === "ov-ec8a-form") prepareOvEc8a();
+  renderView(view);
+  $("sidebar").classList.toggle("open", Boolean(route.menu));
+  $("overlay").classList.toggle("show", Boolean(route.menu));
+}
+
+function showView(view, evidence) {
+  const current = history.state;
+  if (!navigationUid || current?.puAgent !== navigationUid || !current.path) return;
+  const index = current.path.indexOf(view);
+  if (index >= 0) {
+    const distance = current.path.length - 1 - index + (current.menu ? 1 : 0);
+    if (distance) history.go(-distance);
+    return;
+  }
+  const route = {puAgent:navigationUid, path:[...current.path, view], evidence};
+  if (current.menu) history.replaceState(route, "");
+  else history.pushState(route, "");
+  renderRoute(route);
+}
+
+window.addEventListener("popstate", event => {
+  const route = event.state;
+  if (!navigationUid || route?.puAgent !== navigationUid) return;
+  if (route.homeBoundary) {
+    renderView("dashboard");
+    closeMenu();
+    history.forward();
+  } else if (route.path?.length) renderRoute(route);
+});
+
+function renderView(view){
   document.querySelectorAll(".view-section").forEach(section=>section.classList.toggle("active",section.id===`view-${view}`));
   document.querySelectorAll(".nav button[data-view]").forEach(button=>button.classList.toggle("active",button.dataset.view===view));
   const titles={dashboard:"Operations overview",upload:"Upload","upload-report":"Election Status","evidence-upload":"Upload evidence",successful:"Successful Election","ec8a-form":"Digital EC8A","ov-ec8a-form":"Over Voting E-Form","over-voting":"Over Voting",violence:"Violence","violence-eform":"Violence E-Form",backup:"Backup request","vote-alert":"Vote buying alert",profile:"User profile"};
@@ -582,7 +630,6 @@ function showView(view){
     const now = new Date();
     timeInput.value = new Date(now.getTime()-now.getTimezoneOffset()*60000).toISOString().slice(0,16);
   }
-  closeMenu();
   window.scrollTo({top:0,behavior:"smooth"});
 }
 function closeMenu(){$("sidebar").classList.remove("open");$("overlay").classList.remove("show")}
@@ -590,13 +637,26 @@ document.querySelectorAll("[data-view]").forEach(btn=>btn.addEventListener("clic
 document.querySelectorAll("[data-open]").forEach(btn=>btn.addEventListener("click",()=>showView(btn.dataset.open)));
 document.querySelectorAll("[data-action='logout'],#logoutBtn").forEach(btn=>btn.addEventListener("click",logout));
 $("menuBtn").addEventListener("click",()=>{
-  if(window.matchMedia("(max-width:650px)").matches){$("sidebar").classList.toggle("open");$("overlay").classList.toggle("show")}
+  if(window.matchMedia("(max-width:650px)").matches){
+    const current = history.state;
+    if (!navigationUid || current?.puAgent !== navigationUid || !current.path) return;
+    if (current.menu) history.back();
+    else {
+      const menu = {...current, menu:true};
+      history.pushState(menu, "");
+      renderRoute(menu);
+    }
+  }
   else{$("sidebar").classList.toggle("collapsed")}
 });
-$("overlay").addEventListener("click",closeMenu);
-document.addEventListener("keydown",e=>{if(e.key==="Escape")closeMenu()});
+function dismissMenu() {
+  if (navigationUid && history.state?.menu) history.back();
+}
+$("overlay").addEventListener("click",dismissMenu);
+document.addEventListener("keydown",e=>{if(e.key==="Escape")dismissMenu()});
 
 async function logout(){
+  navigationUid = "";
   try{await signOut(auth)}finally{window.location.replace("index.html")}
 }
 let stopElectionStatus = () => {};
@@ -633,8 +693,8 @@ onAuthStateChanged(auth,async user=>{
   stopElectionStatus();
   savedStage = "Loading…";
   $("reportForm").reset();
-  if(!user){window.location.replace("index.html");return}
-  try{await loadAuthenticatedProfile(user)}
+  if(!user){navigationUid = "";window.location.replace("index.html");return}
+  try{await loadAuthenticatedProfile(user);if(auth.currentUser?.uid === user.uid)startNavigation(user.uid)}
   catch(error){console.error("Polling Unit Agent profile error:",error);alert(error.message||"Could not load your assigned profile.");await signOut(auth);window.location.replace("index.html")}
 });
 
@@ -677,7 +737,8 @@ const evidencePageSettings={
   "violence-duplicate":{title:"Upload Duplicate Copy — Violence",subtitle:"Select a duplicate EC40G photo or PDF copy.",accept:"image/*,.pdf",resource:"image",type:"violence_ec40g_duplicate",returnView:"violence"}
 };
 
-function openEvidenceUpload(key){
+function openEvidenceUpload(key){ showView("evidence-upload",key); }
+function configureEvidence(key){
   const cfg=evidencePageSettings[key];
   if(!cfg)return;
   activeEvidenceKey=key;
@@ -694,7 +755,6 @@ function openEvidenceUpload(key){
   text("sharedEvidenceTitle",cfg.title);
   text("sharedEvidenceSubtitle",cfg.subtitle);
   text("sharedEvidenceHelp","Choose File to open your phone gallery or file picker. Select the file, then press Submit to upload it.");
-  showView("evidence-upload");
 }
 function previewSharedEvidence(file){
   if(evidenceUrls.shared)URL.revokeObjectURL(evidenceUrls.shared);
@@ -842,7 +902,6 @@ function prepareEc8a(){
   text("ec8aCandidate",first(currentAgent?.candidateName,"Not assigned"));
 }
 renderPartyRows();
-document.querySelectorAll('[data-open="ec8a-form"]').forEach(b=>b.addEventListener("click",prepareEc8a));
 
 function renderOvEc8aPartyRows(){
   $("ovEc8aPartyRows").innerHTML=partyCodes.map((party,i)=>`<tr><td>${i+1}</td><td><strong>${party}</strong></td><td><input type="number" min="0" step="1" value="0" data-ov-party-votes="${party}" aria-label="${party} over-voting votes"></td><td class="words" data-ov-party-words="${party}">ZERO</td><td><input type="text" data-ov-party-agent="${party}" aria-label="${party} polling agent name"></td></tr>`).join("");
@@ -886,7 +945,6 @@ function prepareOvEc8a(){
   text("ovEc8aCandidate",first(currentAgent?.candidateName,"Not assigned"));
   renderOvEc8aPartyRows();
 }
-document.querySelectorAll('[data-open="ov-ec8a-form"]').forEach(b=>b.addEventListener("click",prepareOvEc8a));
 $("ovEc8aForm").addEventListener("submit",async event=>{
   event.preventDefault();
   if(!currentUser||!currentAgent){notice("ovEc8aNotice","Agent profile is not ready. Please sign in again.",true);return;}
@@ -1035,7 +1093,7 @@ function attachSubmission(formId, noticeId, collectionName, photoId, folder, get
       controls.forEach(el=>el.disabled=true);
       submit.textContent = "Saving…";
       $(noticeId).className = "notice";
-      Object.assign(payload,await photoFields($(photoId),folder));
+      if (photoId) Object.assign(payload,await photoFields($(photoId),folder));
       if (auth.currentUser?.uid !== payload.agentUid) throw new Error("Your sign-in changed. Please reopen the dashboard.");
       await addCleanDoc(collection(db,collectionName),payload);
       if (collectionName === "pollingUnitReports") savedStage = fields.category;
@@ -1051,8 +1109,8 @@ function attachSubmission(formId, noticeId, collectionName, photoId, folder, get
     }
   });
 }
-attachSubmission("reportForm","reportNotice","pollingUnitReports","evidencePhoto","polling-unit-reports",()=>({
-  category:$("reportCategory").value, observationTime:$("reportTime").value, details:$("reportDetails").value.trim()
+attachSubmission("reportForm","reportNotice","pollingUnitReports",null,null,()=>({
+  category:$("reportCategory").value, observationTime:$("reportTime").value, details:""
 }));
 attachSubmission("backupForm","backupNotice","backupRequests","backupPhoto","polling-unit-backup",()=>({
   incidentType:$("backupType").value, urgency:$("backupUrgency").value, details:$("backupDetails").value.trim()
