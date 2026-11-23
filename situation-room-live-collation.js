@@ -51,7 +51,7 @@ export function createLiveCollation({scopeDepth,fields,geoTables,onSnapshot,scop
   function wardEntry(kind,r){
     const time=versionTime(r),v=r.updatedAt||r.createdAt;
     const common={id:r.id,time,nanos:v?.nanoseconds||0,kind};
-    if(kind==='A')return {...common,unit:r.pollingUnitCode,f:figures(r,3)};
+    if(kind==='A')return {...common,unit:r.pollingUnitCode,unitName:r.pollingUnit||r.pollingUnitName,f:figures(r,3)};
     const rows=Array.isArray(r.pollingUnits)?r.pollingUnits.map(u=>({
       id:u?.pollingUnitId,code:u?.code||u?.pollingUnitCode,
       f:figures({pollingUnits:[u]},2)
@@ -80,14 +80,25 @@ export function createLiveCollation({scopeDepth,fields,geoTables,onSnapshot,scop
     }
   }
   function wardAt(w,until,withHistory){
-    const pu=new Map(),tally=new Tally(),trend=[];
-    let overlay=new Map(),summary=null,wardForm=null,unresolved=0;
+    const pu=new Map(),receipts=new Map(),tally=new Tally(),trend=[];
+    let overlay=new Map(),summary=null,wardForm=null,unresolved=0,heldSummary=false;
     for(let i=0;i<w.ordered.length;i++){
       const e=w.ordered[i];if(until!==Infinity&&(!e.time||e.time>until))continue;
       if(e.kind==='A'){
         const id=codeOf(resolveCode(e.unit,w.aliases||w.knownUnits)??e.unit);
-        if(!overlay.has(id)&&!summary){tally.change(pu.get(id),-1);tally.change(e.f,1)}
+        // A later EC8A replaces the effective contribution for this unit.
+        if(summary){
+          // A total-only EC8B cannot identify this unit's previous share.
+          // Resume from individually attributable receipts and flag reduced coverage.
+          tally.change(summary,-1);
+          for(const prior of pu.values())tally.change(prior,1);
+          summary=null;heldSummary=true;wardForm=null;
+        }
+        tally.change(overlay.get(id)||pu.get(id),-1);
+        overlay.delete(id);
+        tally.change(e.f,1);
         pu.set(id,e.f);
+        receipts.set(id,{pollingUnitCode:e.unit,pollingUnitName:e.unitName,f:e.f,id:e.id});
       }else{
         const replacement=new Map();
         let valid=Object.keys(e.f.votes).length>0;
@@ -98,7 +109,7 @@ export function createLiveCollation({scopeDepth,fields,geoTables,onSnapshot,scop
           replacement.set(id,line.f);
         }
         if(valid){
-          unresolved=0;
+          unresolved=0;heldSummary=false;
           // A replacement sheet is a complete revision of the previous EC8B.
           // Unlisted units fall back to their latest EC8A.
           if(summary){
@@ -115,9 +126,13 @@ export function createLiveCollation({scopeDepth,fields,geoTables,onSnapshot,scop
         trend.push([e.time,tally.value('registered'),tally.value('accredited')]);
       }
     }
+    for(const [id,receipt] of receipts){
+      if(summary)receipt.coverage='Header uses whole-ward EC8B';
+      else if(overlay.has(id))receipt.coverage='Header uses newer EC8B row';
+    }
     return {f:tally.count?tally.figures():null,ref:wardForm?.id||'',unresolved,
       provisional:summary?0:[...pu.keys()].filter(k=>!overlay.has(k)).length,
-      amended:overlay.size,summary:!!summary,trend};
+      amended:overlay.size,summary:!!summary,heldSummary,receipts,trend};
   }
   // Maintain turnout deltas by reporting minute for each parent. A fresh upload
   // updates four small chart indexes instead of replaying the national PU history.
@@ -155,7 +170,7 @@ export function createLiveCollation({scopeDepth,fields,geoTables,onSnapshot,scop
   }
   function rebuild(w){
     chartDelta(w,-1);
-    w.ordered=[...w.docs.values()].sort((a,b)=>a.time-b.time||a.nanos-b.nanos||a.id.localeCompare(b.id)||a.kind.localeCompare(b.kind));
+    w.ordered=[...w.docs.values()].sort((a,b)=>a.time-b.time||a.nanos-b.nanos||a.kind.localeCompare(b.kind)||a.id.localeCompare(b.id));
     w.firstTime=w.ordered.find(e=>e.time>0)?.time;w.lastTime=w.ordered.at(-1)?.time;
     const named=new Map();
     for(const e of w.ordered)if(e.kind==='B')for(const row of e.rows)if(row.id){
@@ -239,9 +254,9 @@ export function createLiveCollation({scopeDepth,fields,geoTables,onSnapshot,scop
     if(projectionCache&&projectionCache.rev===ledgerRevision&&projectionCache.gen===generation&&projectionCache.geo===geo&&projectionCache.cut===cut&&projectionCache.ready===ready)return projectionCache.result;
     const within=[...book.values()].filter(w=>path.every((p,i)=>w.scope[fields[i]]===p.id));
     const times=new Set(),packets=[];
-    const counts={wardRef:'',provisional:0,amended:0,wards:0,summary:0,unresolved:0};
+    const counts={wardRef:'',provisional:0,amended:0,wards:0,summary:0,heldSummary:0,unresolved:0};
     for(const w of within){
-      if(cut===Infinity){
+      if(cut===Infinity&&d!==3){
         if(w.firstTime)times.add(w.firstTime);
         if(w.lastTime)times.add(w.lastTime);
       }else for(const e of w.ordered)if(e.time)times.add(e.time);
@@ -251,7 +266,7 @@ export function createLiveCollation({scopeDepth,fields,geoTables,onSnapshot,scop
     }
     const eligible=[];
     function include(p){
-      counts.unresolved+=p.v.unresolved;
+      counts.unresolved+=p.v.unresolved;counts.heldSummary+=Number(p.v.heldSummary);
       if(!p.v.f)return;
       if(d===3)counts.wardRef=p.v.ref;
       counts.provisional+=p.v.provisional;counts.amended+=p.v.amended;
@@ -270,7 +285,16 @@ export function createLiveCollation({scopeDepth,fields,geoTables,onSnapshot,scop
           leading:f&&!f.incomplete&&pairs[0]?.[1]>0&&pairs[0][1]!==pairs[1]?.[1]?pairs[0][0]:null,
           coverage:b?b+' ward EC8B'+(b===1?'':'s'):'',source:b?'Synchronized':'Provisional EC8A'};
       });
-    }else packets.forEach(include);
+    }else{
+      packets.forEach(include);
+      // Use the same snapshot for the ward's receipt cards and its headline.
+      const receipts=eligible.flatMap(p=>Array.from(p.v.receipts.values()));
+      areas=matchAreas(geo,bounds,receipts,3).areas.map((area,idx)=>{
+        const last=area.forms.at(-1),f=last?.f,pairs=f?ordered(f.votes):[];
+        const leading=pairs[0]?.[1]>0&&pairs[0][1]!==pairs[1]?.[1]?pairs[0][0]:null;
+        return {...area,idx,last,f,pairs,leading,coverage:last?.coverage||''};
+      });
+    }
     const totals=combined(eligible.map(p=>p.v.f));
     const result={areas,unmatched,totals,counts,times:[...times],history:!ready?[]:cut===Infinity&&!unmatched?liveTrend(path):aggregateTrend(eligible.map(p=>p.w),cut)};
     projectionCache={rev:ledgerRevision,gen:generation,geo,cut,ready,result};return result;
