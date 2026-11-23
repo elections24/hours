@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#104e3e"><title>Presidential National Collation · THE EYES</title><style>
+:root{--ink:#18372d;--muted:#546d62;--green:#096446;--line:#d8e3dc;--paper:#fff;font:15px/1.5 system-ui,sans-serif;color:var(--ink);background:#f2f6f3}
+*{box-sizing:border-box}body{margin:0}button,input,select{font:inherit;color:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid #569bde;outline-offset:2px}[hidden]{display:none!important}
+header{background:#104e3e;color:white}.bar,main{max-width:1250px;margin:auto;padding:0 clamp(14px,3vw,40px)}.bar{min-height:59px;display:flex;align-items:center;gap:15px}.brand{letter-spacing:.1em;font-size:13px}.bar .agent{margin-left:auto;font-size:13px}.bar button{background:transparent;color:white;border:1px solid #8baea0;border-radius:8px;padding:6px 12px}main{padding-bottom:40px}h1{font-size:clamp(25px,4vw,40px);line-height:1.14;letter-spacing:-.045em;margin:22px 0 5px}h2{font-size:20px;margin:0}p{margin:8px 0}.muted,small{color:var(--muted)}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0}.stat,.panel{background:var(--paper);border:1px solid var(--line);border-radius:13px}.stat{padding:14px 18px}.stat span{color:var(--muted);font-size:13px}.stat b{display:block;font-size:26px;font-variant-numeric:tabular-nums}.panel{padding:clamp(12px,2vw,24px);box-shadow:0 6px 24px #153e2608}.tools{display:flex;align-items:end;gap:12px;flex-wrap:wrap;margin:12px 0}.tools label{font-size:12px;font-weight:650;flex:1}.tools input,.tools select{width:100%;display:block;margin-top:3px;background:white;border:1px solid #aabeb2;border-radius:8px;padding:9px 10px;font-size:16px}.notice{color:#784711}.notice:empty{display:none}
+.scroll,.entry-scroll{overflow:auto;border:1px solid var(--line);border-radius:9px}.scroll{max-height:65vh;margin-top:10px}table{border-collapse:separate;border-spacing:0;width:100%;font-variant-numeric:tabular-nums}th,td{border-bottom:1px solid var(--line);padding:9px 11px;text-align:right;white-space:nowrap}thead th,tfoot th,tfoot td{background:#e5f0e9;font-size:12px}thead th{position:sticky;top:0;z-index:3}#results td:first-child,#results th:first-child{position:sticky;left:0;text-align:left;z-index:2;background:white;border-right:1px solid var(--line)}#results thead th:first-child{z-index:4;background:#e5f0e9}#results tfoot th,#results tfoot td{position:sticky;bottom:0;background:#e5f0e9}#results tfoot th:first-child{background:#e5f0e9;z-index:3}.stateName{background:none;border:0;font-weight:740;padding:0}.stateName:hover{text-decoration:underline}.chips{display:flex;gap:4px;margin:5px 0}.chips button,.tiles button{border:0;background:var(--green);color:white;border-radius:7px;padding:6px 8px;font-weight:650;font-size:12px}.chips button[data-group=violence]{background:#a3382e}.chips button:disabled,.tiles button:disabled{background:#e6ebe8;color:#637168;cursor:default}.stateStatus{font-size:11px;color:#765320}.received{color:#096446}dialog{border:0;border-radius:14px;width:min(760px,95vw);max-height:90dvh;padding:20px;color:var(--ink)}dialog::backdrop{background:#09241dbc}.dialogHead{display:flex;align-items:start;justify-content:space-between;gap:12px}.quiet{border:1px solid var(--line);border-radius:8px;background:white;padding:7px 12px}.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0}.tiles button{min-height:44px;font-size:13px}.tiles button[aria-pressed=true]{box-shadow:inset 0 0 0 3px #a5d7bb}.entry-scroll table{width:max-content;min-width:100%}.entry-scroll th,.entry-scroll td{text-align:left}.item{background:#f7faf8;border:1px solid var(--line);padding:12px;border-radius:8px;margin-top:9px;overflow-wrap:anywhere}summary{cursor:pointer;font-weight:700}a{color:var(--green)}.upload-preview{display:block;max-width:100%;max-height:50vh;margin:12px auto}.count{font-size:13px;color:var(--muted)}#gate{margin:35px 0}
+@media(max-width:600px){.bar{gap:8px}.stat{padding:9px}.stat span{font-size:11px}.stat b{font-size:21px}.stats{gap:6px}.tools label{flex:1 1 100%}.chips button{font-size:10px;min-height:29px;padding:4px 6px}th,td{padding:8px}.bar .agent{max-width:37%;overflow-wrap:anywhere}.panel{padding:11px}}
+</style></head><body>
+<header><div class="bar"><strong class="brand">THE EYES</strong><span class="agent" id="agent"></span><button id="logout" hidden>Log out</button></div></header>
+<main><section id="gate"><h1>National collation</h1><p id="authStatus" role="status">Checking your assignment…</p><a href="index.html">Return to sign in</a></section>
+<section id="workspace" hidden><h1>Presidential national collation</h1><p id="scope" class="muted"></p>
+<div class="stats"><div class="stat"><span>Reporting areas</span><b>37</b></div><div class="stat"><span>Areas with an EC8D E-form</span><b id="received">—</b></div><div class="stat"><span>State evidence uploads</span><b id="uploadCount">—</b></div></div>
+<section class="panel"><h2>State and FCT returns</h2><div class="tools"><label>Search state or FCT<input id="search" type="search" placeholder="State name or FCT"></label><label>Show<select id="filter"><option value="">All reporting areas</option><option value="received">EC8D received</option><option value="awaiting">Awaiting EC8D</option><option value="successful">Successful collation evidence</option><option value="violence">Violence evidence</option><option value="expose">Expose evidence</option><option value="final">Completed state collations</option></select></label><button class="quiet" id="refresh">Refresh</button></div>
+<p id="status" class="notice" role="status"></p><p id="count" class="count"></p>
+<div class="scroll" tabindex="0" aria-label="Scrollable presidential results"><table id="results"><thead></thead><tbody></tbody><tfoot></tfoot></table></div>
+<p class="count">Party totals use the latest successful EC8D E-form for each reporting area. A dash means a figure is unavailable.</p>
+<div id="unmatched"></div></section></section></main>
+<dialog id="detail" aria-labelledby="detailTitle"><div class="dialogHead"><div><h2 id="detailTitle"></h2><p id="detailType" class="muted"></p></div><button class="quiet" id="close">Close</button></div><div id="detailBody"></div></dialog>
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {getAuth,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {initializeFirestore,doc,getDoc,collection,query,where,onSnapshot} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+const firebaseConfig={apiKey:"AIzaSyBEbkeWDLuQOSPz2ojp59UWgqf0OakRrCo",authDomain:"election-8e790.firebaseapp.com",projectId:"election-8e790",storageBucket:"election-8e790.firebasestorage.app",messagingSenderId:"346568561664",appId:"1:346568561664:web:5618be1ebb4057f9c6f4e5"};
+const $=id=>document.getElementById(id),first=(...v)=>v.find(x=>x!==undefined&&x!==null&&String(x).trim()!==''),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=v=>{if(!v)return '—';const d=v?.toDate?v.toDate():(v instanceof Date?v:new Date(v));return isNaN(d)?String(v):d.toLocaleString()},dateMs=v=>{if(!v)return 0;const d=v?.toDate?v.toDate():(v instanceof Date?v:new Date(v));return isNaN(d)?0:d.getTime()};
+function evidenceBody(record) {
+  const labels = {ec8d:'Form EC8D',ec40g:'Form EC40G',duplicate:'Duplicate copy',original:'Original copy',altered:'Altered/fake copy',video:'Video'};
+  const title = record.action === 'eform' ? (record.category === 'successful'?'EC8D':'EC40G')+' E-form' : labels[record.action] || 'Evidence';
+  let body = '<summary>'+esc(title)+' · '+esc(fmt(record.createdAt))+'</summary><p>Firestore reference<br><strong>'+esc(record.id)+'</strong></p>';
+  if (record.form) {
+    const {formDate,reference,officer,remarks,entries} = record.form;
+    body += [['Form date',formDate],['Form reference',reference],['Collation officer',officer],['Remarks',remarks]].filter(pair => pair[1]).map(([label,value])=>'<p>'+label+'<br><strong>'+esc(value)+'</strong></p>').join('');
+    const rows = Array.isArray(entries)?entries.filter(row=>row && typeof row==='object' && !Array.isArray(row)):[];
+    const names = {lgaCode:'LGA code',lgaName:'Local government',registered:'Registered voters',accredited:'Accredited voters',valid:'Valid votes',rejected:'Rejected votes',cast:'Votes cast',units:'Affected polling units',pvcs:'PVCs collected',reason:'Reason'};
+    const keys = [...new Set(['lgaName','lgaCode',...rows.flatMap(row=>Object.keys(row))])];
+    if (rows.length) body += '<div class="entry-scroll" tabindex="0" aria-label="LGA entries"><table><thead><tr>'+keys.map(k=>'<th>'+esc(Object.hasOwn(names,k)?names[k]:k)+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+keys.map(k=>'<td>'+esc(Object.hasOwn(row,k)?row[k]:'—')+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
+  } else {
+    const media=record.media, url=String(media?.cloudinaryUrl||'');
+    if (/^https:\/\/res\.cloudinary\.com\/hjdnytcb\/(image|video)\/upload\//.test(url)) {
+      const link = esc(url);
+      const image = ['image/jpeg','image/png','image/webp','image/gif','image/avif'].includes(media.fileType);
+      const preview = record.action==='video' ? '<video class="upload-preview" controls playsinline preload="none" src="'+link+'"></video>'
+        : image ? '<img class="upload-preview" loading="lazy" alt="'+esc(media.fileName||title)+'" src="'+link+'">' : '';
+      body += '<p><a href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">Open uploaded file</a></p>'+preview;
+    }
+    else body += '<p>File link unavailable.</p>';
+  }
+  return body;
+}
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=initializeFirestore(app,{experimentalForceLongPolling:true});
+const areas = 'Abia|Adamawa|Akwa Ibom|Anambra|Bauchi|Bayelsa|Benue|Borno|Cross River|Delta|Ebonyi|Edo|Ekiti|Enugu|FCT|Gombe|Imo|Jigawa|Kaduna|Kano|Katsina|Kebbi|Kogi|Kwara|Lagos|Nasarawa|Niger|Ogun|Ondo|Osun|Oyo|Plateau|Rivers|Sokoto|Taraba|Yobe|Zamfara'.split('|');
+const parties='ADC APC A AA AAC ADP APGA APM APP BP LP NNPP NRM PDP PRP SDP YPP ZLP'.split(' ');
+const labels={successful:'Successful',violence:'Violence',expose:'Expose',all:'All submissions'};
+const tiles={successful:{ec8d:'View Form EC8D',eform:'View E-Form',duplicate:'View Duplicate Copy',video:'View Video'},violence:{ec40g:'View Form EC40G',eform:'View E-Form',duplicate:'View Duplicate Copy',video:'View Video'},expose:{original:'View Original Copy',altered:'View Fake/Altered Copy'}};
+const roles=['presidential_national_collation_agent','national_collation_agent','national_presidential_collation_agent'];
+const feedNames={geo:'State directory',uploads:'State evidence',finals:'Completed state collations'};
+let session=0,revision=0,assignment=null,stops=[],selected=null,groups=new Map(),lastDetail=null;
+const records={geo:[],uploads:[],finals:[]},health={};
+function stop(){revision++;stops.forEach(f=>f());stops=[]}
+function normalize(s){return String(s??'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim()}
+function areaName(value){
+  const name=normalize(value).replace(/^ng st \d+ /,'').replace(/ state$/,'');
+  if (/^(?:f c t|fct|abuja|federal capital territory)(?: (?:abuja|fct|f c t|federal capital territory))*$/.test(name))return 'FCT';
+  return areas.find(a=>normalize(a)===name);
+}
+function indexRecords(){
+  const aliases=new Map();
+  for(const g of records.geo){
+    const name=[g.name,g.stateName,g.state,g.label,g.stateCode,g.id].map(areaName).find(Boolean);
+    if(!name)continue;
+    for(const key of [g.id,g.stateCode,g.code].map(normalize).filter(Boolean)){
+      aliases.set(key,aliases.has(key)&&aliases.get(key)!==name?null:name);
+    }
+  }
+  groups=new Map(areas.map(a=>[a,[]]));
+  for(const source of ['uploads','finals']){
+    for(const r of records[source]){
+      if(r.electionType!=='presidential'||r.candidateId!==assignment?.candidateId)continue;
+      if(source==='finals'&&r.recordType!=='state_collation')continue;
+      const code=normalize(r.stateCode);
+      const area=(aliases.has(code)?aliases.get(code):areaName(r.stateCode)||areaName(r.state))||'Unmatched state code';
+      if(!groups.has(area))groups.set(area,[]);
+      groups.get(area).push({source,r});
+    }
+  }
+  for(const rows of groups.values())rows.sort((a,b)=>dateMs(b.r.createdAt)-dateMs(a.r.createdAt)||b.r.id.localeCompare(a.r.id));
+}
+function figures(entries){
+  const values={};
+  if(!Array.isArray(entries)||!entries.length)return values;
+  for(const p of parties){
+    const numbers=entries.map(row=>row?.[p]);
+    if(numbers.every(n=>Number.isSafeInteger(n)&&n>=0))values[p]=numbers.reduce((a,b)=>a+b,0);
+  }
+  return values;
+}
+function note(key){
+  if(health[key]==='ready')return '';
+  if(!health[key])return 'Loading '+feedNames[key].toLowerCase()+'…';
+  if(health[key]==='cache')return 'Waiting for server confirmation of '+feedNames[key].toLowerCase()+'.';
+  return feedNames[key]+' could not be read ('+health[key]+').';
+}
+function render(){
+  const search=normalize($('search').value),filter=$('filter').value,ready=health.uploads==='ready';
+  let received=0,shown=0;
+  const totals={},rows=[];
+  for(const name of areas){
+    const items=groups.get(name)||[];
+    const evidence=items.filter(i=>i.source==='uploads').map(i=>i.r);
+    const form=evidence.find(r=>r.category==='successful'&&r.action==='eform'&&r.form);
+    const values=figures(form?.form.entries);
+    if(form)received++;
+    for(const [p,n] of Object.entries(values))totals[p]=(totals[p]??0)+n;
+    const cats=new Set(evidence.map(r=>r.category));
+    if(!normalize(name==='FCT'?'FCT Abuja Federal Capital Territory':name).includes(search))continue;
+    if(ready&&((filter==='received'&&!form)||(filter==='awaiting'&&form)||(filter in tiles&&!cats.has(filter))))continue;
+    if(filter==='final'&&health.finals==='ready'&&!items.some(i=>i.source==='finals'))continue;
+    shown++;
+    const buttons=Object.keys(tiles).map(k=>'<button data-group="'+k+'" '+(cats.has(k)?'':'disabled')+'>'+labels[k]+'</button>').join('');
+    rows.push('<tr data-area="'+name+'"><td><button class="stateName" data-group="all" aria-label="'+name+' · All submissions">'+name+'</button><div class="chips">'+buttons+'</div><span class="stateStatus '+(form?'received':'')+'">'+(form?'EC8D received':ready?'Awaiting EC8D':'EC8D unconfirmed')+'</span></td>'+parties.map(p=>'<td>'+(values[p]?.toLocaleString()??'—')+'</td>').join('')+'</tr>');
+  }
+  $('received').textContent=ready?received:'—';
+  $('uploadCount').textContent=ready?records.uploads.length:'—';
+  $('status').textContent=Object.keys(feedNames).map(note).filter(Boolean).join(' ');
+  $('count').textContent='Showing '+shown+' of 37 reporting areas';
+  $('results').tBodies[0].innerHTML=rows.join('')||'<tr><td colspan="19">No reporting areas match this view.</td></tr>';
+  $('results').tFoot.innerHTML='<tr><th>Reported national totals</th>'+parties.map(p=>'<td>'+(totals[p]?.toLocaleString()??'—')+'</td>').join('')+'</tr>';
+  $('unmatched').innerHTML=groups.has('Unmatched state code')?'<button class="quiet" data-area="Unmatched state code" data-group="all">Review submissions with an unmatched state code ('+groups.get('Unmatched state code').length+')</button>':'';
+}
+function finalBody(r){
+  const lines=[['Reference',r.id],['State code',r.stateCode],['Date',r.collationDate],['Valid votes',r.stateTotals?.validVotes],['Rejected ballots',r.stateTotals?.rejectedBallots],['LGAs included',r.sourceCounts?.lgas],['Wards included',r.sourceCounts?.wards],['Review status',r.reviewStatus],['Submitted by',r.createdByName||r.createdBy],['Summary',r.summary],['Discrepancies',r.discrepancies]];
+  const sources=Array.isArray(r.sourceLgaCollationIds)?r.sourceLgaCollationIds:[];
+  return '<summary>Completed state collation · '+esc(fmt(r.createdAt))+'</summary>'+lines.filter(([,v])=>v!=null&&v!=='').map(([k,v])=>'<p>'+k+'<br><strong>'+esc(v)+'</strong></p>').join('')+(sources.length?'<p>Source LGA submissions</p><ul>'+sources.map(s=>'<li>'+esc(typeof s==='string'?s:[s?.lga||s?.lgaCode,s?.id].filter(Boolean).join(' · '))+'</li>').join('')+'</ul>':'');
+}
+function renderDetail(){
+  if(!selected)return;
+  const {name,group}=selected;
+  let rows=groups.get(name)||[];
+  let controls='';
+  if(group!=='all'){
+    rows=rows.filter(i=>i.source==='uploads'&&i.r.category===group);
+    const actions=new Set(rows.map(i=>i.r.action));
+    if(!actions.has(selected.action))selected.action=Object.keys(tiles[group]).find(a=>actions.has(a));
+    controls='<div class="tiles">'+Object.entries(tiles[group]).map(([a,l])=>'<button data-action="'+a+'" aria-pressed="'+(a===selected.action)+'" '+(actions.has(a)?'':'disabled')+'>'+l+'</button>').join('')+'</div>';
+    rows=rows.filter(i=>i.r.action===selected.action);
+  }
+  $('detailTitle').textContent=name==='FCT'?'Federal Capital Territory (FCT)':name;
+  $('detailType').textContent=labels[group]+' · Presidential election';
+  const status=(group==='all'?['uploads','finals','geo']:['uploads','geo']).map(note).filter(Boolean).join(' ');
+  const html=controls+(status?'<p role="status">'+esc(status)+'</p>':'')+(rows.map(({source,r},i)=>'<details class="item" '+(i===0?'open':'')+'>'+ (source==='finals'?finalBody(r):evidenceBody(r).replace('<summary>','<summary>'+esc(labels[r.category]||'Evidence')+' · ')+'<small>'+esc(r.stateCode)+' · '+esc(r.createdBy||'')+'</small>')+'</details>').join('')||(!status?'<p>No submissions received here yet.</p>':''));
+  if(html!==lastDetail){$('detailBody').innerHTML=html;lastDetail=html}
+}
+function start(){
+  stop();const active=revision;
+  for(const k of Object.keys(records)){records[k]=[];health[k]=''}
+  indexRecords();render();renderDetail();
+  function listen(k,target){
+    stops.push(onSnapshot(target,{includeMetadataChanges:true},snap=>{
+      if(active!==revision)return;
+      health[k]=snap.metadata.fromCache?'cache':'ready';
+      records[k]=snap.metadata.fromCache?[]:snap.docs.map(d=>({...d.data(),id:d.id}));
+      indexRecords();render();renderDetail();
+    },error=>{
+      if(active!==revision)return;
+      records[k]=[];health[k]=error.code||'unavailable';indexRecords();render();renderDetail();
+    }));
+  }
+  listen('geo',collection(db,'geographyStates'));
+  const scoped=name=>query(collection(db,name),where('electionType','==','presidential'),where('candidateId','==',assignment.candidateId));
+  listen('uploads',scoped('stateEvidenceUploads'));listen('finals',scoped('stateCollations'));
+}
+$('results').tHead.innerHTML='<tr><th scope="col">State / FCT</th>'+parties.map(p=>'<th scope="col">'+p+'</th>').join('')+'</tr>';
+$('workspace').addEventListener('click',e=>{
+  const b=e.target.closest('button[data-group]');
+  if(!b||b.disabled)return;
+  selected={name:b.closest('[data-area]').dataset.area,group:b.dataset.group};lastDetail=null;renderDetail();$('detail').showModal();$('close').focus();
+});
+$('detailBody').addEventListener('click',e=>{const b=e.target.closest('button[data-action]');if(b&&!b.disabled&&selected){selected.action=b.dataset.action;renderDetail();$('detailBody').querySelector('[aria-pressed="true"]')?.focus()}});
+$('close').onclick=()=>$('detail').close();
+$('detail').addEventListener('close',()=>{selected=null;lastDetail=null;$('detailBody').replaceChildren()});
+$('filter').onchange=render;$('search').oninput=render;$('refresh').onclick=()=>{if(assignment)start()};
+$('logout').onclick=async()=>{try{await signOut(auth);location.replace('index.html')}catch{const output=$('workspace').hidden?$('authStatus'):$('status');output.textContent='Sign-out failed. Please try again.'}};
+onAuthStateChanged(auth,async user=>{
+  const current=++session;stop();assignment=null;selected=null;lastDetail=null;
+  if($('detail').open)$('detail').close();
+  $('detailBody').replaceChildren();$('results').tBodies[0].replaceChildren();$('results').tFoot.replaceChildren();$('agent').textContent='';
+  for(const key of Object.keys(records))records[key]=[];
+  groups.clear();$('workspace').hidden=true;$('gate').hidden=false;$('logout').hidden=!user;
+  $('authStatus').textContent=user?'Checking your assignment…':'Sign in with your national collation account.';
+  if(!user)return;
+  try{
+    const [accountSnap,agentSnap]=await Promise.all(['users','electionAgents'].map(k=>getDoc(doc(db,k,user.uid))));
+    if(current!==session)return;
+    const account=accountSnap.exists()?accountSnap.data():{},a=agentSnap.exists()?agentSnap.data():account;
+    const role=String(a.agentRole||a.role||'').toLowerCase().replace(/[ -]+/g,'_');
+    if(!roles.includes(role)||a.electionType!=='presidential'||typeof a.candidateId!=='string'||!a.candidateId.trim())throw Error('A presidential national collation role and candidate assignment are required.');
+    if(!(a.active===true||a.status==='active')||(a.active??true)!==true||(a.status??'active')!=='active'||(account.active??true)!==true||(account.status??'active')!=='active')throw Error('Your national assignment is inactive.');
+    assignment={candidateId:a.candidateId};$('agent').textContent=a.fullName||account.fullName||user.email||'National agent';
+    $('scope').textContent='Presidential election · '+(a.candidateName||a.candidateId);
+    $('search').value='';$('filter').value='';$('gate').hidden=true;$('workspace').hidden=false;start();
+  }catch(err){if(current===session)$('authStatus').textContent=err.message||'Your assignment could not be verified.'}
+});
+</script></body></html>
