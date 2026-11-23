@@ -114,6 +114,9 @@
       .form-brand-sub { font-size:9px; letter-spacing:1px; }
       .form-heading h2 { font-size:26px; }
     }
+    .officer-entry { align-self:center; padding:10px 4px; margin-top:12px; color:#07563e; font-size:14px; font-weight:600; text-underline-offset:3px; }
+    .officer-entry:focus-visible { outline:2px solid currentColor; outline-offset:3px; }
+    .officer-entry[hidden] { display:none; }
   </style>
 </head>
 <body>
@@ -182,7 +185,7 @@
         <button class="login-btn" id="loginButton" type="submit">Sign in securely&nbsp; →</button>
         <div id="status" class="status" role="status" aria-live="polite"></div>
       </form>
-
+      <a id="lgaOfficerEntry" class="officer-entry" href="?role=lga_situation_room_officer">LGA Situation Room Officer sign-in</a>
     </section>
   </main>
 
@@ -319,12 +322,14 @@
         // cannot read electionAgents/{uid}, continue using users/{uid}.
         let agentProfile = {};
         let agentExists = false;
+        let agentReadFailed = false;
         try {
           const agentRef = doc(db, "electionAgents", uid);
           const agentSnap = await getDoc(agentRef);
           agentExists = agentSnap.exists();
           agentProfile = agentExists ? agentSnap.data() : {};
         } catch (agentReadError) {
+          agentReadFailed = true;
           console.warn("Could not read electionAgents profile; using users profile.", agentReadError);
         }
         if (userProfile.active === false || userProfile.status === "disabled"
@@ -343,10 +348,23 @@
           if ((nationalCollationRoles.includes(role) || role === 'national_situation_room_officer') && profile.electionType !== 'presidential')
             throw new Error('This national role requires a presidential election assignment.');
           const scope = profile.assignedScope || {}, geo = profile.geography || {};
-          if (['lga_situation_room_officer','state_situation_room_officer'].includes(role) && !(scope.stateCode || geo.stateCode))
+          if (role === 'state_situation_room_officer' && !(scope.stateCode || geo.stateCode))
             throw new Error('Please ask your administrator to assign your state.');
-          if (role === 'lga_situation_room_officer' && !(scope.lgaCode || geo.lgaCode))
-            throw new Error('Please ask your administrator to assign your LGA.');
+          if (role === 'lga_situation_room_officer') {
+            if (agentReadFailed)
+              throw new Error('Your LGA assignment could not be verified. Please try signing in again.');
+            if (profile.electionType === 'presidential' && (
+                typeof profile.candidateId !== 'string' || !profile.candidateId.trim() ||
+                [profile, userProfile].some(p => (p.active ?? true) !== true || (p.status ?? 'active') !== 'active')))
+              throw new Error('An active presidential LGA officer assignment is required.');
+            for (const [key, label] of [['stateCode', 'state'], ['lgaCode', 'LGA']]) {
+              const code = geo[key] ?? scope[key] ?? profile[key];
+              if (geo[key] && scope[key] && geo[key] !== scope[key])
+                throw new Error('Your assigned ' + label + ' codes do not match. Please contact your administrator.');
+              if (typeof code !== 'string' || !code.trim() || code.includes('/'))
+                throw new Error('Please ask your administrator to assign your ' + label + '.');
+            }
+          }
         }
         return { role, profile, userProfile, agentProfile };
     }
@@ -379,6 +397,7 @@
       catch { document.getElementById('roomStatus').textContent = 'Sign-out failed. Please try again.'; }
     });
     if (isRoleEntry) {
+      document.getElementById('lgaOfficerEntry').hidden = true;
       document.querySelector('.form-heading h2').textContent =
         (officerRoles[entryRole] || 'National Collation Agent') + ' sign-in';
       const mainLink = document.createElement('a');
