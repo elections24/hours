@@ -352,6 +352,7 @@
     }
 
     function dedicatedRoom(role,profile){
+      if(role==='lga_situation_room_officer' && profile.electionType==='presidential')return 'presidential-lga-situation-room-dashboard.html';
       if(role==='state_situation_room_officer' && profile.electionType==='presidential')return 'presidential-state-situation-room-dashboard.html';
       if(role==='national_situation_room_officer')return roleDashboards[role];
       return '';
