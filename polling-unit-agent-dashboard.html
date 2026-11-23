@@ -120,6 +120,9 @@ h1{font-size:clamp(28px,3.5vw,44px);letter-spacing:-1.2px;margin:8px 0 10px;line
 #sharedEvidencePreview iframe{width:100%;height:340px;border:0}
 #sharedEvidenceStatus{font-size:13px;line-height:1.5;margin-top:12px;overflow-wrap:anywhere}
 
+.context-item .election-status-label{border-top:1px solid #dbe5df;margin-top:10px;padding-top:8px}
+#ctxElectionStatus{color:#086548}
+@media(min-width:651px){#view-dashboard .cards .action-card[data-open="backup"]{grid-column:1}}
 </style>
 </head>
 <body>
@@ -160,12 +163,16 @@ h1{font-size:clamp(28px,3.5vw,44px);letter-spacing:-1.2px;margin:8px 0 10px;line
       <div class="context-item"><small>Local Government</small><strong id="ctxLga">—</strong></div>
       <div class="context-item"><small>Ward</small><strong id="ctxWard">—</strong></div>
       <div class="context-item"><small>Polling Unit Code</small><strong id="ctxPuCode">—</strong></div>
-      <div class="context-item"><small>Agent Status</small><strong id="ctxStatus">—</strong></div>
+      <div class="context-item"><small>Agent Status</small><strong id="ctxStatus">—</strong>
+        <small class="election-status-label">Election Status</small>
+        <strong id="ctxElectionStatus" aria-live="polite">Loading…</strong></div>
     </div>
   </div>
   <div class="cards">
     <button class="action-card primary" data-open="upload"><span class="action-icon">↑</span><span class="action-text"><strong>Upload</strong><small>Submit election results and evidence</small></span><span class="chevron">›</span></button>
-    <button class="action-card" data-open="upload-report"><span class="action-icon">▤</span><span class="action-text"><strong>Upload Reports</strong><small>Submit polling-unit observation reports</small></span><span class="chevron">›</span></button>
+    <button class="action-card" data-open="upload-report"><span class="action-icon">▤</span><span class="action-text"><strong>Election Status</strong><small>Update the stage reached at your polling unit</small></span><span class="chevron">›</span></button>
+    <button class="action-card" data-open="backup"><span class="action-icon" aria-hidden="true">⚑</span><span class="action-text"><strong>Backup Request</strong><small>Describe the support you need</small></span><span class="chevron">›</span></button>
+    <button class="action-card" data-open="vote-alert"><span class="action-icon" aria-hidden="true">!</span><span class="action-text"><strong>Vote Buying Alert</strong><small>Report suspected vote buying at your polling unit</small></span><span class="chevron">›</span></button>
     <button class="action-card" data-action="logout"><span class="action-icon">↗</span><span class="action-text"><strong>Log Out</strong><small>End your secure session</small></span><span class="chevron">›</span></button>
   </div>
 </section>
@@ -369,14 +376,14 @@ h1{font-size:clamp(28px,3.5vw,44px);letter-spacing:-1.2px;margin:8px 0 10px;line
 
 
 <section class="view-section" id="view-upload-report">
-  <div class="role-label">Field report</div><h1>Upload report</h1><p class="subtitle">Record the activity observed at your assigned polling unit.</p>
-  <div class="panel"><h2>Polling unit report</h2><p class="desc">Your identity and assigned location are attached automatically from your approved account.</p>
+  <div class="role-label">Polling unit</div><h1>Election Status</h1><p class="subtitle">Select the current stage, then save it to update your dashboard.</p>
+  <div class="panel"><h2>Update election status</h2><p class="desc">Your identity and assigned location are attached automatically from your approved account.</p>
     <form id="reportForm"><div class="form-grid">
-      <div class="field"><label for="reportCategory">Report category</label><select id="reportCategory" required><option value="">Select category</option><option>Opening of Polls</option><option>Accreditation</option><option>Voting Process</option><option>Vote Counting</option><option>Result Announcement</option><option>Closing of Polls</option><option>Danger</option><option>Vote Buying</option><option>General Observation</option></select></div>
+      <div class="field"><label for="reportCategory">Election stage</label><select id="reportCategory" required><option value="">Select election stage</option><option>Opening of Polls</option><option>Accreditation</option><option>Voting Process</option><option>Vote Counting</option><option>Result Announcement</option><option>Closing of Polls</option></select></div>
       <div class="field"><label for="reportTime">Observation time</label><input id="reportTime" type="datetime-local" required></div>
-      <div class="field full"><label for="reportDetails">Report details</label><textarea id="reportDetails" placeholder="Describe what you observed clearly and objectively…" required></textarea></div>
+      <div class="field full"><label for="reportDetails">Observation notes (optional)</label><textarea id="reportDetails" placeholder="Describe what you observed clearly and objectively…"></textarea></div>
       <div class="field full"><label for="evidencePhoto">Evidence photo (optional)</label><input id="evidencePhoto" type="file" accept="image/*" capture="environment"><small style="color:#7b8b81">Optional photo evidence is uploaded to the configured Cloudinary account and linked to this report.</small></div>
-    </div><div class="form-actions"><button class="btn" type="submit">Submit report</button><button class="btn secondary" type="reset">Clear form</button></div><div class="notice" id="reportNotice"></div></form>
+    </div><div class="form-actions"><button class="btn" type="submit">Save election status</button><button class="btn secondary" type="reset">Clear form</button><button type="button" class="btn secondary" data-open="dashboard">Dashboard</button></div><div class="notice" role="status" id="reportNotice"></div></form>
   </div>
   <div class="form-actions"><button class="btn secondary" type="button" data-open="dashboard">Back to Dashboard</button></div>
 </section>
@@ -388,7 +395,8 @@ h1{font-size:clamp(28px,3.5vw,44px);letter-spacing:-1.2px;margin:8px 0 10px;line
     <div class="field"><label for="backupType">Incident type</label><select id="backupType" required><option value="">Select incident</option><option>Security concern</option><option>Medical emergency</option><option>Disruption at polling unit</option><option>Equipment or materials issue</option><option>Observer assistance</option><option>Other</option></select></div>
     <div class="field"><label for="backupUrgency">Urgency</label><select id="backupUrgency" required><option>Routine</option><option>Urgent</option><option>Critical</option></select></div>
     <div class="field full"><label for="backupDetails">Request details</label><textarea id="backupDetails" required placeholder="Describe the issue, current situation, and support needed…"></textarea></div>
-  </div><div class="form-actions"><button class="btn" type="submit">Submit backup request</button></div><div class="notice" id="backupNotice"></div></form></div>
+    <div class="field full"><label for="backupPhoto">Attach a photo (optional)</label><input type="file" id="backupPhoto" accept="image/*"></div>
+  </div><div class="form-actions"><button class="btn" type="submit">Submit backup request</button><button type="button" class="btn secondary" data-open="dashboard">Dashboard</button></div><div class="notice" role="status" id="backupNotice"></div></form></div>
 </section>
 
 <section class="view-section" id="view-vote-alert">
@@ -398,9 +406,10 @@ h1{font-size:clamp(28px,3.5vw,44px);letter-spacing:-1.2px;margin:8px 0 10px;line
     <div class="field"><label for="alertType">Observation type</label><select id="alertType" required><option value="">Select type</option><option>Cash or money distribution</option><option>Distribution of gifts or goods</option><option>Promise of reward or benefit</option><option>Other suspected inducement</option></select></div>
     <div class="field"><label for="alertTime">Time observed</label><input id="alertTime" type="datetime-local" required></div>
     <div class="field"><label for="alertSource">Source of information</label><select id="alertSource" required><option>Direct observation</option><option>Reported by another person</option></select></div>
-    <div class="field"><label for="alertEvidence">Evidence available</label><select id="alertEvidence"><option>No evidence attached</option><option>Photo</option><option>Video</option><option>Witness details</option><option>Other documentation</option></select></div>
+    <div class="field"><label for="alertEvidence">Other evidence available</label><select id="alertEvidence"><option value="">None</option><option>Video</option><option>Witness details</option><option>Other documentation</option></select></div>
     <div class="field full"><label for="alertDetails">Incident description</label><textarea id="alertDetails" required placeholder="Describe the observed activity, location, and relevant details…"></textarea></div>
-  </div><div class="form-actions"><button class="btn" type="submit">Submit alert</button></div><div class="notice" id="alertNotice"></div></form></div>
+    <div class="field full"><label for="alertPhoto">Attach a photo (optional)</label><input type="file" id="alertPhoto" accept="image/*"></div>
+  </div><div class="form-actions"><button class="btn" type="submit">Submit alert</button><button type="button" class="btn secondary" data-open="dashboard">Dashboard</button></div><div class="notice" role="status" id="alertNotice"></div></form></div>
 </section>
 
 <section class="view-section" id="view-profile">
@@ -430,7 +439,7 @@ h1{font-size:clamp(28px,3.5vw,44px);letter-spacing:-1.2px;margin:8px 0 10px;line
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {getAuth,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import {initializeFirestore,doc,getDoc,collection,addDoc,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {initializeFirestore,doc,getDoc,collection,addDoc,serverTimestamp,onSnapshot,where,query} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig={apiKey:"AIzaSyBEbkeWDLuQOSPz2ojp59UWgqf0OakRrCo",authDomain:"election-8e790.firebaseapp.com",projectId:"election-8e790",storageBucket:"election-8e790.firebasestorage.app",messagingSenderId:"346568561664",appId:"1:346568561664:web:5618be1ebb4057f9c6f4e5"};
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=initializeFirestore(app,{experimentalForceLongPolling:true});
@@ -560,13 +569,19 @@ async function loadAuthenticatedProfile(user){
   await hydrateAssignment();
   if(!assignment.stateCode||!assignment.lgaCode||!assignment.wardCode||!assignment.pollingUnitCode||!assignment.pollingUnit)throw new Error("Your electionAgents profile does not contain a complete State, LGA, Ward and Polling Unit assignment. Contact the Super Admin.");
   displayAssignment();
+  watchElectionStatus(user.uid);
 }
 
 function showView(view){
   document.querySelectorAll(".view-section").forEach(section=>section.classList.toggle("active",section.id===`view-${view}`));
   document.querySelectorAll(".nav button[data-view]").forEach(button=>button.classList.toggle("active",button.dataset.view===view));
-  const titles={dashboard:"Operations overview",upload:"Upload","upload-report":"Upload Reports","evidence-upload":"Upload evidence",successful:"Successful Election","ec8a-form":"Digital EC8A","ov-ec8a-form":"Over Voting E-Form","over-voting":"Over Voting",violence:"Violence","violence-eform":"Violence E-Form",backup:"Backup request","vote-alert":"Vote buying alert",profile:"User profile"};
+  const titles={dashboard:"Operations overview",upload:"Upload","upload-report":"Election Status","evidence-upload":"Upload evidence",successful:"Successful Election","ec8a-form":"Digital EC8A","ov-ec8a-form":"Over Voting E-Form","over-voting":"Over Voting",violence:"Violence","violence-eform":"Violence E-Form",backup:"Backup request","vote-alert":"Vote buying alert",profile:"User profile"};
   text("topTitle",titles[view]||"Operations overview");
+  const timeInput = view === "upload-report" ? $("reportTime") : view === "vote-alert" ? $("alertTime") : null;
+  if (timeInput && !timeInput.value) {
+    const now = new Date();
+    timeInput.value = new Date(now.getTime()-now.getTimezoneOffset()*60000).toISOString().slice(0,16);
+  }
   closeMenu();
   window.scrollTo({top:0,behavior:"smooth"});
 }
@@ -584,7 +599,40 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape")closeMenu()});
 async function logout(){
   try{await signOut(auth)}finally{window.location.replace("index.html")}
 }
+let stopElectionStatus = () => {};
+let savedStage = "Loading…";
+function displayStage() {
+  const selected = $("reportCategory").value;
+  text("ctxElectionStatus", selected ? selected + " (unsaved)" : savedStage);
+}
+$("reportCategory").addEventListener("change", displayStage);
+$("reportForm").addEventListener("reset", () => queueMicrotask(displayStage));
+
+function watchElectionStatus(uid) {
+  const allowed = new Set(Array.from($("reportCategory").options, option => option.value).filter(Boolean));
+  const scope = {agentUid:uid, electionType:currentAgent.electionType, candidateId:agentCandidateId(),
+    stateCode:assignment.stateCode, lgaCode:assignment.lgaCode, wardCode:assignment.wardCode, pollingUnitCode:assignment.pollingUnitCode};
+  const feed = query(collection(db,"pollingUnitReports"), ...Object.entries(scope).map(([k,v])=>where(k,"==",v)));
+  stopElectionStatus = onSnapshot(feed, {includeMetadataChanges:true}, snapshot => {
+    if (auth.currentUser?.uid !== uid || snapshot.metadata.hasPendingWrites) return;
+    let latest;
+    for (const doc of snapshot.docs) {
+      const {category, createdAt} = doc.data();
+      if (!allowed.has(category) || !createdAt) continue;
+      const item = {category, time:createdAt.toMillis(), id:doc.id};
+      if (!latest || item.time > latest.time || (item.time === latest.time && item.id > latest.id)) latest = item;
+    }
+    savedStage = latest ? latest.category : snapshot.metadata.fromCache ? "Checking saved status…" : "Awaiting first update";
+    displayStage();
+  }, () => {
+    savedStage = "Saved status unavailable";
+    displayStage();
+  });
+}
 onAuthStateChanged(auth,async user=>{
+  stopElectionStatus();
+  savedStage = "Loading…";
+  $("reportForm").reset();
   if(!user){window.location.replace("index.html");return}
   try{await loadAuthenticatedProfile(user)}
   catch(error){console.error("Polling Unit Agent profile error:",error);alert(error.message||"Could not load your assigned profile.");await signOut(auth);window.location.replace("index.html")}
@@ -944,52 +992,74 @@ function buildSubmissionPayload(extra){
   };
   return base;
 }
-function attachSubmission(formId,noticeId,collectionName,makeExtra){
-  const form=$(formId);
-  if(!form)return;
+const uploadedPhotos = new WeakMap();
+async function photoFields(input, folder) {
+  const file = input.files[0];
+  if (!file) return {evidenceFileName:"", evidenceFileType:"", evidenceFileSize:0};
+  if (!file.type.startsWith("image/")) throw new Error("Choose an image file to attach.");
+  if (uploadedPhotos.has(file)) return uploadedPhotos.get(file);
+  const data = new FormData();
+  data.append("file",file);
+  data.append("upload_preset",CLOUDINARY_UPLOAD_PRESET);
+  data.append("folder","the-eyes/"+folder);
+  const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {method:"POST",body:data});
+  const result = await response.json();
+  if (!response.ok || !result.secure_url || !result.public_id) {
+    throw new Error(result.error?.message || "Photo upload failed. Please try again.");
+  }
+  const fields = {evidenceUrl:result.secure_url, evidencePublicId:result.public_id,
+    evidenceResourceType:"image", evidenceFormat:result.format||"", evidenceFileName:file.name,
+    evidenceFileType:file.type, evidenceFileSize:file.size};
+  uploadedPhotos.set(file,fields);
+  return fields;
+}
+
+function attachSubmission(formId, noticeId, collectionName, photoId, folder, getFields) {
+  const form = $(formId);
+  const submit = form.querySelector('[type="submit"]');
   form.addEventListener("submit",async event=>{
     event.preventDefault();
-    const submit=form.querySelector('button[type="submit"]'),noticeEl=$(noticeId);
-    if(!submit||!noticeEl)return;
-    submit.disabled=true;submit.textContent="Submitting…";noticeEl.className="notice";
-    try{
-      const extra=await makeExtra();
-      const payload=buildSubmissionPayload(extra);
+    if (submit.disabled || !form.reportValidity()) return;
+    const fields = getFields();
+    if (collectionName !== "pollingUnitReports" && !fields.details) {
+      notice(noticeId,"Enter a message before submitting.",true);
+      return;
+    }
+    const label = submit.textContent;
+    const controls = Array.from(form.elements).filter(el=>!el.disabled);
+    try {
+      if (!currentUser || currentUser.uid !== auth.currentUser?.uid || !assignment.pollingUnitCode) {
+        throw new Error("Wait for your polling-unit assignment to finish loading.");
+      }
+      const payload = buildSubmissionPayload(fields);
+      controls.forEach(el=>el.disabled=true);
+      submit.textContent = "Saving…";
+      $(noticeId).className = "notice";
+      Object.assign(payload,await photoFields($(photoId),folder));
+      if (auth.currentUser?.uid !== payload.agentUid) throw new Error("Your sign-in changed. Please reopen the dashboard.");
       await addCleanDoc(collection(db,collectionName),payload);
-      notice(noticeId,"Your submission has been saved successfully.",false);
+      if (collectionName === "pollingUnitReports") savedStage = fields.category;
       form.reset();
-    }catch(error){
-      console.error(collectionName+" submission failed:",error);
-      const message=error.code==="permission-denied"?"Firebase denied this submission. The Firestore rules must allow this agent's assigned polling-unit report for this collection.":(error.message||"Could not submit. Check your connection and try again.");
-      notice(noticeId,message,true);
-    }finally{submit.disabled=false;submit.textContent=collectionName==="pollingUnitReports"?"Submit report":collectionName==="backupRequests"?"Submit backup request":"Submit alert"}
+      notice(noticeId,collectionName === "pollingUnitReports" ? "Election status saved." :
+        collectionName === "backupRequests" ? "Backup request sent." : "Vote buying alert sent.");
+    } catch(error) {
+      notice(noticeId,error.code==="permission-denied" ? "Your account does not have permission to submit this record." :
+        error.message || "Could not save. Please try again.",true);
+    } finally {
+      controls.forEach(el=>el.disabled=false);
+      submit.textContent = label;
+    }
   });
 }
-attachSubmission("reportForm","reportNotice","pollingUnitReports",async()=>{
-  const file=$("evidencePhoto").files?.[0]||null;
-  let evidence={};
-  if(file){
-    const data=new FormData();
-    data.append("file",file);
-    data.append("upload_preset",CLOUDINARY_UPLOAD_PRESET);
-    data.append("folder","the-eyes/polling-unit-reports");
-    const response=await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,{method:"POST",body:data});
-    const result=await response.json().catch(()=>({}));
-    if(!response.ok)throw new Error(result.error?.message||`Cloudinary upload failed (${response.status}).`);
-    evidence={evidenceUrl:result.secure_url||"",evidencePublicId:result.public_id||"",evidenceResourceType:result.resource_type||"image",evidenceFormat:result.format||""};
-  }
-  return {
-    category:$("reportCategory").value,observationTime:$("reportTime").value,
-    details:$("reportDetails").value.trim(),evidenceFileName:file?.name||"",
-    evidenceFileType:file?.type||"",evidenceFileSize:file?.size||0,...evidence
-  };
-});
-attachSubmission("backupForm","backupNotice","backupRequests",()=>({
-  incidentType:$("backupType").value,urgency:$("backupUrgency").value,details:$("backupDetails").value.trim()
+attachSubmission("reportForm","reportNotice","pollingUnitReports","evidencePhoto","polling-unit-reports",()=>({
+  category:$("reportCategory").value, observationTime:$("reportTime").value, details:$("reportDetails").value.trim()
 }));
-attachSubmission("alertForm","alertNotice","voteBuyingAlerts",()=>({
-  alertType:$("alertType").value,observationTime:$("alertTime").value,source:$("alertSource").value,
-  evidenceAvailable:$("alertEvidence").value,details:$("alertDetails").value.trim()
+attachSubmission("backupForm","backupNotice","backupRequests","backupPhoto","polling-unit-backup",()=>({
+  incidentType:$("backupType").value, urgency:$("backupUrgency").value, details:$("backupDetails").value.trim()
+}));
+attachSubmission("alertForm","alertNotice","voteBuyingAlerts","alertPhoto","polling-unit-alerts",()=>({
+  alertType:$("alertType").value, observationTime:$("alertTime").value, source:$("alertSource").value,
+  evidenceAvailable:[$("alertPhoto").files.length ? "Photo" : "", $("alertEvidence").value].filter(Boolean).join(", ") || "No evidence attached", details:$("alertDetails").value.trim()
 }));
 </script>
 </body>
