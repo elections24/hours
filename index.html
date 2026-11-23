@@ -91,6 +91,12 @@
     .status.show { display:block; }
     .status.error { color:var(--danger); background:#fff0ef; border:1px solid #f5d1ce; }
     .status.info { color:#155a3e; background:#edf7f1; border:1px solid #d1e9da; }
+    [hidden] { display:none !important; }
+    .assignment { width:min(100%, 510px); margin:auto; padding:clamp(24px,5vw,40px); background:white; border:1px solid var(--line); border-radius:22px; }
+    .assignment h1 { font-size:clamp(26px,5vw,34px); margin:0; }
+    .assignment dl { margin:24px 0; }
+    .assignment dt { margin-top:14px; font-size:13px; color:#50645a; }
+    .assignment dd { margin:3px 0; font-weight:650; overflow-wrap:anywhere; }
     @media (max-width: 760px) {
       body { padding:14px; align-items:flex-start; }
       .shell { grid-template-columns:1fr; min-height:0; border-radius:22px; max-width:500px; margin:auto; }
@@ -111,7 +117,7 @@
   </style>
 </head>
 <body>
-  <main class="shell">
+  <main id="signInPage" class="shell">
     <section class="brand-panel" aria-label="THE EYES platform introduction">
       <div class="brand-content">
         <div class="brand-top brand-top-centered">
@@ -180,6 +186,18 @@
     </section>
   </main>
 
+  <main id="officerPage" class="assignment" hidden>
+    <h1 id="officerTitle"></h1>
+    <dl>
+      <dt>Officer</dt><dd id="officerName"></dd>
+      <dt>Election</dt><dd id="officerElection"></dd>
+      <dt>Candidate</dt><dd id="officerCandidate"></dd>
+      <dt>Assigned coverage</dt><dd id="officerCoverage"></dd>
+    </dl>
+    <button type="button" class="login-btn" id="endSession">Sign out</button>
+    <p id="roomStatus" role="status"></p>
+  </main>
+
   <!-- Firebase setup:
        1) Replace the placeholder values below with your Firebase project config.
        2) Enable Email/Password in Firebase Authentication.
@@ -214,7 +232,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, setPersistence, browserLocalPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, setPersistence, browserLocalPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -230,7 +248,16 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // Update these paths when the role dashboards are created.
+    const officerRoles = {
+      lga_situation_room_officer: 'LGA Situation Room Officer',
+      state_situation_room_officer: 'State Situation Room Officer',
+      national_situation_room_officer: 'National Situation Room Officer'
+    };
+    const nationalCollationRoles = ['presidential_national_collation_agent', 'national_collation_agent', 'national_presidential_collation_agent'];
+    const normalizeRole = value => String(value || '').trim().toLowerCase().replace(/[\s-]+/g, '_');
+    const entryRole = new URLSearchParams(location.search).get('role');
+    const entryRoles = ['national_collation_agent', ...Object.keys(officerRoles)];
+    const isRoleEntry = entryRoles.includes(entryRole);
     const roleDashboards = {
       admin: "admin-dashboard.html",
       super_admin: "admin-dashboard.html",
@@ -243,6 +270,10 @@
       local_government_collation: "local-government-collation-dashboard.html",
       state_collation_agent: "state-collation-dashboard.html",
       state_collation: "state-collation-dashboard.html",
+      presidential_national_collation_agent: "presidential-national-collation-dashboard.html",
+      national_collation_agent: "presidential-national-collation-dashboard.html",
+      national_presidential_collation_agent: "presidential-national-collation-dashboard.html",
+      ...Object.fromEntries(Object.keys(officerRoles).map(role => [role, "index.html?role=" + role])),
       coordinator: "coordinator-dashboard.html",
       observer: "observer-dashboard.html",
       reporter: "observer-dashboard.html",
@@ -272,8 +303,104 @@
       document.getElementById("togglePassword").setAttribute("aria-label", isPassword ? "Hide password" : "Show password");
     });
 
+    async function readAssignment(uid) {
+        const profileRef = doc(db, "users", uid);
+        const profileSnap = await getDoc(profileRef);
+
+        if (!profileSnap.exists()) {
+          throw new Error("Your account profile is not registered in the system. Contact your system administrator.");
+        }
+
+        const userProfile = profileSnap.data();
+        // Agent assignment/role is authoritative in electionAgents/{uid}.
+        // Keep users/{uid} for login identity and display information.
+        // Agent assignment data is optional for login routing. If this account
+        // cannot read electionAgents/{uid}, continue using users/{uid}.
+        let agentProfile = {};
+        let agentExists = false;
+        try {
+          const agentRef = doc(db, "electionAgents", uid);
+          const agentSnap = await getDoc(agentRef);
+          agentExists = agentSnap.exists();
+          agentProfile = agentExists ? agentSnap.data() : {};
+        } catch (agentReadError) {
+          console.warn("Could not read electionAgents profile; using users profile.", agentReadError);
+        }
+        if (userProfile.active === false || userProfile.status === "disabled"
+            || (agentExists && (agentProfile.active === false || agentProfile.status === "disabled"))) {
+          throw new Error("Your account is currently disabled. Contact your system administrator.");
+        }
+
+        const assignedRole = normalizeRole(agentProfile.agentRole);
+        const alternateRole = normalizeRole(agentProfile.role);
+        const collationRole = ["state_collation_agent", "state_collation", ...nationalCollationRoles, ...Object.keys(officerRoles)].includes(alternateRole) ? alternateRole : "";
+        const role = assignedRole || collationRole || normalizeRole(userProfile.agentRole || userProfile.role);
+        const profile = agentExists ? agentProfile : userProfile;
+        if (nationalCollationRoles.includes(role) || Object.hasOwn(officerRoles, role)) {
+          if (!(profile.active === true || profile.status === 'active') || !profile.candidateId || !profile.electionType)
+            throw new Error('Your assignment is incomplete. Please contact your administrator.');
+          if ((nationalCollationRoles.includes(role) || role === 'national_situation_room_officer') && profile.electionType !== 'presidential')
+            throw new Error('This national role requires a presidential election assignment.');
+          const scope = profile.assignedScope || {}, geo = profile.geography || {};
+          if (['lga_situation_room_officer','state_situation_room_officer'].includes(role) && !(scope.stateCode || geo.stateCode))
+            throw new Error('Please ask your administrator to assign your state.');
+          if (role === 'lga_situation_room_officer' && !(scope.lgaCode || geo.lgaCode))
+            throw new Error('Please ask your administrator to assign your LGA.');
+        }
+        return { role, profile, userProfile, agentProfile };
+    }
+
+    const officerPage = document.getElementById('officerPage');
+    const signInPage = document.getElementById('signInPage');
+    let signingIn = false;
+    function showOfficer(role, profile) {
+      const geo = profile.geography || {}, scope = profile.assignedScope || {};
+      const state = geo.state || scope.stateCode || geo.stateCode;
+      const lga = geo.lga || scope.lgaCode || geo.lgaCode;
+      document.getElementById('officerTitle').textContent = officerRoles[role];
+      document.getElementById('officerName').textContent = profile.fullName || profile.username;
+      document.getElementById('officerElection').textContent = profile.electionName || profile.electionType.replaceAll('_',' ');
+      document.getElementById('officerCandidate').textContent = profile.candidateName || profile.candidateId;
+      document.getElementById('officerCoverage').textContent = role === 'national_situation_room_officer'
+        ? 'Nigeria · All 36 states and the FCT' : role === 'lga_situation_room_officer' ? [lga,state].join(' · ') : state;
+      form.reset();
+      signInPage.hidden = true;
+      officerPage.hidden = false;
+    }
+    document.getElementById('endSession').addEventListener('click', async () => {
+      try { await auth.signOut(); location.replace('index.html'); }
+      catch { document.getElementById('roomStatus').textContent = 'Sign-out failed. Please try again.'; }
+    });
+    if (isRoleEntry) {
+      document.querySelector('.form-heading h2').textContent =
+        (officerRoles[entryRole] || 'National Collation Agent') + ' sign-in';
+      const mainLink = document.createElement('a');
+      mainLink.href = 'index.html';
+      mainLink.textContent = 'Main sign-in page';
+      document.querySelector('.form-panel').append(mainLink);
+      onAuthStateChanged(auth, async user => {
+        officerPage.hidden = true;
+        signInPage.hidden = false;
+        if (signingIn) return;
+        loginButton.disabled = false;
+        loginButton.textContent = 'Sign in securely →';
+        if (!user) return;
+        try {
+          const {role, profile} = await readAssignment(user.uid);
+          if (auth.currentUser?.uid !== user.uid || signingIn) return;
+          if (role === entryRole && Object.hasOwn(officerRoles, role)) showOfficer(role, profile);
+          else if (entryRole === 'national_collation_agent' && nationalCollationRoles.includes(role))
+            location.replace(roleDashboards[role]);
+          else showStatus('This link is for a different role. Use the main sign-in page to open your assignment.');
+        } catch (error) {
+          if (auth.currentUser?.uid === user.uid && !signingIn) showStatus(error.message);
+        }
+      });
+    }
+
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
+      signingIn = true;
       statusBox.className = "status";
       loginButton.disabled = true;
       loginButton.textContent = "Signing in…";
@@ -286,56 +413,32 @@
         await setPersistence(auth, browserSessionPersistence);
 
         const credential = await signInWithEmailAndPassword(auth, email, password);
-        const profileRef = doc(db, "users", credential.user.uid);
-        const profileSnap = await getDoc(profileRef);
-
-        if (!profileSnap.exists()) {
-          await auth.signOut();
-          throw new Error("Your account profile is not registered in the system. Contact your system administrator.");
-        }
-
-        const userProfile = profileSnap.data();
-        // Agent assignment/role is authoritative in electionAgents/{uid}.
-        // Keep users/{uid} for login identity and display information.
-        // Agent assignment data is optional for login routing. If this account
-        // cannot read electionAgents/{uid}, continue using users/{uid}.
-        let agentProfile = {};
-        let agentExists = false;
-        try {
-          const agentRef = doc(db, "electionAgents", credential.user.uid);
-          const agentSnap = await getDoc(agentRef);
-          agentExists = agentSnap.exists();
-          agentProfile = agentExists ? agentSnap.data() : {};
-        } catch (agentReadError) {
-          console.warn("Could not read electionAgents profile; using users profile.", agentReadError);
-        }
+        const {role, profile, userProfile, agentProfile} = await readAssignment(credential.user.uid);
         const storedUsername = String(userProfile.username || "").trim().toLowerCase();
         if (storedUsername && storedUsername !== username.toLowerCase()) {
           await auth.signOut();
           throw new Error("The username does not match this account. Please check your details.");
         }
 
-        if (userProfile.active === false || userProfile.status === "disabled"
-            || (agentExists && (agentProfile.active === false || agentProfile.status === "disabled"))) {
-          await auth.signOut();
-          throw new Error("Your account is currently disabled. Contact your system administrator.");
-        }
-
-        const normalizeRole = value => String(value || "").trim().toLowerCase().replace(/[\s-]+/g, "_");
-        const assignedRole = normalizeRole(agentProfile.agentRole);
-        const alternateRole = normalizeRole(agentProfile.role);
-        const stateRole = ["state_collation_agent", "state_collation"].includes(alternateRole) ? alternateRole : "";
-        const role = assignedRole || stateRole || normalizeRole(userProfile.agentRole || userProfile.role);
         const dashboard = roleDashboards[role] || userProfile.dashboardUrl || agentProfile.dashboardUrl;
 
-        if (!dashboard || typeof dashboard !== "string" || !dashboard.endsWith(".html")) {
+        if (!dashboard || typeof dashboard !== "string" || !(Object.hasOwn(officerRoles, role) || dashboard.endsWith(".html"))) {
           await auth.signOut();
           throw new Error("No dashboard has been assigned to your account. Contact your system administrator.");
         }
 
         // Role and dashboard permissions must also be enforced by Firestore Security Rules.
-        window.location.href = new URL(dashboard, window.location.href).href;
+        if (isRoleEntry && (nationalCollationRoles.includes(role) ? 'national_collation_agent' : role) !== entryRole) {
+          await auth.signOut();
+          throw new Error('This link is for a different role. Open the main sign-in page to use your assigned role.');
+        }
+        if (isRoleEntry && Object.hasOwn(officerRoles, role)) {
+          showOfficer(role, profile);
+        } else {
+          window.location.assign(new URL(dashboard, window.location.href).href);
+        }
       } catch (error) {
+        if (auth.currentUser) await auth.signOut().catch(() => {});
         let message = error?.message || "Unable to sign in. Please try again.";
         if (error?.code === "auth/invalid-credential" || error?.code === "auth/wrong-password" || error?.code === "auth/user-not-found") {
           message = "Incorrect email or password. Please check your details and try again.";
@@ -349,6 +452,8 @@
         showStatus(message, "error");
         loginButton.disabled = false;
         loginButton.textContent = "Sign in securely  →";
+      } finally {
+        signingIn = false;
       }
     });
   </script>
