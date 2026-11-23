@@ -351,6 +351,11 @@
         return { role, profile, userProfile, agentProfile };
     }
 
+    function dedicatedRoom(role,profile){
+      if(role==='state_situation_room_officer' && profile.electionType==='presidential')return 'presidential-state-situation-room-dashboard.html';
+      if(role==='national_situation_room_officer')return roleDashboards[role];
+      return '';
+    }
     const officerPage = document.getElementById('officerPage');
     const signInPage = document.getElementById('signInPage');
     let signingIn = false;
@@ -389,7 +394,7 @@
         try {
           const {role, profile} = await readAssignment(user.uid);
           if (auth.currentUser?.uid !== user.uid || signingIn) return;
-          if (role === entryRole && role === 'national_situation_room_officer') location.replace(roleDashboards[role]);
+          if (role === entryRole && dedicatedRoom(role,profile)) location.replace(dedicatedRoom(role,profile));
           else if (role === entryRole && Object.hasOwn(officerRoles, role)) showOfficer(role, profile);
           else if (entryRole === 'national_collation_agent' && nationalCollationRoles.includes(role))
             location.replace(roleDashboards[role]);
@@ -422,7 +427,7 @@
           throw new Error("The username does not match this account. Please check your details.");
         }
 
-        const dashboard = roleDashboards[role] || userProfile.dashboardUrl || agentProfile.dashboardUrl;
+        const dashboard = dedicatedRoom(role,profile) || roleDashboards[role] || userProfile.dashboardUrl || agentProfile.dashboardUrl;
 
         if (!dashboard || typeof dashboard !== "string" || !(Object.hasOwn(officerRoles, role) || dashboard.endsWith(".html"))) {
           await auth.signOut();
@@ -434,7 +439,7 @@
           await auth.signOut();
           throw new Error('This link is for a different role. Open the main sign-in page to use your assigned role.');
         }
-        if (isRoleEntry && role !== "national_situation_room_officer" && Object.hasOwn(officerRoles, role)) {
+        if (isRoleEntry && !dedicatedRoom(role,profile) && Object.hasOwn(officerRoles, role)) {
           showOfficer(role, profile);
         } else {
           window.location.assign(new URL(dashboard, window.location.href).href);
