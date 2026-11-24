@@ -553,7 +553,22 @@ function renderAll(){
 }
 
 async function loadProfile(u,session){const userSnap=await getDoc(doc(db,'users',u.uid)),userData=userSnap.exists()?userSnap.data():{};let agentData={};try{const agentSnap=await getDoc(doc(db,'electionAgents',u.uid));if(agentSnap.exists())agentData=agentSnap.data()}catch(err){console.warn('Could not read electionAgents; falling back to users profile.',err)}if(session!==stateSession || auth.currentUser?.uid!==u.uid)return;user=u;const a=Object.keys(agentData).length?agentData:userData;const role=roleName(a)||roleName(userData);if(!['state_collation_agent','state_collation'].includes(role))throw new Error('This signed-in account is not assigned to the State Collation Agent role. Ask the Super Admin to check agentRole in electionAgents/{uid} or users/{uid}.');if(a.active===false||a.status==='disabled'||userData.active===false||userData.status==='disabled')throw new Error('Your account is disabled. Contact the Super Admin.');profile={...userData,...a};loadAssignment(a);$('sideName').textContent=first(profile.fullName,u.displayName,u.email,'State Agent');$('sideScope').textContent=assignment.state;$('topName').textContent=first(profile.fullName,u.email,'');$('welcomeTitle').textContent=`${assignment.state} State Collation Dashboard`;$('stateTitle').textContent=assignment.state;$('stateCodeTitle').textContent=assignment.stateCode;$('electionTitle').textContent=assignment.electionName;$('candidateTitle').textContent=assignment.candidateName||'Not specified';renderProfile();await loadData()}
-$('loginForm').addEventListener('submit',e=>e.preventDefault());$('logoutBtn').addEventListener('click',async()=>{unsubs.forEach(f=>f());await signOut(auth);window.location.replace('index.html')});let stateSession=0;
+// Keep Android/browser Back from leaving the authenticated dashboard and returning to the main login page.
+let stateBackGuard=false;
+function armStateBackGuard(){
+  if(stateBackGuard)return;
+  history.pushState({theEyesStateDashboard:true},'',location.href);
+  stateBackGuard=true;
+}
+window.addEventListener('popstate',()=>{
+  if(!auth.currentUser){stateBackGuard=false;return;}
+  // Give Back a useful local effect first, without leaving the authenticated dashboard.
+  if($('detailModal').classList.contains('show')) $('detailModal').classList.remove('show');
+  else if($('sidebar').classList.contains('open')) $('sidebar').classList.remove('open');
+  history.pushState({theEyesStateDashboard:true},'',location.href);
+  stateBackGuard=true;
+});
+$('loginForm').addEventListener('submit',e=>e.preventDefault());$('logoutBtn').addEventListener('click',async()=>{stateBackGuard=false;unsubs.forEach(f=>f());await signOut(auth);window.location.replace('index.html')});let stateSession=0;
 onAuthStateChanged(auth,async u=>{
   const session=++stateSession;
   uploadGroup=''; uploadAction=''; uploadBusy=false; pendingMedia=null;
@@ -577,6 +592,7 @@ onAuthStateChanged(auth,async u=>{
     renderAll();
     $('loginView').classList.add('hidden');
     $('appView').classList.remove('hidden'); $('stateUploadButton').disabled=false;
+    armStateBackGuard();
   }catch(err){
     if(session!==stateSession)return;
     console.error(err);
