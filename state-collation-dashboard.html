@@ -553,21 +553,27 @@ function renderAll(){
 }
 
 async function loadProfile(u,session){const userSnap=await getDoc(doc(db,'users',u.uid)),userData=userSnap.exists()?userSnap.data():{};let agentData={};try{const agentSnap=await getDoc(doc(db,'electionAgents',u.uid));if(agentSnap.exists())agentData=agentSnap.data()}catch(err){console.warn('Could not read electionAgents; falling back to users profile.',err)}if(session!==stateSession || auth.currentUser?.uid!==u.uid)return;user=u;const a=Object.keys(agentData).length?agentData:userData;const role=roleName(a)||roleName(userData);if(!['state_collation_agent','state_collation'].includes(role))throw new Error('This signed-in account is not assigned to the State Collation Agent role. Ask the Super Admin to check agentRole in electionAgents/{uid} or users/{uid}.');if(a.active===false||a.status==='disabled'||userData.active===false||userData.status==='disabled')throw new Error('Your account is disabled. Contact the Super Admin.');profile={...userData,...a};loadAssignment(a);$('sideName').textContent=first(profile.fullName,u.displayName,u.email,'State Agent');$('sideScope').textContent=assignment.state;$('topName').textContent=first(profile.fullName,u.email,'');$('welcomeTitle').textContent=`${assignment.state} State Collation Dashboard`;$('stateTitle').textContent=assignment.state;$('stateCodeTitle').textContent=assignment.stateCode;$('electionTitle').textContent=assignment.electionName;$('candidateTitle').textContent=assignment.candidateName||'Not specified';renderProfile();await loadData()}
-// Keep Android/browser Back from leaving the authenticated dashboard and returning to the main login page.
+// Android/browser Back guard. Arm as soon as Firebase confirms an authenticated
+// session (before profile/network reads), then restore the guard on every Back event.
 let stateBackGuard=false;
-function armStateBackGuard(){
-  if(stateBackGuard)return;
-  history.pushState({theEyesStateDashboard:true},'',location.href);
+function armStateBackGuard(force=false){
+  if(!auth.currentUser)return;
+  if(stateBackGuard && !force)return;
+  // Two same-URL sentinels protect against a single Back press consuming the only guard.
+  history.pushState({theEyesStateDashboard:true,guard:1},'',location.href);
+  history.pushState({theEyesStateDashboard:true,guard:2},'',location.href);
   stateBackGuard=true;
 }
 window.addEventListener('popstate',()=>{
   if(!auth.currentUser){stateBackGuard=false;return;}
-  // Give Back a useful local effect first, without leaving the authenticated dashboard.
+  // Never let a hardware Back press traverse to the login/index page while signed in.
   if($('detailModal').classList.contains('show')) $('detailModal').classList.remove('show');
   else if($('sidebar').classList.contains('open')) $('sidebar').classList.remove('open');
-  history.pushState({theEyesStateDashboard:true},'',location.href);
-  stateBackGuard=true;
+  // Reinsert the sentinel synchronously while the authenticated page is still active.
+  stateBackGuard=false;
+  armStateBackGuard(true);
 });
+window.addEventListener('pageshow',()=>{if(auth.currentUser)armStateBackGuard(true);});
 $('loginForm').addEventListener('submit',e=>e.preventDefault());$('logoutBtn').addEventListener('click',async()=>{stateBackGuard=false;unsubs.forEach(f=>f());await signOut(auth);window.location.replace('index.html')});let stateSession=0;
 onAuthStateChanged(auth,async u=>{
   const session=++stateSession;
@@ -582,9 +588,11 @@ onAuthStateChanged(auth,async u=>{
   $('appView').classList.add('hidden');
   $('loginView').classList.remove('hidden');
   if(!u){
+    stateBackGuard=false;
     notice('loginNotice','Sign in on the main page to open your state dashboard.',true);
     return;
   }
+  armStateBackGuard(true);
   notice('loginNotice','Opening your State Collation dashboard…');
   try{
     await loadProfile(u,session);
