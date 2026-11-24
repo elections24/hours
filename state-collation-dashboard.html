@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#08734f"><title>THE EYES | State Collation Dashboard</title><style>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#08734f"><title>BOTAS PHOTO | State Collation Dashboard</title><style>
 :root{--g:#08734f;--gd:#07543b;--mint:#eaf5ef;--bg:#f3f7f5;--ink:#20372d;--muted:#74847b;--line:#e1eae5;--white:#fff;--gold:#dcae43;--red:#b42318;--shadow:0 4px 18px #163b2910}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,"Segoe UI",Arial,sans-serif}button,input,textarea,select{font:inherit}button{cursor:pointer}.hidden{display:none!important}
 .login-wrap{min-height:100vh;display:grid;place-items:center;padding:20px;background:linear-gradient(135deg,#eef6f1,#f7faf8)}.login{width:min(430px,100%);background:#fff;border:1px solid var(--line);border-radius:18px;padding:28px;box-shadow:0 15px 45px #123b2414}.brand{font-weight:900;color:var(--g);letter-spacing:2px;font-size:20px}.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:.7px;font-weight:500;margin-top:4px}.login h1{font-size:25px;margin:22px 0 6px}.sub{font-size:13px;color:var(--muted);line-height:1.6;margin:0 0 18px}
@@ -80,8 +80,8 @@
 .upload-grid button[data-group=expose]{border-top-color:#966822}
 .upload-tile:active{background:#eaf4ee}.upload-entry .upload-feedback:empty{display:none}
 </style></head><body>
-<section id="loginView" class="login-wrap"><form id="loginForm" class="login"><div class="brand">◉ THE EYES <small>Election Monitoring &amp; Reporting System</small></div><h1>State Collation</h1><p class="sub">This dashboard uses the account already signed in through the main THE EYES index page.</p><div id="loginNotice" class="notice"></div><button class="btn" type="button" onclick="location.replace('index.html')" style="width:100%;margin-top:12px">Return to main sign-in</button></form></section>
-<div id="appView" class="app hidden"><aside class="sidebar" id="sidebar"><div class="brand">◉ THE EYES <small>Election Monitoring System</small></div><div class="rolebox"><small>Signed in as</small><strong id="sideName">Loading…</strong><p id="sideScope">Loading assigned State…</p></div><nav class="nav"><button data-view="overview">▦ Overview</button><button class="active" data-view="lgas">▤ LGA Collations</button><button type="button" id="stateUploadMenu" aria-controls="view-uploads">↑ Upload</button><button data-view="profile">♙ My Profile</button></nav><div class="sidefoot">THE EYES · Restricted State access<br>Data is limited to your assigned State and election.</div></aside>
+<section id="loginView" class="login-wrap"><form id="loginForm" class="login"><div class="brand">◉ BOTAS PHOTO <small>Election Monitoring &amp; Reporting System</small></div><h1>State Collation</h1><p class="sub">This dashboard uses the account already signed in through the main BOTAS PHOTO index page.</p><div id="loginNotice" class="notice"></div><button class="btn" type="button" onclick="location.replace('index.html')" style="width:100%;margin-top:12px">Return to main sign-in</button></form></section>
+<div id="appView" class="app hidden"><aside class="sidebar" id="sidebar"><div class="brand">◉ BOTAS PHOTO <small>Election Monitoring System</small></div><div class="rolebox"><small>Signed in as</small><strong id="sideName">Loading…</strong><p id="sideScope">Loading assigned State…</p></div><nav class="nav"><button data-view="overview">▦ Overview</button><button class="active" data-view="lgas">▤ LGA Collations</button><button type="button" id="stateUploadMenu" aria-controls="view-uploads">↑ Upload</button><button data-view="results">▥ Consolidated Results</button><button data-view="submit">＋ Submit State Collation</button><button data-view="history">◷ Collation History</button><button data-view="profile">♙ My Profile</button></nav><div class="sidefoot">BOTAS PHOTO · Restricted State access<br>Data is limited to your assigned State and election.</div></aside>
 <main class="main"><header class="topbar"><div style="display:flex;align-items:center;gap:10px"><button class="menu" id="menuBtn">☰</button><strong id="topTitle">State overview</strong></div><div class="topright"><span class="pill">State Collation Agent Portal</span><span id="topName" class="muted"></span><button class="btn secondary" id="logoutBtn">Log out</button></div></header><div class="content">
 <section class="view" id="view-overview"><div class="eyebrow">Assigned collation area</div><h1 id="welcomeTitle">State Dashboard</h1><p class="sub">Review submitted Local Government collations and prepare the State collation record.</p><div class="assigned"><h2 id="stateTitle">Loading assigned State…</h2><p>State-level election collation</p><div class="geo"><div><small>Election</small><b id="electionTitle">—</b></div><div><small>Candidate</small><b id="candidateTitle">—</b></div><div><small>Assigned State code</small><b id="stateCodeTitle">—</b></div></div></div><div class="stats"><div class="stat"><small>Registered LGAs</small><strong id="statLgas">—</strong></div><div class="stat"><small>LGA collations received</small><strong id="statReceived">—</strong></div><div class="stat"><small>LGAs awaiting collation</small><strong id="statPending">—</strong></div><div class="stat"><small>Reported valid votes</small><strong id="statVotes">—</strong></div></div><div class="panel"><div class="panelhead"><h2>Local Government collation progress</h2><span class="tag">Live</span></div><div id="progressSummary" class="muted">Loading progress…</div><div id="progressTable" class="tablewrap" style="margin-top:12px"></div></div></section>
 <section class="view active" id="view-lgas"><div class="panel"><div class="panelhead"><h2>State Collation Dashboard</h2><div class="filters"><input id="lgaSearch" placeholder="Search Local Government…"><select id="lgaStatus"><option value="">All LGAs</option><option value="expose">Expose</option><option value="violence">Violence</option><option value="successful">Successful</option><option value="ec8c">EC8C received</option><option value="collation">Completed collation</option></select></div></div><div id="lgaCount" class="muted" style="margin:0 0 12px">Loading assigned LGAs…</div><p class="feed-notice" id="feedNotice" role="status"></p><div id="lgaTable" class="tablewrap"><div class="empty">Loading Local Government collation records…</div></div>
@@ -94,7 +94,10 @@
      <div id="stateUploadView"></div>
    </section>
    
-<section class="view" id="view-profile"><div class="eyebrow">Account information</div><h1>My Profile</h1><div class="panel"><div class="detailgrid" id="profileGrid"></div></div></section><div class="footer">THE EYES · Election Monitoring &amp; Reporting System</div></div></main></div>
+<section class="view" id="view-results"><div class="eyebrow">Election aggregation</div><h1>Consolidated Results</h1><p class="sub">Totals calculated from the latest submitted LGA collation for each Local Government. Original LGA and ward records remain unchanged.</p><div class="stats"><div class="stat"><small>Total valid votes</small><strong id="totalValid">0</strong></div><div class="stat"><small>Total rejected ballots</small><strong id="totalRejected">0</strong></div><div class="stat"><small>LGA records included</small><strong id="totalIncluded">0</strong></div><div class="stat"><small>Ward records represented</small><strong id="totalSources">0</strong></div></div><div class="panel"><div class="panelhead"><h2>LGA-by-LGA totals</h2><button class="btn secondary" id="refreshBtn">Refresh data</button></div><div id="totalsTable" class="tablewrap"></div></div></section>
+<section class="view" id="view-submit"><div class="eyebrow">Final State collation</div><h1>Submit State Collation</h1><p class="sub">Create a separate State record referencing the latest LGA collations for this election. Original Local Government and ward records remain unchanged.</p><form id="stateForm" class="panel"><div class="grid2"><div class="field"><label for="collationDate">Collation date *</label><input id="collationDate" type="date" required></div><div class="field"><label for="reviewStatus">Review status *</label><select id="reviewStatus" required><option value="reviewed">Reviewed</option><option value="provisional">Provisional</option><option value="final">Final</option></select></div><div class="field"><label for="validVotes">Total valid votes (from LGA collations)</label><input id="validVotes" type="number" min="0" step="1" readonly></div><div class="field"><label for="rejectedVotes">Total rejected ballots (from LGA collations)</label><input id="rejectedVotes" type="number" min="0" step="1" readonly></div><div class="field full"><label for="stateSummary">State collation summary *</label><textarea id="stateSummary" required placeholder="Enter the State collation summary…"></textarea></div><div class="field full"><label for="stateDiscrepancies">Discrepancies / remarks</label><textarea id="stateDiscrepancies" placeholder="Record discrepancies, missing LGA returns, or remarks…"></textarea></div></div><label class="checkrow"><input id="confirmLgaReview" type="checkbox" required> I confirm that I have reviewed the Local Government collation records selected for this State.</label><div class="muted" id="sourceCountText">Loading eligible LGA collation sources…</div><div class="notice" id="stateNotice"></div><div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:15px"><button class="btn" id="saveStateBtn" type="submit">Save State Collation</button><button class="btn secondary" type="button" data-goto="results">Back to results</button></div></form></section>
+<section class="view" id="view-history"><div class="eyebrow">Saved State records</div><h1>Collation History</h1><p class="sub">Previously submitted State collation records.</p><div class="panel"><div id="historyTable" class="tablewrap"><div class="empty">Loading history…</div></div></div></section>
+<section class="view" id="view-profile"><div class="eyebrow">Account information</div><h1>My Profile</h1><div class="panel"><div class="detailgrid" id="profileGrid"></div></div></section><div class="footer">BOTAS PHOTO · Election Monitoring &amp; Reporting System</div></div></main></div>
 <div class="modal" id="detailModal" role="dialog" aria-modal="true" aria-labelledby="detailTitle"><div class="modalbox"><div class="modalhead"><span class="category-badge" id="detailCategory">Collation</span><button class="xbtn" id="closeDetail">Close</button></div><h2 id="detailTitle">LGA collation details</h2><p class="detail-scope" id="detailScope"></p><div id="detailContent"></div></div></div>
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -105,12 +108,12 @@ const app=initializeApp(firebaseConfig),auth=getAuth(app),db=initializeFirestore
 const $=id=>document.getElementById(id),first=(...v)=>v.find(x=>x!==undefined&&x!==null&&String(x).trim()!==''),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt=v=>{if(!v)return '—';const d=v?.toDate?v.toDate():(v instanceof Date?v:new Date(v));return isNaN(d)?String(v):d.toLocaleString()},dateMs=v=>{if(!v)return 0;const d=v?.toDate?v.toDate():(v instanceof Date?v:new Date(v));return isNaN(d)?0:d.getTime()};
 const electionNames={presidential:'Presidential Election',gubernatorial:'Gubernatorial Election',senatorial:'Senatorial Election',house_of_representatives:'House of Representatives Election'};
-let user=null,profile={},assignment={},data={lgas:[],collations:[],evidence:[]},unsubs=[];
+let user=null,profile={},assignment={},data={lgas:[],collations:[],evidence:[],stateHistory:[]},unsubs=[];
 function notice(id,msg,error=false){const el=$(id);el.textContent=msg;el.className='notice show'+(error?' error':'')}
 function loadAssignment(a){const g=a.geography||{},s=a.assignedScope||{};assignment={stateCode:String(first(g.stateCode,s.stateCode,a.stateCode) ?? ''),state:first(g.state,s.stateName,a.stateName,''),electionType:String(a.electionType||''),electionName:first(a.electionName,electionNames[a.electionType],a.electionType,''),candidateId:String(a.candidateId||''),candidateName:first(a.candidateName,'')};if(!assignment.stateCode||!assignment.electionType||!assignment.candidateId)throw new Error('Your State Agent assignment is incomplete. Ask the Super Admin to verify State, candidate and election type.')}
 function roleName(a){return String(a.agentRole||a.role||'').trim().toLowerCase().replace(/[\s-]+/g,'_')}
 const categories = {expose:'Expose', violence:'Violence', successful:'Successful'};
-const sourceNames = {lgas:'Registered LGAs', collations:'Completed LGA collations', evidence:'LGA evidence'};
+const sourceNames = {lgas:'Registered LGAs', collations:'Completed LGA collations', evidence:'LGA evidence', stateHistory:'State collation history'};
 let feedStatus = {}, generation = 0;
 function scopeMatches(record) {
   return ['stateCode','candidateId','electionType'].every(key => assignment[key] && record[key] === assignment[key]);
@@ -196,6 +199,7 @@ function loadData() {
   listen('geographyLGAs','lgas',['stateCode']);
   listen('lgaCollations','collations',scope);
   listen('lgaEvidenceUploads','evidence',scope);
+  listen('stateCollations','stateHistory',scope);
   renderAll();
 }
 const partyColumns = 'ADC APC A AA AAC ADP APGA APM APP BP LP NNPP NRM PDP PRP SDP YPP ZLP'.split(' ');
@@ -335,6 +339,8 @@ $('detailModal').addEventListener('keydown', event=>{
 function totals(){return eligibleLgaCollations().reduce((a,r)=>{a.valid+=Number(r.lgaTotals?.validVotes)||0;a.rejected+=Number(r.lgaTotals?.rejectedBallots)||0;a.lgas++;a.wards+=Number(r.sourceCounts?.wards||r.sourceWardCollationIds?.length||0);return a},{valid:0,rejected:0,lgas:0,wards:0})}
 function lgaName(r){return first(r.name,r.lgaName,r.localGovernment,r.label,r.title,r.code,r.lgaCode,r.id,'Unnamed LGA')}
 function renderOverview(){const rows=eligibleLgaCollations(),t=totals(),received=rows.length;$('statLgas').textContent=data.lgas.length;$('statReceived').textContent=received;$('statPending').textContent=Math.max(0,data.lgas.length-received);$('statVotes').textContent=t.valid.toLocaleString();$('progressSummary').textContent=`${received} of ${data.lgas.length} registered LGAs have submitted a matching collation for ${assignment.electionName}.`;const body=data.lgas.slice().sort((a,b)=>lgaName(a).localeCompare(lgaName(b),undefined,{numeric:true})).map(l=>{const code=String(first(l.lgaCode,l.code,l.id,'')),r=rows.find(x=>locationKey(x.lgaCode)===l.id);return `<tr><td><strong>${esc(lgaName(l))}</strong></td><td>${esc(code)}</td><td>${r?'<span class="tag">Received</span>':'<span class="tag warn">'+(feedStatus.collations==='ready'?'Awaiting':'Unconfirmed')+'</span>'}</td><td>${r?Number(r.lgaTotals?.validVotes||0).toLocaleString():'—'}</td><td>${r?esc(fmt(r.createdAt)):'—'}</td></tr>`}).join('');$('progressTable').innerHTML=body?`<table><thead><tr><th>Local Government</th><th>LGA code</th><th>Submission</th><th>Valid votes</th><th>Submitted</th></tr></thead><tbody>${body}</tbody></table>`:'<div class="empty">No registered LGAs found for this State. Check geographyLGAs and the assigned state code.</div>'}
+function renderTotals(){const rows=eligibleLgaCollations().sort((a,b)=>String(a.lga||a.lgaName||'').localeCompare(String(b.lga||b.lgaName||''),undefined,{numeric:true})),t=totals();$('totalValid').textContent=t.valid.toLocaleString();$('totalRejected').textContent=t.rejected.toLocaleString();$('totalIncluded').textContent=t.lgas;$('totalSources').textContent=t.wards;$('validVotes').value=t.valid;$('rejectedVotes').value=t.rejected;$('sourceCountText').textContent=`${rows.length} latest LGA collation record(s) will be referenced, representing ${t.wards} ward collation record(s).`;$('totalsTable').innerHTML=rows.length?`<table><thead><tr><th>Local Government</th><th>Valid votes</th><th>Rejected ballots</th><th>Wards included</th><th>Collation date</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${esc(first(r.lga,r.lgaName,r.lgaCode,'—'))}</td><td>${Number(r.lgaTotals?.validVotes||0).toLocaleString()}</td><td>${Number(r.lgaTotals?.rejectedBallots||0).toLocaleString()}</td><td>${Number(r.sourceCounts?.wards||r.sourceWardCollationIds?.length||0)}</td><td>${esc(fmt(r.collationDate||r.createdAt))}</td></tr>`).join('')}</tbody><tfoot><tr><th>STATE TOTAL</th><th>${t.valid.toLocaleString()}</th><th>${t.rejected.toLocaleString()}</th><th>${t.wards}</th><th></th></tr></tfoot></table>`:'<div class="empty">No eligible LGA collation records are available yet.</div>'}
+function renderHistory(){if(feedMessage('stateHistory')){ $('historyTable').textContent=feedMessage('stateHistory');return;}const rows=data.stateHistory.slice().sort((a,b)=>dateMs(b.createdAt)-dateMs(a.createdAt));$('historyTable').innerHTML=rows.length?`<table><thead><tr><th>Date</th><th>Review status</th><th>LGAs included</th><th>Valid votes</th><th>Rejected ballots</th><th>Created by</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${esc(fmt(r.collationDate||r.createdAt))}</td><td>${esc(r.reviewStatus||r.status||'—')}</td><td>${Number(r.sourceCounts?.lgas||r.sourceLgaCollationIds?.length||0)}</td><td>${Number(r.stateTotals?.validVotes||0).toLocaleString()}</td><td>${Number(r.stateTotals?.rejectedBallots||0).toLocaleString()}</td><td>${esc(r.createdByName||'—')}</td></tr>`).join('')}</tbody></table>`:'<div class="empty">No State collation history yet.</div>'}
 function collationBody(r) {const fields=[['Firestore reference',r.id],['Local Government',first(r.lga,r.lgaName,'—')],['LGA code',r.lgaCode],['State',r.state],['Election',r.electionName||r.electionType],['Candidate',r.candidateName],['Valid votes',r.lgaTotals?.validVotes],['Rejected ballots',r.lgaTotals?.rejectedBallots],['Wards included',r.sourceCounts?.wards],['Review status',r.reviewStatus||r.status],['Submitted by',r.createdByName||r.createdBy],['Submitted at',fmt(r.createdAt)],['Summary',r.summary],['Discrepancies',r.discrepancies]];return `<div class="detailgrid">${fields.filter(x=>x[1]!==undefined&&x[1]!==null&&x[1]!=='').map(([k,v])=>`<div><small>${esc(k)}</small><b>${esc(v)}</b></div>`).join('')}</div><p class="muted">Read-only copy of the Local Government Agent's submitted collation. The original LGA and ward records are not changed here.</p>`;}
 function openLga(id) {
   const r = data.collations.find(row => row.id === id && scopeMatches(row));
@@ -346,7 +352,7 @@ function openLga(id) {
   $('detailModal').classList.add('show');
   $('closeDetail').focus();
 }
-function switchView(v){$('stateUploadMenu').classList.toggle('active',v==='uploads');document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id==='view-'+v));document.querySelectorAll('.nav [data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===v));$('topTitle').textContent=({overview:'State overview',uploads:'State uploads',lgas:'State Collation Dashboard',profile:'My profile'})[v]||'State operations';$('sidebar').classList.remove('open');window.scrollTo({top:0,behavior:'smooth'})}
+function switchView(v){$('stateUploadMenu').classList.toggle('active',v==='uploads');document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id==='view-'+v));document.querySelectorAll('.nav [data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===v));$('topTitle').textContent=({overview:'State overview',uploads:'State uploads',lgas:'State Collation Dashboard',results:'Consolidated results',submit:'Submit State collation',history:'Collation history',profile:'My profile'})[v]||'State operations';$('sidebar').classList.remove('open');window.scrollTo({top:0,behavior:'smooth'})}
 function renderProfile(){const rows=[['Full name',profile.fullName],['Username',profile.username],['Email',profile.email||user.email],['Phone',profile.phone],['Role',profile.agentRoleLabel||profile.agentRole||profile.role],['Election',assignment.electionName],['Candidate',assignment.candidateName],['State',assignment.state],['State code',assignment.stateCode],['Account status',profile.status]];$('profileGrid').innerHTML=rows.filter(x=>x[1]!==undefined&&x[1]!==null&&x[1]!=='').map(([k,v])=>`<div><small>${esc(k)}</small><b>${esc(v)}</b></div>`).join('')}
 const uploadGroups = {
   successful:{label:'SUCCESSFUL STATE COLLATION',actions:{ec8d:'UPLOAD FORM EC8D',duplicate:'UPLOAD DUPLICATE COPY',eform:'FILL E FORM',video:'UPLOAD VIDEO'}},
@@ -402,7 +408,7 @@ function showUploadAction(action){
     '<button class="btn" type="submit">'+(eform?'Save '+formName+' E-Form':'Upload file')+'</button></fieldset><p role="status" class="upload-feedback"></p></form>';
   if(eform) {
     updateLines();
-    if (!data.lgas.length) uploadPanel.querySelector('[role=status]').textContent='Waiting for the assigned LGA list. If it stays empty, check that the assigned State LGA list is available.';
+    if (!data.lgas.length) uploadPanel.querySelector('[role=status]').textContent='Waiting for the assigned LGA list. If it stays empty, return to the results table and refresh.';
   }
   $('uploadHeading').focus();
 }
@@ -538,43 +544,21 @@ function syncUploadLgas() {
 
 function renderAll(){
   indexSubmissions(); renderOpenFeed();
-  renderOverview(); renderLgas();
+  renderOverview(); renderLgas(); renderTotals(); renderHistory();
   const collationNotice = feedMessage('collations'), geographyNotice = feedMessage('lgas');
   if (geographyNotice) {
     $('statLgas').textContent = '—'; $('statPending').textContent = '—';
     $('progressTable').textContent = geographyNotice;
   }
-  if (collationNotice || geographyNotice) {
-    $('progressSummary').textContent = [geographyNotice,collationNotice].filter(Boolean).join(' ');
-  }
+  if (collationNotice || geographyNotice) $('progressSummary').textContent = [geographyNotice,collationNotice].filter(Boolean).join(' ');
   if (collationNotice) {
-    $('statReceived').textContent = '—'; $('statPending').textContent = '—'; $('statVotes').textContent = '—';
+    for (const id of ['statReceived','statPending','statVotes','totalValid','totalRejected','totalIncluded','totalSources']) $(id).textContent='—';
+    $('totalsTable').textContent = collationNotice; $('sourceCountText').textContent = collationNotice;
+    $('validVotes').value = ''; $('rejectedVotes').value = '';
   }
 }
-
-async function loadProfile(u,session){const userSnap=await getDoc(doc(db,'users',u.uid)),userData=userSnap.exists()?userSnap.data():{};let agentData={};try{const agentSnap=await getDoc(doc(db,'electionAgents',u.uid));if(agentSnap.exists())agentData=agentSnap.data()}catch(err){console.warn('Could not read electionAgents; falling back to users profile.',err)}if(session!==stateSession || auth.currentUser?.uid!==u.uid)return;user=u;const a=Object.keys(agentData).length?agentData:userData;const role=roleName(a)||roleName(userData);if(!['state_collation_agent','state_collation'].includes(role))throw new Error('This signed-in account is not assigned to the State Collation Agent role. Ask the Super Admin to check agentRole in electionAgents/{uid} or users/{uid}.');if(a.active===false||a.status==='disabled'||userData.active===false||userData.status==='disabled')throw new Error('Your account is disabled. Contact the Super Admin.');profile={...userData,...a};loadAssignment(a);$('sideName').textContent=first(profile.fullName,u.displayName,u.email,'State Agent');$('sideScope').textContent=assignment.state;$('topName').textContent=first(profile.fullName,u.email,'');$('welcomeTitle').textContent=`${assignment.state} State Collation Dashboard`;$('stateTitle').textContent=assignment.state;$('stateCodeTitle').textContent=assignment.stateCode;$('electionTitle').textContent=assignment.electionName;$('candidateTitle').textContent=assignment.candidateName||'Not specified';renderProfile();await loadData()}
-// Android/browser Back guard. Arm as soon as Firebase confirms an authenticated
-// session (before profile/network reads), then restore the guard on every Back event.
-let stateBackGuard=false;
-function armStateBackGuard(force=false){
-  if(!auth.currentUser)return;
-  if(stateBackGuard && !force)return;
-  // Two same-URL sentinels protect against a single Back press consuming the only guard.
-  history.pushState({theEyesStateDashboard:true,guard:1},'',location.href);
-  history.pushState({theEyesStateDashboard:true,guard:2},'',location.href);
-  stateBackGuard=true;
-}
-window.addEventListener('popstate',()=>{
-  if(!auth.currentUser){stateBackGuard=false;return;}
-  // Never let a hardware Back press traverse to the login/index page while signed in.
-  if($('detailModal').classList.contains('show')) $('detailModal').classList.remove('show');
-  else if($('sidebar').classList.contains('open')) $('sidebar').classList.remove('open');
-  // Reinsert the sentinel synchronously while the authenticated page is still active.
-  stateBackGuard=false;
-  armStateBackGuard(true);
-});
-window.addEventListener('pageshow',()=>{if(auth.currentUser)armStateBackGuard(true);});
-$('loginForm').addEventListener('submit',e=>e.preventDefault());$('logoutBtn').addEventListener('click',async()=>{stateBackGuard=false;unsubs.forEach(f=>f());await signOut(auth);window.location.replace('index.html')});let stateSession=0;
+async function loadProfile(u,session){const userSnap=await getDoc(doc(db,'users',u.uid)),userData=userSnap.exists()?userSnap.data():{};let agentData={};try{const agentSnap=await getDoc(doc(db,'electionAgents',u.uid));if(agentSnap.exists())agentData=agentSnap.data()}catch(err){console.warn('Could not read electionAgents; falling back to users profile.',err)}if(session!==stateSession || auth.currentUser?.uid!==u.uid)return;user=u;const a=Object.keys(agentData).length?agentData:userData;const role=roleName(a)||roleName(userData);if(!['state_collation_agent','state_collation'].includes(role))throw new Error('This signed-in account is not assigned to the State Collation Agent role. Ask the Super Admin to check agentRole in electionAgents/{uid} or users/{uid}.');if(a.active===false||a.status==='disabled'||userData.active===false||userData.status==='disabled')throw new Error('Your account is disabled. Contact the Super Admin.');profile={...userData,...a};loadAssignment(a);$('sideName').textContent=first(profile.fullName,u.displayName,u.email,'State Agent');$('sideScope').textContent=assignment.state;$('topName').textContent=first(profile.fullName,u.email,'');$('welcomeTitle').textContent=`${assignment.state} State Collation Dashboard`;$('stateTitle').textContent=assignment.state;$('stateCodeTitle').textContent=assignment.stateCode;$('electionTitle').textContent=assignment.electionName;$('candidateTitle').textContent=assignment.candidateName||'Not specified';$('collationDate').value=new Date().toISOString().slice(0,10);renderProfile();await loadData()}
+$('loginForm').addEventListener('submit',e=>e.preventDefault());$('logoutBtn').addEventListener('click',async()=>{unsubs.forEach(f=>f());await signOut(auth);window.location.replace('index.html')});let stateSession=0;
 onAuthStateChanged(auth,async u=>{
   const session=++stateSession;
   uploadGroup=''; uploadAction=''; uploadBusy=false; pendingMedia=null;
@@ -583,16 +567,14 @@ onAuthStateChanged(auth,async u=>{
   unsubs.forEach(stop=>stop());
   unsubs=[];
   user=null; profile={}; assignment={};
-  data={lgas:[],collations:[],evidence:[]};
+  data={lgas:[],collations:[],evidence:[],stateHistory:[]};
   $('detailModal').classList.remove('show');
   $('appView').classList.add('hidden');
   $('loginView').classList.remove('hidden');
   if(!u){
-    stateBackGuard=false;
     notice('loginNotice','Sign in on the main page to open your state dashboard.',true);
     return;
   }
-  armStateBackGuard(true);
   notice('loginNotice','Opening your State Collation dashboard…');
   try{
     await loadProfile(u,session);
@@ -600,12 +582,12 @@ onAuthStateChanged(auth,async u=>{
     renderAll();
     $('loginView').classList.add('hidden');
     $('appView').classList.remove('hidden'); $('stateUploadButton').disabled=false;
-    armStateBackGuard();
   }catch(err){
     if(session!==stateSession)return;
     console.error(err);
     notice('loginNotice',err.message||'Unable to load your State Collation assignment.',true);
   }
 });
-document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.goto)));$('menuBtn').addEventListener('click',()=>$('sidebar').classList.toggle('open'));$('lgaSearch').addEventListener('input',renderLgas);$('lgaStatus').addEventListener('change',renderLgas);$('closeDetail').addEventListener('click',()=>$('detailModal').classList.remove('show'));$('detailModal').addEventListener('click',e=>{if(e.target===$('detailModal'))$('detailModal').classList.remove('show')});$('lgaTable').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.disabled)return;if(b.dataset.category)openEvidence(b.dataset.code,b.dataset.category,b.dataset.start);else if(b.dataset.record)openLga(b.dataset.record)});
+document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.goto)));$('menuBtn').addEventListener('click',()=>$('sidebar').classList.toggle('open'));$('lgaSearch').addEventListener('input',renderLgas);$('lgaStatus').addEventListener('change',renderLgas);$('refreshBtn').addEventListener('click',loadData);$('closeDetail').addEventListener('click',()=>$('detailModal').classList.remove('show'));$('detailModal').addEventListener('click',e=>{if(e.target===$('detailModal'))$('detailModal').classList.remove('show')});$('lgaTable').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.disabled)return;if(b.dataset.category)openEvidence(b.dataset.code,b.dataset.category,b.dataset.start);else if(b.dataset.record)openLga(b.dataset.record)});
+$('stateForm').addEventListener('submit',async e=>{e.preventDefault();const btn=$('saveStateBtn');btn.disabled=true;btn.textContent='Saving…';try{if(!user||!assignment.stateCode)throw new Error('Your assigned State is not loaded.');const rows=eligibleLgaCollations();if(!rows.length)throw new Error('No eligible LGA collation records are available. Nothing can be submitted yet.');if(!$('confirmLgaReview').checked)throw new Error('Confirm that you have reviewed the Local Government records.');const t=totals();const sourceLgaCollationIds=rows.map(r=>({id:r.id,lgaCode:r.lgaCode,lga:r.lga||r.lgaName||''}));const payload={recordType:'state_collation',createdBy:user.uid,createdByName:first(profile.fullName,user.displayName,user.email),createdAt:serverTimestamp(),collationDate:$('collationDate').value,reviewStatus:$('reviewStatus').value,status:'submitted',electionType:assignment.electionType,electionName:assignment.electionName,candidateId:assignment.candidateId,candidateName:assignment.candidateName,stateCode:assignment.stateCode,state:assignment.state,sourceCounts:{lgas:rows.length,wards:t.wards},sourceLgaCollationIds,stateTotals:{validVotes:t.valid,rejectedBallots:t.rejected},summary:$('stateSummary').value.trim(),discrepancies:$('stateDiscrepancies').value.trim()};await addDoc(collection(db,'stateCollations'),payload);notice('stateNotice','State collation saved successfully. Original LGA and ward records remain unchanged.');$('stateForm').reset();$('collationDate').value=new Date().toISOString().slice(0,10);$('validVotes').value=t.valid;$('rejectedVotes').value=t.rejected}catch(err){console.error(err);notice('stateNotice',err.code==='permission-denied'?'Firebase denied this save. Firestore Rules must permit this State Agent to create a stateCollations record for the assigned State.':`Could not save State collation: ${err.message||err}`,true)}finally{btn.disabled=false;btn.textContent='Save State Collation'}});
 </script></body></html>
