@@ -254,7 +254,7 @@
       national_situation_room_officer: 'National Situation Room Officer'
     };
     const nationalCollationRoles = ['presidential_national_collation_agent', 'national_collation_agent', 'national_presidential_collation_agent'];
-    const normalizeRole = value => String(value || '').trim().toLowerCase().replace(/[\s-]+/g, '_');
+    const normalizeRole = value => String(value || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
     const entryRole = new URLSearchParams(location.search).get('role');
     const entryRoles = ['national_collation_agent', ...Object.keys(officerRoles)];
     const isRoleEntry = entryRoles.includes(entryRole);
@@ -273,6 +273,11 @@
       federal_constituency_agent: "federal-constituency-collation-dashboard.html",
       federal_constituency_collation_agent: "federal-constituency-collation-dashboard.html",
       federal_constituency_collation: "federal-constituency-collation-dashboard.html",
+      federal_constituency_state_collation_agent: "federal-constituency-collation-dashboard.html",
+      federal_constituency_state_agent: "federal-constituency-collation-dashboard.html",
+      house_of_representatives_collation_agent: "federal-constituency-collation-dashboard.html",
+      house_of_representatives_agent: "federal-constituency-collation-dashboard.html",
+      constituency_collation_agent: "federal-constituency-collation-dashboard.html",
       presidential_national_collation_agent: "presidential-national-collation-dashboard.html",
       national_collation_agent: "presidential-national-collation-dashboard.html",
       national_presidential_collation_agent: "presidential-national-collation-dashboard.html",
@@ -348,11 +353,37 @@
           agentProfile.agentRole,
           agentProfile.dashboardRole,
           agentProfile.role,
+          agentProfile.agentRoleLabel,
+          agentProfile.designation,
+          agentProfile.position,
+          agentProfile.accountType,
+          agentProfile.userType,
           userProfile.agentRole,
           userProfile.dashboardRole,
-          userProfile.role
+          userProfile.role,
+          userProfile.agentRoleLabel,
+          userProfile.designation,
+          userProfile.position,
+          userProfile.accountType,
+          userProfile.userType
         ];
-        const role = roleCandidates.map(recognizedRole).find(Boolean) || '';
+        let role = roleCandidates.map(recognizedRole).find(Boolean) || '';
+
+        // Some older agent records store the assigned dashboard path rather
+        // than a normalized role. Only accept known dashboard filenames.
+        const allowedDashboardPaths = new Map(
+          Object.entries(roleDashboards).map(([key, path]) => [path.toLowerCase(), key])
+        );
+        const assignedDashboard = [
+          agentProfile.dashboardUrl, agentProfile.assignedDashboard, agentProfile.dashboard,
+          userProfile.dashboardUrl, userProfile.assignedDashboard, userProfile.dashboard
+        ].find(value => typeof value === 'string' && value.trim());
+        if (!role && assignedDashboard) {
+          let pathname = '';
+          try { pathname = new URL(assignedDashboard, window.location.href).pathname.split('/').pop().toLowerCase(); }
+          catch { pathname = String(assignedDashboard).split(/[?#]/)[0].split('/').pop().toLowerCase(); }
+          role = allowedDashboardPaths.get(pathname) || '';
+        }
 
         // Use the agent assignment as the primary source while retaining any
         // login/display/routing fields that may exist only in users/{uid}.
@@ -453,11 +484,11 @@
           throw new Error("The username does not match this account. Please check your details.");
         }
 
-        const dashboard = dedicatedRoom(role,profile) || roleDashboards[role] || userProfile.dashboardUrl || agentProfile.dashboardUrl;
+        const dashboard = dedicatedRoom(role,profile) || roleDashboards[role] || '';
 
         if (!dashboard || typeof dashboard !== "string" || !(Object.hasOwn(officerRoles, role) || dashboard.endsWith(".html"))) {
           await auth.signOut();
-          throw new Error("Your account role could not be matched to a dashboard. Ask the administrator to verify agentRole in electionAgents/" + credential.user.uid + " and users/" + credential.user.uid + ".");
+          throw new Error("Your account role could not be matched to a dashboard. Ask the administrator to set agentRole to state_collation_agent for the State Collation Dashboard, or federal_constituency_collation_agent for the Federal Constituency Dashboard, in electionAgents/" + credential.user.uid + ".");
         }
 
         // Role and dashboard permissions must also be enforced by Firestore Security Rules.
