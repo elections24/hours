@@ -124,9 +124,16 @@ function loadData(){
   },err=>{if(current!==sessionNo)return;data[key]=[];feedStatus[key]=err.code||'unavailable';renderAll()}));
  };
  listen('geographyLGAs','lgas',[['stateCode',assignment.stateCode]]);
- listen('lgaCollations','collations',[['stateCode',assignment.stateCode],['candidateId',assignment.candidateId],['electionType',assignment.electionType]]);
- listen('lgaEvidenceUploads','evidence',[['stateCode',assignment.stateCode],['candidateId',assignment.candidateId],['electionType',assignment.electionType]]);
- listen('federalConstituencyCollations','history',[['stateCode',assignment.stateCode],['candidateId',assignment.candidateId],['electionType',assignment.electionType]]);
+ // Restrict result/evidence listeners to the LGA codes mapped to this constituency.
+ // Firestore Rules use the same assigned-LGA scope; this avoids state-wide result access.
+ const assignedLgaCodes=[...new Set(data.lgas.map(l=>String(first(l.lgaCode,l.code,l.id)||'').trim()).filter(Boolean))];
+ if(assignedLgaCodes.length){
+  listen('lgaCollations','collations',[['stateCode',assignment.stateCode],['candidateId',assignment.candidateId],['electionType',assignment.electionType],['lgaCode','in',assignedLgaCodes]]);
+  listen('lgaEvidenceUploads','evidence',[['stateCode',assignment.stateCode],['candidateId',assignment.candidateId],['electionType',assignment.electionType],['lgaCode','in',assignedLgaCodes]]);
+ }else{
+  data.collations=[];data.evidence=[];feedStatus.collations='no-assigned-lgas';feedStatus.evidence='no-assigned-lgas';
+ }
+ listen('federalConstituencyCollations','history',[['stateCode',assignment.stateCode],['candidateId',assignment.candidateId],['electionType',assignment.electionType],['federalConstituencyCode',assignment.constituencyCode]]);
 }
 function renderOverview(){
  const latest=latestLgaCollations(),t=totals(),lgas=data.lgas;

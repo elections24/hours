@@ -1,0 +1,180 @@
+THE EYES — FEDERAL CONSTITUENCY FIRESTORE RULES PATCH
+
+This patch adds permissions only for Federal Constituency Collation Agents.
+It does not replace or loosen the existing Polling Unit, Ward, LGA, State, or Super Admin rules.
+
+IMPORTANT: Apply the following three changes to your existing Firestore rules.
+
+============================================================
+1) ADD THESE HELPER FUNCTIONS
+============================================================
+
+Insert after the existing Section 5 (LOCAL GOVERNMENT COLLATION AGENT), before Section 6.
+
+    // ==========================================
+    // 5A. FEDERAL CONSTITUENCY COLLATION AGENT
+    // ==========================================
+
+    function fcProfile(uid) {
+      return hasAgentDoc(uid) ? agentData(uid) : userData(uid);
+    }
+
+    function fcRole(uid) {
+      let a = hasAgentDoc(uid) ? agentData(uid) : {};
+      let u = hasUserDoc(uid) ? userData(uid) : {};
+      let r1 = a.get('agentRole', '');
+      let r2 = a.get('dashboardRole', '');
+      let r3 = a.get('role', '');
+      let r4 = u.get('agentRole', '');
+      let r5 = u.get('dashboardRole', '');
+      let r6 = u.get('role', '');
+      return r1 in ['federal_constituency_agent', 'federal_constituency_collation_agent', 'federal_constituency_collation'] ? r1
+        : r2 in ['federal_constituency_agent', 'federal_constituency_collation_agent', 'federal_constituency_collation'] ? r2
+        : r3 in ['federal_constituency_agent', 'federal_constituency_collation_agent', 'federal_constituency_collation'] ? r3
+        : r4 in ['federal_constituency_agent', 'federal_constituency_collation_agent', 'federal_constituency_collation'] ? r4
+        : r5 in ['federal_constituency_agent', 'federal_constituency_collation_agent', 'federal_constituency_collation'] ? r5
+        : r6;
+    }
+
+    function fcStateCode(uid) {
+      let p = fcProfile(uid);
+      let g = p.get('geography', {});
+      let s = p.get('assignedScope', {});
+      let gc = g.get('stateCode', '');
+      let sc = s.get('stateCode', '');
+      return gc != '' ? gc : (sc != '' ? sc : p.get('stateCode', ''));
+    }
+
+    function fcConstituencyCode(uid) {
+      let p = fcProfile(uid);
+      let g = p.get('geography', {});
+      let s = p.get('assignedScope', {});
+      let gc = g.get('federalConstituencyCode', g.get('constituencyCode', ''));
+      let sc = s.get('federalConstituencyCode', s.get('constituencyCode', ''));
+      let top = p.get('federalConstituencyCode', p.get('constituencyCode', ''));
+      return gc != '' ? gc : (sc != '' ? sc : top);
+    }
+
+    function fcActiveAgent(uid) {
+      let p = fcProfile(uid);
+      let account = hasUserDoc(uid) ? userData(uid) : {};
+      return signedIn()
+        && (fcRole(uid) in ['federal_constituency_agent', 'federal_constituency_collation_agent', 'federal_constituency_collation'])
+        && p.get('active', false) == true
+        && p.get('status', '') == 'active'
+        && account.get('active', true) == true
+        && account.get('status', 'active') == 'active'
+        && fcStateCode(uid) is string && fcStateCode(uid) != ''
+        && fcConstituencyCode(uid) is string && fcConstituencyCode(uid) != ''
+        && p.get('candidateId', '') is string && p.get('candidateId', '') != ''
+        && p.get('electionType', '') is string && p.get('electionType', '') != '';
+    }
+
+    function fcConstituencyExists(uid) {
+      return fcConstituencyCode(uid) != ''
+        && exists(/databases/$(database)/documents/geographyFederalConstituencies/$(fcConstituencyCode(uid)));
+    }
+
+    // Confirms that an LGA code belongs to the constituency assigned to this agent.
+    // Supports constituency master records using lgaCodes, localGovernmentCodes,
+    // constituencyLgaCodes, lgaNames, or localGovernmentNames, and LGA records
+    // carrying a federalConstituencyCode/constituencyCode/parentCode reference.
+    function fcLgaBelongsToAssignment(uid, code) {
+      let cPath = /databases/$(database)/documents/geographyFederalConstituencies/$(fcConstituencyCode(uid));
+      let lPath = /databases/$(database)/documents/geographyLGAs/$(code);
+      let cExists = exists(cPath);
+      let lExists = exists(lPath);
+      let c = cExists ? get(cPath).data : {};
+      let l = lExists ? get(lPath).data : {};
+      let explicitParent = l.get('federalConstituencyCode',
+        l.get('constituencyCode', l.get('parentCode', l.get('federalConstituencyId', ''))));
+      let lgaLabel = l.get('name', l.get('lgaName', l.get('localGovernment', l.get('label', ''))));
+      return cExists && (
+        explicitParent == fcConstituencyCode(uid)
+        || code in c.get('lgaCodes', [])
+        || code in c.get('localGovernmentCodes', [])
+        || code in c.get('constituencyLgaCodes', [])
+        || code in c.get('lgas', [])
+        || (lgaLabel != '' && lgaLabel in c.get('lgaNames', []))
+        || (lgaLabel != '' && lgaLabel in c.get('localGovernmentNames', []))
+      );
+    }
+
+    function fcCanReadAssignedLgaRecord(d) {
+      let uid = request.auth.uid;
+      return fcActiveAgent(uid)
+        && fcConstituencyExists(uid)
+        && d.stateCode == fcStateCode(uid)
+        && d.candidateId == fcProfile(uid).candidateId
+        && d.electionType == fcProfile(uid).electionType
+        && d.lgaCode is string
+        && fcLgaBelongsToAssignment(uid, d.lgaCode);
+    }
+
+    function fcCanReadOwnConstituencyRecord(d) {
+      let uid = request.auth.uid;
+      return fcActiveAgent(uid)
+        && d.stateCode == fcStateCode(uid)
+        && d.candidateId == fcProfile(uid).candidateId
+        && d.electionType == fcProfile(uid).electionType
+        && d.federalConstituencyCode == fcConstituencyCode(uid);
+    }
+
+    function fcCanCreateConstituencyRecord(d) {
+      let uid = request.auth.uid;
+      return fcActiveAgent(uid)
+        && fcConstituencyExists(uid)
+        && d.recordType == 'federal_constituency_collation'
+        && d.createdBy == uid
+        && d.status == 'submitted'
+        && d.stateCode == fcStateCode(uid)
+        && d.candidateId == fcProfile(uid).candidateId
+        && d.electionType == fcProfile(uid).electionType
+        && d.federalConstituencyCode == fcConstituencyCode(uid)
+        && d.sourceLgaCollationIds is list
+        && d.constituencyTotals is map;
+    }
+
+============================================================
+2) ADD FEDERAL-CONSTITUENCY READ PERMISSION TO EXISTING MATCHES
+============================================================
+
+Inside the existing match /lgaCollations/{id}, add this allow line. Keep all existing lines:
+
+      allow read: if fcCanReadAssignedLgaRecord(resource.data);
+
+Inside the existing match /lgaEvidenceUploads/{id}, add this allow line. Keep all existing lines:
+
+      allow read: if fcCanReadAssignedLgaRecord(resource.data);
+
+These checks bind the read to the signed-in agent's state, election, candidate,
+and the LGA list of that agent's assigned Federal Constituency.
+
+============================================================
+3) ADD A NEW COLLECTION MATCH
+============================================================
+
+Add this new match near the existing /stateCollations/{id} match (do not nest it
+inside another match):
+
+    match /federalConstituencyCollations/{id} {
+      allow create: if fcCanCreateConstituencyRecord(request.resource.data);
+      allow read: if isSuperAdmin() || fcCanReadOwnConstituencyRecord(resource.data);
+      allow update, delete: if isSuperAdmin();
+    }
+
+============================================================
+DASHBOARD QUERY COMPATIBILITY
+============================================================
+
+The Federal Constituency dashboard must query lgaCollations and lgaEvidenceUploads
+using an lgaCode 'in' filter containing only the assigned constituency's LGA codes,
+and query federalConstituencyCollations with federalConstituencyCode == the assigned
+code. The companion dashboard in this ZIP has those query restrictions added.
+
+Before publishing, verify that each geographyFederalConstituencies document ID is
+exactly the federalConstituencyCode stored in the agent profile, and that its lgaCodes
+(or supported mapping fields) accurately lists the constituency's LGAs.
+
+Do not replace the complete existing rules with this patch. Insert the helpers and
+allow statements at the locations described above, then publish the merged rules.
