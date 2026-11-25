@@ -60,7 +60,8 @@ function loadAssignment(a){
   constituencyCode:String(first(g.federalConstituencyCode,s.federalConstituencyCode,g.constituencyCode,s.constituencyCode,a.federalConstituencyCode,a.constituencyCode)||''),
   constituency:first(g.federalConstituency,g.constituencyName,s.federalConstituency,s.constituencyName,a.federalConstituency,a.constituencyName,''),
   electionType:String(a.electionType||''),electionName:first(a.electionName,electionNames[a.electionType],a.electionType,''),
-  candidateId:String(a.candidateId||''),candidateName:first(a.candidateName,'')
+  candidateId:String(a.candidateId||''),candidateName:first(a.candidateName,''),
+  lgaCodes:[...new Set([a.lgaCodes,g.lgaCodes,s.lgaCodes].flatMap(v=>Array.isArray(v)?v:[]).map(v=>typeof v==='object'?String(first(v.lgaCode,v.code,v.id)||''):String(v)).filter(Boolean))]
  };
  if(!assignment.stateCode||!assignment.constituencyCode||!assignment.electionType||!assignment.candidateId)throw new Error('Your Federal Constituency assignment is incomplete. Ask the Super Admin to verify State, Federal Constituency, candidate and election type.');
 }
@@ -113,6 +114,8 @@ function totals(){
 function feedMessage(k){if(feedStatus[k]==='ready')return '';if(!feedStatus[k])return 'Loading '+k+'…';if(feedStatus[k]==='cache')return 'Waiting for the server to confirm '+k+'…';return k+' could not be loaded ('+feedStatus[k]+').'}
 function loadData(){
  const current=++sessionNo;unsubs.forEach(f=>f());unsubs=[];feedStatus={};
+ // Keep the already-resolved constituency LGA list while the live geography listener starts.
+ const assignedLgasSnapshot=[...data.lgas];
  const listen=(name,key,filters)=>{
   data[key]=[];
   const q=query(collection(db,name),...filters.map(([field,value])=>where(field,'==',value)));
@@ -126,10 +129,13 @@ function loadData(){
  listen('geographyLGAs','lgas',[['stateCode',assignment.stateCode]]);
  // Restrict result/evidence listeners to the LGA codes mapped to this constituency.
  // Firestore Rules use the same assigned-LGA scope; this avoids state-wide result access.
- const assignedLgaCodes=[...new Set(data.lgas.map(l=>String(first(l.lgaCode,l.code,l.id)||'').trim()).filter(Boolean))];
- if(assignedLgaCodes.length){
-  listen('lgaCollations','collations',[['stateCode',assignment.stateCode],['candidateId',assignment.candidateId],['electionType',assignment.electionType],['lgaCode','in',assignedLgaCodes]]);
-  listen('lgaEvidenceUploads','evidence',[['stateCode',assignment.stateCode],['candidateId',assignment.candidateId],['electionType',assignment.electionType],['lgaCode','in',assignedLgaCodes]]);
+ const assignedLgaCodes=[...new Set(assignedLgasSnapshot.map(l=>String(first(l.lgaCode,l.code,l.id)||'').trim()).filter(Boolean))];
+ const mappedCodes=new Set(assignedLgaCodes);
+ const agentCodes=assignment.lgaCodes.filter(code=>mappedCodes.has(code));
+ const queryLgaCodes=agentCodes.length?agentCodes:assignedLgaCodes;
+ if(queryLgaCodes.length){
+  listen('lgaCollations','collations',[['stateCode',assignment.stateCode],['candidateId',assignment.candidateId],['electionType',assignment.electionType],['lgaCode','in',queryLgaCodes]]);
+  listen('lgaEvidenceUploads','evidence',[['stateCode',assignment.stateCode],['candidateId',assignment.candidateId],['electionType',assignment.electionType],['lgaCode','in',queryLgaCodes]]);
  }else{
   data.collations=[];data.evidence=[];feedStatus.collations='no-assigned-lgas';feedStatus.evidence='no-assigned-lgas';
  }
@@ -184,7 +190,7 @@ async function loadProfile(u,session){
  profile={...userData,...agentData,geography:{...(userData.geography||{}),...(agentData.geography||{})},assignedScope:{...(userData.assignedScope||{}),...(agentData.assignedScope||{})}};
  if(profile.active===false||profile.status==='disabled')throw new Error('Your account is disabled. Contact the Super Admin.');
  user=u;loadAssignment(profile);
- $('sideName').textContent=first(profile.fullName,u.displayName,u.email,'Federal Constituency Agent');$('sideScope').textContent=[assignment.constituency,assignment.state].filter(Boolean).join(' · ');$('topName').textContent=first(profile.fullName,u.email,'');
+ $('sideName').textContent=first(profile.fullName,u.displayName,u.email,'Federal Constituency Agent');$('sideScope').textContent=[assignment.constituency,assignment.state,assignment.lgaCodes.length?assignment.lgaCodes.length+' assigned LGAs':''].filter(Boolean).join(' · ');$('topName').textContent=first(profile.fullName,u.email,'');
  $('welcomeTitle').textContent=assignment.constituency+' Federal Constituency Dashboard';$('constituencyTitle').textContent=assignment.constituency;$('stateTitle').textContent=assignment.state;$('stateCodeTitle').textContent=assignment.stateCode;$('constituencyCodeTitle').textContent=assignment.constituencyCode;$('electionTitle').textContent=assignment.electionName;$('candidateTitle').textContent=assignment.candidateName||'Not specified';$('collationDate').value=new Date().toISOString().slice(0,10);
  renderProfile();
  // Resolve the exact constituency master record and its LGA membership before loading submissions.
@@ -192,7 +198,7 @@ async function loadProfile(u,session){
  if(cSnap.exists())constituencyRecord={...cSnap.data(),id:cSnap.id};
  else{
   const {getDocs}=await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
-  const snap=await getDocs(query(collection(db,'geographyFederalConstituencies'),where('stateCode','==',assignment.stateCode)));
+  const snap=await getDocs(query(collection(db,'geographyFederalConstituencies'),where('stateCode','==',assignment.stateCode),where('federalConstituencyCode','==',assignment.constituencyCode)));
   constituencyRecord=snap.docs.map(d=>({...d.data(),id:d.id})).find(constituencyMatch)||null;
  }
  if(!constituencyRecord)throw new Error('Your assigned Federal Constituency was not found in geographyFederalConstituencies. Verify that its document ID/code matches the assigned federalConstituencyCode.');
@@ -232,7 +238,7 @@ $('constituencyForm').addEventListener('submit',async e=>{
   const {addDoc:saveDoc}=await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");const ref=await saveDoc(collection(db,'federalConstituencyCollations'),payload);
   notice('saveNotice','Federal Constituency collation saved successfully. Reference: '+ref.id);
   $('constituencyForm').reset();$('collationDate').value=new Date().toISOString().slice(0,10);$('validVotes').value=t.valid;$('rejectedVotes').value=t.rejected;
- }catch(err){console.error(err);notice('saveNotice',err.code==='permission-denied'?'Firebase denied this save. Firestore Rules must allow the assigned Federal Constituency Agent to create a federalConstituencyCollations record for this constituency.':`Could not save constituency collation: ${err.message||err}`,true)}
+ }catch(err){console.error(err);notice('saveNotice',err.code==='permission-denied'?'Firebase denied this save. Check the agent role and assignment fields, then confirm the Firestore create rule accepts the dashboard payload. Firebase: '+(err.code||'permission-denied'):`Could not save constituency collation: ${err.message||err}`,true)}
  finally{btn.disabled=false;btn.textContent='Save Constituency Collation'}
 });
 </script>
