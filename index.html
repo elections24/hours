@@ -332,11 +332,33 @@
           throw new Error("Your account is currently disabled. Contact your system administrator.");
         }
 
-        const assignedRole = normalizeRole(agentProfile.agentRole);
-        const alternateRole = normalizeRole(agentProfile.role);
-        const collationRole = ["state_collation_agent", "state_collation", ...nationalCollationRoles, ...Object.keys(officerRoles)].includes(alternateRole) ? alternateRole : "";
-        const role = assignedRole || collationRole || normalizeRole(userProfile.agentRole || userProfile.role);
-        const profile = agentExists ? agentProfile : userProfile;
+        // Resolve only a recognized dashboard role. A generic value such as
+        // "agent" in electionAgents/{uid} must not mask the specific role stored
+        // in users/{uid}. This is important because agent creation writes both
+        // documents and older records may not have identical role fields.
+        const recognizedRole = value => {
+          const candidate = normalizeRole(value);
+          return candidate && (Object.hasOwn(roleDashboards, candidate) || Object.hasOwn(officerRoles, candidate))
+            ? candidate : '';
+        };
+        const roleCandidates = [
+          agentProfile.agentRole,
+          agentProfile.dashboardRole,
+          agentProfile.role,
+          userProfile.agentRole,
+          userProfile.dashboardRole,
+          userProfile.role
+        ];
+        const role = roleCandidates.map(recognizedRole).find(Boolean) || '';
+
+        // Use the agent assignment as the primary source while retaining any
+        // login/display/routing fields that may exist only in users/{uid}.
+        const profile = {
+          ...userProfile,
+          ...agentProfile,
+          assignedScope: { ...(userProfile.assignedScope || {}), ...(agentProfile.assignedScope || {}) },
+          geography: { ...(userProfile.geography || {}), ...(agentProfile.geography || {}) }
+        };
         if (nationalCollationRoles.includes(role) || Object.hasOwn(officerRoles, role)) {
           if (!(profile.active === true || profile.status === 'active') || !profile.candidateId || !profile.electionType)
             throw new Error('Your assignment is incomplete. Please contact your administrator.');
@@ -432,7 +454,7 @@
 
         if (!dashboard || typeof dashboard !== "string" || !(Object.hasOwn(officerRoles, role) || dashboard.endsWith(".html"))) {
           await auth.signOut();
-          throw new Error("No dashboard has been assigned to your account. Contact your system administrator.");
+          throw new Error("Your account role could not be matched to a dashboard. Ask the administrator to verify agentRole in electionAgents/" + credential.user.uid + " and users/" + credential.user.uid + ".");
         }
 
         // Role and dashboard permissions must also be enforced by Firestore Security Rules.
